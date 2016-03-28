@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>KC的废墟堆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Gone with the ruins">
+<meta property="og:type" content="website">
+<meta property="og:title" content="KC的废墟堆">
+<meta property="og:url" content="http://kingsamchen.github.io/index.html">
+<meta property="og:site_name" content="KC的废墟堆">
+<meta property="og:description" content="Gone with the ruins">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="KC的废墟堆">
+<meta name="twitter:description" content="Gone with the ruins">
+  
+    <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">KC的废墟堆</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Will you serve in Heaven, or rule in Hell</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-trie-ternary-search-tree-and-autocomplete" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/03/24/trie-ternary-search-tree-and-autocomplete/" class="article-date">
+  <time datetime="2016-03-24T03:49:19.000Z" itemprop="datePublished">2016-03-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/24/trie-ternary-search-tree-and-autocomplete/">Trie, Ternary Search Tree, and Autocomplete</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Trie"><a href="#Trie" class="headerlink" title="Trie"></a>Trie</h2><p>对于给定前缀<em>p</em>要求返回集合中所有匹配该前缀的元素的一类问题，例如autocomplete和字典搜索，<a href="https://en.wikipedia.org/wiki/Trie" target="_blank" rel="external">Trie</a>是一个很自然的选择。</p>
+<p>前两天闲的蛋疼，于是自己做了一个quick-and-dirty的<a href="https://github.com/kingsamchen/Eureka/tree/master/TrieFoDict" target="_blank" rel="external">实现</a>，也算是小小地回顾了下当年造数据结构轮子的光景。</p>
+<p>不考虑优化手段，trie的核心性质在于：给定一个字母表<em>T</em>， 每个trie node除了表示当前一个字符之外，还有<code>len(T)</code>个child nodes，每个child node对应下一个可能的字符，于是一个字符串就这样被保存在了路径上。</p>
+<p>直觉上看，trie是通过增加宽度来减小高度（高度和最长的单词长度一直），以减小查询的时间复杂度。</p>
+<p>不过在细节上，node保存的信息可以有不同处理：</p>
+<p>第一种做法是node保存从root到此node的完整路径信息，如图：</p>
+<p><img src="/img/trie_sample_style_1.png" alt=""></p>
+<p>这么做的好处是之后需要路径信息时不需要额外的处理；当然不好的一点是node耗费的内存也变大了。</p>
+<p>第二种做法是node仅保存当前字符的信息，如图：</p>
+<p><img src="/img/trie_sample_style_2.png" alt=""></p>
+<p>我最后选择了第二种做法。</p>
+<p>另外，每个node还要有一个<code>end-of-word</code>的mark，因为路径中间的node有可能已经是一个完整的单词，例如<em>he</em>是<em>here</em>的前缀，但是两个都是完整的单词。</p>
+<p>实现提供了三个接口：</p>
+<ul>
+<li><code>Insert</code>负责插入一个word到trie中</li>
+<li><code>Contains</code>检查trie当前是否存在某个word</li>
+<li><code>Search</code>接受一个前缀，返回一个包含所有满足改前缀的word的集合</li>
+</ul>
+<p>接口的实现如果采用递归的话，会变成弱智一般的简单。</p>
+<p>不过好在就算是采用迭代，也不会麻烦到哪里去，除了<code>Search</code>。</p>
+<p>为了返回所有包含前缀的单词，实际上我们需要对trie做一个pre-order traversal，于是我们就有了一个stack。</p>
+<p>一开始我是打算用stack保存一个node里还没有处理过的child nodes。这样就需要在迭代时不断往stack里加node，以及不断地从stack里取出node做处理。</p>
+<p>我觉得这个思路很直接，并且觉着写起来会非常的流畅。但是有个不好的地方是，stack最多时需要保存所有的leaf nodes。而trie恰恰是通过增加宽度换取较低的高度，因此内存开销会比较大。</p>
+<p>回龙观周杰伦<a href="http://www.daozhihun.com/" target="_blank" rel="external">大木</a>老师提供了另外一个思路：利用stack保存正在处理的nodes。这样stack保存的恰好是构成目标字符串的路径，内存开销也成功压缩到了$O(h)$。</p>
+<p>不愧是德艺双馨的亚洲人气小天王，服！</p>
+<p>不过如果采用这个方法，还需要保存一个额外的信息，指明某个node已经处理过了多少child node，这样才能确定下一个要处理的child node。</p>
+<p>别忘了一个node有字母表大小个children，而我们需要在node和他的child node之前来回切换。当然，如果语言自身提供了类似<code>yield</code>的设施，那实现就轻松多了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; Trie::Search(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix) <span class="keyword">const</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; words;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Locate the node matching the last character of `prefix`.</span></span><br><span class="line">    <span class="keyword">const</span> TrieNode* node = header_;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> ch : prefix) &#123;</span><br><span class="line">        <span class="keyword">auto</span> pos = Alphabet::GetCharacterIndex(ch);</span><br><span class="line">        <span class="keyword">if</span> (pos == Alphabet::npos) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> TrieNode* child = node-&gt;children[pos];</span><br><span class="line">        <span class="keyword">if</span> (!child) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        node = child;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We use `processing_nodes` as a stack to maintain nodes that are being processed.</span></span><br><span class="line">    <span class="keyword">using</span> CludeNode = <span class="built_in">std</span>::pair&lt;<span class="keyword">const</span> TrieNode*, <span class="keyword">size_t</span>&gt;;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CludeNode&gt; processing_nodes;</span><br><span class="line">    processing_nodes.emplace_back(CludeNode(node, <span class="number">0U</span>));</span><br><span class="line">    <span class="keyword">while</span> (!processing_nodes.empty()) &#123;</span><br><span class="line">        <span class="comment">// Don't access `current` after having pushed another node into `processing_nodes`.</span></span><br><span class="line">        <span class="comment">// Because the push might result in memory reallocation, rendering `current` an invalid</span></span><br><span class="line">        <span class="comment">// reference.</span></span><br><span class="line">        <span class="keyword">auto</span>&amp; current = processing_nodes.back();</span><br><span class="line">        <span class="keyword">bool</span> child_node_found = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">while</span> (current.second &lt; current.first-&gt;children.size()) &#123;</span><br><span class="line">            <span class="keyword">const</span> TrieNode* child = current.first-&gt;children[current.second];</span><br><span class="line">            ++current.second;</span><br><span class="line">            <span class="keyword">if</span> (child) &#123;</span><br><span class="line">                processing_nodes.emplace_back(CludeNode(child, <span class="number">0U</span>));</span><br><span class="line">                child_node_found = <span class="literal">true</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!child_node_found) &#123;</span><br><span class="line">            <span class="keyword">if</span> (processing_nodes.back().first-&gt;last_char_of_word) &#123;</span><br><span class="line">                <span class="built_in">std</span>::<span class="built_in">string</span> word = prefix;</span><br><span class="line">                <span class="built_in">std</span>::for_each(processing_nodes.cbegin() + <span class="number">1</span>, processing_nodes.cend(),</span><br><span class="line">                              [&amp;word](<span class="keyword">const</span> <span class="keyword">auto</span>&amp; clude_node) &#123;</span><br><span class="line">                    word += clude_node.first-&gt;character;</span><br><span class="line">                &#125;);</span><br><span class="line">                words.push_back(<span class="built_in">std</span>::move(word));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            processing_nodes.pop_back();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> words;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对于写迭代形式的算法，我一直比较推荐采用<a href="https://en.wikipedia.org/wiki/Loop_invariant" target="_blank" rel="external">循环不变式</a>（loop invariant）去理解的做法。这几乎是我认为一个人能从算法导论里学到的<strong>最精华的基础</strong>。</p>
+<h2 id="Ternary-Search-Tree"><a href="#Ternary-Search-Tree" class="headerlink" title="Ternary Search Tree"></a>Ternary Search Tree</h2><p>默认的trie内存开销比较大，所以又有很多针对内存做了优化的改进数据结构，<a href="https://en.wikipedia.org/wiki/Ternary_search_tree" target="_blank" rel="external">ternary search tree</a>便是其中之一。</p>
+<p>如名所述，ternary search tree的一个node只有三个child nodes：left, middle, right。</p>
+<p><img src="/img/ternary-search-tree.png" alt=""></p>
+<p>三子节点的做法来源于，一次比较会产生三种结果：大、小、相等。</p>
+<p>假设字符间的大小关系为字符在字母表的先后顺序，TST的核心规则如下：</p>
+<ul>
+<li>如果字符<code>c</code>和当前node的字符相等，表示当前字符匹配，则进入当前node的middle-child</li>
+<li>如果字符<code>c</code>比当前node的字符小，则进入当前node的left-child尝试匹配</li>
+<li>如果字符<code>c</code>比当前node的字符大，则进入当前node的right-child尝试匹配</li>
+</ul>
+<p>如果把TST放在一个三维空间上考虑的话，我认为left-child和right-child更像是当前node的sibling nodes。</p>
+<p>匹配过程就像从顶部的root node一直向下搜索，匹配时middle-node连接下一层的node，失败时在当前层由sibling nodes构成的平面上搜索。</p>
+<p>不过因为二维平面更加容易理解，所以还是在这个维度上考虑。</p>
+<p><code>Insert</code>和<code>Contains</code>的非递归实现并不难，只要选择好loop invariant。</p>
+<p>我在实现时选择的loop invariant是：</p>
+<ol>
+<li>每次对一个字符的迭代结束后，一定停留在这个字符对应的node上</li>
+<li>每次开始迭代时，始终尝试进入当前node（上一轮迭代结束停留的位置）的middle-node</li>
+<li>第2步失败时，根据比较信息在左子树/右子树中找到目标node</li>
+</ol>
+<p>并且为了实现方便，root node被我实现为一个sentinel node。</p>
+<p>不过非递归的<code>Search</code>实现起来非常繁琐，因为一个node的三个child nodes不在一个语义层，所以需要为了遍历需要用两个stack维护不同的信息。</p>
+<p>我在纸上尝试了一下就回头选择了递归地实现=’’=。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SearchWord</span><span class="params">(Node* node, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt;* words, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt;* seq,</span><br><span class="line">                <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    seq-&gt;push_back(Alphabet::GetCharacter(node-&gt;char_index));</span><br><span class="line">    <span class="keyword">if</span> (node-&gt;end_word) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="function"><span class="built_in">string</span> <span class="title">word</span><span class="params">(prefix)</span></span>;</span><br><span class="line">        word.append(seq-&gt;begin(), seq-&gt;end());</span><br><span class="line">        words-&gt;push_back(<span class="built_in">std</span>::move(word));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kMiddle]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kMiddle], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    seq-&gt;pop_back();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kLeft]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kLeft], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kRight]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kRight], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; TernaryTree::Search(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix) <span class="keyword">const</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; words;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Locate the node matching the last character of `prefix`.</span></span><br><span class="line">    <span class="keyword">const</span> Node* node = root_;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> ch : prefix) &#123;</span><br><span class="line">        <span class="keyword">auto</span> index = Alphabet::GetCharacterIndex(ch);</span><br><span class="line">        <span class="keyword">if</span> (index == Alphabet::npos) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> Node* next_node = node-&gt;children[Node::kMiddle];</span><br><span class="line">        <span class="keyword">if</span> (!next_node) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (index != next_node-&gt;char_index) &#123;</span><br><span class="line">            <span class="keyword">if</span> (index &lt; next_node-&gt;char_index) &#123;</span><br><span class="line">                next_node = next_node-&gt;children[Node::kLeft];</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                next_node = next_node-&gt;children[Node::kRight];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!next_node) &#123;</span><br><span class="line">                <span class="keyword">return</span> words;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        node = next_node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;end_word) &#123;</span><br><span class="line">        words.push_back(prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt; sequence;</span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kMiddle]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kMiddle], &amp;words, &amp;sequence, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> words;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>完整的实现在<a href="https://github.com/kingsamchen/Eureka/tree/master/TernarySearchTree" target="_blank" rel="external">这里</a></p>
+<h2 id="Epilogue"><a href="#Epilogue" class="headerlink" title="Epilogue"></a>Epilogue</h2><p>我会写Trie是因为看到了<a href="https://www.toptal.com/java/the-trie-a-neglected-data-structure" target="_blank" rel="external">the-trie-a-neglected-data-structure</a>这篇文章，有张图片也是从文章里截取的。</p>
+<p>而Ternary Search Tree则是不小心看到了<a href="http://igoro.com/archive/efficient-auto-complete-with-a-ternary-search-tree/" target="_blank" rel="external">efficient-auto-complete-with-a-ternary-search-tree</a>，同样从文章里“借”了一张图片</p>
+<p>再次对两位作者表示感谢！</p>
+<p>其实一开始写实现时，我犹豫了一会儿是应该用raw pointer还是smart pointer。虽然raw pointer不是什么evil的东西，但是owned raw pointers对我来说始终有点不太舒服。</p>
+<p>后来我看见了这个<a href="http://stackoverflow.com/a/5473807/1746503" target="_blank" rel="external">post</a>，再联想C++提供的muli-paradigms的目的就是为了<em>offer you the best-practice whenever you need, and you don’t pay what you don’t use</em>。</p>
+<p>于是我就不断地给自己洗脑：<em>nodes themselves are resources managed by a Tree</em>.</p>
+<p>再然后，我就释然了XD。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/03/24/trie-ternary-search-tree-and-autocomplete/" data-id="cimc7oy710000c84nu34jhyo8" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/03/24/trie-ternary-search-tree-and-autocomplete/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/trie/">trie</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-reincarnated-hello-world" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/03/21/reincarnated-hello-world/" class="article-date">
+  <time datetime="2016-03-21T07:21:27.000Z" itemprop="datePublished">2016-03-21</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/CODE-LIFE/">CODE-LIFE</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/03/21/reincarnated-hello-world/">Reincarnated: Hello World</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>和某花闹掰之后神奇地发现托管在0GiNr上的blog被和谐了，何厚铧。</p>
+<p>伤脑筋，这总得找个地儿写写口水文章吧，不然时间一长肯定被自己憋死，即影响了中华民族的伟大复兴，又对不起社会主义接班人的称号，罪该万死。</p>
+<p>最后思来想去，索性直接在Github上架blog好了，一来有现成的工具，二来还省得麻烦。我这个人特别怕麻烦。</p>
+<p>在几个社区上转了一圈，最后选择Hexo作为搭建工具，主要原因还是这东西用起来简单，不那么折腾，并且自带的默认主题还特别对我口味，interesting。</p>
+<p>最后效果大概就是现在看到的样子，虽然比较简陋，但是起码可以用不是。反正写的都是口水文，掀不起风浪，传不了后世，make不了difference，欣然接受便是。</p>
+<p>不过Hexo也有一个很麻烦的缺点，github上保存的只是最后生成的内容，并不是源内容，所以如果要在多台设备上使用，还要考虑程序自己的同步。</p>
+<p>因为我没有Github的private repo，所以不能直接简单的把整个目录丢上去；不过我已经想到了一个还不错的workaround，回头试试。</p>
+<p>如果要说可惜，大概是之前写了那么久的文章什么都没剩下了；不过，again， 反正口水文主要还是为了感动一下自己罢了，何厚铧。至于域名，懒得弄了，原域名就这样挂着好了，也懒得转移了，到期了就让他reclaimed好了，也省了之后每年一百多块钱的支出。</p>
+<p>最后，某些人看上去表面强大，内心脆弱的很，这是心理残疾，估计难治。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/03/21/reincarnated-hello-world/" data-id="cim23d5qw00006g4nbwj5j17h" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/03/21/reincarnated-hello-world/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/blog/">blog</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git-pages/">git-pages</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/03/24/trie-ternary-search-tree-and-autocomplete/">Trie, Ternary Search Tree, and Autocomplete</a>
+          </li>
+        
+          <li>
+            <a href="/2016/03/21/reincarnated-hello-world/">Reincarnated: Hello World</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/Hexo/" style="font-size: 10px;">Hexo</a> <a href="/tags/blog/" style="font-size: 10px;">blog</a> <a href="/tags/data-structures/" style="font-size: 10px;">data-structures</a> <a href="/tags/git-pages/" style="font-size: 10px;">git-pages</a> <a href="/tags/ternary-search-tree/" style="font-size: 10px;">ternary-search-tree</a> <a href="/tags/trie/" style="font-size: 10px;">trie</a>
+    </div>
+  </div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title">Blog Rolls</h3>
+    <div class="widget">
+    <ul>
+      <li><a href="http://www.daozhihun.com/">刀之魂 | 大木老师成长日记</a></li>
+      <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
+      <li><a href="http://chichou.0ginr.com/blog/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
+      <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
+      <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
+      <li><a href="http://www.tolower.net/">Lower | 喊大木大哥的小弟</a></li>
+    </ul>
+  </div>
+</div>
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Kingsley Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'kingsamchen-github-io';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} 
+}); 
+</script>
+<script type="text/javascript"
+   src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </div>
+</body>
+</html>
