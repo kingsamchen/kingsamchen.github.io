@@ -3,27 +3,24 @@
 <head>
   <meta charset="utf-8">
   
-  <title>让 Path 更自然 | KC的废墟堆</title>
+  <title>自己轮的 string_view 和它的小伙伴 tokenizer | KC的废墟堆</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。
-对，说的就是 filesystem::path。
-对于一个 path class 而言，最常用的操作不外乎：parent_path filename append/join。
-首先，对于函数 pare">
+  <meta name="description" content="String Viewstring_view 是 C++ 17 引入的一个基础设施，和 array_view 类似，表示一种 non-owning object。
+实际上，StringPiece 也是一种类似 string_view 的实现，并且一开始也作为提供 string_view 的范例实现之一出现在相关的 proposal 中。
+但是既然标准委员会已经钦定了 string_view，我们就">
 <meta property="og:type" content="article">
-<meta property="og:title" content="让 Path 更自然">
-<meta property="og:url" content="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/index.html">
+<meta property="og:title" content="自己轮的 string_view 和它的小伙伴 tokenizer">
+<meta property="og:url" content="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/index.html">
 <meta property="og:site_name" content="KC的废墟堆">
-<meta property="og:description" content="虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。
-对，说的就是 filesystem::path。
-对于一个 path class 而言，最常用的操作不外乎：parent_path filename append/join。
-首先，对于函数 pare">
-<meta property="og:updated_time" content="2016-04-18T17:49:13.249Z">
+<meta property="og:description" content="String Viewstring_view 是 C++ 17 引入的一个基础设施，和 array_view 类似，表示一种 non-owning object。
+实际上，StringPiece 也是一种类似 string_view 的实现，并且一开始也作为提供 string_view 的范例实现之一出现在相关的 proposal 中。
+但是既然标准委员会已经钦定了 string_view，我们就">
+<meta property="og:updated_time" content="2016-05-03T15:24:32.325Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="让 Path 更自然">
-<meta name="twitter:description" content="虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。
-对，说的就是 filesystem::path。
-对于一个 path class 而言，最常用的操作不外乎：parent_path filename append/join。
-首先，对于函数 pare">
+<meta name="twitter:title" content="自己轮的 string_view 和它的小伙伴 tokenizer">
+<meta name="twitter:description" content="String Viewstring_view 是 C++ 17 引入的一个基础设施，和 array_view 类似，表示一种 non-owning object。
+实际上，StringPiece 也是一种类似 string_view 的实现，并且一开始也作为提供 string_view 的范例实现之一出现在相关的 proposal 中。
+但是既然标准委员会已经钦定了 string_view，我们就">
   
     <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
   
@@ -76,10 +73,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-make-our-path-class-more-natural" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-an-unofficial-implementation-for-string-view-and-its-companion-tokenizer" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/04/19/make-our-path-class-more-natural/" class="article-date">
-  <time datetime="2016-04-18T16:38:38.000Z" itemprop="datePublished">2016-04-19</time>
+    <a href="/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/" class="article-date">
+  <time datetime="2016-05-03T14:16:03.000Z" itemprop="datePublished">2016-05-03</time>
 </a>
     
   <div class="article-category">
@@ -94,7 +91,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      让 Path 更自然
+      自己轮的 string_view 和它的小伙伴 tokenizer
     </h1>
   
 
@@ -102,42 +99,34 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。</p>
-<p>对，说的就是 <code>filesystem::path</code>。</p>
-<p>对于一个 path class 而言，最常用的操作不外乎：<code>parent_path</code> <code>filename</code> <code>append/join</code>。</p>
-<p>首先，对于函数 <code>parent_path()</code>，文档是这么描述的：</p>
-<p><em>Returns the path to the parent directory.<br>Returns empty path if empty() or there’s only a single element in the path (begin() == –end().</em></p>
-<p>但是对于路径形如 <code>C:\</code> 的 <code>path</code> 对象，Visual Stuido 2015 update 2 提供的实现的调用 <code>parent_path()</code> 的结果居然是 <code>C:</code>。</p>
-<p>好吧，看来这个实现版本认为 <code>C:</code> 是 <code>C:\</code> 的 parent path。</p>
-<p>然而这个认为却是极大错误的。</p>
-<p>实际上，<code>C:\</code> 才是和 Unix/Linux 下的 <code>/</code> 一样，是一个完整的根目录表示。而按照标准的要求描述，路径形如 <code>C:\</code> 的 parent path 应该是一个空字符串。</p>
-<p>不过这估计也得怪 Windows 奇葩的路径设计。谁能想到 <code>C:tmp.txt</code> 和 <code>C:\tmp.txt</code> 是两个完全不同的路径表示呢？更别提还存在 <code>\\server\path</code> 这种 UNC 路径格式，以及必杀招：用以支持超过 <code>MAX_PATH</code> 的长路径的 <code>\\?\C:\very-long-path</code> 格式。</p>
-<p>而对于 <code>filename</code>，实现上倒是没什么原则性的问题，但是 example 里反映的</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fs::path(<span class="string">"/foo/bar"</span>).filename(); <span class="comment">// output bar</span></span><br><span class="line">fs::path(<span class="string">"/foo/bar/"</span>).filename(); <span class="comment">// output .</span></span><br></pre></td></tr></table></figure>
-<p>给人一种刻板过头的感觉。你确定路径后面拖着的那个 trailing separator 是我可以要用来表示<code>.</code>的么？</p>
-<p>不过也可能这是 unix/linux 下的一种神奇的用法，不过实在理解不能。</p>
-<p><code>filesystem::path</code> 不光提供了标准的 append，还顺带提供了纯字符串操作的 concat。抛开两个操作对应的符号重载是否美观不谈，操作 concat 的引入总给人一种 <em>I wanna to make it complete</em> 的无力感。</p>
-<p>不过这个操作符对前面分辨 <code>C:/C:\</code> 不能倒是提供了一个帮助，Orz。</p>
-<h2 id="补救"><a href="#补救" class="headerlink" title="补救"></a>补救</h2><p>很早之前在 <code>kbase</code> 里也提供了一个路径类的实现 <code>FilePath</code>。</p>
-<p>在暂时无法接受 <code>filesystem::path</code> 的情况下，我对 <code>FilePath</code> 做了一次不大不小的重构。</p>
-<p>首先把名字给换成了 <code>Path</code>，并且相关的几个操作也都保持和标准库一致。</p>
-<p>但是这回 <code>Path</code> 的 <code>parent_path</code> 可是可以正确处理上面说的 dark cases 的；并且 <code>filename</code> 会在返回数据前机智的去掉 redundant trailing separator。</p>
-<p>重复一遍，<code>C:\</code> 的 <code>\</code> 可不是 redundant trailing separator。</p>
-<p>另外，<code>filesystem::path</code> 提供了一个 iterator 用来遍历路径的每个 component；而且实际上，<code>parent_path</code> 和 <code>filename</code> 都是直接用这个 iterator 构建的。</p>
-<p>不过因为时间所限，我没有在 <code>Path</code> 里加上这个 iterator。（我怕强迫症犯了一天内肯定写不完）不过也仍然提供了一个类似的操作 <code>GetComponents</code>。</p>
-<p>不同之处是这个函数会一下返回所有的 components，于是显得不那么 C++ philosophi compliant。不过还是将就着用吧，毕竟没有标准库实现那样有神奇的结果。</p>
-<p>最新的代码可见 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/path.h" target="_blank" rel="external">这里</a> 和 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/path.cpp" target="_blank" rel="external">这里</a>；实例参见附带的 <a href="https://github.com/kingsamchen/KBase/blob/master/KBase_Test/samples/path_unittest.cpp" target="_blank" rel="external">unittest case</a>。</p>
-<p>BTW：我删除了 kbase 的 dev 分支，打算换一种 git workflow。原来的 branch model 感觉有点不够拥抱变化。</p>
+        <h3 id="String-View"><a href="#String-View" class="headerlink" title="String View"></a>String View</h3><p><code>string_view</code> 是 C++ 17 引入的一个基础设施，和 <code>array_view</code> 类似，表示一种 <em>non-owning object</em>。</p>
+<p>实际上，<code>StringPiece</code> 也是一种类似 <code>string_view</code> 的实现，并且一开始也作为提供 <code>string_view</code> 的范例实现之一出现在相关的 proposal 中。</p>
+<p>但是既然标准委员会已经钦定了 <code>string_view</code>，我们就应该用它。</p>
+<p>不过 VS 2015 update 2 附带的 STL 实现中并没有包含 <code>string_view</code>，于是出于其他需求，我做了如下两件小事：</p>
+<ol>
+<li>按照<a href="http://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank" rel="external">标准要求</a>，自己轮了一个 <code>string_view</code> 的<a href="https://github.com/kingsamchen/KBase/blob/master/kbase/string_view.h" target="_blank" rel="external">实现</a>。</li>
+<li>移除了 <code>StringPiece</code>，并用自己实现的 <code>StringView</code> 替换。</li>
+</ol>
+<p>不过自己实现的代码，代码风格还是按照自己的偏好。</p>
+<h3 id="Tokenizer"><a href="#Tokenizer" class="headerlink" title="Tokenizer"></a>Tokenizer</h3><p>某个需求是这样的：从文本读入一段数据，数据用固定标记分隔成一段一段，需要对每段数据做相关处理。</p>
+<p>一种直接的方式是利用 <code>kbase::SplitString</code> 将数据分段。但是 <code>SplitString</code> 会一下将所有数据分段，在数据量很大的情况下会消耗不小的空间。而如果每段数据前后没有依赖关系，那么只要每次能获取到那一段的数据即可。</p>
+<p><code>Tokenizer</code> 就是在这种情况下被实现出来的。</p>
+<p><code>Tokenizer</code> 依赖前面提到的 <code>StringView</code>，因为它实际上也是一个 non-owning viewer，不会对原始数据造成任何可修改的影响。</p>
+<p><code>Tokenizer</code> 利用提供的 iterator 实现对数据段的遍历，并且利用标准的 <code>begin</code> <code>end</code> 可以直接支持 C++ 11 的 ranged-base for。额外的好处是让编译器对和 <code>end()</code> 比较的代码进行优化。</p>
+<p>虽然从标准而言，<code>begin()</code> 和 <code>end()</code> 应该具有常数时间复杂度，但是在以 token 为目标数据的条件下，<code>begin()</code> 很难做到常数时间复杂度，一般情况下需要 $O(l)$ 的复杂度，其中 $l$ 为数据段长度。不过好在初始调用并不频繁。</p>
+<p>一个简单的范例看起来大概是这样的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> str = <span class="string">"anything that cannot kill you makes you stronger.\n\tsaid by Bruce Wayne\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; <span class="built_in">exp</span> &#123; <span class="string">"anything"</span>, <span class="string">"that"</span>, <span class="string">"cannot"</span>, <span class="string">"kill"</span>, <span class="string">"you"</span>, <span class="string">"makes"</span>, <span class="string">"you"</span>,</span><br><span class="line">                              <span class="string">"stronger"</span>, <span class="string">"said"</span>, <span class="string">"by"</span>, <span class="string">"Bruce"</span>, <span class="string">"Wayne"</span> &#125;;</span><br><span class="line"><span class="function">Tokenizer <span class="title">tokenizer</span><span class="params">(str, <span class="string">" .\n\t"</span>)</span></span>;</span><br><span class="line"><span class="keyword">size_t</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span>&amp;&amp; token : tokenizer) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!token.empty()) &#123;</span><br><span class="line">    EXPECT_EQ(<span class="built_in">exp</span>[i], token.ToString());</span><br><span class="line">    ++i;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体实现见<a href="https://github.com/kingsamchen/KBase/blob/master/kbase/tokenizer.h" target="_blank" rel="external">这里</a>。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/" data-id="cinrl4pge0005a44nudu4k9b0" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/" data-id="cinrl5w1o0000704nbz9uvn85" class="article-share-link">Share</a>
       
-        <a href="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/path/">path</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windows/">windows</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/string-view/">string_view</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tokenizer/">tokenizer</a></li></ul>
 
     </footer>
   </div>
@@ -145,19 +134,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          推荐 google samples for android-architecture
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/04/05/an-implementation-of-non-intrusive-buddy-allocator/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">挖坟：一个非侵入式的 buddy allocator 实现</div>
+      <div class="article-nav-title">推荐 google samples for android-architecture</div>
     </a>
   
 </nav>
@@ -285,7 +265,7 @@
 <script>
   var disqus_shortname = 'kingsamchen-github-io';
   
-  var disqus_url = 'http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/';
+  var disqus_url = 'http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/';
   
   (function(){
     var dsq = document.createElement('script');
