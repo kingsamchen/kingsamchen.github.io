@@ -3,17 +3,24 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Archives: 2016/5 | KC的废墟堆</title>
+  <title>为什么我反对使用 git flow | KC的废墟堆</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Gone with the ruins">
-<meta property="og:type" content="website">
-<meta property="og:title" content="KC的废墟堆">
-<meta property="og:url" content="http://kingsamchen.github.io/archives/2016/05/index.html">
+  <meta name="description" content="如果论知名度，git flow 绝对是现在数一数二的 git 协作模型。甚至直到不久之前，我也在用这个模型作为我在 github 上的几个项目的工作流。
+但是一段时间后，我越来越觉得这个 work flow 不仅过于冗余、繁琐，而且在实际操作中充满了艰险。这种想法在我到新公司后，和多个同事（5-7人）一起协作开发一款 android 直播客户端时达到顶峰。
+从核心点来看，git flow 的最大亮">
+<meta property="og:type" content="article">
+<meta property="og:title" content="为什么我反对使用 git flow">
+<meta property="og:url" content="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/index.html">
 <meta property="og:site_name" content="KC的废墟堆">
-<meta property="og:description" content="Gone with the ruins">
+<meta property="og:description" content="如果论知名度，git flow 绝对是现在数一数二的 git 协作模型。甚至直到不久之前，我也在用这个模型作为我在 github 上的几个项目的工作流。
+但是一段时间后，我越来越觉得这个 work flow 不仅过于冗余、繁琐，而且在实际操作中充满了艰险。这种想法在我到新公司后，和多个同事（5-7人）一起协作开发一款 android 直播客户端时达到顶峰。
+从核心点来看，git flow 的最大亮">
+<meta property="og:updated_time" content="2016-05-22T16:52:39.147Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="KC的废墟堆">
-<meta name="twitter:description" content="Gone with the ruins">
+<meta name="twitter:title" content="为什么我反对使用 git flow">
+<meta name="twitter:description" content="如果论知名度，git flow 绝对是现在数一数二的 git 协作模型。甚至直到不久之前，我也在用这个模型作为我在 github 上的几个项目的工作流。
+但是一段时间后，我越来越觉得这个 work flow 不仅过于冗余、繁琐，而且在实际操作中充满了艰险。这种想法在我到新公司后，和多个同事（5-7人）一起协作开发一款 android 直播客户端时达到顶峰。
+从核心点来看，git flow 的最大亮">
   
     <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
   
@@ -66,78 +73,91 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/" class="archive-article-date">
-  <time datetime="2016-05-22T16:01:45.000Z" itemprop="datePublished">May 23</time>
+        <section id="main"><article id="post-why-git-flow-model-is-considered-harmful" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/" class="article-date">
+  <time datetime="2016-05-22T16:01:45.000Z" itemprop="datePublished">2016-05-23</time>
 </a>
-      
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/05/23/why-git-flow-model-is-considered-harmful/">为什么我反对使用 git flow</a>
+    <h1 class="article-title" itemprop="name">
+      为什么我反对使用 git flow
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
+      </header>
     
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/" class="archive-article-date">
-  <time datetime="2016-05-08T07:42:18.000Z" itemprop="datePublished">May 8</time>
-</a>
+    <div class="article-entry" itemprop="articleBody">
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/">记一次被 Android 进程复用坑的经历</a>
-    </h1>
-  
+        <p>如果论知名度，<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="external">git flow</a> 绝对是现在数一数二的 git 协作模型。甚至直到不久之前，我也在用这个模型作为我在 github 上的几个项目的工作流。</p>
+<p>但是一段时间后，我越来越觉得这个 work flow 不仅过于冗余、繁琐，而且在实际操作中充满了艰险。这种想法在我到新公司后，和多个同事（5-7人）一起协作开发一款 android 直播客户端时达到顶峰。</p>
+<p>从核心点来看，git flow 的最大亮点是：</p>
+<ul>
+<li>一个始终稳定且代表可发布产品时刻的 master 分支</li>
+<li>各自独立的开发分支，例如各种 feature 分支</li>
+</ul>
+<h3 id="坑在何处"><a href="#坑在何处" class="headerlink" title="坑在何处"></a>坑在何处</h3><p>对于客户端项目来说，稳定可发布的 master 分支完全没有什么意义。因为客户端没有所谓的线上环境，产品发布有自己单独的发布渠道（例如应用市场，官方主页等），这部分版本更迭完全是天然隔离的。</p>
+<p>而服务端项目，虽然确实需要一个稳定的，对应线上环境的分支，但是其他 work flow 也完全可以做到。例如一个简单的 master 分支和对应开发的 develop 分支。</p>
+<p>其次，git flow 第二个所谓亮点会引发一个很严重的后果：后期合并代码时连锁的冲突问题。</p>
+<p>git flow 最大的亮点导致的一个核心问题就是，大家在各自独立的分支上展开工作，工作完毕了才合并到 develop 分支，导致<strong>每个人距离共同分支（他人修改）太远</strong>。</p>
+<p>这种对彼此的代码修改互相不可知的工作流程，在后期合并代码时简直是噩梦。通常来说，需要有一个专门的人负责合并代码，并且合并某个分支时，对应分支的开发人员要在场，否则对于大块大块陌生的代码，完全没法进行合并操作。</p>
+<p>于是你就会发现，在这一期需求的收尾阶段，你浪费了大量的时间和精力在合并代码上，并且还伴随着潜在的合并出错的风险。</p>
+<p>上一周不到三天的时间内，我已经做了两次修改远程仓库的历史，抹掉新来的同事提交的大块修改代码导致的问题，这只能用灾难来形容。</p>
+<p>现在回过头来想想 git flow 这种独立多 feature 到底有效解决了什么问题？答案是有效解决了一个人为臆想的问题，即：某个要做的需求大大超前于产品的版本。</p>
+<p>就现在的环境而言，出现这种需求，99%的情况下是产品需求不合理。所以正确的做法是，把产品按在地上暴打一顿。</p>
+<h3 id="化繁为简，返璞归真"><a href="#化繁为简，返璞归真" class="headerlink" title="化繁为简，返璞归真"></a>化繁为简，返璞归真</h3><p>个人建议的 git work flow 其实早在 SVN 时代就用的很普遍了：我们只需要一个用于开发的 master 分支。</p>
+<p>对于客户端，只需要一个这样的 master 分支即可，每次到发版本，切出一个发布分支，并在 master 上打上 tag 即可。</p>
+<p>而对于服务端，一个稳定的 master 分支，加上一个开发的 develop 分支即可。</p>
+<p>这种模式下，每个人需要把修改 push 到远程分支时，都需要利用 <code>fetch &amp;&amp; rebase</code> 同步他人修改，而就算此时发生冲突，冲突的范围也绝对是能在控制之中。</p>
+<p>所以这里的核心就是：<strong>减少和公共分支的距离，尽量缩小冲突的大小</strong>。</p>
+<p>Pop quiz: 多次解决小冲突比起一次性解决大冲突会有优势吗？</p>
+<p>妈的简直废话，你没学过什么叫 divide/decrease-and-conquer 吗？</p>
+<p>git flow 这种多分枝模型，给人的感觉就是，because I can，典型的不考虑实际生产环境。</p>
+<p>多说一句，chromium 这种巨型项目，用的就是一个稳定的 master 分支这种工作流。难以想象如果他们用 git flow，最后冲突会出现什么样天崩地裂的景象啊。</p>
 
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/" class="archive-article-date">
-  <time datetime="2016-05-03T14:16:03.000Z" itemprop="datePublished">May 3</time>
-</a>
       
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">自己轮的 string_view 和它的小伙伴 tokenizer</a>
-    </h1>
-  
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/" data-id="cioitnpds0005iw4njdawvc4q" class="article-share-link">Partager</a>
+      
+        <a href="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/#disqus_thread" class="article-comment-link">Commentaires</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
 
-    </header>
+    </footer>
   </div>
-</article>
+  
+    
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Ancien</strong>
+      <div class="article-nav-title">记一次被 Android 进程复用坑的经历</div>
+    </a>
   
+</nav>
 
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
 </section>
         
           <aside id="sidebar">
@@ -252,11 +272,13 @@
 <script>
   var disqus_shortname = 'kingsamchen-github-io';
   
+  var disqus_url = 'http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/';
+  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
