@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Template Type Constraints And Type Traits | KC的废墟堆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="模板参数类型约束在 C++ 中一直以来大概得算不上不下的一个处境。
+因为非运行时（编译期）的优势，对于参数类型约束的需求不像 C# 那样紧迫；但是同时又因为实例化完成的时期过早，编译器对于模板代码的处理并不能上升到一个精确的语义层次，导致的后果就是模板相关的代码的出错信息一直在井喷，而且相当一部分的错误信息完全没有卵用。
+最直接的例子就是拿 std::sort 去对一个 std::list 对象进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Template Type Constraints And Type Traits">
+<meta property="og:url" content="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/index.html">
+<meta property="og:site_name" content="KC的废墟堆">
+<meta property="og:description" content="模板参数类型约束在 C++ 中一直以来大概得算不上不下的一个处境。
+因为非运行时（编译期）的优势，对于参数类型约束的需求不像 C# 那样紧迫；但是同时又因为实例化完成的时期过早，编译器对于模板代码的处理并不能上升到一个精确的语义层次，导致的后果就是模板相关的代码的出错信息一直在井喷，而且相当一部分的错误信息完全没有卵用。
+最直接的例子就是拿 std::sort 去对一个 std::list 对象进">
+<meta property="og:updated_time" content="2016-06-13T17:39:40.192Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Template Type Constraints And Type Traits">
+<meta name="twitter:description" content="模板参数类型约束在 C++ 中一直以来大概得算不上不下的一个处境。
+因为非运行时（编译期）的优势，对于参数类型约束的需求不像 C# 那样紧迫；但是同时又因为实例化完成的时期过早，编译器对于模板代码的处理并不能上升到一个精确的语义层次，导致的后果就是模板相关的代码的出错信息一直在井喷，而且相当一部分的错误信息完全没有卵用。
+最直接的例子就是拿 std::sort 去对一个 std::list 对象进">
+  
+    <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">KC的废墟堆</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Will you serve in Heaven, or rule in Hell</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-template-type-constraints-and-type-traits" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/06/14/template-type-constraints-and-type-traits/" class="article-date">
+  <time datetime="2016-06-13T16:32:39.000Z" itemprop="datePublished">2016-06-14</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Template Type Constraints And Type Traits
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>模板参数类型约束在 C++ 中一直以来大概得算不上不下的一个处境。</p>
+<p>因为非运行时（编译期）的优势，对于参数类型约束的需求不像 C# 那样紧迫；但是同时又因为实例化完成的时期过早，编译器对于模板代码的处理并不能上升到一个精确的语义层次，导致的后果就是模板相关的代码的出错信息一直在井喷，而且相当一部分的错误信息完全没有卵用。</p>
+<p>最直接的例子就是拿 <code>std::sort</code> 去对一个 <code>std::list</code> 对象进行排序。</p>
+<p>早期的编译器扔出来的错误提示第一眼完全看不出再讲什么（例如找不到 <code>operator&lt;</code>的定义）；虽然经验丰富的老司机们一下就能看出问题在于 <code>std::sort</code> 要求的迭代器是 <em>random access iterator</em>, 而 <code>std::list</code> 提供的迭代器是 <em>bidirectional iterator</em>，但是原因八成是因为老司机们撸过的轮子比你用过的库还多。</p>
+<p>这个问题对于 library developer 尤为尖锐。</p>
+<p>按照原本的历史进程，解决这个大麻烦的荣耀应属 C++17 中的 <a href="http://en.cppreference.com/w/cpp/language/constraints" target="_blank" rel="external">Concepts</a>；然而不知道标准委员会的委员们哪根神经回路短路了，居然把这个 proposal 给 veto/reject 了，于是之前说好的大救星就这么突然被打脸了。</p>
+<h2 id="Type-Constraints"><a href="#Type-Constraints" class="headerlink" title="Type Constraints"></a>Type Constraints</h2><p>在很久很久以前，甚至比提出 concepts 这个想法还要早，曾经有一批人开始尝试自己加一些类型约束设施，已达到类似的要求。</p>
+<p>在 Herb Sutter 著名的 <em>More Exceptional C++</em> 一书中，提供了这么一个例子：</p>
+<p>假设我有一个类模板</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> Foo &#123; ... &#125;;</span><br></pre></td></tr></table></figure>
+<p>要求 <code>Foo</code> 的实例化类型参数 <code>T</code> 必须包含一个成员函数 <code>Clone()</code>，并且这个函数的原型要<strong>严格满足</strong> <code>T* Clone() const</code>。</p>
+<p>做法是提供一个类型约束类 <code>HasClone</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> HasClone &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    HasClone()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">void</span> (*pfn)() = &amp;ValidateConstraints;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~HasClone() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    DISALLOW_COPY(HasClone);</span><br><span class="line"></span><br><span class="line">    DISALLOW_MOVE(HasClone);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ValidateConstraints</span><span class="params">()</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        T* (T::*fn)() <span class="keyword">const</span> = &amp;T::Clone;</span><br><span class="line">        UNREFED_VAR(fn);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>并利用父类构造函数先于子类执行的特性</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">class</span> Foo : HasClone&lt;T&gt; &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>对模板参数 <code>T</code> 进行约束。</p>
+<p>虽然在形式上这个构造法非常漂亮，然而在实践中，根本称不上好用。</p>
+<p>某些编译器，例如 VS 2015，在显式调用 <code>T::Clone()</code> 失败时会直接跳过 <code>HasClone</code> 的构造，直接提示目标调用点相关的错误。</p>
+<p>这意味着精心设计的类型约束类直接变成了 subordinate solution。</p>
+<h2 id="Type-Traits"><a href="#Type-Traits" class="headerlink" title="Type Traits"></a>Type Traits</h2><p>另一方面：既然不方便改善类型约束，那么可以考虑在编译期利用类型信息针对不同的类选择不同的行为。</p>
+<p>于是这个操作通常需要两部分协助： type traits 和 template specialization。</p>
+<p>举个很常见的误用 OOP 的例子：有两个类型 A 和 B，如果 B 是 A 的子类，那么进行操作1，否则进行操作2。</p>
+<p>有些人会利用 runtime type information 的方式实现，显著特征是要做 down-cast，例如 <code>dynamic_cast</code> 或者 Java 中的 <code>instanceof</code>，然而他们不知道这是 runtime polymorphism 的典型场景。</p>
+<p>不过在 C++ 中，借助 type traits，可以实现 compile time polymorphism。</p>
+<p>这里我们需要一个能够编译期判断继承关系的设施，假设它是一个名为 <code>IsDerivedDrom</code> 的类。</p>
+<p>同样来自 <em>More Exceptional C++</em>，这个实现来自脑洞炸开的 Andrei Alexandrescu：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> D, <span class="keyword">typename</span> B&gt;</span><br><span class="line"><span class="keyword">class</span> IsDerivedFrom &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">struct</span> No &#123;&#125;;</span><br><span class="line">    <span class="keyword">struct</span> Yes &#123; No data[<span class="number">2</span>]; &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> No <span class="title">Check</span><span class="params">(...)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Yes <span class="title">Check</span><span class="params">(B*)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123;</span><br><span class="line">        value = <span class="keyword">sizeof</span>(Check(<span class="keyword">static_cast</span>&lt;D*&gt;(<span class="number">0</span>))) == <span class="keyword">sizeof</span>(Yes)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这个实现有多精巧呢？</p>
+<ol>
+<li>继承关系通过非常自然的 implicit upcast。如果 <code>D</code> 是 <code>B</code> 的子类，那么 <code>D*</code> 能够安全顺滑的转换为 <code>B*</code></li>
+<li>利用函数重载来实现编译期绑定，并且利用了不定参数形式在 overload resolution 中的 low priority</li>
+<li>sizeof 和 enum 的编译期求值行为</li>
+<li>没有任何运行时开销</li>
+</ol>
+<p>从头到脚的 compile-compiliant 的处理方式，闪耀着老司机们的智慧光芒。</p>
+<p>当然到了 C++11，可以把这个形式做更进一步的简化，让直观上更容易理解</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> D, <span class="keyword">typename</span> B&gt;</span><br><span class="line"><span class="keyword">class</span> IsDerivedFrom &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">false_type <span class="title">Check</span><span class="params">(...)</span></span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">true_type <span class="title">Check</span><span class="params">(B*)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(Check(<span class="keyword">static_cast</span>&lt;D*&gt;(<span class="literal">nullptr</span>)))::value ;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>至于剩下的怎么做 specialization 这里就不提了，自己翻书去吧。</p>
+<p>一个好消息是 C++ 11 开始，STL 内置了一大票和这个类似的 type traits 设施。</p>
+<p>在 concepts 短期无望的情况下，利用 type traits 和 specialization/overload resolution 可以做出一些更加灵活的设计，并且依托内置设施，甚至大程度可以避开自己手工跑 SFINAE，减轻生活压力。</p>
+<p>大概就这样。</p>
+<p>PS：不过其实你最后可以发现，两者前后并没有什么直接的因果关系。主要原因大概还是为了写个 post 而丧心病狂的强行拉亲戚。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="ciq9kxpq60004to4n0t8mmimt" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/template/">template</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/07/05/wicked-data-type-promotion/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Wicked Data Type Promotion
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">为什么我反对使用 git flow</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/05/wicked-data-type-promotion/">Wicked Data Type Promotion</a>
+          </li>
+        
+          <li>
+            <a href="/2016/06/14/template-type-constraints-and-type-traits/">Template Type Constraints And Type Traits</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/">为什么我反对使用 git flow</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/">记一次被 Android 进程复用坑的经历</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">自己轮的 string_view 和它的小伙伴 tokenizer</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/">推荐 google samples for android-architecture</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/19/make-our-path-class-more-natural/">让 Path 更自然</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title">Blog Rolls</h3>
+    <div class="widget">
+    <ul>
+      <li><a href="http://www.daozhihun.com/">刀之魂 | 大木老师成长日记</a></li>
+      <li><a href="http://blog.mistysoul.net/">Sean | 大木老师的私人保姆</a></li>
+      <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
+      <li><a href="http://chichou.0ginr.com/blog/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
+      <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
+      <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
+      <li><a href="http://www.tolower.net/">Lower | 喊大木大哥的小弟</a></li>
+      <li><a href="http://mrljdx.com/">Mrljdx | 大保健老司机</a></li>
+    </ul>
+  </div>
+</div>
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Kingsley Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'kingsamchen-github-io';
+  
+  var disqus_url = 'http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} 
+}); 
+</script>
+<script type="text/javascript"
+   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  </div>
+</body>
+</html>

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Wicked Data Type Promotion | KC的废墟堆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="昨天在给 KAdBlockEngine 的 AdFilter 加上序列化/反序列化的支持时，意外的又一次被 data type promotion 坑了，导致一晚上的时间都在 debug…
+Yesterday-Case Once More因为做 deserialization 时需要数据校验，所以在序列化到磁盘前会先对数据做一遍 MD5-checksum，然后再将 checksum 和实际数据分别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Wicked Data Type Promotion">
+<meta property="og:url" content="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/index.html">
+<meta property="og:site_name" content="KC的废墟堆">
+<meta property="og:description" content="昨天在给 KAdBlockEngine 的 AdFilter 加上序列化/反序列化的支持时，意外的又一次被 data type promotion 坑了，导致一晚上的时间都在 debug…
+Yesterday-Case Once More因为做 deserialization 时需要数据校验，所以在序列化到磁盘前会先对数据做一遍 MD5-checksum，然后再将 checksum 和实际数据分别">
+<meta property="og:updated_time" content="2016-07-05T14:57:25.002Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Wicked Data Type Promotion">
+<meta name="twitter:description" content="昨天在给 KAdBlockEngine 的 AdFilter 加上序列化/反序列化的支持时，意外的又一次被 data type promotion 坑了，导致一晚上的时间都在 debug…
+Yesterday-Case Once More因为做 deserialization 时需要数据校验，所以在序列化到磁盘前会先对数据做一遍 MD5-checksum，然后再将 checksum 和实际数据分别">
+  
+    <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">KC的废墟堆</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Will you serve in Heaven, or rule in Hell</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-wicked-data-type-promotion" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/05/wicked-data-type-promotion/" class="article-date">
+  <time datetime="2016-07-05T13:19:08.000Z" itemprop="datePublished">2016-07-05</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Wicked Data Type Promotion
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>昨天在给 <a href="https://github.com/kingsamchen/KAdBlockEngine" target="_blank" rel="external">KAdBlockEngine</a> 的 <code>AdFilter</code> 加上序列化/反序列化的支持时，意外的又一次被 data type promotion 坑了，导致一晚上的时间都在 debug…</p>
+<h2 id="Yesterday-Case-Once-More"><a href="#Yesterday-Case-Once-More" class="headerlink" title="Yesterday-Case Once More"></a>Yesterday-Case Once More</h2><p>因为做 deserialization 时需要数据校验，所以在序列化到磁盘前会先对数据做一遍 MD5-checksum，然后再将 checksum 和实际数据分别写入磁盘。</p>
+<p>类似的，反序列化时需要从读入的文件数据里分出 checksum 和实际数据，对实际数据再做一遍 MD5-checksum 后和上次保存的 checksum 进行比对。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kbase::<span class="function">Path <span class="title">snapshot_file</span><span class="params">(<span class="string">L"..."</span>)</span></span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> file_data = kbase::ReadFileToString(snapshot_file);</span><br><span class="line"><span class="keyword">if</span> (!file_data.empty()) &#123;</span><br><span class="line">    kbase::MD5Digest checksum;</span><br><span class="line">    <span class="keyword">auto</span> snapshot_data = file_data.data() + <span class="keyword">sizeof</span>(checksum);</span><br><span class="line">    <span class="keyword">auto</span> snapshot_data_size = file_data.size() - <span class="keyword">sizeof</span>(checksum);</span><br><span class="line">    kbase::MD5Sum(snapshot_data, snapshot_data_size, &amp;checksum);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::equal(checksum.cbegin(), checksum.cend(), file_data.cbegin())) &#123;</span><br><span class="line">        kbase::<span class="function">PickleReader <span class="title">snapshot</span><span class="params">(snapshot_data, snapshot_data_size)</span></span>;</span><br><span class="line">        AdFilter ad_filter = AdFilter::FromSnapshot(snapshot);</span><br><span class="line">        ad_filters_.push_back(AdFilterPair(filter_file, <span class="built_in">std</span>::move(ad_filter)));</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>于是神奇的事情出现了：当我用 <code>std::equal</code> 去比较两个 checksum 数据时，结果始终是 false，即使我在 debugger 的 memory watch 中确认了两块数据是一样的。</p>
+<p>更神奇的是，顺手把 <code>std::equal</code> 换成 <code>memcmp</code> 之后，整段代码都能够正常工作。</p>
+<p>看来问题出在 <code>std::equal</code>；But how come ?</p>
+<h2 id="Thinking-and-Resolving"><a href="#Thinking-and-Resolving" class="headerlink" title="Thinking and Resolving"></a>Thinking and Resolving</h2><p>一开始怀疑是 <code>std::equal</code> 的实现问题，于是自己用 <code>for(...)</code> 手工展开，结果却惊人地和 <code>std::equal</code> 一致，并且根据调试的反馈，应该是第一个字节比较就不等返回了。</p>
+<p>这说明 <code>std::equal</code> 的实现是正确的，问题出在使用方式上。</p>
+<p>于是下一秒瞥到了一个惊人的发现：<code>MD5Digest</code> 的数据类型是 <code>std::array&lt;uint8_t&gt;</code>，而 file_data 却是 <code>std::basic_string&lt;char&gt;</code>；而 <code>char</code> 在 MSVC 上是 signed data type。</p>
+<p>直觉告诉我我掉到了 <strong><em>data type promotion</em></strong> 这个天坑里。</p>
+<p>在 C/C++ 里对(unsigned) char/short 进行算术运算时，出于性能考虑，编译器会首先将数据扩展到 int(unsigned int)，再进行实际的运算。这个过程通常称之为 <strong><em>promotion</em></strong>。</p>
+<p>但是问题来了，signed/unsigned 数据类型在扩展时使用的指令是不一样的。</p>
+<p>考虑如下示例代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> lhs = <span class="number">-98</span>;</span><br><span class="line"><span class="keyword">char</span> rhs = <span class="number">-98</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; (lhs == rhs);</span><br></pre></td></tr></table></figure>
+<p>首先，比较的结果肯定是 <code>false</code>，不然上下文就没意义了不是…</p>
+<p>接下来看一下对应的汇编代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    unsigned char lhs = -98;</span><br><span class="line">00007FF60EA717DE  mov         byte ptr [lhs],9Eh  </span><br><span class="line">    char rhs = -98;</span><br><span class="line">00007FF60EA717E2  mov         byte ptr [rhs],9Eh  </span><br><span class="line">    std::cout &lt;&lt; (lhs == rhs);</span><br><span class="line">00007FF60EA717E6  movzx       eax,byte ptr [lhs]  </span><br><span class="line">00007FF60EA717EA  movsx       ecx,byte ptr [rhs]  </span><br><span class="line">00007FF60EA717EE  cmp         eax,ecx</span><br></pre></td></tr></table></figure>
+<p>明显，对无符号类型的扩展使用的指令是 <code>movzx</code>，扩展时用0填充；对有符号类型的扩展指令是 <code>movsx</code>，扩展时使用<strong>符号位</strong>。</p>
+<p>这是 two’s complement 结构体系下的必然选择。</p>
+<p>但是这里有个明显的坑，如果原始数据在有符号下是负数，亦即上例中的情况，那么扩展中会用符号位填充，扩展之后高位都变成了FF..；而无符号扩展则会使用0填充，扩展之后高位都是00..；这就导致扩展后的两个数据不想等。</p>
+<p>回到一开始的坑。</p>
+<p>因为 <code>std::equal</code> 默认会使用 <code>std::equal_to&lt;&gt;</code> 作为比较的 predicate，而 <code>std::equal_to&lt;&gt;</code> 等价于使用 <code>==</code> 进行比较；而比较的两方数据又分别是 <code>char</code> 和  <code>uint8_t</code>，于是出现 promotion，导致错误。</p>
+<p>而 <code>memcmp</code> 直接比较两块内存的 bits，不会发生 promotion。</p>
+<h2 id="Afterthoughts"><a href="#Afterthoughts" class="headerlink" title="Afterthoughts"></a>Afterthoughts</h2><p>其实 CSAPP 在某一章有专门提到 data type promotion 这个问题，不过时隔多日，真是转头就忘…</p>
+<p>这个天坑说明一个道理，涉及无符合和有符号的整型比较时需要引起注意；而如果整型是 char/short 类型则更要注意。</p>
+<p>最好的解决方案是避免写除混合类型比较且没有使用 cast 明确标识的代码。</p>
+<p>这次为了偷懒直接用 std::string 保存内存块数据，最后也算是报应把… -‘’-</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="ciq9kxpqd000bto4n2nihs4s3" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/06/14/template-type-constraints-and-type-traits/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Template Type Constraints And Type Traits</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/05/wicked-data-type-promotion/">Wicked Data Type Promotion</a>
+          </li>
+        
+          <li>
+            <a href="/2016/06/14/template-type-constraints-and-type-traits/">Template Type Constraints And Type Traits</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/">为什么我反对使用 git flow</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/">记一次被 Android 进程复用坑的经历</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">自己轮的 string_view 和它的小伙伴 tokenizer</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/">推荐 google samples for android-architecture</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/19/make-our-path-class-more-natural/">让 Path 更自然</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title">Blog Rolls</h3>
+    <div class="widget">
+    <ul>
+      <li><a href="http://www.daozhihun.com/">刀之魂 | 大木老师成长日记</a></li>
+      <li><a href="http://blog.mistysoul.net/">Sean | 大木老师的私人保姆</a></li>
+      <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
+      <li><a href="http://chichou.0ginr.com/blog/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
+      <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
+      <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
+      <li><a href="http://www.tolower.net/">Lower | 喊大木大哥的小弟</a></li>
+      <li><a href="http://mrljdx.com/">Mrljdx | 大保健老司机</a></li>
+    </ul>
+  </div>
+</div>
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Kingsley Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'kingsamchen-github-io';
+  
+  var disqus_url = 'http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} 
+}); 
+</script>
+<script type="text/javascript"
+   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  </div>
+</body>
+</html>
