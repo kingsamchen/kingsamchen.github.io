@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>避免在类设计上混合 Owner 及 View 语义 | KC的废墟堆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这个论断来自于前段时间重构 pickle 时的想法。
+The Big PicturePickle 是一个二进制序列化设施，内部维护一块 buffer 用以保存被序列化的二进制数据，语义上看，一个 Pickle 对象对内部 buffer 具有无争议的 resource owner 语义。
+反序列化设施 PickleReader 被设计为从一个给定的 Pickle 对象构造，并且在反序列化过程中只改变">
+<meta property="og:type" content="article">
+<meta property="og:title" content="避免在类设计上混合 Owner 及 View 语义">
+<meta property="og:url" content="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/index.html">
+<meta property="og:site_name" content="KC的废墟堆">
+<meta property="og:description" content="这个论断来自于前段时间重构 pickle 时的想法。
+The Big PicturePickle 是一个二进制序列化设施，内部维护一块 buffer 用以保存被序列化的二进制数据，语义上看，一个 Pickle 对象对内部 buffer 具有无争议的 resource owner 语义。
+反序列化设施 PickleReader 被设计为从一个给定的 Pickle 对象构造，并且在反序列化过程中只改变">
+<meta property="og:updated_time" content="2016-07-10T04:44:39.880Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="避免在类设计上混合 Owner 及 View 语义">
+<meta name="twitter:description" content="这个论断来自于前段时间重构 pickle 时的想法。
+The Big PicturePickle 是一个二进制序列化设施，内部维护一块 buffer 用以保存被序列化的二进制数据，语义上看，一个 Pickle 对象对内部 buffer 具有无争议的 resource owner 语义。
+反序列化设施 PickleReader 被设计为从一个给定的 Pickle 对象构造，并且在反序列化过程中只改变">
+  
+    <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">KC的废墟堆</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Will you serve in Heaven, or rule in Hell</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-do-not-intermingle-owner-with-view-semantics" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/10/do-not-intermingle-owner-with-view-semantics/" class="article-date">
+  <time datetime="2016-07-10T03:08:00.000Z" itemprop="datePublished">2016-07-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      避免在类设计上混合 Owner 及 View 语义
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这个论断来自于前段时间重构 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/pickle.h" target="_blank" rel="external">pickle</a> 时的想法。</p>
+<h2 id="The-Big-Picture"><a href="#The-Big-Picture" class="headerlink" title="The Big Picture"></a>The Big Picture</h2><p><code>Pickle</code> 是一个二进制序列化设施，内部维护一块 buffer 用以保存被序列化的二进制数据，语义上看，一个 <code>Pickle</code> 对象对内部 buffer 具有无争议的 resource owner 语义。</p>
+<p>反序列化设施 <code>PickleReader</code> 被设计为从一个给定的 <code>Pickle</code> 对象构造，并且在反序列化过程中只改变 <code>PickleReader</code> 内部的 reader cursor，不会对 <code>Pickle</code> 内部的 buffer 有任何 side-effect。显然，<code>PickleReader</code> 对 <code>Pickle</code> 的内部 buffer 具有 view 语义。</p>
+<p>为了支持能从一块给定的 raw buffer of serialized data 进行反序列化（这是很常见的需求，只要序列化后的数据涉及持久化操作，例如存储在磁盘上），<code>Pickle</code> 被设计为允许从给定的 read-only buffer 构造，以方便继续构造 <code>PickleReader</code> 对象进行反序列化操作；并且出于性能和逻辑考虑，<code>Pickle</code> 只维护指向这块 read-only buffer 的指针，并不拷贝一份 buffer 数据。</p>
+<p>为了区分这种情况，在 read-only buffer 上构造的 <code>Pickle</code> 对象的 buffer capacity 始终为 <code>size_t(-1)</code>。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Pickle &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">struct</span> Header &#123;</span><br><span class="line">        <span class="keyword">uint32_t</span> payload_size;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Pickle();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Creates a Pickle object that has weak-reference to a serialized buffer.</span></span><br><span class="line">    <span class="comment">// The Pickle object cannot call any modifiable methods, and caller must ensure</span></span><br><span class="line">    <span class="comment">// the referee is in a valid state, when PickleReader is applied.</span></span><br><span class="line">    Pickle(<span class="keyword">const</span> <span class="keyword">char</span>* data, <span class="keyword">int</span> data_len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Makes a deep copy of the Pickle object.</span></span><br><span class="line">    Pickle(<span class="keyword">const</span> Pickle&amp; other);</span><br><span class="line"></span><br><span class="line">    Pickle(Pickle&amp;&amp; other);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Makes a deep copy of the Pickle object.</span></span><br><span class="line">    Pickle&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> Pickle&amp; rhs);</span><br><span class="line"></span><br><span class="line">    Pickle&amp; <span class="keyword">operator</span>=(Pickle&amp;&amp; rhs);</span><br><span class="line"></span><br><span class="line">    ~Pickle();</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Returns true, if this object is weakly bound to a serialized buffer.</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">readonly</span><span class="params">()</span> <span class="keyword">const</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> capacity_ == kCapacityReadOnly;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">size_t</span> kCapacityReadOnly = <span class="keyword">static_cast</span>&lt;<span class="keyword">size_t</span>&gt;(<span class="number">-1</span>);</span><br><span class="line">    Header* header_;</span><br><span class="line">    <span class="keyword">size_t</span> capacity_;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>不经意间，<code>Pickle</code> 被我加上了 view 语义。</p>
+<h2 id="What’s-the-Problem"><a href="#What’s-the-Problem" class="headerlink" title="What’s the Problem ?"></a>What’s the Problem ?</h2><p>问题始于对 assignment operators，尤其是 move-assignment 的修改。</p>
+<p>一开始我发现我遗漏了对 evil self-assignments 的处理，加上一个非常简陋的 patch 之后我开始发觉事情没有这么简单。</p>
+<p>assignments 的麻烦之处在于它涉及到两个方面的资源处理：原始资源和新资源。如果是 move assignment，那么还要考虑到被移动对象的资源的 ownership。</p>
+<p>那么接下来考虑这样一个问题： <strong>创建一个 owned pickle 对象，以及在这个 pickle 对象的 buffer 上创建一个 view pickle 对象，然后将 view pickle 对象赋给（copy and move） owned pickle 对象</strong>。</p>
+<p>注意，这种行为是合乎逻辑合乎语义的。因为 <code>Pickle</code> 具有值语义，无论是 owner 还是 view，都允许 duplication 行为。</p>
+<p>接下来想一想，上面的操作会出现什么样的可能后果？以及，为了做到正确的行为，需要做什么样的 workaround？</p>
+<p>你会发现你掉进了一个大坑，为了避免出现错误，你需要不断的修改你的 assignment 语义以适应可能出现的神奇情况。</p>
+<p>如果赋值操作需要同时保证复制对象具有的 owner/view 语义，呃，这似乎是不可能的…</p>
+<p>如果赋值操作只需要保证创建的 <code>PickleReader</code> 等效，那么可以在进行赋值前检查两个 <code>Pickle</code> 是否 ref 同一块数据内存，如果是，则直接返回。</p>
+<p>但是注意，这个规定在语义上是一个很大的 degeneration。</p>
+<p>当然还有其他 workarouond，但是实质上都不能摆脱它们只是不恰当语义下的丑陋的遮羞布。</p>
+<p>而这一切的根本原因在于一个对象可能表现出 owner 语义，也可能表现出 view 语义；这实质上是 evil self-assignment 的一个延伸，即不同 resource 语义下 ref 同一个 resource。</p>
+<p>想一想实现一个 copy-on-write 的 string 类可能要付出的代价，哪怕只考虑单线程。</p>
+<p>一个 COW-string 能够从一个 view 语义对象悄悄的 transform 到一个 owner 语义对象；而这不起眼的 transformation 不意外的挖了一个大坑，没有经验的人可能直接跌得尸骨无存。</p>
+<p>有兴趣的可以看看 Herb Sutter 在 <em>More Exceptional C++</em> 中解决这个坑所引入的语义技巧。</p>
+<p>对了，<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code> 倒是很机智的用两个对象来表示 owner-view 语义。</p>
+<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>这篇 post 的目的不是说完全不能这样设计，而是说在可能的前提下尽量拆分语义，毕竟挖了大坑把别人埋进去了不是一件值得炫耀的事情。</p>
+<p>最后吐槽一下 chromium 组的某些工程师，虽然我承认 chromium 确实是一个成功的 C++ Project，但是他们有些人真的是不理解 C++，也只是把 C++ 当作一个加强版的 Java 来用。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="ciqg40y080000584no87vhqcc" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/view-semantics/">view semantics</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/07/05/wicked-data-type-promotion/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Wicked Data Type Promotion</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/07/10/do-not-intermingle-owner-with-view-semantics/">避免在类设计上混合 Owner 及 View 语义</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/05/wicked-data-type-promotion/">Wicked Data Type Promotion</a>
+          </li>
+        
+          <li>
+            <a href="/2016/06/14/template-type-constraints-and-type-traits/">Template Type Constraints And Type Traits</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/">为什么我反对使用 git flow</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/">记一次被 Android 进程复用坑的经历</a>
+          </li>
+        
+          <li>
+            <a href="/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">自己轮的 string_view 和它的小伙伴 tokenizer</a>
+          </li>
+        
+          <li>
+            <a href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/">推荐 google samples for android-architecture</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title">Blog Rolls</h3>
+    <div class="widget">
+    <ul>
+      <li><a href="http://www.daozhihun.com/">刀之魂 | 大木老师成长日记</a></li>
+      <li><a href="http://blog.mistysoul.net/">Sean | 大木老师的私人保姆</a></li>
+      <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
+      <li><a href="https://blog.chichou.me/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
+      <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
+      <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
+      <li><a href="http://www.tolower.net/">Lower | 喊大木大哥的小弟</a></li>
+      <li><a href="http://mrljdx.com/">Mrljdx | 大保健老司机</a></li>
+    </ul>
+  </div>
+</div>
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Kingsley Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'kingsamchen-github-io';
+  
+  var disqus_url = 'http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} 
+}); 
+</script>
+<script type="text/javascript"
+   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  </div>
+</body>
+</html>
