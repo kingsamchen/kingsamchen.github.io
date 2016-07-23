@@ -68,6 +68,66 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-gibberish-on-kadblockengine" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/07/23/gibberish-on-kadblockengine/" class="article-date">
+  <time datetime="2016-07-23T08:52:55.000Z" itemprop="datePublished">2016-07-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/CODE-LIFE/">CODE-LIFE</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/07/23/gibberish-on-kadblockengine/">闲扯 KAdBlockEngine</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>几天前给 <a href="https://github.com/kingsamchen/KAdBlockEngine" target="_blank" rel="external">KAdBlockEngine</a> 加上了 README 之后，这个 repo 算是正式的结了。</p>
+<p>对别人来说，这只是一个很普通的 repo；但是对我而言，却意义重大。</p>
+<p>3年前人生第一次实习，最主要的任务就是重写某浏览器的广告过滤引擎；那大概是我第一次写真实产品的代码。</p>
+<p>虽然之前几年在大学里看了一些书，写了一些小打小闹的代码，但是由于还不够努力的缘故，那几年的训练并没有让我形成工程实践相关的思想和认知；而当时的 AdFilterEngine，则是我第一个有意识的，开始试图形成自己的方法论的项目。</p>
+<p>觉醒总伴随着代价，如果以现在的认知去审视 AdFilterEngine 的设计和代码，会发现许多 twisted thoughts 的痕迹，但是这些都无法掩盖 AdFilterEngine 是我职业道路上的一个非常重要的起点。而起点过后，则是非常迅速的能力上的提升。</p>
+<p>（这里要感谢当时浏览器团队的那帮同事，共事的那段时间是我职业生涯非常重要的一段时间）</p>
+<p>在后来的一段时间里，我有多次想过重写这部分代码，但都未能付诸行动，或许是恐惧自己达不到当时的期许吧。</p>
+<p>转眼到今年年初离职，离开北京来到上海，我觉得自己的人生怎么也算过渡到一个新的阶段了，于是内心又开始惊起重写 AdFilterEngine 的波澜，不同的是，this time, I took the shot，于是就有了 KAdBlockEngine。</p>
+<p>我的第一个提交发生在4月9号，最后一个提交（加上 README）发生在7月19号。</p>
+<p>期间断断续续地提交了一些代码，让我有足够的时间去构思设计；并且在重写过程中，因为一些设计需求，我针对 <a href="https://github.com/kingsamchen/KBase" target="_blank" rel="external">kbase</a> 的几个模块也同时做了重构。</p>
+<p>首先是为了（更好的）处理文件路径，重构了 <a href="https://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/">Path</a>。</p>
+<p>接着为了更能够高效的从规则文件中抽出规则文本，以及简化一些规则文本的预处理，加人了 <a href="https://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">StringView/Tokenizer</a>。</p>
+<p>考虑到对 filter 的序列化保存，避免每次都要重新解析规则文本，重构了 Pickle；并且在过程中<a href="https://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/">加深了对 resource ownership 的理解</a>。</p>
+<p>（而序列化让一个 filter 的初始化时间，在 debug 模式下，从 7s 降到了 500ms）</p>
+<p>在这几年的训练下，KAdBlockEngine 不仅在设计/代码上更加合理、优雅，性能也得到了提升（配合增加的 StringView 和 Tokenizer，我可以说是在这部分代码里真正做到了省掉了不需要的拷贝）；一定程度上可以算是这两三年来进步的见证吧。</p>
+<p>人是一种奇怪的动物，时常会回想过去；在重写 KAdBlockEngine 期间，我不止一次想起自己刚开始实习，以及还在大学的种种瞬间，不只一次觉得：嗯，当初要是能够在努力一点该有多好呢。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="ciqz7qc470004704nq087yrbw" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gibberish/">gibberish</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-do-not-intermingle-owner-with-view-semantics" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/07/10/do-not-intermingle-owner-with-view-semantics/" class="article-date">
@@ -123,7 +183,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="ciqg40y080000584no87vhqcc" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="ciqz7qc420001704nrwmwlcvb" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -195,7 +255,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="ciqg40y1a000s584ndcppq00f" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="ciqz7qc4z000v704ncuq6mf7u" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -281,7 +341,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="ciqg40y0u000f584n6wcv162d" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="ciqz7qc4x000s704n3xre2oxp" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -350,7 +410,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/" data-id="ciqg40y1a000o584ns094vx3t" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/" data-id="ciqz7qc4s000l704n4og1ffy5" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -410,7 +470,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/" data-id="ciqg40y0u0004584nqc131z6d" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/" data-id="ciqz7qc480005704npmfzbp8g" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -472,71 +532,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/" data-id="ciqg40y0q0001584nnivcp9db" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/" data-id="ciqz7qc3y0000704n6yrcjvpc" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/string-view/">string_view</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/tokenizer/">tokenizer</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-recommend-google-samples-for-android-mvp-architecture" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/" class="article-date">
-  <time datetime="2016-04-24T17:13:57.000Z" itemprop="datePublished">2016-04-25</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/">推荐 google samples for android-architecture</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在 Android 正式支持 data binding &amp; MVVM 之前，MVP 可以算是最好的 android app 架构模式。</p>
-<p>但是直到前不久，Google 才在 <a href="https://github.com/googlesamples/android-architecture" target="_blank" rel="external">github</a> 上提供了推荐的 android-mvp 做法。</p>
-<p>虽然现在能找到各式各样实现 MVP 的 blog posts 和 samples，但是不得不说 Google 这次提供的 sample 依然惊艳十足，并且还是来自官方钦定。</p>
-<p>Sample 将 view layer 和 presenter layer 需要协定的接口写到了一个单独的 xyz_contract 文件里，view 和 presenter 都需要实现各自的接口。</p>
-<p>Sample 中 view layer 对应的是具体的 fragment，activity 只是充当了一个 startup facility。我觉得这个里可以做一个灵活的选择：如果引入 fragment 是没有必要的，那么可以直接将 view layer 放到 activity 中。</p>
-<p>Model layer 的实现到可以不用那么讲究，如果项目中提供了 dependency injection 的设施，或者需要单独对 model layer 做 unit test（一般有这种需求手头应该有支持 DI 的设施了），则可以在 presnter – model 间协定一个 contract，present 持有实现了 contract 的对象，做到进一步解耦。</p>
-<p>反之，如果不需要在 model layer 有太多的变化余地，则可以直接把具体的 model object 暴露给上层的 presenter。</p>
-<p>讲真，如果没有 DI 协助，多一个 model contract 其实也挺多余。</p>
-<p>Google samples 采用的是混合方式…看代码的话就知道了。</p>
-<p>为了更快速的熟悉 google 推荐的做法，我花了点时间做了一个 <a href="https://github.com/kingsamchen/Eureka/tree/master/Android-Login-MVP" target="_blank" rel="external">login demo</a>。view 直接放在了 activity，并且 model 直接暴露给了 presenter。</p>
-<p>举个例子：</p>
-<p>因为 view 中不能包含除了 UI 设置以外的代码，所以 login button 是否可用状态是 view 层监听输入框消息，并且将事件 delegate 到 presenter，presenter 通过判断后通知 view（调用 view 暴露的接口），改变按钮状态。</p>
-<p>整个流程拆解后虽然变得繁琐，但是责任却变清晰了，所以在业务逻辑变得复杂的时候，这种 view – presenter 的拆分会逐渐体现出优点。</p>
-<p>不过很明显，如果采用 MVVM，上面的实现会变得更加优雅、简单。</p>
-<p>最后还是推荐一下 android devs 看一下这个 demo（虽然我不是很想做 android app -‘’-）。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/04/25/recommend-google-samples-for-android-mvp-architecture/" data-id="ciqg40y0u0009584nkztkzlkz" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/04/25/recommend-google-samples-for-android-mvp-architecture/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/MVP/">MVP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
 
     </footer>
   </div>
@@ -571,6 +572,10 @@
       <ul>
         
           <li>
+            <a href="/2016/07/23/gibberish-on-kadblockengine/">闲扯 KAdBlockEngine</a>
+          </li>
+        
+          <li>
             <a href="/2016/07/10/do-not-intermingle-owner-with-view-semantics/">避免在类设计上混合 Owner 及 View 语义</a>
           </li>
         
@@ -594,10 +599,6 @@
             <a href="/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">自己轮的 string_view 和它的小伙伴 tokenizer</a>
           </li>
         
-          <li>
-            <a href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/">推荐 google samples for android-architecture</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -617,7 +618,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
     </div>
   </div>
 
