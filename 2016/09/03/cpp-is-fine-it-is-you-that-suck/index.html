@@ -3,27 +3,27 @@
 <head>
   <meta charset="utf-8">
   
-  <title>让 Path 更自然 | KC的废墟堆</title>
+  <title>C++ is fine, it&#39;s you that suck | KC的废墟堆</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。
-对，说的就是 filesystem::path。
-对于一个 path class 而言，最常用的操作不外乎：parent_path filename append/join。
-首先，对于函数 pare">
+  <meta name="description" content="这篇主要内容是吐槽，干货不多。
+曾经我以为只要是我设计的代码结构里，基本不会碰到需要 multiple inheritance 的情况，更不用说需要 virtual inheritance，结果没想到这周就被啪啪啪打脸了。
+起因在于我要为底层的 obs properties 体系设计一个 wrapper，为上层提供类似的等价物。
+properties 描述了一个 obs source 所具备的特性">
 <meta property="og:type" content="article">
-<meta property="og:title" content="让 Path 更自然">
-<meta property="og:url" content="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/index.html">
+<meta property="og:title" content="C++ is fine, it's you that suck">
+<meta property="og:url" content="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/index.html">
 <meta property="og:site_name" content="KC的废墟堆">
-<meta property="og:description" content="虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。
-对，说的就是 filesystem::path。
-对于一个 path class 而言，最常用的操作不外乎：parent_path filename append/join。
-首先，对于函数 pare">
-<meta property="og:updated_time" content="2016-04-18T17:49:13.249Z">
+<meta property="og:description" content="这篇主要内容是吐槽，干货不多。
+曾经我以为只要是我设计的代码结构里，基本不会碰到需要 multiple inheritance 的情况，更不用说需要 virtual inheritance，结果没想到这周就被啪啪啪打脸了。
+起因在于我要为底层的 obs properties 体系设计一个 wrapper，为上层提供类似的等价物。
+properties 描述了一个 obs source 所具备的特性">
+<meta property="og:updated_time" content="2016-09-03T13:16:22.295Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="让 Path 更自然">
-<meta name="twitter:description" content="虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。
-对，说的就是 filesystem::path。
-对于一个 path class 而言，最常用的操作不外乎：parent_path filename append/join。
-首先，对于函数 pare">
+<meta name="twitter:title" content="C++ is fine, it's you that suck">
+<meta name="twitter:description" content="这篇主要内容是吐槽，干货不多。
+曾经我以为只要是我设计的代码结构里，基本不会碰到需要 multiple inheritance 的情况，更不用说需要 virtual inheritance，结果没想到这周就被啪啪啪打脸了。
+起因在于我要为底层的 obs properties 体系设计一个 wrapper，为上层提供类似的等价物。
+properties 描述了一个 obs source 所具备的特性">
   
     <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
   
@@ -76,10 +76,10 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main"><article id="post-make-our-path-class-more-natural" class="article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-cpp-is-fine-it-is-you-that-suck" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2016/04/19/make-our-path-class-more-natural/" class="article-date">
-  <time datetime="2016-04-18T16:38:38.000Z" itemprop="datePublished">2016-04-19</time>
+    <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/" class="article-date">
+  <time datetime="2016-09-03T09:10:39.000Z" itemprop="datePublished">2016-09-03</time>
 </a>
     
   <div class="article-category">
@@ -94,7 +94,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      让 Path 更自然
+      C++ is fine, it&#39;s you that suck
     </h1>
   
 
@@ -102,42 +102,64 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。</p>
-<p>对，说的就是 <code>filesystem::path</code>。</p>
-<p>对于一个 path class 而言，最常用的操作不外乎：<code>parent_path</code> <code>filename</code> <code>append/join</code>。</p>
-<p>首先，对于函数 <code>parent_path()</code>，文档是这么描述的：</p>
-<p><em>Returns the path to the parent directory.<br>Returns empty path if empty() or there’s only a single element in the path (begin() == –end().</em></p>
-<p>但是对于路径形如 <code>C:\</code> 的 <code>path</code> 对象，Visual Stuido 2015 update 2 提供的实现的调用 <code>parent_path()</code> 的结果居然是 <code>C:</code>。</p>
-<p>好吧，看来这个实现版本认为 <code>C:</code> 是 <code>C:\</code> 的 parent path。</p>
-<p>然而这个认为却是极大错误的。</p>
-<p>实际上，<code>C:\</code> 才是和 Unix/Linux 下的 <code>/</code> 一样，是一个完整的根目录表示。而按照标准的要求描述，路径形如 <code>C:\</code> 的 parent path 应该是一个空字符串。</p>
-<p>不过这估计也得怪 Windows 奇葩的路径设计。谁能想到 <code>C:tmp.txt</code> 和 <code>C:\tmp.txt</code> 是两个完全不同的路径表示呢？更别提还存在 <code>\\server\path</code> 这种 UNC 路径格式，以及必杀招：用以支持超过 <code>MAX_PATH</code> 的长路径的 <code>\\?\C:\very-long-path</code> 格式。</p>
-<p>而对于 <code>filename</code>，实现上倒是没什么原则性的问题，但是 example 里反映的</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fs::path(<span class="string">"/foo/bar"</span>).filename(); <span class="comment">// output bar</span></span><br><span class="line">fs::path(<span class="string">"/foo/bar/"</span>).filename(); <span class="comment">// output .</span></span><br></pre></td></tr></table></figure>
-<p>给人一种刻板过头的感觉。你确定路径后面拖着的那个 trailing separator 是我可以要用来表示<code>.</code>的么？</p>
-<p>不过也可能这是 unix/linux 下的一种神奇的用法，不过实在理解不能。</p>
-<p><code>filesystem::path</code> 不光提供了标准的 append，还顺带提供了纯字符串操作的 concat。抛开两个操作对应的符号重载是否美观不谈，操作 concat 的引入总给人一种 <em>I wanna to make it complete</em> 的无力感。</p>
-<p>不过这个操作符对前面分辨 <code>C:/C:\</code> 不能倒是提供了一个帮助，Orz。</p>
-<h2 id="补救"><a href="#补救" class="headerlink" title="补救"></a>补救</h2><p>很早之前在 <code>kbase</code> 里也提供了一个路径类的实现 <code>FilePath</code>。</p>
-<p>在暂时无法接受 <code>filesystem::path</code> 的情况下，我对 <code>FilePath</code> 做了一次不大不小的重构。</p>
-<p>首先把名字给换成了 <code>Path</code>，并且相关的几个操作也都保持和标准库一致。</p>
-<p>但是这回 <code>Path</code> 的 <code>parent_path</code> 可是可以正确处理上面说的 dark cases 的；并且 <code>filename</code> 会在返回数据前机智的去掉 redundant trailing separator。</p>
-<p>重复一遍，<code>C:\</code> 的 <code>\</code> 可不是 redundant trailing separator。</p>
-<p>另外，<code>filesystem::path</code> 提供了一个 iterator 用来遍历路径的每个 component；而且实际上，<code>parent_path</code> 和 <code>filename</code> 都是直接用这个 iterator 构建的。</p>
-<p>不过因为时间所限，我没有在 <code>Path</code> 里加上这个 iterator。（我怕强迫症犯了一天内肯定写不完）不过也仍然提供了一个类似的操作 <code>GetComponents</code>。</p>
-<p>不同之处是这个函数会一下返回所有的 components，于是显得不那么 C++ philosophi compliant。不过还是将就着用吧，毕竟没有标准库实现那样有神奇的结果。</p>
-<p>最新的代码可见 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/path.h" target="_blank" rel="external">这里</a> 和 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/path.cpp" target="_blank" rel="external">这里</a>；实例参见附带的 <a href="https://github.com/kingsamchen/KBase/blob/master/KBase_Test/samples/path_unittest.cpp" target="_blank" rel="external">unittest case</a>。</p>
-<p>BTW：我删除了 kbase 的 dev 分支，打算换一种 git workflow。原来的 branch model 感觉有点不够拥抱变化。</p>
+        <p>这篇主要内容是吐槽，干货不多。</p>
+<p>曾经我以为只要是我设计的代码结构里，基本不会碰到需要 multiple inheritance 的情况，更不用说需要 virtual inheritance，结果没想到这周就被啪啪啪打脸了。</p>
+<p>起因在于我要为底层的 obs properties 体系设计一个 wrapper，为上层提供类似的等价物。</p>
+<p>properties 描述了一个 obs source 所具备的特性集合，不同的 obs source 拥有不同的 properties；而 properties 实质上又是一个由众多不同类型的 property 构成的集合，因此不同类型的 property 才是操作的基本单位。</p>
+<p>一个 source 的 properties 可能实际上包含：</p>
+<ul>
+<li>描述数值类型的 int-property or float-property</li>
+<li>描述文字信息的 text-property</li>
+<li>描述一系列子属性的 list-property</li>
+<li>etc.</li>
+</ul>
+<p>但是蛋疼的地方在于，在 obs core 这一层，逻辑上不同类型的 property 却具有相同类型的数据类型，都由 <code>obs_property_t</code> 来表示；</p>
+<p>于是，除了通吃的诸如 <code>get_name()</code>, <code>get_description()</code> 操作之外，obs 还提供了返回具体类型的函数接口，以及分别针对某个类型的一组操作函数接口。</p>
+<p>考虑到几个原则</p>
+<ul>
+<li>proxy layer 本身是一个屏蔽底层细节的模块，只能在边界暴露必要的接口</li>
+<li>properties 要反映出是 property 的序列容器（能够便利定位到某个 property）</li>
+<li>property 无论是共有的操作还是特定的操作都要暴露给外界，并且要屏蔽底层实现 property 的细节</li>
+</ul>
+<p>最适合我的实现反而是拥有如下两条 hierarchical path 的多继承设计</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">                 Property [pure]</span><br><span class="line">                 /        \</span><br><span class="line">                /          \</span><br><span class="line">SpecificProperty[pure]     PropertyImpl [实现基础操作，兼容 properties 的存储]</span><br><span class="line">                \          /</span><br><span class="line">                 \        /</span><br><span class="line">             SpecificPropertyImpl</span><br></pre></td></tr></table></figure>
+<p>左侧两个基类都是 pure abstract class，负责对外暴露接口，右侧的 impl class 是在 proxy layer 中的实际类型。</p>
+<p>由于考虑到 <em>properties contains a series of property</em> 的事实，<code>PropertyImpl</code> 实际上对外表现出值类型语义（嗯哼，我才不会说我硬生生的在另外的 <code>properties</code> wrapper 上给加上了迭代器支持…）。</p>
+<p>上面继承出现了菱形继承，于是 virtual inheritance 就进来了，不然 <code>Property</code> 的析构函数就有两份，并且还会执行两次。</p>
+<p>考虑上层在某些时候需要从 <code>Property</code> 获得更为具体的 <code>SpecificProperty</code>，以执行一些特定的属性操作，这个时候就需要利用 <code>dynamic_cast</code> 做一些 down-cast。</p>
+<p>然而…..这是不可能的，因为整个程序是基于 chromium 的框架开发，而 chromium 强制把 RTTI 关闭了…</p>
+<p>于是一个晚上加上一个白天，最后终于想出一个 workaround 给绕了过去…而在构想最终的 workaround 期间，我甚至有冲动要自己艹 memory layout 来计算偏移…</p>
+<p>关闭 RTTI 是一个非常具有代表性的行为，和多重继承，虚继承类似，很多人认为这些东西是非常 evil 的；因为他们不光带来了性能开销，并且实际作用都可以藉由各种 workaround 实现。于是先把你的设计批判一番，再接着滔滔不绝的给你讲解各种可能可以用得上的 idioms…</p>
+<p>然而，工程设计是非常 non-trivial 的，现实世界是非常 cruel 的，你永远不知道你面临的会是什么问题，尤其是遇到你的 code base 中存在来源于其他不受控制的代码的时候。</p>
+<p>或许是对这种人已经感到了厌倦，甚至是无语，Bjarne Stroustrup 特意在他的 FAQ 里提到了这么两点：</p>
+<ul>
+<li>language-supported inheritance is typically superior to workarounds for ease of programming, for detecting logical problems, for maintainability, and often for performance <a href="https://isocpp.org/wiki/faq/multiple-inheritance#mi-needed" target="_blank" rel="external">FAQ</a></li>
+<li>It <em>really</em> bothers me when people think they know what’s best for <em>your</em> problem even though they’ve never seen <em>your</em> problem!! How can anybody possibly know that multiple inheritance won’t help <em>you</em> accomplish <em>your</em> goals without knowing <em>your</em> goals?!?!?!?!!! <a href="https://isocpp.org/wiki/faq/multiple-inheritance#mi-not-evil" target="_blank" rel="external">FAQ</a></li>
+</ul>
+<p>C++ 之所以发展成今天这样，成为一个 multi-paradigm 的语言，本就来源于 BS 认为世界太过 undeterministic，依靠单一的范式很难精准有效的解决大部分问题。</p>
+<p>回到前面 RTTI 的问题，十来年前，各大主流编译器 （MSVC, GCC 等）是默认关闭 RTTI 的，理由是 for better performance；而现在，RTTI 的是默认打开的，这至少意味着主流编译器认为 RTTI 所带来的 side-effect penalty 已经是 negligible。</p>
+<p>打开 RTTI 的副作用是什么呢？所有 <strong>polymorphic class</strong> 的 vtable 多了一个 slot 专门存放类型信息。</p>
+<p><em>If you don’t want to use a feature, just don’t use it</em></p>
+<p>相较之下，禁用异常就真的是非常不理智的行为了。</p>
+<p>更重要的，不要因为存在某个 feature 就不明真相的乱用，掉坑里了又愤愤不平的搞个大新闻，四处宣扬这个 feature 简直是 shit，并且 C++ 是 a pile of shit。</p>
+<p><strong><em>Remember, C++ is fine, it is you that suck</em></strong></p>
+<h3 id="Bonus"><a href="#Bonus" class="headerlink" title="Bonus"></a>Bonus</h3><p>最后贴两个 presentation，分别是 Bjarne Stroustrup 和 Herb Sutter 在 CppCon 2015 上的分享。</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=1OEu9C51K2A" target="_blank" rel="external">Bjarne Stroustrup: Writing Good C++ 14</a></li>
+<li><a href="https://www.youtube.com/watch?v=hEx5DNLWGgA" target="_blank" rel="external">Herb Sutter: Writing Good C++ 14 By Default</a></li>
+</ul>
+<p>作为开篇分享，这两个 talks 应该说是为 write moder c++ programs 奠定了一个基调，里面对 resource ownership, type safety, data-safety 都做了非常精彩的叙述，并且还联手提炼了一个 C++ Core Guidelines 出来。</p>
+<p>当然里面也有各种私货，例如 BS 吐槽 xx coding style，BS 推销 VS 的静态分析功能…</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/" data-id="cisn7il9b000jlw4nng73igzb" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cisn7il890000lw4nitsokdd1" class="article-share-link">Share</a>
       
-        <a href="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/#disqus_thread" class="article-comment-link">Comments</a>
+        <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
       
       
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/path/">path</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windows/">windows</a></li></ul>
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rant/">rant</a></li></ul>
 
     </footer>
   </div>
@@ -145,19 +167,10 @@
     
 <nav id="article-nav">
   
-    <a href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/" id="article-nav-newer" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Newer</strong>
-      <div class="article-nav-title">
-        
-          推荐 google samples for android-architecture
-        
-      </div>
-    </a>
   
-  
-    <a href="/2016/04/05/an-implementation-of-non-intrusive-buddy-allocator/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2016/07/30/get-correct-system-version-on-windows-10/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">挖坟：一个非侵入式的 buddy allocator 实现</div>
+      <div class="article-nav-title">在 Windows 10 上获取正确的系统版本</div>
     </a>
   
 </nav>
@@ -286,7 +299,7 @@
 <script>
   var disqus_shortname = 'kingsamchen-github-io';
   
-  var disqus_url = 'http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/';
+  var disqus_url = 'http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/';
   
   (function(){
     var dsq = document.createElement('script');
