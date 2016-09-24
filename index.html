@@ -68,6 +68,80 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-build-and-integrate-the-newest-version-of-breakpad-on-windows" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" class="article-date">
+  <time datetime="2016-09-24T03:12:02.000Z" itemprop="datePublished">2016-09-24</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/">在 Windows 上构建并接入最新发布分支的 breakpad</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>新直播姬项目重构的差不多了，于是前几天 leader 对我说：组织已经决定了，你来接入 crash dump 的处理收集！</p>
+<p>于是我就念了句口号：<em>Hail Hydra</em>，然后开始研究怎么接入 <a href="https://chromium.googlesource.com/breakpad/breakpad/" target="_blank" rel="external">google-breakpad</a>。</p>
+<p>breakpad 一直是 chromium 收集 crash dump 的御用雏形（在其之上加了一些私货），不过之前在做大屎豹的时候一直都是别人在负责这块功能，所以并不熟悉；不过没吃过猪肉还是见过猪跑的。</p>
+<p>项目最新的发布分支是 <strong>chrome_53</strong>， 那就选择从这个 remote branch 切出一个 local branch。但是切完之后我就发现不对劲了：特么以前一直随包附带的 <code>gyp</code> 目录呢？？？难道最新的发布版本修改了 Windows 上的构建流程？</p>
+<p>按照 Google 的一贯尿性，这是极有可能的，看看隔壁 chromium 的 tool-chain 改了多少次就知道了；于是打开官方项目的 README 看看 build instructions，嗯，果然改了，踏马直接把 build on Windows 的相关内容给删了！ WTF？？！</p>
+<p>Google 一下发现虽然 gyp 和 doc 被移除了，但是之前的 gyp 构建方案还是可以用的。（嗯，我日你个仙人板）</p>
+<p>研究了一下，可用的构建流程如下：</p>
+<ol>
+<li>在本地 clone 一个 <a href="https://chromium.googlesource.com/external/gyp" target="_blank" rel="external">gyp</a>，直接用 <code>master</code> 分支就好，并且保证 <code>gyp.bat</code> 在环境变量 <code>%PATH%</code> 中（无所谓是你手动添加还是在命令行中用 <code>set path</code> 添加）</li>
+<li>打开文件 <code>breakpad\src\client\windows\breakpad_client.gyp</code>，注释掉 <code>targets : dependencies</code> 列表中的最后三个和 test 有关的依赖引用；因为某些测试工程的编译依赖 <code>gtest</code>，但是当前项目并不附带，所以你直接编译肯定会一坨错误，所以这里直接不构建测试工程。当然如果你需要的化，自己根据 gyp 设置一下 gtest 目录。</li>
+<li>在 breakpad 的项目目录打开 cmd，用 <code>SET GYP_MSVS_VERSION=2013</code> 设置目标 Visual Studio 工程的版本；如果要生成 VS 2015 的文件，版本改成 2015 就好了</li>
+<li>运行 <code>gyp.bat --no-circular-check src\client\windows\breakpad_client.gyp -Dwin_release_RuntimeLibrary=0 -Dwin_debug_RuntimeLibrary=1</code>；最后两个参数设置的是 <code>/MT(d)</code> 还是 <code>/MD(d)</code><ul>
+<li>0：<code>/MT</code></li>
+<li>1：<code>/MTd</code></li>
+<li>2：<code>/MD</code></li>
+<li>3：<code>/MDd</code></li>
+</ul>
+</li>
+<li>生成的项目文件在目录 <code>src\client\windows\</code> 中，直接打开编译即可；（Visual Studio 2015 编译可能会出现 warning C4091，导致编译失败，直接屏蔽掉这个错误）</li>
+</ol>
+<h3 id="使用上要注意的几个坑"><a href="#使用上要注意的几个坑" class="headerlink" title="使用上要注意的几个坑"></a>使用上要注意的几个坑</h3><p>Disclaimers：因为服务端暂时不支持，考虑到简易性，我在直播姬里用的是进程内抓 dump。</p>
+<p>一个简单靠谱的 demo</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> google_breakpad::ExceptionHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span> kCrashDumpDirName[] = <span class="string">L"crash_dumps"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span> kHintMessage[] = <span class="string">L"我...挂了...囧rz"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// We leak the object on purpose.</span></span><br><span class="line">ExceptionHandler* exception_handler = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">OnMinidumpGenerated</span><span class="params">(<span class="keyword">const</span> wchar_t* dump_path, <span class="keyword">const</span> wchar_t* minidump_id, <span class="keyword">void</span>* context,</span><br><span class="line">                         EXCEPTION_POINTERS* exinfo, MDRawAssertionInfo* assertion, <span class="keyword">bool</span> succeeded)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (succeeded)</span><br><span class="line">    &#123;</span><br><span class="line">        MessageBoxW(<span class="literal">nullptr</span>, kHintMessage, <span class="string">L"Error"</span>, MB_OK);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> succeeded;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">InstallCrashHandler</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="comment">// This is needed for CRT to not show dialog for invalid param</span></span><br><span class="line">    <span class="comment">// failures and instead let the code handle it.</span></span><br><span class="line">    _CrtSetReportMode(_CRT_ASSERT, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::wstring dump_dir_path = SetupCrashDumpDirectory(kCrashDumpDirName);</span><br><span class="line">    exception_handler = <span class="keyword">new</span> ExceptionHandler(dump_dir_path,</span><br><span class="line">                                             <span class="literal">nullptr</span>,</span><br><span class="line">                                             OnMinidumpGenerated,</span><br><span class="line">                                             <span class="literal">nullptr</span>,</span><br><span class="line">                                             ExceptionHandler::HANDLER_ALL,</span><br><span class="line">                                             MiniDumpNormal,</span><br><span class="line">                                             <span class="string">L""</span>,</span><br><span class="line">                                             <span class="literal">nullptr</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;   <span class="comment">// namespace</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> APIENTRY <span class="title">wWinMain</span><span class="params">(HINSTANCE instance, HINSTANCE prev, wchar_t*, <span class="keyword">int</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    InstallCrashHandler();</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先要保证项目的 include directory 中一定要包含 <code>breakpad\src\</code> 这个路径，因为 breakpad 内部代码的 include 是基于这个假设</p>
+<p>只需要在 exe 文件的入口函数（<code>main</code> 或者 <code>WinMain</code>）中设置 breakpad 的 <code>exception handler</code> 即可，哪怕你的项目有很多额外的 DLLs；Handler 是进程全局的，这点由操作系统保证（本来 breakpad 就是基于操作系统提供的 API 做的一个 wrapper）。</p>
+<p>不过要注意在自己的代码中，尤其是用的第三方的 DLL，不要出现用了 <code>SetUnexpectedHandler()</code> 导致 override 了 breakpad 的 handler 的情况。因为这个我被坑过一下午 -‘’-</p>
+<p>保存 crash dump 的文件夹一定要<strong>事先存在</strong>，breakpad 不会帮你创建，事实上，如果文件夹不存在，breakpad 的 handler 甚至工作不正常，还是走回 Windows 的崩溃反馈流程去了。</p>
+<p>第二个参数是一个 exception filter callback，用来过滤一些异常，这里不需要直接填空。</p>
+<p>第三个参数是 mini dump 写完之后的回调，用来做一些提示用户的善后操作，参数 <code>succeeded</code> 提示 dump 是否成功写入；通常情况下，这个 routine 返回后 breakpad 会<strong>自动结束程序</strong>，避免异常造成更进一步的破坏，这是非常合理的做法，所以不要在这个 callback 里做一些 non-trivial 的事情。</p>
+<h3 id="王之鄙视"><a href="#王之鄙视" class="headerlink" title="王之鄙视"></a>王之鄙视</h3><p>最后鄙视一下 google breakpad team 这种不想做兼容就索性删掉相关内容的做法。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="citgor46700002w4n5h9hhlpf" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cant/">cant</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-cpp-is-fine-it-is-you-that-suck" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/" class="article-date">
@@ -146,7 +220,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cisn7il890000lw4nitsokdd1" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="citgor46n00012w4n4sf1lfta" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -207,7 +281,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="cisn7il8v000glw4nkmv2v9hq" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="citgor46t000g2w4nxgeip58u" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -267,7 +341,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="cisn7il8v000blw4nfeedvhsl" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="citgor46t00092w4n8ad5v7op" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -336,7 +410,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="cisn7il8v0005lw4nmt5l4csh" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="citgor46t00052w4nc74727vu" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -408,7 +482,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="cisn7il9b000tlw4nz3jffbiv" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="citgor47800142w4nmnrivrou" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -494,81 +568,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="cisn7il9b0010lw4njlq2xyv9" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="citgor47800122w4nnves7uri" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/template/">template</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-why-git-flow-model-is-considered-harmful" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/" class="article-date">
-  <time datetime="2016-05-22T16:01:45.000Z" itemprop="datePublished">2016-05-23</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/23/why-git-flow-model-is-considered-harmful/">为什么我反对使用 git flow</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>如果论知名度，<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="external">git flow</a> 绝对是现在数一数二的 git 协作模型。甚至直到不久之前，我也在用这个模型作为我在 github 上的几个项目的工作流。</p>
-<p>但是一段时间后，我越来越觉得这个 work flow 不仅过于冗余、繁琐，而且在实际操作中充满了艰险。这种想法在我到新公司后，和多个同事（5-7人）一起协作开发一款 android 直播客户端时达到顶峰。</p>
-<p>从核心点来看，git flow 的最大亮点是：</p>
-<ul>
-<li>一个始终稳定且代表可发布产品时刻的 master 分支</li>
-<li>各自独立的开发分支，例如各种 feature 分支</li>
-</ul>
-<h3 id="坑在何处"><a href="#坑在何处" class="headerlink" title="坑在何处"></a>坑在何处</h3><p>对于客户端项目来说，稳定可发布的 master 分支完全没有什么意义。因为客户端没有所谓的线上环境，产品发布有自己单独的发布渠道（例如应用市场，官方主页等），这部分版本更迭完全是天然隔离的。</p>
-<p>而服务端项目，虽然确实需要一个稳定的，对应线上环境的分支，但是其他 work flow 也完全可以做到。例如一个简单的 master 分支和对应开发的 develop 分支。</p>
-<p>其次，git flow 第二个所谓亮点会引发一个很严重的后果：后期合并代码时连锁的冲突问题。</p>
-<p>git flow 最大的亮点导致的一个核心问题就是，大家在各自独立的分支上展开工作，工作完毕了才合并到 develop 分支，导致<strong>每个人距离共同分支（他人修改）太远</strong>。</p>
-<p>这种对彼此的代码修改互相不可知的工作流程，在后期合并代码时简直是噩梦。通常来说，需要有一个专门的人负责合并代码，并且合并某个分支时，对应分支的开发人员要在场，否则对于大块大块陌生的代码，完全没法进行合并操作。</p>
-<p>于是你就会发现，在这一期需求的收尾阶段，你浪费了大量的时间和精力在合并代码上，并且还伴随着潜在的合并出错的风险。</p>
-<p>上一周不到三天的时间内，我已经做了两次修改远程仓库的历史，抹掉新来的同事提交的大块修改代码导致的问题，这只能用灾难来形容。</p>
-<p>现在回过头来想想 git flow 这种独立多 feature 到底有效解决了什么问题？答案是有效解决了一个人为臆想的问题，即：某个要做的需求大大超前于产品的版本。</p>
-<p>就现在的环境而言，出现这种需求，99%的情况下是产品需求不合理。所以正确的做法是，把产品按在地上暴打一顿。</p>
-<h3 id="化繁为简，返璞归真"><a href="#化繁为简，返璞归真" class="headerlink" title="化繁为简，返璞归真"></a>化繁为简，返璞归真</h3><p>个人建议的 git work flow 其实早在 SVN 时代就用的很普遍了：我们只需要一个用于开发的 master 分支。</p>
-<p>对于客户端，只需要一个这样的 master 分支即可，每次到发版本，切出一个发布分支，并在 master 上打上 tag 即可。</p>
-<p>而对于服务端，一个稳定的 master 分支，加上一个开发的 develop 分支即可。</p>
-<p>这种模式下，每个人需要把修改 push 到远程分支时，都需要利用 <code>fetch &amp;&amp; rebase</code> 同步他人修改，而就算此时发生冲突，冲突的范围也绝对是能在控制之中。</p>
-<p>所以这里的核心就是：<strong>减少和公共分支的距离，尽量缩小冲突的大小</strong>。</p>
-<p>Pop quiz: 多次解决小冲突比起一次性解决大冲突会有优势吗？</p>
-<p>妈的简直废话，你没学过什么叫 divide/decrease-and-conquer 吗？</p>
-<p>git flow 这种多分枝模型，给人的感觉就是，because I can，典型的不考虑实际生产环境。</p>
-<p>多说一句，chromium 这种巨型项目，用的就是一个稳定的 master 分支这种工作流。难以想象如果他们用 git flow，最后冲突会出现什么样天崩地裂的景象啊。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/" data-id="cisn7il9b000wlw4nfc0bete8" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/git/">git</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
 
     </footer>
   </div>
@@ -603,6 +608,10 @@
       <ul>
         
           <li>
+            <a href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/">在 Windows 上构建并接入最新发布分支的 breakpad</a>
+          </li>
+        
+          <li>
             <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/">C++ is fine, it&#39;s you that suck</a>
           </li>
         
@@ -626,10 +635,6 @@
             <a href="/2016/06/14/template-type-constraints-and-type-traits/">Template Type Constraints And Type Traits</a>
           </li>
         
-          <li>
-            <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/">为什么我反对使用 git flow</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -649,7 +654,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li></ul>
     </div>
   </div>
 
@@ -664,6 +669,8 @@
       <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
       <li><a href="https://blog.chichou.me/">ChiChou | 首席安全地球仪切图总奸</a></li>
       <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://thecjw.0ginr.com/blog/">TheCJW | 爱弹棉花的小伟</a></li>
+      <li><a href="http://newbiecoder.0ginr.com/blog/">Newbie Coder | 萌萌哒的炉子</a></li>
       <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
       <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
       <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
