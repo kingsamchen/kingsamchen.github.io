@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>在 WSL 的 VIM 里安装 YCM | KC的废墟堆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="注 1：此处的 WSL 指的是 Windows Subsytem for Linux，不是“猥琐流”
+注 2：如果是在中国并且没有专用的全局科学上网线路（比如在自己家里），建议找一个类似 SS 的梯子，让 WSL 里的网络操作走代理，提高速度，避免因为某些连接被和谐导致悲剧发生。
+如果有 SS，那么进入 WSL 后执行命令
+12export http_proxy=http://127.0.0.1:">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 WSL 的 VIM 里安装 YCM">
+<meta property="og:url" content="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/index.html">
+<meta property="og:site_name" content="KC的废墟堆">
+<meta property="og:description" content="注 1：此处的 WSL 指的是 Windows Subsytem for Linux，不是“猥琐流”
+注 2：如果是在中国并且没有专用的全局科学上网线路（比如在自己家里），建议找一个类似 SS 的梯子，让 WSL 里的网络操作走代理，提高速度，避免因为某些连接被和谐导致悲剧发生。
+如果有 SS，那么进入 WSL 后执行命令
+12export http_proxy=http://127.0.0.1:">
+<meta property="og:image" content="http://kingsamchen.github.io/img/wsl_vim_ycm.jpg">
+<meta property="og:updated_time" content="2016-11-19T04:22:20.061Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="在 WSL 的 VIM 里安装 YCM">
+<meta name="twitter:description" content="注 1：此处的 WSL 指的是 Windows Subsytem for Linux，不是“猥琐流”
+注 2：如果是在中国并且没有专用的全局科学上网线路（比如在自己家里），建议找一个类似 SS 的梯子，让 WSL 里的网络操作走代理，提高速度，避免因为某些连接被和谐导致悲剧发生。
+如果有 SS，那么进入 WSL 后执行命令
+12export http_proxy=http://127.0.0.1:">
+<meta name="twitter:image" content="http://kingsamchen.github.io/img/wsl_vim_ycm.jpg">
+  
+    <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">KC的废墟堆</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Will you serve in Heaven, or rule in Hell</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-install-ycm-plugin-on-WSL" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/10/03/install-ycm-plugin-on-WSL/" class="article-date">
+  <time datetime="2016-10-03T05:52:18.000Z" itemprop="datePublished">2016-10-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      在 WSL 的 VIM 里安装 YCM
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>注 1：此处的 WSL 指的是 <em>Windows Subsytem for Linux</em>，不是“猥琐流”</p>
+<p>注 2：如果是在中国并且没有专用的全局科学上网线路（比如在自己家里），建议找一个类似 SS 的梯子，让 WSL 里的网络操作走代理，提高速度，避免因为某些连接被和谐导致悲剧发生。</p>
+<p>如果有 SS，那么进入 WSL 后执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export http_proxy=http://127.0.0.1:1080</span><br><span class="line">export https_proxy=http://127.0.0.1:1080</span><br></pre></td></tr></table></figure>
+<p>对当前用户设置代理。</p>
+<p>如果需要使用 apt-get 操作，那么需要首先 <code>su</code> 进入 root 账户，在 root 下设置代理。</p>
+<p>此处设置的环境变量在某个 terminal 退出后自动销毁，下次进入 terminal 需要重复设置。如果你的代理非常稳定非常快，那么可以考虑改写 profile，避免每次手输。</p>
+<p><em><strong>Special thanks to @xqq here</strong></em></p>
+<h3 id="更新自带的-VIM"><a href="#更新自带的-VIM" class="headerlink" title="更新自带的 VIM"></a>更新自带的 VIM</h3><p>因为 WSL 里的 ubuntu 是 14.04 LTS，因此里面附带的 vim 并不满足<strong>最新</strong>的 YCM 的最低版本要求，如果不升级会出现 ycm 工作异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:pkg-vim/vim-daily</span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
+<h3 id="安装构建基础依赖"><a href="#安装构建基础依赖" class="headerlink" title="安装构建基础依赖"></a>安装构建基础依赖</h3><p>主要包括：CMake 和 python-dev packages</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install build-essential cmake</span><br><span class="line">sudo apt-get install python-dev python3-dev</span><br></pre></td></tr></table></figure>
+<h3 id="安装-VIM-插件管理器-Vundle"><a href="#安装-VIM-插件管理器-Vundle" class="headerlink" title="安装 VIM 插件管理器 Vundle"></a>安装 VIM 插件管理器 Vundle</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim</span><br></pre></td></tr></table></figure>
+<p>插件设置参考 <a href="https://github.com/VundleVim/Vundle.vim" target="_blank" rel="external">这里</a></p>
+<h3 id="安装-YCM"><a href="#安装-YCM" class="headerlink" title="安装 YCM"></a>安装 YCM</h3><p>虽然我们安装了 vundle，但是我们不会直接通过 vundle 装 ycm，因为太慢了。</p>
+<p>当然如果你在国外或者有科学上网专线，那就无所谓了…不过谁让我们是穷屌丝呢。</p>
+<p>首先进入目录 <code>~/.vim/bundle</code>，然后把 YCM 的 repo 拉下来，记得要用 <code>--recursive</code>，因为现在的 ycm 依赖的第三方模块太多了…</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone --recursive https://github.com/Valloric/YouCompleteMe.git</span><br></pre></td></tr></table></figure>
+<p>这个操作对你的梯子是一个极大的考验，如果中途 clone 挂了，就进入 ycm 的目录，接着用 submodule update 去继续拖代码即可。</p>
+<p>想当初我的 SS 在这里断了 5-6 次，每一次 connection lost 都让我问候了一遍党和国家…</p>
+<p>代码拉完之后还没结束，这个时候打开 <code>.vimrc</code>，把 ycm 加到 vundle 的设置列表里，然后打开 vim 走一遍 <code>PluginInstall</code>。你应该会看到 ycm 被飞快的安装完了（其实也就校验了一下😁）</p>
+<h3 id="编译-ycm"><a href="#编译-ycm" class="headerlink" title="编译 ycm"></a>编译 ycm</h3><p>源代码拖完了就该轮到编译了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~/.vim/bundle/YouCompleteMe</span><br><span class="line">./install.py --clang-completer</span><br></pre></td></tr></table></figure>
+<p>脚本首先会去下载 clang-3.9，然后走一遍 cmake 的编译，等一会儿就好。</p>
+<h3 id="Debut"><a href="#Debut" class="headerlink" title="Debut"></a>Debut</h3><p>来一张最终效果图</p>
+<p><img src="img/wsl_vim_ycm.jpg" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="civouan0s00097w4n92hv6tg9" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/wsl/">wsl</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          推荐 CSAPP:3e 课程视频以及 Bomb Lab
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">在 Windows 上构建并接入最新发布分支的 breakpad</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/">推荐 CSAPP:3e 课程视频以及 Bomb Lab</a>
+          </li>
+        
+          <li>
+            <a href="/2016/10/03/install-ycm-plugin-on-WSL/">在 WSL 的 VIM 里安装 YCM</a>
+          </li>
+        
+          <li>
+            <a href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/">在 Windows 上构建并接入最新发布分支的 breakpad</a>
+          </li>
+        
+          <li>
+            <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/">C++ is fine, it&#39;s you that suck</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/30/get-correct-system-version-on-windows-10/">在 Windows 10 上获取正确的系统版本</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/23/gibberish-on-kadblockengine/">闲扯 KAdBlockEngine</a>
+          </li>
+        
+          <li>
+            <a href="/2016/07/10/do-not-intermingle-owner-with-view-semantics/">避免在类设计上混合 Owner 及 View 语义</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title">Blog Rolls</h3>
+    <div class="widget">
+    <ul>
+      <li><a href="http://www.daozhihun.com/">刀之魂 | 大木老师成长日记</a></li>
+      <li><a href="http://blog.mistysoul.net/">Sean | 大木老师的私人保姆</a></li>
+      <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
+      <li><a href="https://blog.chichou.me/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://thecjw.0ginr.com/blog/">TheCJW | 爱弹棉花的小伟</a></li>
+      <li><a href="http://newbiecoder.0ginr.com/blog/">Newbie Coder | 萌萌哒的炉子</a></li>
+      <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
+      <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
+      <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
+      <li><a href="http://www.tolower.net/">Lower | 喊大木大哥的小弟</a></li>
+      <li><a href="http://mrljdx.com/">Mrljdx | 大保健老司机</a></li>
+    </ul>
+  </div>
+</div>
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Kingsley Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'kingsamchen-github-io';
+  
+  var disqus_url = 'http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} 
+}); 
+</script>
+<script type="text/javascript"
+   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  </div>
+</body>
+</html>
