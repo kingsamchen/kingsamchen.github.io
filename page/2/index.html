@@ -97,7 +97,7 @@
         <p>昨天在给 <a href="https://github.com/kingsamchen/KAdBlockEngine" target="_blank" rel="external">KAdBlockEngine</a> 的 <code>AdFilter</code> 加上序列化/反序列化的支持时，意外的又一次被 data type promotion 坑了，导致一晚上的时间都在 debug…</p>
 <h2 id="Yesterday-Case-Once-More"><a href="#Yesterday-Case-Once-More" class="headerlink" title="Yesterday-Case Once More"></a>Yesterday-Case Once More</h2><p>因为做 deserialization 时需要数据校验，所以在序列化到磁盘前会先对数据做一遍 MD5-checksum，然后再将 checksum 和实际数据分别写入磁盘。</p>
 <p>类似的，反序列化时需要从读入的文件数据里分出 checksum 和实际数据，对实际数据再做一遍 MD5-checksum 后和上次保存的 checksum 进行比对。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kbase::<span class="function">Path <span class="title">snapshot_file</span><span class="params">(<span class="string">L"..."</span>)</span></span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> file_data = kbase::ReadFileToString(snapshot_file);</span><br><span class="line"><span class="keyword">if</span> (!file_data.empty()) &#123;</span><br><span class="line">    kbase::MD5Digest checksum;</span><br><span class="line">    <span class="keyword">auto</span> snapshot_data = file_data.data() + <span class="keyword">sizeof</span>(checksum);</span><br><span class="line">    <span class="keyword">auto</span> snapshot_data_size = file_data.size() - <span class="keyword">sizeof</span>(checksum);</span><br><span class="line">    kbase::MD5Sum(snapshot_data, snapshot_data_size, &amp;checksum);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::equal(checksum.cbegin(), checksum.cend(), file_data.cbegin())) &#123;</span><br><span class="line">        kbase::<span class="function">PickleReader <span class="title">snapshot</span><span class="params">(snapshot_data, snapshot_data_size)</span></span>;</span><br><span class="line">        AdFilter ad_filter = AdFilter::FromSnapshot(snapshot);</span><br><span class="line">        ad_filters_.push_back(AdFilterPair(filter_file, <span class="built_in">std</span>::move(ad_filter)));</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kbase::Path snapshot_file(L"...");</span><br><span class="line">std::string file_data = kbase::ReadFileToString(snapshot_file);</span><br><span class="line">if (!file_data.empty()) &#123;</span><br><span class="line">    kbase::MD5Digest checksum;</span><br><span class="line">    auto snapshot_data = file_data.data() + sizeof(checksum);</span><br><span class="line">    auto snapshot_data_size = file_data.size() - sizeof(checksum);</span><br><span class="line">    kbase::MD5Sum(snapshot_data, snapshot_data_size, &amp;checksum);</span><br><span class="line">    if (std::equal(checksum.cbegin(), checksum.cend(), file_data.cbegin())) &#123;</span><br><span class="line">        kbase::PickleReader snapshot(snapshot_data, snapshot_data_size);</span><br><span class="line">        AdFilter ad_filter = AdFilter::FromSnapshot(snapshot);</span><br><span class="line">        ad_filters_.push_back(AdFilterPair(filter_file, std::move(ad_filter)));</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>于是神奇的事情出现了：当我用 <code>std::equal</code> 去比较两个 checksum 数据时，结果始终是 false，即使我在 debugger 的 memory watch 中确认了两块数据是一样的。</p>
 <p>更神奇的是，顺手把 <code>std::equal</code> 换成 <code>memcmp</code> 之后，整段代码都能够正常工作。</p>
 <p>看来问题出在 <code>std::equal</code>；But how come ?</p>
@@ -126,7 +126,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="civouan1l00197w4ne2nck0ox" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="civox6xak001ans4nntzygt7x" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -212,7 +212,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="civouan19000w7w4nbuef6ylw" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="civox6xa50012ns4nxzpqecoz" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -281,7 +281,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/" data-id="civouan1j00177w4nxcaln0k0" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/" data-id="civox6xa70015ns4n3sz9moto" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -341,7 +341,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/" data-id="civouan0q00077w4ndbfcpfmd" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/" data-id="civox6x940000ns4ntlaodrky" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -403,7 +403,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/" data-id="civouan0o00047w4n2e5zy10i" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/" data-id="civox6x9j000ans4n692zchus" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -462,7 +462,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/04/25/recommend-google-samples-for-android-mvp-architecture/" data-id="civouan12000n7w4n1uzc10nv" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/04/25/recommend-google-samples-for-android-mvp-architecture/" data-id="civox6xa2000wns4nwp8srucy" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/04/25/recommend-google-samples-for-android-mvp-architecture/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -532,7 +532,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/" data-id="civouan1c00107w4np4rvcw9a" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/" data-id="civox6x9z000tns4npwuak3s9" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/#disqus_thread" class="article-comment-link">Comments</a>
       
