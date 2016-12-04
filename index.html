@@ -68,6 +68,91 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-monthly-read-posts-in-nov-2016" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/04/monthly-read-posts-in-nov-2016/" class="article-date">
+  <time datetime="2016-12-04T13:53:00.000Z" itemprop="datePublished">2016-12-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64" target="_blank" rel="external">Stack Frame Layout on X86-64</a></p>
+<p><strong>Main observations</strong></p>
+<p>For AMD64 X64 ABI compiliant platforms (such as Linux), the major changes include:</p>
+<ul>
+<li>Introduces a red-zone storage area on the stack</li>
+<li>Officially makes frame pointer explicitly optional</li>
+</ul>
+<p>For Windows X64 ABI(though depictated in supplementary):</p>
+<ul>
+<li>No red-zone; instead, a pre-allocated home-space is enforced for every function call</li>
+<li>Cleanup of old calling convention legacy; no more worry about cdecl/fastcall/stdcall etc.</li>
+</ul>
+<p><a href="http://www.golgi.io/security-ssl-tls/" target="_blank" rel="external">Understanding Security in IoT: SSL/TLS</a><br><a href="http://insights.thoughtworkers.org/talk-about-https/" target="_blank" rel="external">我也想来谈谈HTTPS</a></p>
+<p><strong>Why HTTPS</strong></p>
+<p>Why HTTP is not secure?</p>
+<p>Because it transports information in plain text and with no anti-eavesdroping protection.</p>
+<p><strong>How does it work</strong></p>
+<p>After TCP connection is established, the client and server will futher start TLS/SSL handshake:</p>
+<ol>
+<li>Client-Hello</li>
+<li>Server-Hello</li>
+<li>Authentication and Key Exchange</li>
+<li>Server-Finish</li>
+<li>Client-Finish</li>
+</ol>
+<p><strong>Extra Bonus</strong></p>
+<p>How to use openssl for https.</p>
+<p>帧哥在他的<a href="http://blog.syscallx.com" target="_blank" rel="external">技术博客分站</a>上有三篇和 TLS/SSL 协议实现相关的 posts，可以放到下个月的 reading list 里</p>
+<p><a href="http://thereignn.ghost.io/on-dry-and-the-cost-of-wrongful-abstractions/" target="_blank" rel="external">ON DRY AND THE COST OF WRONGFUL ABSTRACTIONS</a></p>
+<p><strong>Insight</strong></p>
+<p>Duplicating code sometimes can be a good thing (when the cost imposed by abstractions is too high); namely, context matters.</p>
+<p><strong>Reasons</strong></p>
+<p>Programmers spend far more time reading code (to understand logic behind) than writing code.</p>
+<p>Abstractions cut both ways: every abstraction comes at a cost.</p>
+<p>Every abstraction imposes an extra layer of knowledge, which places cognitive load on brain, and in turn, increases the time spent on understanding that piece of code.</p>
+<p>In some extreme cases(everything is encapsulated in abstractions), the abstraction lost its value, and became a wrongful one.</p>
+<p><strong>Conclusion</strong></p>
+<p>Always abstract if the cost of abstraction does not surpass the cost of duplicating code.</p>
+<p>But, it’s just hard to get it right in real practice.</p>
+<p><strong>Extra Comments</strong></p>
+<p>之前看过一篇类似的 post，标题大概是 <em>dependency versus redundancy</em>，印象中里面叙述的观点比这边更加的具体。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/" data-id="ciwaqz38z000vsw4nsjmlai0r" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DRY/">DRY</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/https/">https</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" class="article-date">
@@ -108,7 +193,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" data-id="civq62s5500041o4nez931nsf" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" data-id="ciwaqz38d0007sw4nhwoewfgg" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -163,7 +248,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" data-id="civq62s5o000o1o4nk4tsnpmc" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" data-id="ciwaqz3900010sw4n05hb91h5" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -233,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="civq62s5r000s1o4nm591jx4p" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="ciwaqz38s000ksw4n5nwpx35h" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -307,7 +392,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="civq62s5700071o4nfk8q2kk3" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="ciwaqz3890004sw4nfvnnz461" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -399,7 +484,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="civq62s5600051o4nsfw2f0f5" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="ciwaqz38a0005sw4n6nan66co" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -460,72 +545,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="civq62s5j000h1o4nd69m3gny" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="ciwaqz38j000bsw4n5hedd3x1" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/system-version/">system version</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windows/">windows</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-gibberish-on-kadblockengine" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/23/gibberish-on-kadblockengine/" class="article-date">
-  <time datetime="2016-07-23T08:52:55.000Z" itemprop="datePublished">2016-07-23</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/CODE-LIFE/">CODE-LIFE</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/23/gibberish-on-kadblockengine/">闲扯 KAdBlockEngine</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>几天前给 <a href="https://github.com/kingsamchen/KAdBlockEngine" target="_blank" rel="external">KAdBlockEngine</a> 加上了 README 之后，这个 repo 算是正式的结了。</p>
-<p>对别人来说，这只是一个很普通的 repo；但是对我而言，却意义重大。</p>
-<p>3年前人生第一次实习，最主要的任务就是重写某浏览器的广告过滤引擎；那大概是我第一次写真实产品的代码。</p>
-<p>虽然之前几年在大学里看了一些书，写了一些小打小闹的代码，但是由于还不够努力的缘故，那几年的训练并没有让我形成工程实践相关的思想和认知；而当时的 AdFilterEngine，则是我第一个有意识的，开始试图形成自己的方法论的项目。</p>
-<p>觉醒总伴随着代价，如果以现在的认知去审视 AdFilterEngine 的设计和代码，会发现许多 twisted thoughts 的痕迹，但是这些都无法掩盖 AdFilterEngine 是我职业道路上的一个非常重要的起点。而起点过后，则是非常迅速的能力上的提升。</p>
-<p>（这里要感谢当时浏览器团队的那帮同事，共事的那段时间是我职业生涯非常重要的一段时间）</p>
-<p>在后来的一段时间里，我有多次想过重写这部分代码，但都未能付诸行动，或许是恐惧自己达不到当时的期许吧。</p>
-<p>转眼到今年年初离职，离开北京来到上海，我觉得自己的人生怎么也算过渡到一个新的阶段了，于是内心又开始惊起重写 AdFilterEngine 的波澜，不同的是，this time, I took the shot，于是就有了 KAdBlockEngine。</p>
-<p>我的第一个提交发生在4月9号，最后一个提交（加上 README）发生在7月19号。</p>
-<p>期间断断续续地提交了一些代码，让我有足够的时间去构思设计；并且在重写过程中，因为一些设计需求，我针对 <a href="https://github.com/kingsamchen/KBase" target="_blank" rel="external">kbase</a> 的几个模块也同时做了重构。</p>
-<p>首先是为了（更好的）处理文件路径，重构了 <a href="https://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/">Path</a>。</p>
-<p>接着为了更能够高效的从规则文件中抽出规则文本，以及简化一些规则文本的预处理，加人了 <a href="https://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">StringView/Tokenizer</a>。</p>
-<p>考虑到对 filter 的序列化保存，避免每次都要重新解析规则文本，重构了 Pickle；并且在过程中<a href="https://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/">加深了对 resource ownership 的理解</a>。</p>
-<p>（而序列化让一个 filter 的初始化时间，在 debug 模式下，从 7s 降到了 500ms）</p>
-<p>在这几年的训练下，KAdBlockEngine 不仅在设计/代码上更加合理、优雅，性能也得到了提升（配合增加的 StringView 和 Tokenizer，我可以说是在这部分代码里真正做到了省掉了不需要的拷贝）；一定程度上可以算是这两三年来进步的见证吧。</p>
-<p>人是一种奇怪的动物，时常会回想过去；在重写 KAdBlockEngine 期间，我不止一次想起自己刚开始实习，以及还在大学的种种瞬间，不只一次觉得：嗯，当初要是能够在努力一点该有多好呢。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="civq62s5d000b1o4nxup6pbec" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gibberish/">gibberish</a></li></ul>
 
     </footer>
   </div>
@@ -560,6 +585,10 @@
       <ul>
         
           <li>
+            <a href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
+          </li>
+        
+          <li>
             <a href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/">避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理</a>
           </li>
         
@@ -583,10 +612,6 @@
             <a href="/2016/07/30/get-correct-system-version-on-windows-10/">在 Windows 10 上获取正确的系统版本</a>
           </li>
         
-          <li>
-            <a href="/2016/07/23/gibberish-on-kadblockengine/">闲扯 KAdBlockEngine</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -596,7 +621,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
     </div>
   </div>
 
@@ -606,7 +631,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
     </div>
   </div>
 
