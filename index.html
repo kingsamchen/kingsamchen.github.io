@@ -68,6 +68,72 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" class="article-date">
+  <time datetime="2016-12-18T15:11:30.000Z" itemprop="datePublished">2016-12-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/">利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近因为要实现某直播姬的自动更新功能，于是就要求客户端能够自动下载安装包，所以就要实现一个简单的支持续传的下载功能。</p>
+<p>因为用了 chromium 的框架，所以自然是基于 chromium net lib 去实现；稍微翻了一下源码目录，最后决定在 <code>net::URLRequest</code> 的基础上自己封装一个 <code>URLDownloader</code>。</p>
+<p>虽然之前某豹浏览器也有恶意魔改过的下载，但是相关功能一直和我没关系，所以这次基本算是 from scratch，期间也因为资料文档基本没有，绕了一些弯路，全靠一边看源码一遍自己通过demo调试去学习…</p>
+<p>为了方便可能的后来人，这里稍作记录。</p>
+<p>完整的demo源码可以看这里：<a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleDownloader" target="_blank" rel="external">SimpleDownloader</a></p>
+<p>把 <code>URLDownloader</code> 的头文件单独摘出来</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> DOWNLOADER_URL_DOWNLOADER_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DOWNLOADER_URL_DOWNLOADER_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"base/basictypes.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"base/files/file_path.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"base/memory/ref_counted.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"base/threading/thread_checker.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"net/base/io_buffer.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"net/url_request/url_request.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"net/url_request/url_request_context.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"url/gurl.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> downloader &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The user of URLDownloader must ensure that the construction and operations of an URLDownloader</span></span><br><span class="line"><span class="comment">// instance are performed on a same thread.</span></span><br><span class="line"><span class="keyword">class</span> URLDownloader : <span class="keyword">public</span> net::URLRequest::Delegate &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">class</span> CompleteCallback &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="keyword">virtual</span> ~CompleteCallback() &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnDownloadSuccess</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnDownloadFailure</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The caller of this constructor must make sure:</span></span><br><span class="line">    <span class="comment">// - `save_path` is writable;</span></span><br><span class="line">    <span class="comment">// - the object `callback` refers to is alive during the entire lifecycle of URLDownloader, since</span></span><br><span class="line">    <span class="comment">//   the class itself doesn't acquire the ownership for the `callback`.</span></span><br><span class="line">    URLDownloader(<span class="keyword">const</span> GURL&amp; url, <span class="keyword">const</span> base::FilePath&amp; save_path, CompleteCallback* callback);</span><br><span class="line"></span><br><span class="line">    ~URLDownloader() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Starts or resumes the download.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Stops the download.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Stop</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnResponseStarted</span><span class="params">(net::URLRequest* request)</span> override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnReadCompleted</span><span class="params">(net::URLRequest* request, <span class="keyword">int</span> bytes_read)</span> override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Saves received network data (stored in `buf_`) to disk write cache, and writes to disk</span></span><br><span class="line">    <span class="comment">// if necessary.</span></span><br><span class="line">    <span class="comment">// It is legal to call this function with 0 passed in as `bytes_received`, when you want to</span></span><br><span class="line">    <span class="comment">// force flushing cache to disk.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SaveReceivedChunk</span><span class="params">(<span class="keyword">int</span> bytes_received, <span class="keyword">bool</span> force_write_to_disk)</span></span>;</span><br><span class="line"></span><br><span class="line">    DISALLOW_COPY_AND_ASSIGN(URLDownloader);</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    GURL url_;</span><br><span class="line">    base::FilePath save_path_;</span><br><span class="line">    base::FilePath tmp_save_path_;</span><br><span class="line">    CompleteCallback* complete_callback_;</span><br><span class="line">    <span class="keyword">size_t</span> downloaded_bytes_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt; disk_write_cache_;</span><br><span class="line">    scoped_refptr&lt;net::IOBuffer&gt; buf_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;net::URLRequestContext&gt; request_context_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;net::URLRequest&gt; request_;</span><br><span class="line">    base::ThreadChecker thread_checker_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125;   <span class="comment">// namespace bililive</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>  <span class="comment">// DOWNLOADER_URL_DOWNLOADER_H_</span></span></span><br></pre></td></tr></table></figure>
+<p>核心只有四个函数：<code>URLRequest::Start()</code>, <code>OnResponseStarted()</code>, <code>URLRequest::Read()</code>，和 <code>OnReadCompleted()</code>。</p>
+<p>这四个函数的 interactions 大概如下：</p>
+<ul>
+<li><code>Start()</code> 执行后内部会调用 <code>OnResponseStarted()</code></li>
+<li>在 <code>OnResponseStarted()</code> 中，如果 request 和 response 的通信都没有什么问题，则要用 <code>Read()</code> 读取接收到的网络 IO 数据，接着调用 <code>OnReadCompleted()</code> 切换状态；这个步骤称之为 initial reading</li>
+<li>在 <code>OnReadCompleted()</code> 中，反复利用 <code>Read()</code> 读取网络数据</li>
+</ul>
+<p><code>Read()</code> 和 <code>OnReadCompleted()</code> 之间有一个容易被忽略的细节： 利用 <code>Read()</code> 从读取网络 IO 数据时</p>
+<ol>
+<li>如果数据立即可用，则 <code>Read()</code> 会正常读取数据</li>
+<li>如果数据当前不可用，则会触发 asynchronous reading，但是 <code>Read()</code> 函数会马上返回；等到底层获取到 IO 数据后，内部自己会调用 <code>OnReadCompleted()</code></li>
+</ol>
+<p>除此之外，还要注意 <code>URLRequest</code> 对象的<strong>构造和操作</strong>必须在同一个线程。</p>
+<p>至于续传，本质就是利用了 HTTP request header 的 range，具体请参考代码。</p>
+<p>最后说一句，如果你的目的是实现一套和服务端 RESTFul API 通信的设施，那么直接使用 <code>net::URLFetcher</code> 是个更好的选择；因为后者是在 <code>net::URLRequest</code> 基础之上针对字符处理加的一个wrapper，屏蔽了具体的 IO data read 细节。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" data-id="ciwuu7mvx001juo4nandthrim" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chromium/">chromium</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/urlrequest/">urlrequest</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-monthly-read-posts-in-nov-2016" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/12/04/monthly-read-posts-in-nov-2016/" class="article-date">
@@ -139,7 +205,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/" data-id="ciwaqz38z000vsw4nsjmlai0r" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/" data-id="ciwuu7mv8000uuo4nrytds75n" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -193,7 +259,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" data-id="ciwaqz38d0007sw4nhwoewfgg" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" data-id="ciwuu7mus000auo4n2zh31tfn" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -248,7 +314,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" data-id="ciwaqz3900010sw4n05hb91h5" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" data-id="ciwuu7mv9000zuo4nxppiyvu1" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -318,7 +384,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="ciwaqz38s000ksw4n5nwpx35h" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="ciwuu7mv4000ouo4nve978zcw" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -380,7 +446,7 @@
 </ol>
 <h3 id="使用上要注意的几个坑"><a href="#使用上要注意的几个坑" class="headerlink" title="使用上要注意的几个坑"></a>使用上要注意的几个坑</h3><p>Disclaimers：因为服务端暂时不支持，考虑到简易性，我在直播姬里用的是进程内抓 dump。</p>
 <p>一个简单靠谱的 demo</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> google_breakpad::ExceptionHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span> kCrashDumpDirName[] = <span class="string">L"crash_dumps"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span> kHintMessage[] = <span class="string">L"我...挂了...囧rz"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// We leak the object on purpose.</span></span><br><span class="line">ExceptionHandler* exception_handler = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">OnMinidumpGenerated</span><span class="params">(<span class="keyword">const</span> wchar_t* dump_path, <span class="keyword">const</span> wchar_t* minidump_id, <span class="keyword">void</span>* context,</span><br><span class="line">                         EXCEPTION_POINTERS* exinfo, MDRawAssertionInfo* assertion, <span class="keyword">bool</span> succeeded)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (succeeded)</span><br><span class="line">    &#123;</span><br><span class="line">        MessageBoxW(<span class="literal">nullptr</span>, kHintMessage, <span class="string">L"Error"</span>, MB_OK);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> succeeded;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">InstallCrashHandler</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="comment">// This is needed for CRT to not show dialog for invalid param</span></span><br><span class="line">    <span class="comment">// failures and instead let the code handle it.</span></span><br><span class="line">    _CrtSetReportMode(_CRT_ASSERT, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::wstring dump_dir_path = SetupCrashDumpDirectory(kCrashDumpDirName);</span><br><span class="line">    exception_handler = <span class="keyword">new</span> ExceptionHandler(dump_dir_path,</span><br><span class="line">                                             <span class="literal">nullptr</span>,</span><br><span class="line">                                             OnMinidumpGenerated,</span><br><span class="line">                                             <span class="literal">nullptr</span>,</span><br><span class="line">                                             ExceptionHandler::HANDLER_ALL,</span><br><span class="line">                                             MiniDumpNormal,</span><br><span class="line">                                             <span class="string">L""</span>,</span><br><span class="line">                                             <span class="literal">nullptr</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;   <span class="comment">// namespace</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> APIENTRY <span class="title">wWinMain</span><span class="params">(HINSTANCE instance, HINSTANCE prev, wchar_t*, <span class="keyword">int</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    InstallCrashHandler();</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">namespace &#123;</span><br><span class="line"></span><br><span class="line">using google_breakpad::ExceptionHandler;</span><br><span class="line"></span><br><span class="line">const wchar_t kCrashDumpDirName[] = L"crash_dumps";</span><br><span class="line">const wchar_t kHintMessage[] = L"我...挂了...囧rz";</span><br><span class="line"></span><br><span class="line">// We leak the object on purpose.</span><br><span class="line">ExceptionHandler* exception_handler = nullptr;</span><br><span class="line"></span><br><span class="line">bool OnMinidumpGenerated(const wchar_t* dump_path, const wchar_t* minidump_id, void* context,</span><br><span class="line">                         EXCEPTION_POINTERS* exinfo, MDRawAssertionInfo* assertion, bool succeeded)</span><br><span class="line">&#123;</span><br><span class="line">    if (succeeded)</span><br><span class="line">    &#123;</span><br><span class="line">        MessageBoxW(nullptr, kHintMessage, L"Error", MB_OK);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return succeeded;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void InstallCrashHandler()</span><br><span class="line">&#123;</span><br><span class="line">    // This is needed for CRT to not show dialog for invalid param</span><br><span class="line">    // failures and instead let the code handle it.</span><br><span class="line">    _CrtSetReportMode(_CRT_ASSERT, 0);</span><br><span class="line"></span><br><span class="line">    std::wstring dump_dir_path = SetupCrashDumpDirectory(kCrashDumpDirName);</span><br><span class="line">    exception_handler = new ExceptionHandler(dump_dir_path,</span><br><span class="line">                                             nullptr,</span><br><span class="line">                                             OnMinidumpGenerated,</span><br><span class="line">                                             nullptr,</span><br><span class="line">                                             ExceptionHandler::HANDLER_ALL,</span><br><span class="line">                                             MiniDumpNormal,</span><br><span class="line">                                             L"",</span><br><span class="line">                                             nullptr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;   // namespace</span><br><span class="line"></span><br><span class="line">int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t*, int)</span><br><span class="line">&#123;</span><br><span class="line">    InstallCrashHandler();</span><br><span class="line">    // ...</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>首先要保证项目的 include directory 中一定要包含 <code>breakpad\src\</code> 这个路径，因为 breakpad 内部代码的 include 是基于这个假设</p>
 <p>只需要在 exe 文件的入口函数（<code>main</code> 或者 <code>WinMain</code>）中设置 breakpad 的 <code>exception handler</code> 即可，哪怕你的项目有很多额外的 DLLs；Handler 是进程全局的，这点由操作系统保证（本来 breakpad 就是基于操作系统提供的 API 做的一个 wrapper）。</p>
 <p>不过要注意在自己的代码中，尤其是用的第三方的 DLL，不要出现用了 <code>SetUnexpectedHandler()</code> 导致 override 了 breakpad 的 handler 的情况。因为这个我被坑过一下午 -‘’-</p>
@@ -392,7 +458,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="ciwaqz3890004sw4nfvnnz461" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="ciwuu7mum0004uo4nlve10n5l" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -484,73 +550,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="ciwaqz38a0005sw4n6nan66co" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="ciwuu7mup0007uo4n5qhhpdth" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rant/">rant</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-get-correct-system-version-on-windows-10" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/30/get-correct-system-version-on-windows-10/" class="article-date">
-  <time datetime="2016-07-30T15:45:38.000Z" itemprop="datePublished">2016-07-30</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/30/get-correct-system-version-on-windows-10/">在 Windows 10 上获取正确的系统版本</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>大约从 Windows 8 开始，微软开始觉得大家之前那种不同系统版本给不同的代码的方式太不和谐了，怎么可以搞 discrimination 呢？要和谐，要有爱！于是把常用的 <code>GetVersionEx()</code> 给标记成了 deprecated，并且建议大家使用另外一套更加政治正确的 version verification API。</p>
-<p>然后就到了 Windows 10，微软发现大家这个版本歧视还是搞得很严重啊，太不和谐了，于是不光把原来的 version verification 给 deprecate 了，甚至 <code>GetVersionEx()</code> 返回的结果都给强行改成和 windows 8.1 一样。</p>
-<p>这下没法简单区分 Windows 8.1 和 Windows 10 了，耶，one Windows, a universal windows platform! Hail Microsoft!</p>
-<p>当然微软还是留了一条后路，如果真的需要获得正确的 Windows 版本，那么就需要给 EXE 挂一个 manifest，往里面加兼容版本的 UUID item。</p>
-<p>但是这样做就非常麻烦，而且似乎就算加了 manifest，程序也得使用正确的 SDK 版本。</p>
-<p>于是就有其他非常规的方式，比如 <code>RtlGetVersion()</code>。</p>
-<p><code>RtlGetVersion()</code> 非常神奇，<code>GetVersionEx()</code> 实际上内部调用的就是这个函数，但是 <code>RtlGetVersion()</code> 不会做额外的模糊版本号的事情。</p>
-<p>这个 API 位于 <em>ntdll.dll</em> 中，所以直接动态调用就好（或者你有 DDK，直接用 DDK 提供的那份声明也可以）。</p>
-<p>于是只需要</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_DLL_FUNCTION(fn, type, dll) \</span><br><span class="line">    auto fn = reinterpret_cast&lt;type&gt;(GetProcAddress(GetModuleHandleW(L##dll), #fn))</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> VersionNumber &#123;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> major_version;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> minor_version;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">GetSystemVersion</span><span class="params">(VersionNumber&amp; version_number)</span> <span class="keyword">noexcept</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">constexpr</span> NTSTATUS kStatusSuccess = <span class="number">0L</span>;</span><br><span class="line">    DECLARE_DLL_FUNCTION(RtlGetVersion, NTSTATUS(WINAPI*)(PRTL_OSVERSIONINFOW), <span class="string">"ntdll.dll"</span>);</span><br><span class="line">    <span class="keyword">if</span> (!RtlGetVersion) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    RTL_OSVERSIONINFOW ovi &#123; <span class="keyword">sizeof</span>(ovi) &#125;;</span><br><span class="line">    <span class="keyword">if</span> (RtlGetVersion(&amp;ovi) != kStatusSuccess) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    version_number.major_version = ovi.dwMajorVersion;</span><br><span class="line">    version_number.minor_version = ovi.dwMinorVersion;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>就可以达到生命的伟大和谐。</p>
-<p>RANT #1: 有另外一种方式的思路是通过获取 <em>kernel32.dll</em> 或其他系统 DLL 的文件版本，比如 chromium 就是这么做的。但是总觉得这种方式太容易玩脱。</p>
-<p>RANT #2: 宏 <code>DECLARE_DLL_FUNCTION</code> 是从某花之前的一篇 <a href="http://flowercode.org/archives/51" target="_blank" rel="external">post</a> 改的。我觉得他给的宏问题太大，实用性比较差。</p>
-<p>API 原型没有必要分离出来，太累赘；如果硬要说分离有什么好处的话，大概就是这些 API 都保存在一个单独的 <em>.h</em> 里，不用自己手写。但是这样又会引入另外一个问题，很容易玩脱违反 ODR，然后打出 GG，<code>extern</code> 都拯救不了。</p>
-<p>其实 <code>DECLARE_DLL_FUNCTION</code> 长现在这个样子有个原因是没发现什么简单有效的方法从函数指针的原型声明中分理处变量名…</p>
-<p>RANT #3: 微软刻意模糊系统版本估计是希望大家尽量走 UWP 的方式，毕竟可以通过链接到不同版本的 SDK 来区分支持的系统，而分发又是直接通过 microsoft app store 完成。但是对于 native code app 来说，这样做简直就是自己挖坑别人跳，快赶上 Apple 一样无赖了。</p>
-<p>Bonus: 欢迎使用 <code>kbase::OSInfo::IsVersionOrGreater()</code> 来解决版本检查，Sample 可以看<a href="https://github.com/kingsamchen/KBase/blob/master/Docs/os_info.md" target="_blank" rel="external">这里</a></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="ciwaqz38j000bsw4n5hedd3x1" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/system-version/">system version</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windows/">windows</a></li></ul>
 
     </footer>
   </div>
@@ -585,6 +590,10 @@
       <ul>
         
           <li>
+            <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/">利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader</a>
+          </li>
+        
+          <li>
             <a href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
           </li>
         
@@ -608,10 +617,6 @@
             <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/">C++ is fine, it&#39;s you that suck</a>
           </li>
         
-          <li>
-            <a href="/2016/07/30/get-correct-system-version-on-windows-10/">在 Windows 10 上获取正确的系统版本</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -631,7 +636,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
     </div>
   </div>
 

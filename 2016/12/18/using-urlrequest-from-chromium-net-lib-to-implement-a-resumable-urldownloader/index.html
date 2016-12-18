@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader | KC的废墟堆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="最近因为要实现某直播姬的自动更新功能，于是就要求客户端能够自动下载安装包，所以就要实现一个简单的支持续传的下载功能。
+因为用了 chromium 的框架，所以自然是基于 chromium net lib 去实现；稍微翻了一下源码目录，最后决定在 net::URLRequest 的基础上自己封装一个 URLDownloader。
+虽然之前某豹浏览器也有恶意魔改过的下载，但是相关功能一直和我没关系，所">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader">
+<meta property="og:url" content="http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/index.html">
+<meta property="og:site_name" content="KC的废墟堆">
+<meta property="og:description" content="最近因为要实现某直播姬的自动更新功能，于是就要求客户端能够自动下载安装包，所以就要实现一个简单的支持续传的下载功能。
+因为用了 chromium 的框架，所以自然是基于 chromium net lib 去实现；稍微翻了一下源码目录，最后决定在 net::URLRequest 的基础上自己封装一个 URLDownloader。
+虽然之前某豹浏览器也有恶意魔改过的下载，但是相关功能一直和我没关系，所">
+<meta property="og:updated_time" content="2016-12-18T15:58:14.328Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader">
+<meta name="twitter:description" content="最近因为要实现某直播姬的自动更新功能，于是就要求客户端能够自动下载安装包，所以就要实现一个简单的支持续传的下载功能。
+因为用了 chromium 的框架，所以自然是基于 chromium net lib 去实现；稍微翻了一下源码目录，最后决定在 net::URLRequest 的基础上自己封装一个 URLDownloader。
+虽然之前某豹浏览器也有恶意魔改过的下载，但是相关功能一直和我没关系，所">
+  
+    <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">KC的废墟堆</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Will you serve in Heaven, or rule in Hell</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" class="article-date">
+  <time datetime="2016-12-18T15:11:30.000Z" itemprop="datePublished">2016-12-18</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>最近因为要实现某直播姬的自动更新功能，于是就要求客户端能够自动下载安装包，所以就要实现一个简单的支持续传的下载功能。</p>
+<p>因为用了 chromium 的框架，所以自然是基于 chromium net lib 去实现；稍微翻了一下源码目录，最后决定在 <code>net::URLRequest</code> 的基础上自己封装一个 <code>URLDownloader</code>。</p>
+<p>虽然之前某豹浏览器也有恶意魔改过的下载，但是相关功能一直和我没关系，所以这次基本算是 from scratch，期间也因为资料文档基本没有，绕了一些弯路，全靠一边看源码一遍自己通过demo调试去学习…</p>
+<p>为了方便可能的后来人，这里稍作记录。</p>
+<p>完整的demo源码可以看这里：<a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleDownloader" target="_blank" rel="external">SimpleDownloader</a></p>
+<p>把 <code>URLDownloader</code> 的头文件单独摘出来</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> DOWNLOADER_URL_DOWNLOADER_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DOWNLOADER_URL_DOWNLOADER_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"base/basictypes.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"base/files/file_path.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"base/memory/ref_counted.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"base/threading/thread_checker.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"net/base/io_buffer.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"net/url_request/url_request.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"net/url_request/url_request_context.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="string">"url/gurl.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> downloader &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The user of URLDownloader must ensure that the construction and operations of an URLDownloader</span></span><br><span class="line"><span class="comment">// instance are performed on a same thread.</span></span><br><span class="line"><span class="keyword">class</span> URLDownloader : <span class="keyword">public</span> net::URLRequest::Delegate &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">class</span> CompleteCallback &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="keyword">virtual</span> ~CompleteCallback() &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnDownloadSuccess</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnDownloadFailure</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The caller of this constructor must make sure:</span></span><br><span class="line">    <span class="comment">// - `save_path` is writable;</span></span><br><span class="line">    <span class="comment">// - the object `callback` refers to is alive during the entire lifecycle of URLDownloader, since</span></span><br><span class="line">    <span class="comment">//   the class itself doesn't acquire the ownership for the `callback`.</span></span><br><span class="line">    URLDownloader(<span class="keyword">const</span> GURL&amp; url, <span class="keyword">const</span> base::FilePath&amp; save_path, CompleteCallback* callback);</span><br><span class="line"></span><br><span class="line">    ~URLDownloader() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Starts or resumes the download.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Stops the download.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Stop</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnResponseStarted</span><span class="params">(net::URLRequest* request)</span> override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnReadCompleted</span><span class="params">(net::URLRequest* request, <span class="keyword">int</span> bytes_read)</span> override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Saves received network data (stored in `buf_`) to disk write cache, and writes to disk</span></span><br><span class="line">    <span class="comment">// if necessary.</span></span><br><span class="line">    <span class="comment">// It is legal to call this function with 0 passed in as `bytes_received`, when you want to</span></span><br><span class="line">    <span class="comment">// force flushing cache to disk.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SaveReceivedChunk</span><span class="params">(<span class="keyword">int</span> bytes_received, <span class="keyword">bool</span> force_write_to_disk)</span></span>;</span><br><span class="line"></span><br><span class="line">    DISALLOW_COPY_AND_ASSIGN(URLDownloader);</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    GURL url_;</span><br><span class="line">    base::FilePath save_path_;</span><br><span class="line">    base::FilePath tmp_save_path_;</span><br><span class="line">    CompleteCallback* complete_callback_;</span><br><span class="line">    <span class="keyword">size_t</span> downloaded_bytes_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt; disk_write_cache_;</span><br><span class="line">    scoped_refptr&lt;net::IOBuffer&gt; buf_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;net::URLRequestContext&gt; request_context_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;net::URLRequest&gt; request_;</span><br><span class="line">    base::ThreadChecker thread_checker_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125;   <span class="comment">// namespace bililive</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>  <span class="comment">// DOWNLOADER_URL_DOWNLOADER_H_</span></span></span><br></pre></td></tr></table></figure>
+<p>核心只有四个函数：<code>URLRequest::Start()</code>, <code>OnResponseStarted()</code>, <code>URLRequest::Read()</code>，和 <code>OnReadCompleted()</code>。</p>
+<p>这四个函数的 interactions 大概如下：</p>
+<ul>
+<li><code>Start()</code> 执行后内部会调用 <code>OnResponseStarted()</code></li>
+<li>在 <code>OnResponseStarted()</code> 中，如果 request 和 response 的通信都没有什么问题，则要用 <code>Read()</code> 读取接收到的网络 IO 数据，接着调用 <code>OnReadCompleted()</code> 切换状态；这个步骤称之为 initial reading</li>
+<li>在 <code>OnReadCompleted()</code> 中，反复利用 <code>Read()</code> 读取网络数据</li>
+</ul>
+<p><code>Read()</code> 和 <code>OnReadCompleted()</code> 之间有一个容易被忽略的细节： 利用 <code>Read()</code> 从读取网络 IO 数据时</p>
+<ol>
+<li>如果数据立即可用，则 <code>Read()</code> 会正常读取数据</li>
+<li>如果数据当前不可用，则会触发 asynchronous reading，但是 <code>Read()</code> 函数会马上返回；等到底层获取到 IO 数据后，内部自己会调用 <code>OnReadCompleted()</code></li>
+</ol>
+<p>除此之外，还要注意 <code>URLRequest</code> 对象的<strong>构造和操作</strong>必须在同一个线程。</p>
+<p>至于续传，本质就是利用了 HTTP request header 的 range，具体请参考代码。</p>
+<p>最后说一句，如果你的目的是实现一套和服务端 RESTFul API 通信的设施，那么直接使用 <code>net::URLFetcher</code> 是个更好的选择；因为后者是在 <code>net::URLRequest</code> 基础之上针对字符处理加的一个wrapper，屏蔽了具体的 IO data read 细节。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" data-id="ciwuu7mvx001juo4nandthrim" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chromium/">chromium</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/urlrequest/">urlrequest</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2016/12/04/monthly-read-posts-in-nov-2016/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Monthly Read Posts in Nov 2016</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/">利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader</a>
+          </li>
+        
+          <li>
+            <a href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
+          </li>
+        
+          <li>
+            <a href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/">避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理</a>
+          </li>
+        
+          <li>
+            <a href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/">推荐 CSAPP:3e 课程视频以及 Bomb Lab</a>
+          </li>
+        
+          <li>
+            <a href="/2016/10/03/install-ycm-plugin-on-WSL/">在 WSL 的 VIM 里安装 YCM</a>
+          </li>
+        
+          <li>
+            <a href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/">在 Windows 上构建并接入最新发布分支的 breakpad</a>
+          </li>
+        
+          <li>
+            <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/">C++ is fine, it&#39;s you that suck</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title">Blog Rolls</h3>
+    <div class="widget">
+    <ul>
+      <li><a href="http://www.daozhihun.com/">刀之魂 | 大木老师成长日记</a></li>
+      <li><a href="http://blog.mistysoul.net/">Sean | 大木老师的私人保姆</a></li>
+      <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
+      <li><a href="https://blog.chichou.me/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://thecjw.0ginr.com/blog/">TheCJW | 爱弹棉花的小伟</a></li>
+      <li><a href="http://newbiecoder.0ginr.com/blog/">Newbie Coder | 萌萌哒的炉子</a></li>
+      <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
+      <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
+      <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
+      <li><a href="http://www.tolower.net/">Lower | 喊大木大哥的小弟</a></li>
+      <li><a href="http://mrljdx.com/">Mrljdx | 大保健老司机</a></li>
+    </ul>
+  </div>
+</div>
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2016 Kingsley Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'kingsamchen-github-io';
+  
+  var disqus_url = 'http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} 
+}); 
+</script>
+<script type="text/javascript"
+   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  </div>
+</body>
+</html>
