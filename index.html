@@ -68,6 +68,108 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-monthly-read-posts-in-dec-2016" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/01/04/monthly-read-posts-in-dec-2016/" class="article-date">
+  <time datetime="2017-01-03T16:39:01.000Z" itemprop="datePublished">2017-01-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/01/04/monthly-read-posts-in-dec-2016/">Monthly Read Posts in Dec 2016</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://ithare.com/c-performance-common-wisdoms-and-common-wisdoms/" target="_blank" rel="external">C++ Performance: Common Wisdoms and Common “Wisdoms”</a></p>
+<p>The post discusses some oftenly-argued performance related aspects of C++.</p>
+<p>Topics/objects include:</p>
+<ul>
+<li>C++ Exceptions – (Almost-)Zero-Cost until Thrown</li>
+<li>Smart Pointers and STL: Allocations are Still Evil</li>
+<li>Using boost:: – Case by Case and Only If You Do Need It</li>
+<li>Polymorphism – Two-Fold Impact</li>
+<li>RTTI – Can be Easily Avoided Most of the Time</li>
+<li>On Branch (mis)-Predictions and Pipeline Stalls</li>
+<li>On inline asm and SSE</li>
+<li>On inlines and force-inlines</li>
+<li>On templates</li>
+<li>On compiler flags</li>
+<li>On Manual Loop Unrolling</li>
+<li>“For-free” Optimizations a.k.a. Avoiding Premature Pessimization</li>
+</ul>
+<p>All suggestion based on a fundamental pre-requisite: Three things Really Matter for performance.</p>
+<p>The first one is Algorithm, the second one is your code being Non-Blocking, and the third one is Data Locality.</p>
+<p>The rest of the tricks, while potentially useful, should be used only on case-by-case basis, when a bottleneck is identified. Otherwise it will be a Premature Optimisation.</p>
+<p>Note: 作者是一个游戏开发者，上述观点也是结合游戏开发阐述的，因此对相当一部分高性能应用也有参考意义。</p>
+<hr>
+<p><a href="http://nvie.com/posts/iterators-vs-generators/" target="_blank" rel="external">Iterables vs. Iterators vs. Generators</a></p>
+<p>Key points:</p>
+<p>Anything that <strong>can return an iterator</strong> (usually via overriding <code>__iter__()</code>) is <em>iterable</em>.</p>
+<p>Anything that <strong>can be iterated</strong> (usually via overriding <code>__next__()</code>, or overriding <code>next()</code> in python 2.x) is an <em>iterator</em>.</p>
+<p>A generator is a <strong>special kind of iterator</strong>; it make you avoid writing <code>__netxt__()</code> and <code>__iter__()</code>.</p>
+<p>Two types of generator:</p>
+<ul>
+<li>Generator function: A function with yield to return value, the return value of the functio call is a generator</li>
+<li>Generator expression: A expression using comprehension-syntax</li>
+</ul>
+<p>Note：有 C++ STL 背景基本看这种问题都秒懂…</p>
+<hr>
+<p><a href="http://michael-j.net/2016/12/15/%E6%9E%B6%E6%9E%84%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E8%85%90%E5%8C%96/" target="_blank" rel="external">架构为什么会腐化</a></p>
+<p><strong>文中观点</strong></p>
+<ul>
+<li>不理解项目业务价值，对于实际需求把握不明确</li>
+<li>过度设计，导致扩展性差</li>
+<li>懒于重构</li>
+</ul>
+<p><strong>个人观点</strong></p>
+<ul>
+<li>明确/理解需求是第一位</li>
+<li>过度设计导致扩展性差存疑，实际上过度设计往往来源于需求把握不准</li>
+<li>初始架构设计很重要，对项目领导者要求较高</li>
+<li>重构可参考最小滑坡原则（每次离开一段代码，代码都要比刚接手时更清晰整洁）</li>
+</ul>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2016/06/29/competing-constructors/" target="_blank" rel="external">Competing constructors</a></p>
+<p>Competing constructor: two constructors that would take the same sequence of arguments (if one is somehow made invisible), but also that they do different, incompatible things.</p>
+<p>Main observations:</p>
+<ul>
+<li>Competing functions complicate resolution for human beings</li>
+<li>Don’t write competing constructors, or even competing functions.</li>
+<li>Take care of class template function, one instantiation may turn into a competing function.</li>
+<li>Use tag with overload function can benefit from more clearer semantics</li>
+</ul>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/01/04/monthly-read-posts-in-dec-2016/" data-id="cixhr4ryr000ot04n85hi0lc2" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/01/04/monthly-read-posts-in-dec-2016/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/iterator/">iterator</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/performance/">performance</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" class="article-date">
@@ -120,7 +222,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" data-id="ciwuu7mvx001juo4nandthrim" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" data-id="cixhr4rzm001ft04nteal2yko" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -205,7 +307,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/" data-id="ciwuu7mv8000uuo4nrytds75n" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/" data-id="cixhr4ryq000lt04n7ot5ya8m" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -259,7 +361,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" data-id="ciwuu7mus000auo4n2zh31tfn" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" data-id="cixhr4rye0009t04nvipdx356" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -314,7 +416,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" data-id="ciwuu7mv9000zuo4nxppiyvu1" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" data-id="cixhr4rz90011t04ndqhydd8e" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -384,7 +486,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="ciwuu7mv4000ouo4nve978zcw" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="cixhr4ryt000st04n1ryusmp8" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -446,7 +548,7 @@
 </ol>
 <h3 id="使用上要注意的几个坑"><a href="#使用上要注意的几个坑" class="headerlink" title="使用上要注意的几个坑"></a>使用上要注意的几个坑</h3><p>Disclaimers：因为服务端暂时不支持，考虑到简易性，我在直播姬里用的是进程内抓 dump。</p>
 <p>一个简单靠谱的 demo</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">namespace &#123;</span><br><span class="line"></span><br><span class="line">using google_breakpad::ExceptionHandler;</span><br><span class="line"></span><br><span class="line">const wchar_t kCrashDumpDirName[] = L"crash_dumps";</span><br><span class="line">const wchar_t kHintMessage[] = L"我...挂了...囧rz";</span><br><span class="line"></span><br><span class="line">// We leak the object on purpose.</span><br><span class="line">ExceptionHandler* exception_handler = nullptr;</span><br><span class="line"></span><br><span class="line">bool OnMinidumpGenerated(const wchar_t* dump_path, const wchar_t* minidump_id, void* context,</span><br><span class="line">                         EXCEPTION_POINTERS* exinfo, MDRawAssertionInfo* assertion, bool succeeded)</span><br><span class="line">&#123;</span><br><span class="line">    if (succeeded)</span><br><span class="line">    &#123;</span><br><span class="line">        MessageBoxW(nullptr, kHintMessage, L"Error", MB_OK);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return succeeded;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void InstallCrashHandler()</span><br><span class="line">&#123;</span><br><span class="line">    // This is needed for CRT to not show dialog for invalid param</span><br><span class="line">    // failures and instead let the code handle it.</span><br><span class="line">    _CrtSetReportMode(_CRT_ASSERT, 0);</span><br><span class="line"></span><br><span class="line">    std::wstring dump_dir_path = SetupCrashDumpDirectory(kCrashDumpDirName);</span><br><span class="line">    exception_handler = new ExceptionHandler(dump_dir_path,</span><br><span class="line">                                             nullptr,</span><br><span class="line">                                             OnMinidumpGenerated,</span><br><span class="line">                                             nullptr,</span><br><span class="line">                                             ExceptionHandler::HANDLER_ALL,</span><br><span class="line">                                             MiniDumpNormal,</span><br><span class="line">                                             L"",</span><br><span class="line">                                             nullptr);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;   // namespace</span><br><span class="line"></span><br><span class="line">int APIENTRY wWinMain(HINSTANCE instance, HINSTANCE prev, wchar_t*, int)</span><br><span class="line">&#123;</span><br><span class="line">    InstallCrashHandler();</span><br><span class="line">    // ...</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> google_breakpad::ExceptionHandler;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span> kCrashDumpDirName[] = <span class="string">L"crash_dumps"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span> kHintMessage[] = <span class="string">L"我...挂了...囧rz"</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// We leak the object on purpose.</span></span><br><span class="line">ExceptionHandler* exception_handler = <span class="literal">nullptr</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">OnMinidumpGenerated</span><span class="params">(<span class="keyword">const</span> wchar_t* dump_path, <span class="keyword">const</span> wchar_t* minidump_id, <span class="keyword">void</span>* context,</span><br><span class="line">                         EXCEPTION_POINTERS* exinfo, MDRawAssertionInfo* assertion, <span class="keyword">bool</span> succeeded)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (succeeded)</span><br><span class="line">    &#123;</span><br><span class="line">        MessageBoxW(<span class="literal">nullptr</span>, kHintMessage, <span class="string">L"Error"</span>, MB_OK);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> succeeded;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">InstallCrashHandler</span><span class="params">()</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    <span class="comment">// This is needed for CRT to not show dialog for invalid param</span></span><br><span class="line">    <span class="comment">// failures and instead let the code handle it.</span></span><br><span class="line">    _CrtSetReportMode(_CRT_ASSERT, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::wstring dump_dir_path = SetupCrashDumpDirectory(kCrashDumpDirName);</span><br><span class="line">    exception_handler = <span class="keyword">new</span> ExceptionHandler(dump_dir_path,</span><br><span class="line">                                             <span class="literal">nullptr</span>,</span><br><span class="line">                                             OnMinidumpGenerated,</span><br><span class="line">                                             <span class="literal">nullptr</span>,</span><br><span class="line">                                             ExceptionHandler::HANDLER_ALL,</span><br><span class="line">                                             MiniDumpNormal,</span><br><span class="line">                                             <span class="string">L""</span>,</span><br><span class="line">                                             <span class="literal">nullptr</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;   <span class="comment">// namespace</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> APIENTRY <span class="title">wWinMain</span><span class="params">(HINSTANCE instance, HINSTANCE prev, wchar_t*, <span class="keyword">int</span>)</span></span><br><span class="line"></span>&#123;</span><br><span class="line">    InstallCrashHandler();</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>首先要保证项目的 include directory 中一定要包含 <code>breakpad\src\</code> 这个路径，因为 breakpad 内部代码的 include 是基于这个假设</p>
 <p>只需要在 exe 文件的入口函数（<code>main</code> 或者 <code>WinMain</code>）中设置 breakpad 的 <code>exception handler</code> 即可，哪怕你的项目有很多额外的 DLLs；Handler 是进程全局的，这点由操作系统保证（本来 breakpad 就是基于操作系统提供的 API 做的一个 wrapper）。</p>
 <p>不过要注意在自己的代码中，尤其是用的第三方的 DLL，不要出现用了 <code>SetUnexpectedHandler()</code> 导致 override 了 breakpad 的 handler 的情况。因为这个我被坑过一下午 -‘’-</p>
@@ -458,7 +560,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="ciwuu7mum0004uo4nlve10n5l" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="cixhr4ryb0007t04n5pk8kq2j" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -472,102 +574,10 @@
 
 
   
-    <article id="post-cpp-is-fine-it-is-you-that-suck" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/" class="article-date">
-  <time datetime="2016-09-03T09:10:39.000Z" itemprop="datePublished">2016-09-03</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/">C++ is fine, it&#39;s you that suck</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这篇主要内容是吐槽，干货不多。</p>
-<p>曾经我以为只要是我设计的代码结构里，基本不会碰到需要 multiple inheritance 的情况，更不用说需要 virtual inheritance，结果没想到这周就被啪啪啪打脸了。</p>
-<p>起因在于我要为底层的 obs properties 体系设计一个 wrapper，为上层提供类似的等价物。</p>
-<p>properties 描述了一个 obs source 所具备的特性集合，不同的 obs source 拥有不同的 properties；而 properties 实质上又是一个由众多不同类型的 property 构成的集合，因此不同类型的 property 才是操作的基本单位。</p>
-<p>一个 source 的 properties 可能实际上包含：</p>
-<ul>
-<li>描述数值类型的 int-property or float-property</li>
-<li>描述文字信息的 text-property</li>
-<li>描述一系列子属性的 list-property</li>
-<li>etc.</li>
-</ul>
-<p>但是蛋疼的地方在于，在 obs core 这一层，逻辑上不同类型的 property 却具有相同类型的数据类型，都由 <code>obs_property_t</code> 来表示；</p>
-<p>于是，除了通吃的诸如 <code>get_name()</code>, <code>get_description()</code> 操作之外，obs 还提供了返回具体类型的函数接口，以及分别针对某个类型的一组操作函数接口。</p>
-<p>考虑到几个原则</p>
-<ul>
-<li>proxy layer 本身是一个屏蔽底层细节的模块，只能在边界暴露必要的接口</li>
-<li>properties 要反映出是 property 的序列容器（能够便利定位到某个 property）</li>
-<li>property 无论是共有的操作还是特定的操作都要暴露给外界，并且要屏蔽底层实现 property 的细节</li>
-</ul>
-<p>最适合我的实现反而是拥有如下两条 hierarchical path 的多继承设计</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">                 Property [pure]</span><br><span class="line">                 /        \</span><br><span class="line">                /          \</span><br><span class="line">SpecificProperty[pure]     PropertyImpl [实现基础操作，兼容 properties 的存储]</span><br><span class="line">                \          /</span><br><span class="line">                 \        /</span><br><span class="line">             SpecificPropertyImpl</span><br></pre></td></tr></table></figure>
-<p>左侧两个基类都是 pure abstract class，负责对外暴露接口，右侧的 impl class 是在 proxy layer 中的实际类型。</p>
-<p>由于考虑到 <em>properties contains a series of property</em> 的事实，<code>PropertyImpl</code> 实际上对外表现出值类型语义（嗯哼，我才不会说我硬生生的在另外的 <code>properties</code> wrapper 上给加上了迭代器支持…）。</p>
-<p>上面继承出现了菱形继承，于是 virtual inheritance 就进来了，不然 <code>Property</code> 的析构函数就有两份，并且还会执行两次。</p>
-<p>考虑上层在某些时候需要从 <code>Property</code> 获得更为具体的 <code>SpecificProperty</code>，以执行一些特定的属性操作，这个时候就需要利用 <code>dynamic_cast</code> 做一些 down-cast。</p>
-<p>然而…..这是不可能的，因为整个程序是基于 chromium 的框架开发，而 chromium 强制把 RTTI 关闭了…</p>
-<p>于是一个晚上加上一个白天，最后终于想出一个 workaround 给绕了过去…而在构想最终的 workaround 期间，我甚至有冲动要自己艹 memory layout 来计算偏移…</p>
-<p>关闭 RTTI 是一个非常具有代表性的行为，和多重继承，虚继承类似，很多人认为这些东西是非常 evil 的；因为他们不光带来了性能开销，并且实际作用都可以藉由各种 workaround 实现。于是先把你的设计批判一番，再接着滔滔不绝的给你讲解各种可能可以用得上的 idioms…</p>
-<p>然而，工程设计是非常 non-trivial 的，现实世界是非常 cruel 的，你永远不知道你面临的会是什么问题，尤其是遇到你的 code base 中存在来源于其他不受控制的代码的时候。</p>
-<p>或许是对这种人已经感到了厌倦，甚至是无语，Bjarne Stroustrup 特意在他的 FAQ 里提到了这么两点：</p>
-<ul>
-<li>language-supported inheritance is typically superior to workarounds for ease of programming, for detecting logical problems, for maintainability, and often for performance <a href="https://isocpp.org/wiki/faq/multiple-inheritance#mi-needed" target="_blank" rel="external">FAQ</a></li>
-<li>It <em>really</em> bothers me when people think they know what’s best for <em>your</em> problem even though they’ve never seen <em>your</em> problem!! How can anybody possibly know that multiple inheritance won’t help <em>you</em> accomplish <em>your</em> goals without knowing <em>your</em> goals?!?!?!?!!! <a href="https://isocpp.org/wiki/faq/multiple-inheritance#mi-not-evil" target="_blank" rel="external">FAQ</a></li>
-</ul>
-<p>C++ 之所以发展成今天这样，成为一个 multi-paradigm 的语言，本就来源于 BS 认为世界太过 undeterministic，依靠单一的范式很难精准有效的解决大部分问题。</p>
-<p>回到前面 RTTI 的问题，十来年前，各大主流编译器 （MSVC, GCC 等）是默认关闭 RTTI 的，理由是 for better performance；而现在，RTTI 的是默认打开的，这至少意味着主流编译器认为 RTTI 所带来的 side-effect penalty 已经是 negligible。</p>
-<p>打开 RTTI 的副作用是什么呢？所有 <strong>polymorphic class</strong> 的 vtable 多了一个 slot 专门存放类型信息。</p>
-<p><em>If you don’t want to use a feature, just don’t use it</em></p>
-<p>相较之下，禁用异常就真的是非常不理智的行为了。</p>
-<p>更重要的，不要因为存在某个 feature 就不明真相的乱用，掉坑里了又愤愤不平的搞个大新闻，四处宣扬这个 feature 简直是 shit，并且 C++ 是 a pile of shit。</p>
-<p><strong><em>Remember, C++ is fine, it is you that suck</em></strong></p>
-<h3 id="Bonus"><a href="#Bonus" class="headerlink" title="Bonus"></a>Bonus</h3><p>最后贴两个 presentation，分别是 Bjarne Stroustrup 和 Herb Sutter 在 CppCon 2015 上的分享。</p>
-<ul>
-<li><a href="https://www.youtube.com/watch?v=1OEu9C51K2A" target="_blank" rel="external">Bjarne Stroustrup: Writing Good C++ 14</a></li>
-<li><a href="https://www.youtube.com/watch?v=hEx5DNLWGgA" target="_blank" rel="external">Herb Sutter: Writing Good C++ 14 By Default</a></li>
-</ul>
-<p>作为开篇分享，这两个 talks 应该说是为 write moder c++ programs 奠定了一个基调，里面对 resource ownership, type safety, data-safety 都做了非常精彩的叙述，并且还联手提炼了一个 C++ Core Guidelines 出来。</p>
-<p>当然里面也有各种私货，例如 BS 吐槽 xx coding style，BS 推销 VS 的静态分析功能…</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="ciwuu7mup0007uo4n5qhhpdth" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rant/">rant</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
   </nav>
 </section>
         
@@ -588,6 +598,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/01/04/monthly-read-posts-in-dec-2016/">Monthly Read Posts in Dec 2016</a>
+          </li>
         
           <li>
             <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/">利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader</a>
@@ -613,10 +627,6 @@
             <a href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/">在 Windows 上构建并接入最新发布分支的 breakpad</a>
           </li>
         
-          <li>
-            <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/">C++ is fine, it&#39;s you that suck</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -626,7 +636,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
     </div>
   </div>
 
@@ -636,7 +646,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
     </div>
   </div>
 
@@ -669,7 +679,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2016 Kingsley Chen<br>
+      &copy; 2017 Kingsley Chen<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
