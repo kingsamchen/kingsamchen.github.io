@@ -68,6 +68,200 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-monthly-read-posts-in-nov-2016" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/12/04/monthly-read-posts-in-nov-2016/" class="article-date">
+  <time datetime="2016-12-04T13:53:00.000Z" itemprop="datePublished">2016-12-04</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64" target="_blank" rel="external">Stack Frame Layout on X86-64</a></p>
+<p><strong>Main observations</strong></p>
+<p>For AMD64 X64 ABI compiliant platforms (such as Linux), the major changes include:</p>
+<ul>
+<li>Introduces a red-zone storage area on the stack</li>
+<li>Officially makes frame pointer explicitly optional</li>
+</ul>
+<p>For Windows X64 ABI(though depictated in supplementary):</p>
+<ul>
+<li>No red-zone; instead, a pre-allocated home-space is enforced for every function call</li>
+<li>Cleanup of old calling convention legacy; no more worry about cdecl/fastcall/stdcall etc.</li>
+</ul>
+<p><a href="http://www.golgi.io/security-ssl-tls/" target="_blank" rel="external">Understanding Security in IoT: SSL/TLS</a><br><a href="http://insights.thoughtworkers.org/talk-about-https/" target="_blank" rel="external">我也想来谈谈HTTPS</a></p>
+<p><strong>Why HTTPS</strong></p>
+<p>Why HTTP is not secure?</p>
+<p>Because it transports information in plain text and with no anti-eavesdroping protection.</p>
+<p><strong>How does it work</strong></p>
+<p>After TCP connection is established, the client and server will futher start TLS/SSL handshake:</p>
+<ol>
+<li>Client-Hello</li>
+<li>Server-Hello</li>
+<li>Authentication and Key Exchange</li>
+<li>Server-Finish</li>
+<li>Client-Finish</li>
+</ol>
+<p><strong>Extra Bonus</strong></p>
+<p>How to use openssl for https.</p>
+<p>帧哥在他的<a href="http://blog.syscallx.com" target="_blank" rel="external">技术博客分站</a>上有三篇和 TLS/SSL 协议实现相关的 posts，可以放到下个月的 reading list 里</p>
+<p><a href="http://thereignn.ghost.io/on-dry-and-the-cost-of-wrongful-abstractions/" target="_blank" rel="external">ON DRY AND THE COST OF WRONGFUL ABSTRACTIONS</a></p>
+<p><strong>Insight</strong></p>
+<p>Duplicating code sometimes can be a good thing (when the cost imposed by abstractions is too high); namely, context matters.</p>
+<p><strong>Reasons</strong></p>
+<p>Programmers spend far more time reading code (to understand logic behind) than writing code.</p>
+<p>Abstractions cut both ways: every abstraction comes at a cost.</p>
+<p>Every abstraction imposes an extra layer of knowledge, which places cognitive load on brain, and in turn, increases the time spent on understanding that piece of code.</p>
+<p>In some extreme cases(everything is encapsulated in abstractions), the abstraction lost its value, and became a wrongful one.</p>
+<p><strong>Conclusion</strong></p>
+<p>Always abstract if the cost of abstraction does not surpass the cost of duplicating code.</p>
+<p>But, it’s just hard to get it right in real practice.</p>
+<p><strong>Extra Comments</strong></p>
+<p>之前看过一篇类似的 post，标题大概是 <em>dependency versus redundancy</em>，印象中里面叙述的观点比这边更加的具体。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/" data-id="cizr73ih1001fwo4nuz0l501v" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/DRY/">DRY</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/https/">https</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" class="article-date">
+  <time datetime="2016-11-20T04:30:16.000Z" itemprop="datePublished">2016-11-20</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/">避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h3><p>某个小朋友（虽然和我同年同届…）写代码时不注意，出现未知错误，但是即使调试器启用所有断点选项，也并没有断在出现错误的地方，而是直接进入了我写的 crash handler。</p>
+<h3 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h3><p>在调用会出现错误的函数前加入</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*<span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>*&gt;(<span class="number">0x0</span>) = <span class="number">0xDEADBEEF</span>;</span><br></pre></td></tr></table></figure>
+<p>调试运行，debugger 成功断下；说明相关功能均正常，问题应该只和该函数产生的错误有关。</p>
+<p>打开 crash handler 生成的 dump 文件，设置符号表，发现错误发生原因是： <code>vector::operator[]</code> 访问下标越界，但是该错误直接触发 crash handler</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>去掉 client 安装 crash handler 前的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_CrtSetReportMode(_CRT_ASSERT, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>即可解决问题。</p>
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>因为标准规定 <code>vector::operator[]</code> 操作不做 bounds checking，有问题情况下直接导致 undefined behavior；MSVC 为了更快诊断问题，Debug 模式下会对这个操作进行 CRT ASSERT。</p>
+<p>而 <code>_CrtSetReportMode()</code> 屏蔽了 CRT ASSERT，所以直接进入了 crash handler。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" data-id="cizr73ig5000bwo4nm776feq6" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/operator/">operator[]</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-recommend-csapp-3e-course-video-and-bomb-lab" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" class="article-date">
+  <time datetime="2016-11-19T04:26:19.000Z" itemprop="datePublished">2016-11-19</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/">推荐 CSAPP:3e 课程视频以及 Bomb Lab</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>经过差不多 7 年时间（2008 ~ 2015），CSAPP 终于出了 3rd edition；根据官方的 changelog，新版全面用 x64 的体系结构去替代了旧版的 ia-32。</p>
+<p>不管手头有没有第三版的书（讲道理其实挺贵的，机工的翻译版 2016/12 会发行，但是不知道英文版/影印版什么时候发），课程的在线视频都是很好的一个补充手段。</p>
+<p>视频地址：<a href="https://scs.hosted.panopto.com/Panopto/Pages/Sessions/List.aspx#folderID=%22b96d90ae-9871-4fae-91e2-b1627b43e25e%22&amp;maxResults=10&amp;folderQuery=%22introduction%20to%20computer%20system%22&amp;page=3" target="_blank" rel="external">csapp:3e coruse videos</a></p>
+<p><strong>温馨提示：需要梯子 需要梯子 需要梯子</strong></p>
+<p>另外顺手强烈建议尝试一下课程提供的 labs，例如前两天在玩的 bomb lab，简直是专门量身为 chapter 3 相关内容定制的，可以迅速帮助学习者熟悉汇编和最基本的逆向知识。</p>
+<p>与此形成强烈反差的是国内高校的课程和训练方式，简直何厚铧。</p>
+<p>labs 地址：<a href="http://csapp.cs.cmu.edu/3e/labs.html" target="_blank" rel="external">csapp:3e labs</a></p>
+<p><strong>（再次）温馨提示：需要梯子 需要梯子 需要梯子</strong></p>
+<p>最后贴一张 bomb lab 通关截图</p>
+<p><img src="/img/csapp_bomb_lab.png" alt=""></p>
+<p>（自白：前四关我真的是非常认真的玩的，后面两关实在太长了，<code>disas</code> 出来的内容都要好机屏幕才能显示完，实在没耐心了就直接“眼算栈平衡，手改RIP”给过去了…</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" data-id="cizr73ih1001iwo4nt1l59mxv" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/csapp/">csapp</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-install-ycm-plugin-on-WSL" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/10/03/install-ycm-plugin-on-WSL/" class="article-date">
@@ -124,7 +318,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="cixw3m5jh000sw44naniei8yl" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="cizr73igl000ywo4nfyfwlziv" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -198,7 +392,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="cixw3m5j10009w44nnpnnyhin" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="cizr73igl000kwo4ngudo1wjw" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -290,7 +484,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cixw3m5j1000bw44nsl3kz8qe" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cizr73igl000fwo4n476d2dgh" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -351,213 +545,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="cixw3m5j1000jw44nqfq1bsmb" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="cizr73igl000hwo4nu9j9nt8x" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/system-version/">system version</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windows/">windows</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-gibberish-on-kadblockengine" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/23/gibberish-on-kadblockengine/" class="article-date">
-  <time datetime="2016-07-23T08:52:55.000Z" itemprop="datePublished">2016-07-23</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/CODE-LIFE/">CODE-LIFE</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/23/gibberish-on-kadblockengine/">闲扯 KAdBlockEngine</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>几天前给 <a href="https://github.com/kingsamchen/KAdBlockEngine" target="_blank" rel="external">KAdBlockEngine</a> 加上了 README 之后，这个 repo 算是正式的结了。</p>
-<p>对别人来说，这只是一个很普通的 repo；但是对我而言，却意义重大。</p>
-<p>3年前人生第一次实习，最主要的任务就是重写某浏览器的广告过滤引擎；那大概是我第一次写真实产品的代码。</p>
-<p>虽然之前几年在大学里看了一些书，写了一些小打小闹的代码，但是由于还不够努力的缘故，那几年的训练并没有让我形成工程实践相关的思想和认知；而当时的 AdFilterEngine，则是我第一个有意识的，开始试图形成自己的方法论的项目。</p>
-<p>觉醒总伴随着代价，如果以现在的认知去审视 AdFilterEngine 的设计和代码，会发现许多 twisted thoughts 的痕迹，但是这些都无法掩盖 AdFilterEngine 是我职业道路上的一个非常重要的起点。而起点过后，则是非常迅速的能力上的提升。</p>
-<p>（这里要感谢当时浏览器团队的那帮同事，共事的那段时间是我职业生涯非常重要的一段时间）</p>
-<p>在后来的一段时间里，我有多次想过重写这部分代码，但都未能付诸行动，或许是恐惧自己达不到当时的期许吧。</p>
-<p>转眼到今年年初离职，离开北京来到上海，我觉得自己的人生怎么也算过渡到一个新的阶段了，于是内心又开始惊起重写 AdFilterEngine 的波澜，不同的是，this time, I took the shot，于是就有了 KAdBlockEngine。</p>
-<p>我的第一个提交发生在4月9号，最后一个提交（加上 README）发生在7月19号。</p>
-<p>期间断断续续地提交了一些代码，让我有足够的时间去构思设计；并且在重写过程中，因为一些设计需求，我针对 <a href="https://github.com/kingsamchen/KBase" target="_blank" rel="external">kbase</a> 的几个模块也同时做了重构。</p>
-<p>首先是为了（更好的）处理文件路径，重构了 <a href="https://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/">Path</a>。</p>
-<p>接着为了更能够高效的从规则文件中抽出规则文本，以及简化一些规则文本的预处理，加人了 <a href="https://kingsamchen.github.io/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">StringView/Tokenizer</a>。</p>
-<p>考虑到对 filter 的序列化保存，避免每次都要重新解析规则文本，重构了 Pickle；并且在过程中<a href="https://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/">加深了对 resource ownership 的理解</a>。</p>
-<p>（而序列化让一个 filter 的初始化时间，在 debug 模式下，从 7s 降到了 500ms）</p>
-<p>在这几年的训练下，KAdBlockEngine 不仅在设计/代码上更加合理、优雅，性能也得到了提升（配合增加的 StringView 和 Tokenizer，我可以说是在这部分代码里真正做到了省掉了不需要的拷贝）；一定程度上可以算是这两三年来进步的见证吧。</p>
-<p>人是一种奇怪的动物，时常会回想过去；在重写 KAdBlockEngine 期间，我不止一次想起自己刚开始实习，以及还在大学的种种瞬间，不只一次觉得：嗯，当初要是能够在努力一点该有多好呢。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="cixw3m5j1000mw44nmfp8mscn" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gibberish/">gibberish</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-do-not-intermingle-owner-with-view-semantics" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/10/do-not-intermingle-owner-with-view-semantics/" class="article-date">
-  <time datetime="2016-07-10T03:08:00.000Z" itemprop="datePublished">2016-07-10</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/10/do-not-intermingle-owner-with-view-semantics/">避免在类设计上混合 Owner 及 View 语义</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>这个论断来自于前段时间重构 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/pickle.h" target="_blank" rel="external">pickle</a> 时的想法。</p>
-<h2 id="The-Big-Picture"><a href="#The-Big-Picture" class="headerlink" title="The Big Picture"></a>The Big Picture</h2><p><code>Pickle</code> 是一个二进制序列化设施，内部维护一块 buffer 用以保存被序列化的二进制数据，语义上看，一个 <code>Pickle</code> 对象对内部 buffer 具有无争议的 resource owner 语义。</p>
-<p>反序列化设施 <code>PickleReader</code> 被设计为从一个给定的 <code>Pickle</code> 对象构造，并且在反序列化过程中只改变 <code>PickleReader</code> 内部的 reader cursor，不会对 <code>Pickle</code> 内部的 buffer 有任何 side-effect。显然，<code>PickleReader</code> 对 <code>Pickle</code> 的内部 buffer 具有 view 语义。</p>
-<p>为了支持能从一块给定的 raw buffer of serialized data 进行反序列化（这是很常见的需求，只要序列化后的数据涉及持久化操作，例如存储在磁盘上），<code>Pickle</code> 被设计为允许从给定的 read-only buffer 构造，以方便继续构造 <code>PickleReader</code> 对象进行反序列化操作；并且出于性能和逻辑考虑，<code>Pickle</code> 只维护指向这块 read-only buffer 的指针，并不拷贝一份 buffer 数据。</p>
-<p>为了区分这种情况，在 read-only buffer 上构造的 <code>Pickle</code> 对象的 buffer capacity 始终为 <code>size_t(-1)</code>。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> Pickle &#123;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">struct</span> Header &#123;</span><br><span class="line">        <span class="keyword">uint32_t</span> payload_size;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Pickle();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Creates a Pickle object that has weak-reference to a serialized buffer.</span></span><br><span class="line">    <span class="comment">// The Pickle object cannot call any modifiable methods, and caller must ensure</span></span><br><span class="line">    <span class="comment">// the referee is in a valid state, when PickleReader is applied.</span></span><br><span class="line">    Pickle(<span class="keyword">const</span> <span class="keyword">char</span>* data, <span class="keyword">int</span> data_len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Makes a deep copy of the Pickle object.</span></span><br><span class="line">    Pickle(<span class="keyword">const</span> Pickle&amp; other);</span><br><span class="line"></span><br><span class="line">    Pickle(Pickle&amp;&amp; other);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Makes a deep copy of the Pickle object.</span></span><br><span class="line">    Pickle&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> Pickle&amp; rhs);</span><br><span class="line"></span><br><span class="line">    Pickle&amp; <span class="keyword">operator</span>=(Pickle&amp;&amp; rhs);</span><br><span class="line"></span><br><span class="line">    ~Pickle();</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Returns true, if this object is weakly bound to a serialized buffer.</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">readonly</span><span class="params">()</span> <span class="keyword">const</span></span><br><span class="line">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> capacity_ == kCapacityReadOnly;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">size_t</span> kCapacityReadOnly = <span class="keyword">static_cast</span>&lt;<span class="keyword">size_t</span>&gt;(<span class="number">-1</span>);</span><br><span class="line">    Header* header_;</span><br><span class="line">    <span class="keyword">size_t</span> capacity_;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>不经意间，<code>Pickle</code> 被我加上了 view 语义。</p>
-<h2 id="What’s-the-Problem"><a href="#What’s-the-Problem" class="headerlink" title="What’s the Problem ?"></a>What’s the Problem ?</h2><p>问题始于对 assignment operators，尤其是 move-assignment 的修改。</p>
-<p>一开始我发现我遗漏了对 evil self-assignments 的处理，加上一个非常简陋的 patch 之后我开始发觉事情没有这么简单。</p>
-<p>assignments 的麻烦之处在于它涉及到两个方面的资源处理：原始资源和新资源。如果是 move assignment，那么还要考虑到被移动对象的资源的 ownership。</p>
-<p>那么接下来考虑这样一个问题： <strong>创建一个 owned pickle 对象，以及在这个 pickle 对象的 buffer 上创建一个 view pickle 对象，然后将 view pickle 对象赋给（copy and move） owned pickle 对象</strong>。</p>
-<p>注意，这种行为是合乎逻辑合乎语义的。因为 <code>Pickle</code> 具有值语义，无论是 owner 还是 view，都允许 duplication 行为。</p>
-<p>接下来想一想，上面的操作会出现什么样的可能后果？以及，为了做到正确的行为，需要做什么样的 workaround？</p>
-<p>你会发现你掉进了一个大坑，为了避免出现错误，你需要不断的修改你的 assignment 语义以适应可能出现的神奇情况。</p>
-<p>如果赋值操作需要同时保证复制对象具有的 owner/view 语义，呃，这似乎是不可能的…</p>
-<p>如果赋值操作只需要保证创建的 <code>PickleReader</code> 等效，那么可以在进行赋值前检查两个 <code>Pickle</code> 是否 ref 同一块数据内存，如果是，则直接返回。</p>
-<p>但是注意，这个规定在语义上是一个很大的 degeneration。</p>
-<p>当然还有其他 workarouond，但是实质上都不能摆脱它们只是不恰当语义下的丑陋的遮羞布。</p>
-<p>而这一切的根本原因在于一个对象可能表现出 owner 语义，也可能表现出 view 语义；这实质上是 evil self-assignment 的一个延伸，即不同 resource 语义下 ref 同一个 resource。</p>
-<p>想一想实现一个 copy-on-write 的 string 类可能要付出的代价，哪怕只考虑单线程。</p>
-<p>一个 COW-string 能够从一个 view 语义对象悄悄的 transform 到一个 owner 语义对象；而这不起眼的 transformation 不意外的挖了一个大坑，没有经验的人可能直接跌得尸骨无存。</p>
-<p>有兴趣的可以看看 Herb Sutter 在 <em>More Exceptional C++</em> 中解决这个坑所引入的语义技巧。</p>
-<p>对了，<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code> 倒是很机智的用两个对象来表示 owner-view 语义。</p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>这篇 post 的目的不是说完全不能这样设计，而是说在可能的前提下尽量拆分语义，毕竟挖了大坑把别人埋进去了不是一件值得炫耀的事情。</p>
-<p>最后吐槽一下 chromium 组的某些工程师，虽然我承认 chromium 确实是一个成功的 C++ Project，但是他们有些人真的是不理解 C++，也只是把 C++ 当作一个加强版的 Java 来用。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="cixw3m5j1000ow44nf8tq283q" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/view-semantics/">view semantics</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-wicked-data-type-promotion" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/07/05/wicked-data-type-promotion/" class="article-date">
-  <time datetime="2016-07-05T13:19:08.000Z" itemprop="datePublished">2016-07-05</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/07/05/wicked-data-type-promotion/">Wicked Data Type Promotion</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>昨天在给 <a href="https://github.com/kingsamchen/KAdBlockEngine" target="_blank" rel="external">KAdBlockEngine</a> 的 <code>AdFilter</code> 加上序列化/反序列化的支持时，意外的又一次被 data type promotion 坑了，导致一晚上的时间都在 debug…</p>
-<h2 id="Yesterday-Case-Once-More"><a href="#Yesterday-Case-Once-More" class="headerlink" title="Yesterday-Case Once More"></a>Yesterday-Case Once More</h2><p>因为做 deserialization 时需要数据校验，所以在序列化到磁盘前会先对数据做一遍 MD5-checksum，然后再将 checksum 和实际数据分别写入磁盘。</p>
-<p>类似的，反序列化时需要从读入的文件数据里分出 checksum 和实际数据，对实际数据再做一遍 MD5-checksum 后和上次保存的 checksum 进行比对。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kbase::<span class="function">Path <span class="title">snapshot_file</span><span class="params">(<span class="string">L"..."</span>)</span></span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> file_data = kbase::ReadFileToString(snapshot_file);</span><br><span class="line"><span class="keyword">if</span> (!file_data.empty()) &#123;</span><br><span class="line">    kbase::MD5Digest checksum;</span><br><span class="line">    <span class="keyword">auto</span> snapshot_data = file_data.data() + <span class="keyword">sizeof</span>(checksum);</span><br><span class="line">    <span class="keyword">auto</span> snapshot_data_size = file_data.size() - <span class="keyword">sizeof</span>(checksum);</span><br><span class="line">    kbase::MD5Sum(snapshot_data, snapshot_data_size, &amp;checksum);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::equal(checksum.cbegin(), checksum.cend(), file_data.cbegin())) &#123;</span><br><span class="line">        kbase::<span class="function">PickleReader <span class="title">snapshot</span><span class="params">(snapshot_data, snapshot_data_size)</span></span>;</span><br><span class="line">        AdFilter ad_filter = AdFilter::FromSnapshot(snapshot);</span><br><span class="line">        ad_filters_.push_back(AdFilterPair(filter_file, <span class="built_in">std</span>::move(ad_filter)));</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>于是神奇的事情出现了：当我用 <code>std::equal</code> 去比较两个 checksum 数据时，结果始终是 false，即使我在 debugger 的 memory watch 中确认了两块数据是一样的。</p>
-<p>更神奇的是，顺手把 <code>std::equal</code> 换成 <code>memcmp</code> 之后，整段代码都能够正常工作。</p>
-<p>看来问题出在 <code>std::equal</code>；But how come ?</p>
-<h2 id="Thinking-and-Resolving"><a href="#Thinking-and-Resolving" class="headerlink" title="Thinking and Resolving"></a>Thinking and Resolving</h2><p>一开始怀疑是 <code>std::equal</code> 的实现问题，于是自己用 <code>for(...)</code> 手工展开，结果却惊人地和 <code>std::equal</code> 一致，并且根据调试的反馈，应该是第一个字节比较就不等返回了。</p>
-<p>这说明 <code>std::equal</code> 的实现是正确的，问题出在使用方式上。</p>
-<p>于是下一秒瞥到了一个惊人的发现：<code>MD5Digest</code> 的数据类型是 <code>std::array&lt;uint8_t&gt;</code>，而 file_data 却是 <code>std::basic_string&lt;char&gt;</code>；而 <code>char</code> 在 MSVC 上是 signed data type。</p>
-<p>直觉告诉我我掉到了 <strong><em>data type promotion</em></strong> 这个天坑里。</p>
-<p>在 C/C++ 里对(unsigned) char/short 进行算术运算时，出于性能考虑，编译器会首先将数据扩展到 int(unsigned int)，再进行实际的运算。这个过程通常称之为 <strong><em>promotion</em></strong>。</p>
-<p>但是问题来了，signed/unsigned 数据类型在扩展时使用的指令是不一样的。</p>
-<p>考虑如下示例代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> lhs = <span class="number">-98</span>;</span><br><span class="line"><span class="keyword">char</span> rhs = <span class="number">-98</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; (lhs == rhs);</span><br></pre></td></tr></table></figure>
-<p>首先，比较的结果肯定是 <code>false</code>，不然上下文就没意义了不是…</p>
-<p>接下来看一下对应的汇编代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    unsigned char lhs = -98;</span><br><span class="line">00007FF60EA717DE  mov         byte ptr [lhs],9Eh  </span><br><span class="line">    char rhs = -98;</span><br><span class="line">00007FF60EA717E2  mov         byte ptr [rhs],9Eh  </span><br><span class="line">    std::cout &lt;&lt; (lhs == rhs);</span><br><span class="line">00007FF60EA717E6  movzx       eax,byte ptr [lhs]  </span><br><span class="line">00007FF60EA717EA  movsx       ecx,byte ptr [rhs]  </span><br><span class="line">00007FF60EA717EE  cmp         eax,ecx</span><br></pre></td></tr></table></figure>
-<p>明显，对无符号类型的扩展使用的指令是 <code>movzx</code>，扩展时用0填充；对有符号类型的扩展指令是 <code>movsx</code>，扩展时使用<strong>符号位</strong>。</p>
-<p>这是 two’s complement 结构体系下的必然选择。</p>
-<p>但是这里有个明显的坑，如果原始数据在有符号下是负数，亦即上例中的情况，那么扩展中会用符号位填充，扩展之后高位都变成了FF..；而无符号扩展则会使用0填充，扩展之后高位都是00..；这就导致扩展后的两个数据不想等。</p>
-<p>回到一开始的坑。</p>
-<p>因为 <code>std::equal</code> 默认会使用 <code>std::equal_to&lt;&gt;</code> 作为比较的 predicate，而 <code>std::equal_to&lt;&gt;</code> 等价于使用 <code>==</code> 进行比较；而比较的两方数据又分别是 <code>char</code> 和  <code>uint8_t</code>，于是出现 promotion，导致错误。</p>
-<p>而 <code>memcmp</code> 直接比较两块内存的 bits，不会发生 promotion。</p>
-<h2 id="Afterthoughts"><a href="#Afterthoughts" class="headerlink" title="Afterthoughts"></a>Afterthoughts</h2><p>其实 CSAPP 在某一章有专门提到 data type promotion 这个问题，不过时隔多日，真是转头就忘…</p>
-<p>这个天坑说明一个道理，涉及无符合和有符号的整型比较时需要引起注意；而如果整型是 char/short 类型则更要注意。</p>
-<p>最好的解决方案是避免写除混合类型比较且没有使用 cast 明确标识的代码。</p>
-<p>这次为了偷懒直接用 std::string 保存内存块数据，最后也算是报应把… -‘’-</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="cixw3m5l7004rw44nqquf7wnl" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li></ul>
 
     </footer>
   </div>
@@ -592,6 +585,18 @@
       <ul>
         
           <li>
+            <a href="/2017/03/02/monthly-read-posts-in-feb-2017/">Monthly Read Posts in Feb 2017</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/01/monthly-read-posts-in-jan-2017/">Monthly Read Posts in Jan 2017</a>
+          </li>
+        
+          <li>
+            <a href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">编译期判断是否存在某个成员函数</a>
+          </li>
+        
+          <li>
             <a href="/2017/01/14/automatically-start-installation-using-inno-setup/">自动开始安装 Inno Setup 打包的安装程序</a>
           </li>
         
@@ -607,18 +612,6 @@
             <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/">利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader</a>
           </li>
         
-          <li>
-            <a href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
-          </li>
-        
-          <li>
-            <a href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/">避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理</a>
-          </li>
-        
-          <li>
-            <a href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/">推荐 CSAPP:3e 课程视频以及 Bomb Lab</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -628,7 +621,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
     </div>
   </div>
 
@@ -638,7 +631,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
     </div>
   </div>
 
@@ -652,6 +645,7 @@
       <li><a href="http://blog.mistysoul.net/">Sean | 大木老师的私人保姆</a></li>
       <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
       <li><a href="https://blog.chichou.me/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://www.fleurer-lee.com">Fleurer-lee | F叔的读书笔记（大量干货）</a></li>
       <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
       <li><a href="http://thecjw.0ginr.com/blog/">TheCJW | 爱弹棉花的小伟</a></li>
       <li><a href="http://newbiecoder.0ginr.com/blog/">Newbie Coder | 萌萌哒的炉子</a></li>
