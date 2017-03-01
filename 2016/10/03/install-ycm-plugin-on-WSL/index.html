@@ -107,26 +107,26 @@
         <p>注 1：此处的 WSL 指的是 <em>Windows Subsytem for Linux</em>，不是“猥琐流”</p>
 <p>注 2：如果是在中国并且没有专用的全局科学上网线路（比如在自己家里），建议找一个类似 SS 的梯子，让 WSL 里的网络操作走代理，提高速度，避免因为某些连接被和谐导致悲剧发生。</p>
 <p>如果有 SS，那么进入 WSL 后执行命令</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export http_proxy=http://127.0.0.1:1080</span><br><span class="line">export https_proxy=http://127.0.0.1:1080</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export http_proxy=http://127.0.0.1:1080</div><div class="line">export https_proxy=http://127.0.0.1:1080</div></pre></td></tr></table></figure>
 <p>对当前用户设置代理。</p>
 <p>如果需要使用 apt-get 操作，那么需要首先 <code>su</code> 进入 root 账户，在 root 下设置代理。</p>
 <p>此处设置的环境变量在某个 terminal 退出后自动销毁，下次进入 terminal 需要重复设置。如果你的代理非常稳定非常快，那么可以考虑改写 profile，避免每次手输。</p>
 <p><em><strong>Special thanks to @xqq here</strong></em></p>
 <h3 id="更新自带的-VIM"><a href="#更新自带的-VIM" class="headerlink" title="更新自带的 VIM"></a>更新自带的 VIM</h3><p>因为 WSL 里的 ubuntu 是 14.04 LTS，因此里面附带的 vim 并不满足<strong>最新</strong>的 YCM 的最低版本要求，如果不升级会出现 ycm 工作异常。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:pkg-vim/vim-daily</span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo add-apt-repository ppa:pkg-vim/vim-daily</div><div class="line">sudo apt-get update &amp;&amp; sudo apt-get upgrade</div></pre></td></tr></table></figure>
 <h3 id="安装构建基础依赖"><a href="#安装构建基础依赖" class="headerlink" title="安装构建基础依赖"></a>安装构建基础依赖</h3><p>主要包括：CMake 和 python-dev packages</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install build-essential cmake</span><br><span class="line">sudo apt-get install python-dev python3-dev</span><br></pre></td></tr></table></figure>
-<h3 id="安装-VIM-插件管理器-Vundle"><a href="#安装-VIM-插件管理器-Vundle" class="headerlink" title="安装 VIM 插件管理器 Vundle"></a>安装 VIM 插件管理器 Vundle</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install build-essential cmake</div><div class="line">sudo apt-get install python-dev python3-dev</div></pre></td></tr></table></figure>
+<h3 id="安装-VIM-插件管理器-Vundle"><a href="#安装-VIM-插件管理器-Vundle" class="headerlink" title="安装 VIM 插件管理器 Vundle"></a>安装 VIM 插件管理器 Vundle</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim</div></pre></td></tr></table></figure>
 <p>插件设置参考 <a href="https://github.com/VundleVim/Vundle.vim" target="_blank" rel="external">这里</a></p>
 <h3 id="安装-YCM"><a href="#安装-YCM" class="headerlink" title="安装 YCM"></a>安装 YCM</h3><p>虽然我们安装了 vundle，但是我们不会直接通过 vundle 装 ycm，因为太慢了。</p>
 <p>当然如果你在国外或者有科学上网专线，那就无所谓了…不过谁让我们是穷屌丝呢。</p>
 <p>首先进入目录 <code>~/.vim/bundle</code>，然后把 YCM 的 repo 拉下来，记得要用 <code>--recursive</code>，因为现在的 ycm 依赖的第三方模块太多了…</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone --recursive https://github.com/Valloric/YouCompleteMe.git</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone --recursive https://github.com/Valloric/YouCompleteMe.git</div></pre></td></tr></table></figure>
 <p>这个操作对你的梯子是一个极大的考验，如果中途 clone 挂了，就进入 ycm 的目录，接着用 submodule update 去继续拖代码即可。</p>
 <p>想当初我的 SS 在这里断了 5-6 次，每一次 connection lost 都让我问候了一遍党和国家…</p>
 <p>代码拉完之后还没结束，这个时候打开 <code>.vimrc</code>，把 ycm 加到 vundle 的设置列表里，然后打开 vim 走一遍 <code>PluginInstall</code>。你应该会看到 ycm 被飞快的安装完了（其实也就校验了一下😁）</p>
 <h3 id="编译-ycm"><a href="#编译-ycm" class="headerlink" title="编译 ycm"></a>编译 ycm</h3><p>源代码拖完了就该轮到编译了</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~/.vim/bundle/YouCompleteMe</span><br><span class="line">./install.py --clang-completer</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd ~/.vim/bundle/YouCompleteMe</div><div class="line">./install.py --clang-completer</div></pre></td></tr></table></figure>
 <p>脚本首先会去下载 clang-3.9，然后走一遍 cmake 的编译，等一会儿就好。</p>
 <h3 id="Debut"><a href="#Debut" class="headerlink" title="Debut"></a>Debut</h3><p>来一张最终效果图</p>
 <p><img src="img/wsl_vim_ycm.jpg" alt=""></p>
@@ -134,7 +134,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="cizr7e241000y1g4nw3nni9qh" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="cizr7jnyi0013c04nnnhl2c4g" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/#disqus_thread" class="article-comment-link">Comments</a>
       

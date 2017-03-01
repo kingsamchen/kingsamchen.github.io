@@ -122,7 +122,7 @@ properties 描述了一个 obs source 所具备的特性">
 <li>property 无论是共有的操作还是特定的操作都要暴露给外界，并且要屏蔽底层实现 property 的细节</li>
 </ul>
 <p>最适合我的实现反而是拥有如下两条 hierarchical path 的多继承设计</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">                 Property [pure]</span><br><span class="line">                 /        \</span><br><span class="line">                /          \</span><br><span class="line">SpecificProperty[pure]     PropertyImpl [实现基础操作，兼容 properties 的存储]</span><br><span class="line">                \          /</span><br><span class="line">                 \        /</span><br><span class="line">             SpecificPropertyImpl</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">                 Property [pure]</div><div class="line">                 /        \</div><div class="line">                /          \</div><div class="line">SpecificProperty[pure]     PropertyImpl [实现基础操作，兼容 properties 的存储]</div><div class="line">                \          /</div><div class="line">                 \        /</div><div class="line">             SpecificPropertyImpl</div></pre></td></tr></table></figure>
 <p>左侧两个基类都是 pure abstract class，负责对外暴露接口，右侧的 impl class 是在 proxy layer 中的实际类型。</p>
 <p>由于考虑到 <em>properties contains a series of property</em> 的事实，<code>PropertyImpl</code> 实际上对外表现出值类型语义（嗯哼，我才不会说我硬生生的在另外的 <code>properties</code> wrapper 上给加上了迭代器支持…）。</p>
 <p>上面继承出现了菱形继承，于是 virtual inheritance 就进来了，不然 <code>Property</code> 的析构函数就有两份，并且还会执行两次。</p>
@@ -154,7 +154,7 @@ properties 描述了一个 obs source 所具备的特性">
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cizr7e23l000j1g4nt7dek75w" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cizr7jny0000cc04nriu5msdp" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
       

@@ -113,7 +113,7 @@
 <p>实际上，<code>C:\</code> 才是和 Unix/Linux 下的 <code>/</code> 一样，是一个完整的根目录表示。而按照标准的要求描述，路径形如 <code>C:\</code> 的 parent path 应该是一个空字符串。</p>
 <p>不过这估计也得怪 Windows 奇葩的路径设计。谁能想到 <code>C:tmp.txt</code> 和 <code>C:\tmp.txt</code> 是两个完全不同的路径表示呢？更别提还存在 <code>\\server\path</code> 这种 UNC 路径格式，以及必杀招：用以支持超过 <code>MAX_PATH</code> 的长路径的 <code>\\?\C:\very-long-path</code> 格式。</p>
 <p>而对于 <code>filename</code>，实现上倒是没什么原则性的问题，但是 example 里反映的</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fs::path(<span class="string">"/foo/bar"</span>).filename(); <span class="comment">// output bar</span></span><br><span class="line">fs::path(<span class="string">"/foo/bar/"</span>).filename(); <span class="comment">// output .</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">fs::path(<span class="string">"/foo/bar"</span>).filename(); <span class="comment">// output bar</span></div><div class="line">fs::path(<span class="string">"/foo/bar/"</span>).filename(); <span class="comment">// output .</span></div></pre></td></tr></table></figure>
 <p>给人一种刻板过头的感觉。你确定路径后面拖着的那个 trailing separator 是我可以要用来表示<code>.</code>的么？</p>
 <p>不过也可能这是 unix/linux 下的一种神奇的用法，不过实在理解不能。</p>
 <p><code>filesystem::path</code> 不光提供了标准的 append，还顺带提供了纯字符串操作的 concat。抛开两个操作对应的符号重载是否美观不谈，操作 concat 的引入总给人一种 <em>I wanna to make it complete</em> 的无力感。</p>
@@ -132,7 +132,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/" data-id="cizr7e24500121g4n8pipv386" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/" data-id="cizr7jnyb000tc04n8h3eiis3" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/04/19/make-our-path-class-more-natural/#disqus_thread" class="article-comment-link">Comments</a>
       

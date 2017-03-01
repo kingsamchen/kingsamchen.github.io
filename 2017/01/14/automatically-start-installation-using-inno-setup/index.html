@@ -116,7 +116,7 @@ St">
 <p>真他喵的体贴啊。</p>
 <p>既然只能手动点击安装，那我们就通过发送按钮点击事件来模拟用户点击就好了。</p>
 <h3 id="Step-2"><a href="#Step-2" class="headerlink" title="Step 2"></a>Step 2</h3><p>在函数 <code>CurPageChanged(CurPageID: Integer)</code> 中检查当前页，如果已经到了确认页，就发送按钮事件。</p>
-<figure class="highlight pascal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> CurPageID = wpReady <span class="keyword">then</span> <span class="keyword">begin</span></span><br><span class="line">    param := <span class="number">0</span> <span class="keyword">or</span> BN_CLICKED <span class="keyword">shl</span> <span class="number">16</span>;</span><br><span class="line">    PostMessage(WizardForm.NextButton.Handle, CN_COMMAND, param, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">end</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight pascal"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> CurPageID = wpReady <span class="keyword">then</span> <span class="keyword">begin</span></div><div class="line">    param := <span class="number">0</span> <span class="keyword">or</span> BN_CLICKED <span class="keyword">shl</span> <span class="number">16</span>;</div><div class="line">    PostMessage(WizardForm.NextButton.Handle, CN_COMMAND, param, <span class="number">0</span>);</div><div class="line"><span class="keyword">end</span>;</div></pre></td></tr></table></figure>
 <p>这里注意几个坑，按我当时被踩的先后顺序：</p>
 <ol>
 <li>如果你的安装程序定制了 UI，那么极有可能会隐藏原生的 next button 并且提供一个自己美化过的安装按钮；如果真的是这样，那么请通过设置 <code>WizardForm.NextButton.Height := 0</code> 来隐藏他，而不是直接 set invisible。因为后者会导致这个按钮直接不响应他的事件。</li>
@@ -129,7 +129,7 @@ St">
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/01/14/automatically-start-installation-using-inno-setup/" data-id="cizr7e23700071g4n7asn17nh" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/01/14/automatically-start-installation-using-inno-setup/" data-id="cizr7jnxs0004c04ny07tgot2" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/01/14/automatically-start-installation-using-inno-setup/#disqus_thread" class="article-comment-link">Comments</a>
       
