@@ -3,17 +3,27 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Tag: path | KC的废墟堆</title>
+  <title>在 C++ 11 中实现 apply | KC的废墟堆</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Gone with the ruins">
-<meta property="og:type" content="website">
-<meta property="og:title" content="KC的废墟堆">
-<meta property="og:url" content="http://kingsamchen.github.io/tags/path/index.html">
+  <meta name="description" content="Why apply matters假设我们要实现一个和具体业务无关的 HTTP(S) 网络 (Restful)API 请求设施 RequestConnection，我们至少要提供两个实现：
+
+客户代码的请求结束时的回调 callback/handler
+针对具体业务的 response parser；因为 HTTP 是文本协议，无论 response data 基于何种格式（例如 JSON），我们">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在 C++ 11 中实现 apply">
+<meta property="og:url" content="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/index.html">
 <meta property="og:site_name" content="KC的废墟堆">
-<meta property="og:description" content="Gone with the ruins">
+<meta property="og:description" content="Why apply matters假设我们要实现一个和具体业务无关的 HTTP(S) 网络 (Restful)API 请求设施 RequestConnection，我们至少要提供两个实现：
+
+客户代码的请求结束时的回调 callback/handler
+针对具体业务的 response parser；因为 HTTP 是文本协议，无论 response data 基于何种格式（例如 JSON），我们">
+<meta property="og:updated_time" content="2017-03-04T09:48:42.863Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="KC的废墟堆">
-<meta name="twitter:description" content="Gone with the ruins">
+<meta name="twitter:title" content="在 C++ 11 中实现 apply">
+<meta name="twitter:description" content="Why apply matters假设我们要实现一个和具体业务无关的 HTTP(S) 网络 (Restful)API 请求设施 RequestConnection，我们至少要提供两个实现：
+
+客户代码的请求结束时的回调 callback/handler
+针对具体业务的 response parser；因为 HTTP 是文本协议，无论 response data 基于何种格式（例如 JSON），我们">
   
     <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
   
@@ -66,40 +76,87 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-  
-    
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2016" class="archive-year">2016</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2016/04/19/make-our-path-class-more-natural/" class="archive-article-date">
-  <time datetime="2016-04-18T16:38:38.000Z" itemprop="datePublished">Apr 19</time>
+        <section id="main"><article id="post-implement-apply-in-cpp-11" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/03/04/implement-apply-in-cpp-11/" class="article-date">
+  <time datetime="2017-03-04T09:08:07.000Z" itemprop="datePublished">2017-03-04</time>
 </a>
-      
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2016/04/19/make-our-path-class-more-natural/">让 Path 更自然</a>
+    <h1 class="article-title" itemprop="name">
+      在 C++ 11 中实现 apply
     </h1>
   
 
-    </header>
-  </div>
-</article>
-  
-  
-    </div></section>
-  
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="Why-apply-matters"><a href="#Why-apply-matters" class="headerlink" title="Why apply matters"></a>Why apply matters</h2><p>假设我们要实现一个和具体业务无关的 HTTP(S) 网络 (Restful)API 请求设施 <code>RequestConnection</code>，我们至少要提供两个实现：</p>
+<ul>
+<li>客户代码的请求结束时的回调 callback/handler</li>
+<li>针对具体业务的 response parser；因为 HTTP 是文本协议，无论 response data 基于何种格式（例如 JSON），我们都要针对具体的业务逻辑场景进行解析</li>
+</ul>
+<p>假设我们希望请求的 callback 足够友好，直接将 client 需要的数据通过函数原型暴露出来，例如</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnCheckUpdateComplete</span><span class="params">(<span class="keyword">bool</span> succeeded, <span class="keyword">int</span> last_build_no)</span></span>;</div></pre></td></tr></table></figure>
+<p>那么我们的 reponse parser 也要相应的能够返回符合 callback signature 的数据，在 C++ 中，我们可以用 <code>std::tuple</code> 来保存 parsed result：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">std</span>::tuple&lt;<span class="keyword">bool</span>, <span class="keyword">int</span>&gt; ParseCheckUpdateResponse(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; data);</div></pre></td></tr></table></figure>
+<p>但是很不巧的，<code>RequestConnection</code> 是业务无关的，而业务相关的 callback/response-parser 则是通过依赖注入的方式（例如通过模板参数）进入 <code>RequestConnection</code>；这意味着我们需要一个通用的方法能够在编译期完成如下事情：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Presume magic function Apply</span></div><div class="line"><span class="built_in">std</span>::<span class="built_in">string</span> response_data;</div><div class="line">Apply(ResponseHandler, ResponseParser(response_data));</div></pre></td></tr></table></figure>
+<p>神奇函数 <code>Apply()</code> 能够调用一个函数，并且将一个 <code>std::tuple</code> 里的元素按照顺序转换为对应的实参。</p>
+<p>简言之，这就是 C++ 17 要引入的 <a href="http://en.cppreference.com/w/cpp/utility/apply" target="_blank" rel="external">std::apply</a> 所做的事情。</p>
+<p>但是如果我们的 codebase 是 C++ 11的，那又如何呢？</p>
+<h2 id="How-to-implement-apply-in-C-11"><a href="#How-to-implement-apply-in-C-11" class="headerlink" title="How to implement apply in C++ 11"></a>How to implement apply in C++ 11</h2><p>在 C++ 11 里实现 <code>apply()</code>，我们要做两步：</p>
+<ol>
+<li>实现 index-sequence （C++ 14 开始标准库附带了这个实现）</li>
+<li>实现 apply</li>
+</ol>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">#include &lt;tuple&gt;</div><div class="line">#include &lt;type_traits&gt;</div><div class="line"></div><div class="line">template&lt;size_t... Ints&gt;</div><div class="line">struct index_sequence &#123;</div><div class="line">    using type = index_sequence;</div><div class="line">    using value_type = size_t;</div><div class="line"></div><div class="line">    static std::size_t size()</div><div class="line">    &#123;</div><div class="line">        return sizeof...(Ints);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">template&lt;class Sequence1, class Sequence2&gt;</div><div class="line">struct merge_and_renumber;</div><div class="line"></div><div class="line">template&lt;size_t... I1, size_t... I2&gt;</div><div class="line">struct merge_and_renumber&lt;index_sequence&lt;I1...&gt;, index_sequence&lt;I2...&gt;&gt;</div><div class="line">    : index_sequence&lt;I1..., (sizeof...(I1) + I2)...&gt;</div><div class="line">&#123;&#125;;</div><div class="line"></div><div class="line">template&lt;size_t N&gt;</div><div class="line">struct make_index_sequence</div><div class="line">    : merge_and_renumber&lt;typename make_index_sequence&lt;N / 2&gt;::type,</div><div class="line">                         typename make_index_sequence&lt;N - N / 2&gt;::type&gt;</div><div class="line">&#123;&#125;;</div><div class="line"></div><div class="line">template&lt;&gt;</div><div class="line">struct make_index_sequence&lt;0&gt; : index_sequence&lt;&gt;</div><div class="line">&#123;&#125;;</div><div class="line"></div><div class="line">template&lt;&gt;</div><div class="line">struct make_index_sequence&lt;1&gt; : index_sequence&lt;0&gt;</div><div class="line">&#123;&#125;;</div><div class="line"></div><div class="line">template&lt;typename Func, typename Tuple, std::size_t... index&gt;</div><div class="line">auto apply_helper(Func&amp;&amp; func, Tuple&amp;&amp; tuple, index_sequence&lt;index...&gt;) -&gt;</div><div class="line">    decltype(func(std::get&lt;index&gt;(std::forward&lt;Tuple&gt;(tuple))...))</div><div class="line">&#123;</div><div class="line">    return func(std::get&lt;index&gt;(std::forward&lt;Tuple&gt;(tuple))...);</div><div class="line">&#125;</div><div class="line"></div><div class="line">template&lt;typename Func, typename Tuple&gt;</div><div class="line">auto apply(Func&amp;&amp; func, Tuple&amp;&amp; tuple) -&gt;</div><div class="line">    decltype(apply_helper(std::forward&lt;Func&gt;(func),</div><div class="line">                          std::forward&lt;Tuple&gt;(tuple),</div><div class="line">                          make_index_sequence&lt;std::tuple_size&lt;typename std::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;))</div><div class="line">&#123;</div><div class="line">    return apply_helper(std::forward&lt;Func&gt;(func),</div><div class="line">                        std::forward&lt;Tuple&gt;(tuple),</div><div class="line">                        make_index_sequence&lt;std::tuple_size&lt;typename std::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上代码就是我在某直播姬的网络框架里所用的实现；根据实际是用来看，quite awesome</p>
 
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/" data-id="cizv2ks1n0011jo4n0lwiro21" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/03/02/monthly-read-posts-in-feb-2017/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Monthly Read Posts in Feb 2017</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
 </section>
         
           <aside id="sidebar">
@@ -218,11 +275,13 @@
 <script>
   var disqus_shortname = 'kingsamchen-github-io';
   
+  var disqus_url = 'http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/';
+  
   (function(){
     var dsq = document.createElement('script');
     dsq.type = 'text/javascript';
     dsq.async = true;
-    dsq.src = '//' + disqus_shortname + '.disqus.com/count.js';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
     (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
   })();
 </script>
