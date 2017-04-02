@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Monthly Read Posts in Mar 2017 | KC的废墟堆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Generate lambdas for clarity and performance
+Generate a class of lambdas with auto-return-type deduction.
+唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 std::function&amp;lt;&amp;gt; 来做 workaround
+
+Appending to a File">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Monthly Read Posts in Mar 2017">
+<meta property="og:url" content="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/index.html">
+<meta property="og:site_name" content="KC的废墟堆">
+<meta property="og:description" content="Generate lambdas for clarity and performance
+Generate a class of lambdas with auto-return-type deduction.
+唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 std::function&amp;lt;&amp;gt; 来做 workaround
+
+Appending to a File">
+<meta property="og:updated_time" content="2017-04-02T09:21:22.879Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Monthly Read Posts in Mar 2017">
+<meta name="twitter:description" content="Generate lambdas for clarity and performance
+Generate a class of lambdas with auto-return-type deduction.
+唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 std::function&amp;lt;&amp;gt; 来做 workaround
+
+Appending to a File">
+  
+    <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">KC的废墟堆</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Will you serve in Heaven, or rule in Hell</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-monthly-read-posts-in-mar-2017" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/02/monthly-read-posts-in-mar-2017/" class="article-date">
+  <time datetime="2017-04-02T08:58:24.000Z" itemprop="datePublished">2017-04-02</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Monthly Read Posts in Mar 2017
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><a href="http://playfulprogramming.blogspot.hk/2017/01/generate-lambdas-for-clarity-and.html" target="_blank" rel="external">Generate lambdas for clarity and performance</a></p>
+<p>Generate a class of lambdas with auto-return-type deduction.</p>
+<p>唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 <code>std::function&lt;&gt;</code> 来做 workaround</p>
+<hr>
+<p><a href="http://nullprogram.com/blog/2016/08/03/" target="_blank" rel="external">Appending to a File from Multiple Processes</a></p>
+<p>经验问题，写客户端的 logger 轮子时应该会经常需要考虑到这个问题。</p>
+<p>文章针对的是 POSIX 系统，不过不同系统在一些具体策略/细节上也有区别。</p>
+<p>另，Windows 上这个场景有直接的 API 调用保证。</p>
+<p>不过有点比较奇怪，chromium 的 base::logging 只提供了 Windows 下的多进程无锁 appending，POSIX/Mach 下依然用的是线程同步锁和全局锁，可能考虑的原因是实现起来坑比较大？</p>
+<hr>
+<p>OAuth 2.0 Protocol</p>
+<ol>
+<li><a href="http://tutorials.jenkov.com/oauth2/authorization.html" target="_blank" rel="external">oauth2 authorization</a></li>
+<li><a href="https://taozj.org/201605/principle-of-oauth2.html" target="_blank" rel="external">principle-of-oauth2</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="external">oauth_2_0</a></li>
+</ol>
+<p>第二篇文章基本可以看作第一篇的翻译，但是很多地方都没有翻译出来，所以推荐主要看第一篇文章，把第二、三篇作为补充材料</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Events/GoingNative/2013/Inheritance-Is-The-Base-Class-of-Evil" target="_blank" rel="external">Inheritance Is The Base Class of Evil</a></p>
+<p>C9 上的一个 Tech Talk，speaker 是 Adobe 的技术大佬，但是我觉得有标题党之嫌。</p>
+<p>Talk 中展现出来的哲学观挺有意思的，比如那句 <em>There is no polymorphic type, just polymorphic use of types</em>。</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Shows/C9-GoingNative/GoingNative-53-Learning-STL-Multithreading" target="_blank" rel="external">Learning STL Multithreading</a></p>
+<p>虽然标题是 STL Multithreading，但是里面的核心内容基本都是原理性的，通用的。</p>
+<p>对于 mutex/condition-variable 这类比较高级的 synchronization primitives 和低级的 atomic variables 均有涉及，并且也给了实践建议。</p>
+<p>话说右边那个胖胖的小哥的口音听起来真的是容易懂…</p>
+<p>另外有个挺有意思的细节，快到最后的时候胖小哥提到了 <code>async</code> 和 <code>future</code>，他说希望大家能优先考虑这俩玩意儿，但是说了几句话又欲言又止，最后无奈地说 <em>we will discuss these later</em>。。。估计他想了想，就目前标准给的设施和实现情况，要做到 task-based paralleilism，那坑大的都可以把自己埋进去了。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/" data-id="cj10h9j1j0011lo4nw7p3qcs9" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lambda/">lambda</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/stl/">stl</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/03/04/implement-apply-in-cpp-11/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">在 C++ 11 中实现 apply</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/04/02/monthly-read-posts-in-mar-2017/">Monthly Read Posts in Mar 2017</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/04/implement-apply-in-cpp-11/">在 C++ 11 中实现 apply</a>
+          </li>
+        
+          <li>
+            <a href="/2017/03/02/monthly-read-posts-in-feb-2017/">Monthly Read Posts in Feb 2017</a>
+          </li>
+        
+          <li>
+            <a href="/2017/02/01/monthly-read-posts-in-jan-2017/">Monthly Read Posts in Jan 2017</a>
+          </li>
+        
+          <li>
+            <a href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">编译期判断是否存在某个成员函数</a>
+          </li>
+        
+          <li>
+            <a href="/2017/01/14/automatically-start-installation-using-inno-setup/">自动开始安装 Inno Setup 打包的安装程序</a>
+          </li>
+        
+          <li>
+            <a href="/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/">自动将 non-capturing lambda 转换为函数指针</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title">Blog Rolls</h3>
+    <div class="widget">
+    <ul>
+      <li><a href="http://www.daozhihun.com/">刀之魂 | 大木老师成长日记</a></li>
+      <li><a href="http://blog.mistysoul.net/">Sean | 大木老师的私人保姆</a></li>
+      <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
+      <li><a href="https://blog.chichou.me/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://www.fleurer-lee.com">Fleurer-lee | F叔的读书笔记（大量干货）</a></li>
+      <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://thecjw.0ginr.com/blog/">TheCJW | 爱弹棉花的小伟</a></li>
+      <li><a href="http://newbiecoder.0ginr.com/blog/">Newbie Coder | 萌萌哒的炉子</a></li>
+      <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
+      <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
+      <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
+      <li><a href="http://www.tolower.net/">Lower | 喊大木大哥的小弟</a></li>
+      <li><a href="http://mrljdx.com/">Mrljdx | 大保健老司机</a></li>
+    </ul>
+  </div>
+</div>
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Kingsley Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'kingsamchen-github-io';
+  
+  var disqus_url = 'http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} 
+}); 
+</script>
+<script type="text/javascript"
+   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  </div>
+</body>
+</html>
