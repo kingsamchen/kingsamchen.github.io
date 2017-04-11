@@ -68,6 +68,65 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-use-ffmpeg-to-reencode-videos" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/04/12/use-ffmpeg-to-reencode-videos/" class="article-date">
+  <time datetime="2017-04-11T16:58:45.000Z" itemprop="datePublished">2017-04-12</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/04/12/use-ffmpeg-to-reencode-videos/">使用 ffmpeg 压制视频</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>帮主站重写完投稿工具的上传模块后，Neo 和我说，我们这期版本还是得带上视频压制功能…</p>
+<p>这是我第一次知道原来 ffmpeg 还可以压制视频。因为重构的缘故，老版本的代码完全不能用（就算不考虑换上层 UI 框架的事儿，老版本那个代码质量…），所以只能抄一下他们的压制相关的驱动参数，自己从头把功能实现一遍。</p>
+<p>花了差不多刚好一周的时间提供了一个底层压制模块后，我发现，因为产品需求的因素，实现这部分功能居然可以很好的做为熟悉一个语言涉及操作层面的 roadmap，整理一下 feature list，算算差不多至少要能够提供：</p>
+<ul>
+<li>运行子进程，并且能够通过 IPC 读取并解析子进程的 stdout 和 stderr 数据；通常情况下，这意味着需要熟悉 Windows 的 Pipe</li>
+<li>压制首先涉及到利用 <code>ffprobe.exe</code> 检测视频的 meta-info，符合压制条件并且用户确认后利用 meta-info 作为压制的部分输入信息；中间涉及到几个线程间的交互</li>
+<li>因为压制功能和视频上传在逻辑上具有先后顺序，并且都需要有专门的 worker thread，因此他们可以共用一个线程池；而支持多任务并行操作，又要求线程池的调度策略要足够“及时”（事实上，这个要求有一部分锅来自 chromium net 的 <code>URLFetcher</code>，which requires 网络操作运行的线程在 URLFetcher context 生命周期内是唯一且固定的，因此会出现一个上传任务只要不结束，就会一直霸占一个线程的情况；另有一部分锅来自 chromium base 的 <code>scoped_reptr</code>，居然没有考虑对外暴露自己 ref-count 信息，无形中加大了实现线程池的困难）</li>
+</ul>
+<p>因此在项目提测结束，基本验收通过之后，我想籍由这个功能，重新回忆一下 C# 和 WPF （噫，怎么老是再回忆这个…），所以花了一个周末，就有了 <a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleVideoEncoder" target="_blank" rel="external">SimpleVideoEncoder</a></p>
+<p>但是在实现过程中我发现，纵使有 async/await，它也不是银弹，也有他覆盖不了的 case；而我对 C#/.NET 的多线程模型实在是完全不懂，导致某些细节完全没法下手（只能说某些case 下，CSP 真是好用到想哭，还好 WPF 的 UI-thread 提供了一个 <code>Dispatcher</code> 支持了对 UI 线程的 CSP；再将需求简化到 Demo 程度后，勉强实现了出来。</p>
+<p><img src="/img/ffmpeg-encode.png" alt=""></p>
+<p>上层界面基于 WPF，但是没有走 MVVM。</p>
+<p>实话说，经过一年半（距离上次写 EasyKeeper），自己主导过两个不大不小的项目后，对于为什么需要有 MVC/MVP/MVVM 有了一些更实际的想法，并且也能理解有时候过分追求这些反而是一种坑。</p>
+<p>考虑到目前应该是没法公开为投稿工具写的那部分代码（压制模块算起来大概有 1K+ lines of code），所以这个 <em>SimpleVideoEncoder</em> 的意义也大大折扣，基本只能作为一个 ffmpeg 压制功能的简单展示…</p>
+<p>不过最后还是要赞一下 C# 对 Pipe IPC 的封装，几行代码做了需要几十行 C++ 代码的事情；并且基于 event 的通知机制比起传统的 observer，更能准确的体现 OOP 中<strong>对象级别消息通信</strong>的内涵。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/" data-id="cj1dujfle001m484nwgdkgm3d" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/C/">C#</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/视频压制/">视频压制</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-monthly-read-posts-in-mar-2017" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/04/02/monthly-read-posts-in-mar-2017/" class="article-date">
@@ -125,7 +184,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/" data-id="cj10h9j1j0011lo4nw7p3qcs9" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/" data-id="cj1dujflk001r484nrgsy678f" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -190,7 +249,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/" data-id="cj10h9j1j000xlo4nu1xp3bf5" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/" data-id="cj1dujfkw000w484nuu9jwbyo" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -246,7 +305,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/" data-id="cj10h9j1h000vlo4nmporod9y" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/" data-id="cj1dujfl20013484n5jfqp8by" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -345,7 +404,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/" data-id="cj10h9j1j001blo4n53a0j6es" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/" data-id="cj1dujflb001f484n9tl46r4e" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -408,7 +467,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/" data-id="cj10h9j0x0009lo4no9clyo1w" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/" data-id="cj1dujfkd0009484nrpdaehjm" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -472,81 +531,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/01/14/automatically-start-installation-using-inno-setup/" data-id="cj10h9j0x0006lo4nm7pzwmpv" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/01/14/automatically-start-installation-using-inno-setup/" data-id="cj1dujfjx0000484nufv0tnau" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/01/14/automatically-start-installation-using-inno-setup/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/installer/">installer</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-automatically-convert-non-capturing-lambdas-to-normal-function-pointers" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/" class="article-date">
-  <time datetime="2017-01-10T16:12:14.000Z" itemprop="datePublished">2017-01-11</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/">自动将 non-capturing lambda 转换为函数指针</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>在开发某科学的直播姬的过程中，经常需要在 obs-studio 处理源之后紧接着做一些事情，例如针对大图片源做自动放缩等。</p>
-<p>obs-studio 采用一个专有的 graphics rendering thread 来渲染各种 visualizable sources，并且允许你根据需求，注册各种底层源操作事件的回调函数（obs-studio 自己称之为 signal handler）。</p>
-<p>我在 obs signal handler 之上，利用 <code>std::function</code> 构建了一层自己的 signal-handler，将原始的 obs 事件经过合理转换后得到语义更加明确的直播姬专属事件，并且通知上层。</p>
-<p>但是前面提到，各种源操作都是在 obs 专属的渲染线程上完成的，那么我们向 obs 注册的 handler 也必然运行在这个专属线程上；这显然不是一个好现象，因为在直播姬程序语义下，这部分操作应属于我们自己定义的 UI 线程，并且用户可见的 UI 元素的操作也必须只能在 UI 线程中完成。</p>
-<p>所以我们需要在 signal 转换的同时切换线程，让 <code>std::function</code> 的调用发生在指定的线程。</p>
-<p>于是这里遇到这个 post 要解决的问题：我们使用 chromium base lib 来完成各种线程操作，<strong>但是 <code>base::Bind()</code> 不接受 lambda 作为 currying 的载体</strong>，因为这套 lib 是在 C++ 11 标准化之前就实现的，因此 chromium team 实现这个轮子的时候并没有考虑 C++ 11 的 lambda expressions。</p>
-<p>方案1：使用独立的函数来产生 <code>base::Callback</code></p>
-<p>优点是直观明确而且很传统不容易出错；</p>
-<p>缺点是，每个函数平均只有5行不到的代码（毕竟只是通过调用 <code>std::function</code> 做一个转发），而且我们要写大量这样的函数。。。另外由于这些独立的函数都放到了源文件开头的 anonymous namespace 里，造成阅读代码时的上下文割裂。这也是当初引入 lambda 的一个很重要的原因。</p>
-<p>方案2：使用 non-capturing lambda，但是自己手动 cast 到函数指针</p>
-<p>优点是利用 lambda 来限制了这部分“转发”函数的可见性；</p>
-<p>缺点是，不仅会造成上下文割裂，而且手动 cast 非常的 tedious。</p>
-<p>思索片刻后我打算自己实现一个 <code>lambda_decay()</code>，来将 non-capturing lambda 自动转换为等价的函数指针。</p>
-<p>借助 template 和一个 trick 可以做到如下的效果</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">using</span> lpfn = <span class="keyword">void</span>(*)(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;);</div><div class="line"></div><div class="line"><span class="function">lpfn <span class="title">Foo</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">return</span> lambda_decay([](<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; s) &#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; s &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">auto</span> ptr = Foo();</div><div class="line">    ptr(<span class="string">"hello world"</span>);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>这样就可以直接将 lambda “嵌到” <code>base::Bind()</code> 里，极大提升幸福感。</p>
-<p>这里说两个我并不认为是缺点的局限性：</p>
-<ol>
-<li>不能使用在 capturing lambdas 上。这其实是我恰好需要的，因为 capturing lambda 会有各种安全隐患，配合 <code>base::Bind()</code> 一个不小心就容易出坑；另外我的目的本来就是转换得到能被 <code>base::Bind()</code> 使用的等价函数指针，而正常情况下从 non-capturing lambdas cast 得到一个函数指针是良好定义的十分明确的行为。</li>
-<li>不能使用在 generic lambdas 上。generic lambdas 很好很有用，但是它不是银弹，尤其在配合 <code>base::Bind()</code> 使用的情况下。</li>
-</ol>
-<p>接下来是实现方法</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">struct</span> dememberize;</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> R, <span class="keyword">typename</span>... Args&gt;</div><div class="line"><span class="keyword">struct</span> dememberize&lt;R(C::*)(Args...) <span class="keyword">const</span>&gt; &#123;</div><div class="line">    <span class="keyword">using</span> type = R(*)(Args...);</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">struct</span> lambda_pointerize_impl &#123;</div><div class="line">    <span class="keyword">using</span> type = <span class="keyword">typename</span> dememberize&lt;<span class="keyword">decltype</span>(&amp;T::<span class="keyword">operator</span>())&gt;::type;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">using</span> lambda_pointerize = <span class="keyword">typename</span> lambda_pointerize_impl&lt;T&gt;::type;</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</div><div class="line">lambda_pointerize&lt;F&gt; lambda_decay(F lambda)</div><div class="line">&#123;</div><div class="line">    <span class="keyword">return</span> lambda_pointerize&lt;F&gt;(lambda);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>其实如果 VS 2013 支持 <code>constexpr</code> 的话，其实用起来会更优雅。</p>
-<p>另：我发现英文在自创单词上简直太有感觉了。。。。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/" data-id="cj10h9j0i0001lo4nwd0uusn0" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/obs-studio/">obs-studio</a></li></ul>
 
     </footer>
   </div>
@@ -581,6 +571,10 @@
       <ul>
         
           <li>
+            <a href="/2017/04/12/use-ffmpeg-to-reencode-videos/">使用 ffmpeg 压制视频</a>
+          </li>
+        
+          <li>
             <a href="/2017/04/02/monthly-read-posts-in-mar-2017/">Monthly Read Posts in Mar 2017</a>
           </li>
         
@@ -604,10 +598,6 @@
             <a href="/2017/01/14/automatically-start-installation-using-inno-setup/">自动开始安装 Inno Setup 打包的安装程序</a>
           </li>
         
-          <li>
-            <a href="/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/">自动将 non-capturing lambda 转换为函数指针</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -627,7 +617,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 
