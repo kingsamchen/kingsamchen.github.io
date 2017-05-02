@@ -68,6 +68,76 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-install-ycm-plugin-on-WSL" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/10/03/install-ycm-plugin-on-WSL/" class="article-date">
+  <time datetime="2016-10-03T05:52:18.000Z" itemprop="datePublished">2016-10-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/10/03/install-ycm-plugin-on-WSL/">在 WSL 的 VIM 里安装 YCM</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>注 1：此处的 WSL 指的是 <em>Windows Subsytem for Linux</em>，不是“猥琐流”</p>
+<p>注 2：如果是在中国并且没有专用的全局科学上网线路（比如在自己家里），建议找一个类似 SS 的梯子，让 WSL 里的网络操作走代理，提高速度，避免因为某些连接被和谐导致悲剧发生。</p>
+<p>如果有 SS，那么进入 WSL 后执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">export http_proxy=http://127.0.0.1:1080</div><div class="line">export https_proxy=http://127.0.0.1:1080</div></pre></td></tr></table></figure>
+<p>对当前用户设置代理。</p>
+<p>如果需要使用 apt-get 操作，那么需要首先 <code>su</code> 进入 root 账户，在 root 下设置代理。</p>
+<p>此处设置的环境变量在某个 terminal 退出后自动销毁，下次进入 terminal 需要重复设置。如果你的代理非常稳定非常快，那么可以考虑改写 profile，避免每次手输。</p>
+<p><em><strong>Special thanks to @xqq here</strong></em></p>
+<h3 id="更新自带的-VIM"><a href="#更新自带的-VIM" class="headerlink" title="更新自带的 VIM"></a>更新自带的 VIM</h3><p>因为 WSL 里的 ubuntu 是 14.04 LTS，因此里面附带的 vim 并不满足<strong>最新</strong>的 YCM 的最低版本要求，如果不升级会出现 ycm 工作异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo add-apt-repository ppa:pkg-vim/vim-daily</div><div class="line">sudo apt-get update &amp;&amp; sudo apt-get upgrade</div></pre></td></tr></table></figure>
+<h3 id="安装构建基础依赖"><a href="#安装构建基础依赖" class="headerlink" title="安装构建基础依赖"></a>安装构建基础依赖</h3><p>主要包括：CMake 和 python-dev packages</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">sudo apt-get install build-essential cmake</div><div class="line">sudo apt-get install python-dev python3-dev</div></pre></td></tr></table></figure>
+<h3 id="安装-VIM-插件管理器-Vundle"><a href="#安装-VIM-插件管理器-Vundle" class="headerlink" title="安装 VIM 插件管理器 Vundle"></a>安装 VIM 插件管理器 Vundle</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim</div></pre></td></tr></table></figure>
+<p>插件设置参考 <a href="https://github.com/VundleVim/Vundle.vim" target="_blank" rel="external">这里</a></p>
+<h3 id="安装-YCM"><a href="#安装-YCM" class="headerlink" title="安装 YCM"></a>安装 YCM</h3><p>虽然我们安装了 vundle，但是我们不会直接通过 vundle 装 ycm，因为太慢了。</p>
+<p>当然如果你在国外或者有科学上网专线，那就无所谓了…不过谁让我们是穷屌丝呢。</p>
+<p>首先进入目录 <code>~/.vim/bundle</code>，然后把 YCM 的 repo 拉下来，记得要用 <code>--recursive</code>，因为现在的 ycm 依赖的第三方模块太多了…</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git clone --recursive https://github.com/Valloric/YouCompleteMe.git</div></pre></td></tr></table></figure>
+<p>这个操作对你的梯子是一个极大的考验，如果中途 clone 挂了，就进入 ycm 的目录，接着用 submodule update 去继续拖代码即可。</p>
+<p>想当初我的 SS 在这里断了 5-6 次，每一次 connection lost 都让我问候了一遍党和国家…</p>
+<p>代码拉完之后还没结束，这个时候打开 <code>.vimrc</code>，把 ycm 加到 vundle 的设置列表里，然后打开 vim 走一遍 <code>PluginInstall</code>。你应该会看到 ycm 被飞快的安装完了（其实也就校验了一下😁）</p>
+<h3 id="编译-ycm"><a href="#编译-ycm" class="headerlink" title="编译 ycm"></a>编译 ycm</h3><p>源代码拖完了就该轮到编译了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cd ~/.vim/bundle/YouCompleteMe</div><div class="line">./install.py --clang-completer</div></pre></td></tr></table></figure>
+<p>脚本首先会去下载 clang-3.9，然后走一遍 cmake 的编译，等一会儿就好。</p>
+<h3 id="Debut"><a href="#Debut" class="headerlink" title="Debut"></a>Debut</h3><p>来一张最终效果图</p>
+<p><img src="img/wsl_vim_ycm.jpg" alt=""></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/" data-id="cj27pvfiq001atg4ni74e9vps" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/10/03/install-ycm-plugin-on-WSL/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/wsl/">wsl</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ycm/">ycm</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-build-and-integrate-the-newest-version-of-breakpad-on-windows" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" class="article-date">
@@ -128,7 +198,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="cj1dujfkl000i484n6jhr9l2f" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" data-id="cj27pvfhv000htg4nv7dd9u8u" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -220,7 +290,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cj1dujfka0006484n4r2rxa04" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cj27pvfhv000ftg4nc6vbk45j" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -281,7 +351,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="cj1dujfks000s484ny01k1jea" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="cj27pvfhv000stg4ny901l23b" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -341,7 +411,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="cj1dujfkn000m484nk57n551i" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="cj27pvfhv000ktg4nmu7pifi3" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -410,7 +480,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="cj1dujfkp000o484n2st8cnr4" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="cj27pvfia000vtg4nafzlr0gy" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -482,98 +552,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="cj1dujfmv0061484n8c9i7pql" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="cj27pvfkk006qtg4nlno5r8vr" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-template-type-constraints-and-type-traits" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/06/14/template-type-constraints-and-type-traits/" class="article-date">
-  <time datetime="2016-06-13T16:32:39.000Z" itemprop="datePublished">2016-06-14</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/06/14/template-type-constraints-and-type-traits/">Template Type Constraints And Type Traits</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>模板参数类型约束在 C++ 中一直以来大概得算不上不下的一个处境。</p>
-<p>因为非运行时（编译期）的优势，对于参数类型约束的需求不像 C# 那样紧迫；但是同时又因为实例化完成的时期过早，编译器对于模板代码的处理并不能上升到一个精确的语义层次，导致的后果就是模板相关的代码的出错信息一直在井喷，而且相当一部分的错误信息完全没有卵用。</p>
-<p>最直接的例子就是拿 <code>std::sort</code> 去对一个 <code>std::list</code> 对象进行排序。</p>
-<p>早期的编译器扔出来的错误提示第一眼完全看不出再讲什么（例如找不到 <code>operator&lt;</code>的定义）；虽然经验丰富的老司机们一下就能看出问题在于 <code>std::sort</code> 要求的迭代器是 <em>random access iterator</em>, 而 <code>std::list</code> 提供的迭代器是 <em>bidirectional iterator</em>，但是原因八成是因为老司机们撸过的轮子比你用过的库还多。</p>
-<p>这个问题对于 library developer 尤为尖锐。</p>
-<p>按照原本的历史进程，解决这个大麻烦的荣耀应属 C++17 中的 <a href="http://en.cppreference.com/w/cpp/language/constraints" target="_blank" rel="external">Concepts</a>；然而不知道标准委员会的委员们哪根神经回路短路了，居然把这个 proposal 给 veto/reject 了，于是之前说好的大救星就这么突然被打脸了。</p>
-<h2 id="Type-Constraints"><a href="#Type-Constraints" class="headerlink" title="Type Constraints"></a>Type Constraints</h2><p>在很久很久以前，甚至比提出 concepts 这个想法还要早，曾经有一批人开始尝试自己加一些类型约束设施，已达到类似的要求。</p>
-<p>在 Herb Sutter 著名的 <em>More Exceptional C++</em> 一书中，提供了这么一个例子：</p>
-<p>假设我有一个类模板</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">class</span> Foo &#123; ... &#125;;</div></pre></td></tr></table></figure>
-<p>要求 <code>Foo</code> 的实例化类型参数 <code>T</code> 必须包含一个成员函数 <code>Clone()</code>，并且这个函数的原型要<strong>严格满足</strong> <code>T* Clone() const</code>。</p>
-<p>做法是提供一个类型约束类 <code>HasClone</code></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">class</span> HasClone &#123;</div><div class="line"><span class="keyword">public</span>:</div><div class="line">    HasClone()</div><div class="line">    &#123;</div><div class="line">        <span class="keyword">void</span> (*pfn)() = &amp;ValidateConstraints;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    ~HasClone() = <span class="keyword">default</span>;</div><div class="line"></div><div class="line">    DISALLOW_COPY(HasClone);</div><div class="line"></div><div class="line">    DISALLOW_MOVE(HasClone);</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ValidateConstraints</span><span class="params">()</span></span></div><div class="line">    &#123;</div><div class="line">        T* (T::*fn)() <span class="keyword">const</span> = &amp;T::Clone;</div><div class="line">        UNREFED_VAR(fn);</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>并利用父类构造函数先于子类执行的特性</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">class</span> Foo : HasClone&lt;T&gt; &#123;</div><div class="line">    ...</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>对模板参数 <code>T</code> 进行约束。</p>
-<p>虽然在形式上这个构造法非常漂亮，然而在实践中，根本称不上好用。</p>
-<p>某些编译器，例如 VS 2015，在显式调用 <code>T::Clone()</code> 失败时会直接跳过 <code>HasClone</code> 的构造，直接提示目标调用点相关的错误。</p>
-<p>这意味着精心设计的类型约束类直接变成了 subordinate solution。</p>
-<h2 id="Type-Traits"><a href="#Type-Traits" class="headerlink" title="Type Traits"></a>Type Traits</h2><p>另一方面：既然不方便改善类型约束，那么可以考虑在编译期利用类型信息针对不同的类选择不同的行为。</p>
-<p>于是这个操作通常需要两部分协助： type traits 和 template specialization。</p>
-<p>举个很常见的误用 OOP 的例子：有两个类型 A 和 B，如果 B 是 A 的子类，那么进行操作1，否则进行操作2。</p>
-<p>有些人会利用 runtime type information 的方式实现，显著特征是要做 down-cast，例如 <code>dynamic_cast</code> 或者 Java 中的 <code>instanceof</code>，然而他们不知道这是 runtime polymorphism 的典型场景。</p>
-<p>不过在 C++ 中，借助 type traits，可以实现 compile time polymorphism。</p>
-<p>这里我们需要一个能够编译期判断继承关系的设施，假设它是一个名为 <code>IsDerivedDrom</code> 的类。</p>
-<p>同样来自 <em>More Exceptional C++</em>，这个实现来自脑洞炸开的 Andrei Alexandrescu：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> D, <span class="keyword">typename</span> B&gt;</div><div class="line"><span class="keyword">class</span> IsDerivedFrom &#123;</div><div class="line"><span class="keyword">private</span>:</div><div class="line">    <span class="keyword">struct</span> No &#123;&#125;;</div><div class="line">    <span class="keyword">struct</span> Yes &#123; No data[<span class="number">2</span>]; &#125;;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">static</span> No <span class="title">Check</span><span class="params">(...)</span></span>;</div><div class="line">    <span class="function"><span class="keyword">static</span> Yes <span class="title">Check</span><span class="params">(B*)</span></span>;</div><div class="line"></div><div class="line"><span class="keyword">public</span>:</div><div class="line">    <span class="keyword">enum</span> &#123;</div><div class="line">        value = <span class="keyword">sizeof</span>(Check(<span class="keyword">static_cast</span>&lt;D*&gt;(<span class="number">0</span>))) == <span class="keyword">sizeof</span>(Yes)</div><div class="line">    &#125;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>这个实现有多精巧呢？</p>
-<ol>
-<li>继承关系通过非常自然的 implicit upcast。如果 <code>D</code> 是 <code>B</code> 的子类，那么 <code>D*</code> 能够安全顺滑的转换为 <code>B*</code></li>
-<li>利用函数重载来实现编译期绑定，并且利用了不定参数形式在 overload resolution 中的 low priority</li>
-<li>sizeof 和 enum 的编译期求值行为</li>
-<li>没有任何运行时开销</li>
-</ol>
-<p>从头到脚的 compile-compiliant 的处理方式，闪耀着老司机们的智慧光芒。</p>
-<p>当然到了 C++11，可以把这个形式做更进一步的简化，让直观上更容易理解</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> D, <span class="keyword">typename</span> B&gt;</div><div class="line"><span class="keyword">class</span> IsDerivedFrom &#123;</div><div class="line"><span class="keyword">private</span>:</div><div class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">false_type <span class="title">Check</span><span class="params">(...)</span></span>;</div><div class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">true_type <span class="title">Check</span><span class="params">(B*)</span></span>;</div><div class="line"></div><div class="line"><span class="keyword">public</span>:</div><div class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(Check(<span class="keyword">static_cast</span>&lt;D*&gt;(<span class="literal">nullptr</span>)))::value ;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
-<p>至于剩下的怎么做 specialization 这里就不提了，自己翻书去吧。</p>
-<p>一个好消息是 C++ 11 开始，STL 内置了一大票和这个类似的 type traits 设施。</p>
-<p>在 concepts 短期无望的情况下，利用 type traits 和 specialization/overload resolution 可以做出一些更加灵活的设计，并且依托内置设施，甚至大程度可以避开自己手工跑 SFINAE，减轻生活压力。</p>
-<p>大概就这样。</p>
-<p>PS：不过其实你最后可以发现，两者前后并没有什么直接的因果关系。主要原因大概还是为了写个 post 而丧心病狂的强行拉亲戚。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="cj1dujfln001w484n472qurex" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/template/">template</a></li></ul>
 
     </footer>
   </div>
@@ -608,6 +592,10 @@
       <ul>
         
           <li>
+            <a href="/2017/05/02/monthly-read-posts-in-apr-2017/">Monthly Read Posts in Apr 2017</a>
+          </li>
+        
+          <li>
             <a href="/2017/04/12/use-ffmpeg-to-reencode-videos/">使用 ffmpeg 压制视频</a>
           </li>
         
@@ -631,10 +619,6 @@
             <a href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">编译期判断是否存在某个成员函数</a>
           </li>
         
-          <li>
-            <a href="/2017/01/14/automatically-start-installation-using-inno-setup/">自动开始安装 Inno Setup 打包的安装程序</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -644,7 +628,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Archives</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
     </div>
   </div>
 
@@ -654,7 +638,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 
