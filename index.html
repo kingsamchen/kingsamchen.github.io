@@ -68,6 +68,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-generate-video-thumbnails-by-using-ffmpeg" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/" class="article-date">
+  <time datetime="2017-05-06T14:21:18.000Z" itemprop="datePublished">2017-05-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/">用 FFMpeg 生成视频缩略图</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>除了可以使用 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">ffmpeg 压制视频外</a>，还能利用 ffmpeg 生成某个视频的缩略图。</p>
+<p>利用命令行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ffmpeg.exe -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 9 -c:v mjpeg &quot;output_dir\thumb_%d.jpg&quot;</div></pre></td></tr></table></figure>
+<p>就可以在 <code>output_dir</code> 这个目录下为视频文件 <em>some_video.mp4</em> 从头开始生成最多不超过9张关键帧缩略图，文件名分别是 <code>thumb_1.jpg</code> ~ <code>thumb_9.jpg</code>。</p>
+<p>这个默认策略适合长度较短的视频（比如半分钟或一分钟内），对于长视频，很可能跑完9张关键帧缩略图，正片都还没开始…</p>
+<p>所以，这个时候的生成策略应该考虑能够尽可能的均匀分布于视频内容。</p>
+<p>首先利用这个 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">post</a> 里提到的做法，用 <code>ffprobe.exe</code> 获得视频的长度，记为 <strong><em>T</em></strong>（单位，秒）。</p>
+<p>将 <strong><em>T</em></strong> 均分为 10（9+1）个片段，取 $ t_i = \frac{T}{10} * i, i = 1, 2, \cdots 9 $，这么做的原因是避免取到开头和结尾。</p>
+<p>最后针对每个 $ t_i $，运行 ffmpeg</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ffmpeg.exe -ss t_i -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 1 -c:v mjpeg &quot;output_dir\thumb_i.jpg&quot;</div></pre></td></tr></table></figure>
+<p>唯一麻烦的地方在于输出文件名序列需要我们自己指定。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/" data-id="cj2de9phh000fig4nt9246yqn" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/thumbnails/">thumbnails</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-monthly-read-posts-in-apr-2017" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/05/02/monthly-read-posts-in-apr-2017/" class="article-date">
@@ -110,7 +165,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/" data-id="cj27pvfia000ytg4n0cuz2bqs" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/" data-id="cj2de9pi2001aig4nh85ysm2u" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -169,7 +224,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/" data-id="cj27pvfj6001ztg4n8b3e1x8j" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/" data-id="cj2de9pif001tig4n4ze3uo0u" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -240,7 +295,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/" data-id="cj27pvfiq001etg4nyjuop7ju" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/" data-id="cj2de9pia001mig4ny73y3ugv" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -305,7 +360,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/" data-id="cj27pvfia0014tg4n81kto5ic" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/" data-id="cj2de9pi00018ig4n1b6tlk7q" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -361,7 +416,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/" data-id="cj27pvfiq001jtg4nob3qfooy" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/" data-id="cj2de9pi7001gig4npo3p5ewg" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -460,75 +515,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/" data-id="cj27pvfiq001gtg4nimjtryxm" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/" data-id="cj2de9pi5001dig4n0ti9moh6" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linker/">linker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-check-if-has-member-at-compile-time-in-cpp" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/" class="article-date">
-  <time datetime="2017-01-29T16:32:42.000Z" itemprop="datePublished">2017-01-30</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">编译期判断是否存在某个成员函数</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>之前在<a href="https://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/">某篇</a>文章描述了一个实际上不是那么好用的检查某个模板类型参数是否存在某个函数的方法。</p>
-<p>这次会介绍一个相对有用的，在编译期检查某个类是否存在给定成员函数的做法，并且可以根据检查的结果执行不同的代码。</p>
-<p>（简而言之就是如何拙劣的模拟一下 duck typing）</p>
-<p>假设我们要检查某个类 <code>class Foo</code> 是否存在成员数 <code>bar(int)</code></p>
-<p>实现辅助设施</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">template&lt;typename T, typename... Args&gt;</div><div class="line">struct has_member_bar &#123;</div><div class="line">    template&lt;typename U&gt;</div><div class="line">    constexpr static auto check(const void*)-&gt;</div><div class="line">        decltype(std::declval&lt;U&gt;().bar(std::declval&lt;Args&gt;()...), std::true_type());</div><div class="line"></div><div class="line">    template&lt;typename U&gt;</div><div class="line">    constexpr static std::false_type check(...);</div><div class="line"></div><div class="line">    static constexpr bool value = decltype(check&lt;T&gt;(nullptr))::value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>检查的方法是尝试生成函数 <code>T::bar</code> 的返回类型，如果不存在相应函数，则 <code>check()</code> 的重载决议会匹配到第二个函数上。</p>
-<p>这里引入 variadic template 的原因是我们希望能够检查时同时确定函数的 signature（注意 signature 是不包含返回类型的）。</p>
-<p>使用方法：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">constexpr</span> <span class="keyword">bool</span> has_bar = has_member_bar&lt;Foo, <span class="keyword">int</span>&gt;::value;</div></pre></td></tr></table></figure>
-<p>如果想把这部分做成通用的设施，那只能引入宏，根据需要生成辅助结构的代码；因为一个辅助结构只能检查一个函数成员。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_HAS_CLASS_MEMBER(NAME)                                                  \</span></div><div class="line">template<span class="meta-string">&lt;typename T, typename... Args&gt;</span>                                                  \</div><div class="line">struct has_member_##NAME &#123;                                                              \</div><div class="line">    template<span class="meta-string">&lt;typename U&gt;</span>                                                                \</div><div class="line">    constexpr static auto check(const void*)-&gt;                                          \</div><div class="line">        decltype(std::declval<span class="meta-string">&lt;U&gt;</span>().NAME(std::declval<span class="meta-string">&lt;Args&gt;</span>()...), std::true_type());    \</div><div class="line">                                                                                        \</div><div class="line">    template<span class="meta-string">&lt;typename U&gt;</span>                                                                \</div><div class="line">    constexpr static std::false_type check(...);                                        \</div><div class="line">                                                                                        \</div><div class="line">    static constexpr bool value = decltype(check<span class="meta-string">&lt;T&gt;</span>(nullptr))::value;                   \</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">define</span> HAS_CLASS_MEMBER(CLASS, MEMBER, ...) \</span></div><div class="line">    has_member_##MEMBER<span class="meta-string">&lt;CLASS, __VA_ARGS__&gt;</span>::value</div></pre></td></tr></table></figure>
-<p>使用前需要先用 <code>DECLARE_HAS_CLASS_MEMBER(class_name)</code> 来创建一个辅助结构，再利用 <code>HAS_CLASS_MEMBER(Foo, bar, int)</code> 来判断是否存在 <code>Foo::bar(int)</code>。</p>
-<p>如果希望能利用上面的设施在编译期做到根据函数是否存在执行不同的操作，那么则可以借助 SFINAE 来实现：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">DECLARE_HAS_CLASS_MEMBER(foo);</div><div class="line">DECLARE_HAS_CLASS_MEMBER(bar);</div><div class="line"></div><div class="line"><span class="keyword">struct</span> Foo &#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;&#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">struct</span> Bar &#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Bar::bar()\n"</span>; &#125;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Bar::foo(const std::string&amp;, int)\n"</span>; &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">typename</span> <span class="built_in">std</span>::enable_if&lt;HAS_CLASS_MEMBER(T, foo, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)&gt;::<span class="function">type <span class="title">RunFoo</span><span class="params">(T&amp; obj)</span></span></div><div class="line">&#123;</div><div class="line">    obj.foo(<span class="string">"hello world"</span>, <span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">typename</span> <span class="built_in">std</span>::enable_if&lt;!HAS_CLASS_MEMBER(T, foo, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)&gt;::<span class="function">type <span class="title">RunFoo</span><span class="params">(T&amp; obj)</span></span></div><div class="line">&#123;</div><div class="line">    obj.bar();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    Bar bar;</div><div class="line">    RunFoo(bar);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>但是如果想将 SFINAE 这部分做成通用的 static-if，还是比较 tricky 的；我一开始利用 lambda + SFINAE 倒是模拟了一个，但是因为 lambda 直接被无条件编译，导致即使在编译期已经确定不用某个分支的 lambda，仍然会编译这个 lambda 的代码，使得 static-if 功能大减。</p>
-<p>我猜想使用 generic lambda 应该可以绕过去，但是实现上可能会更加 tricky，并且使用上不会太直观，或者满地坑。</p>
-<p>其实 <code>HAS_CLASS_MEMBER</code> 最好的作用是等到 C++ 17 普及了 if-constexpr，这样整个流程都变得清晰了。</p>
-<p>另外有一点不得不说，其实很多你认为需要通过编译期判断是否存在某个成员函数才能解决的问题，压根就走不到需要自己实现 SFINAE 那一步，通过一些（可能不是那么优雅）简单的构造，就可以利用 type traits 解决，例如，我在实现 <a href="https://github.com/kingsamchen/KBase/blob/master/src/kbase/singleton.h" target="_blank" rel="external">KBase Singleton</a> 的方案。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/" data-id="cj27pvfhv000btg4nvueozi1u" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/template/">template</a></li></ul>
 
     </footer>
   </div>
@@ -563,6 +555,10 @@
       <ul>
         
           <li>
+            <a href="/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/">用 FFMpeg 生成视频缩略图</a>
+          </li>
+        
+          <li>
             <a href="/2017/05/02/monthly-read-posts-in-apr-2017/">Monthly Read Posts in Apr 2017</a>
           </li>
         
@@ -586,10 +582,6 @@
             <a href="/2017/02/01/monthly-read-posts-in-jan-2017/">Monthly Read Posts in Jan 2017</a>
           </li>
         
-          <li>
-            <a href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">编译期判断是否存在某个成员函数</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -609,7 +601,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 
