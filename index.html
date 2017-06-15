@@ -68,6 +68,60 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-use-base-bind-with-std-function" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/06/15/use-base-bind-with-std-function/" class="article-date">
+  <time datetime="2017-06-15T14:10:23.000Z" itemprop="datePublished">2017-06-15</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/06/15/use-base-bind-with-std-function/">Use base::Bind With std::function</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><code>base::Bind()</code> 和 <code>base::Callback</code> 可以看作是对标准库 <code>std::bind()</code> 和 <code>std::function</code> 的模拟；因为 chromium 项目早在 C++ 11 正式通过前就已经存在好多年了。</p>
+<p>我为直播姬设计新的网络通信基础组件时，接口的回调 handler 通常设计为 <code>std::function</code> 对象，因为它可以“吸收”任何函数对象，大多数情况下这个设计运转的非常良好；但是这里有一个略微棘手的问题： <code>base::Callback</code> 对象无法被 <code>std::function</code> 使用。</p>
+<p>问题本质很简单，因为 <code>base::Callback</code> 不是一个 function object，因为它不支持以函数形式调用（没有提供 <code>operator()</code> 的重载），instead，它提供了一个 <code>Run()</code> 函数来执行这个 callback…</p>
+<p>虽然我之前吐槽过好多次 chromium 的很多架构设计完全是 Java-Style 的，但是这里并不打算再拎出来批判一次，我们要聚焦的是如何解决这个问题。</p>
+<p>解决思路很简单：既然它不是一个 function object，那么我们就给他包一层 function object 的皮就好了：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">#include "base/bind.h"</div><div class="line"></div><div class="line">template&lt;typename&gt;</div><div class="line">class CallableCallback;</div><div class="line"></div><div class="line">template&lt;typename R, typename... Args&gt;</div><div class="line">class CallableCallback&lt;R(Args...)&gt; &#123;</div><div class="line">public:</div><div class="line">    using callback_t = base::Callback&lt;R(Args...)&gt;;</div><div class="line"></div><div class="line">    explicit CallableCallback(callback_t callback)</div><div class="line">        : callback_(callback)</div><div class="line">    &#123;&#125;</div><div class="line"></div><div class="line">    R operator()(Args... args) const</div><div class="line">    &#123;</div><div class="line">        return callback_.Run(args...);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">private:</div><div class="line">    callback_t callback_;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">template&lt;typename Callback&gt;</div><div class="line">auto MakeCallable(Callback callback)-&gt;CallableCallback&lt;typename Callback::RunType&gt;</div><div class="line">&#123;</div><div class="line">    using Sig = typename Callback::RunType;</div><div class="line">    return CallableCallback&lt;Sig&gt;(callback);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>辅助函数 <code>MakeCallable()</code> 可以将一个 <code>base::Callback</code> 对象转换成一个 function object。</p>
+<p>一个简单的示例如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">Inc</span><span class="params">(<span class="keyword">int</span> i)</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">return</span> ++i;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">Foo</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="built_in">std</span>::<span class="built_in">string</span>, <span class="keyword">int</span>)</span></span></div><div class="line">&#123;&#125;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> &#123;</span></div><div class="line"><span class="keyword">public</span>:</div><div class="line">    Test()</div><div class="line">        : msg_(<span class="string">"test"</span>), weak_ptr_factory_(<span class="keyword">this</span>)</div><div class="line">    &#123;&#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Bark</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; data)</span></span></div><div class="line">    &#123;</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; data &lt;&lt; <span class="string">":\t"</span> &lt;&lt; msg_ &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> msg_;</div><div class="line">    base::WeakPtrFactory&lt;Test&gt; weak_ptr_factory_;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"--- test case 1 ---\n"</span>;</div><div class="line">    <span class="built_in">std</span>::function&lt;<span class="keyword">int</span>(<span class="keyword">int</span>)&gt; fn(MakeCallable(base::Bind(&amp;Inc)));</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; fn(<span class="number">5</span>) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line"></div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"--- test case 2 ---\n"</span>;</div><div class="line">    Test* ptr = <span class="keyword">new</span> Test();</div><div class="line">    <span class="built_in">std</span>::function&lt;<span class="keyword">void</span>()&gt; mfn(</div><div class="line">        MakeCallable(base::Bind(&amp;Test::Bark, ptr-&gt;weak_ptr_factory_.GetWeakPtr(), <span class="string">"inside"</span>)));</div><div class="line">    mfn();</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"release test instance\n"</span>;</div><div class="line">    <span class="keyword">delete</span> ptr;</div><div class="line">    mfn();</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>小巧优雅纯天然</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/" data-id="cj3yjjvy30023h84nsaalk3vk" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chromium/">chromium</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/function-object/">function object</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/std-function/">std::function</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-activate-the-first-application-instance-when-there-is-one" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/" class="article-date">
@@ -112,7 +166,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/06/05/activate-the-first-application-instance-when-there-is-one/" data-id="cj3ixcvwa0000cw4nocnp24lj" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/06/05/activate-the-first-application-instance-when-there-is-one/" data-id="cj3yjjvwc0000h84n77ru6zdv" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/06/05/activate-the-first-application-instance-when-there-is-one/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -182,7 +236,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/06/03/monthly-read-posts-in-may-2017/" data-id="cj3ixcvy6001ocw4n8tbgjhgr" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/06/03/monthly-read-posts-in-may-2017/" data-id="cj3yjjvxz001wh84nf6t5i4ou" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/06/03/monthly-read-posts-in-may-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -232,7 +286,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/05/08/fix-full-minidump-issue-of-breakpad/" data-id="cj3ixcvxe000pcw4nj59b34kq" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/05/08/fix-full-minidump-issue-of-breakpad/" data-id="cj3yjjvxa000xh84nh0gqrsss" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/05/08/fix-full-minidump-issue-of-breakpad/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -287,7 +341,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/" data-id="cj3ixcvxg000scw4nolse088v" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/" data-id="cj3yjjvx8000uh84nbsoj6zxw" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -343,7 +397,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/" data-id="cj3ixcvxy001ccw4nm8bmybxp" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/" data-id="cj3yjjvxm001eh84nyhrhjzij" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -402,7 +456,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/" data-id="cj3ixcvyr002ecw4nj4ey6zmp" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/" data-id="cj3yjjvyb002ch84nscjxy2nk" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -416,81 +470,10 @@
 
 
   
-    <article id="post-monthly-read-posts-in-mar-2017" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/04/02/monthly-read-posts-in-mar-2017/" class="article-date">
-  <time datetime="2017-04-02T08:58:24.000Z" itemprop="datePublished">2017-04-02</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/04/02/monthly-read-posts-in-mar-2017/">Monthly Read Posts in Mar 2017</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p><a href="http://playfulprogramming.blogspot.hk/2017/01/generate-lambdas-for-clarity-and.html" target="_blank" rel="external">Generate lambdas for clarity and performance</a></p>
-<p>Generate a class of lambdas with auto-return-type deduction.</p>
-<p>唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 <code>std::function&lt;&gt;</code> 来做 workaround</p>
-<hr>
-<p><a href="http://nullprogram.com/blog/2016/08/03/" target="_blank" rel="external">Appending to a File from Multiple Processes</a></p>
-<p>经验问题，写客户端的 logger 轮子时应该会经常需要考虑到这个问题。</p>
-<p>文章针对的是 POSIX 系统，不过不同系统在一些具体策略/细节上也有区别。</p>
-<p>另，Windows 上这个场景有直接的 API 调用保证。</p>
-<p>不过有点比较奇怪，chromium 的 base::logging 只提供了 Windows 下的多进程无锁 appending，POSIX/Mach 下依然用的是线程同步锁和全局锁，可能考虑的原因是实现起来坑比较大？</p>
-<hr>
-<p>OAuth 2.0 Protocol</p>
-<ol>
-<li><a href="http://tutorials.jenkov.com/oauth2/authorization.html" target="_blank" rel="external">oauth2 authorization</a></li>
-<li><a href="https://taozj.org/201605/principle-of-oauth2.html" target="_blank" rel="external">principle-of-oauth2</a></li>
-<li><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="external">oauth_2_0</a></li>
-</ol>
-<p>第二篇文章基本可以看作第一篇的翻译，但是很多地方都没有翻译出来，所以推荐主要看第一篇文章，把第二、三篇作为补充材料</p>
-<hr>
-<p><a href="https://channel9.msdn.com/Events/GoingNative/2013/Inheritance-Is-The-Base-Class-of-Evil" target="_blank" rel="external">Inheritance Is The Base Class of Evil</a></p>
-<p>C9 上的一个 Tech Talk，speaker 是 Adobe 的技术大佬，但是我觉得有标题党之嫌。</p>
-<p>Talk 中展现出来的哲学观挺有意思的，比如那句 <em>There is no polymorphic type, just polymorphic use of types</em>。</p>
-<hr>
-<p><a href="https://channel9.msdn.com/Shows/C9-GoingNative/GoingNative-53-Learning-STL-Multithreading" target="_blank" rel="external">Learning STL Multithreading</a></p>
-<p>虽然标题是 STL Multithreading，但是里面的核心内容基本都是原理性的，通用的。</p>
-<p>对于 mutex/condition-variable 这类比较高级的 synchronization primitives 和低级的 atomic variables 均有涉及，并且也给了实践建议。</p>
-<p>话说右边那个胖胖的小哥的口音听起来真的是容易懂…</p>
-<p>另外有个挺有意思的细节，快到最后的时候胖小哥提到了 <code>async</code> 和 <code>future</code>，他说希望大家能优先考虑这俩玩意儿，但是说了几句话又欲言又止，最后无奈地说 <em>we will discuss these later</em>。。。估计他想了想，就目前标准给的设施和实现情况，要做到 task-based paralleilism，那坑大的都可以把自己埋进去了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/" data-id="cj3ixcvy7001rcw4n1asl4sz2" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lambda/">lambda</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/stl/">stl</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/6/">6</a><a class="extend next" rel="next" href="/page/2/">__('next') &raquo;</a>
   </nav>
 </section>
         
@@ -511,6 +494,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/06/15/use-base-bind-with-std-function/">Use base::Bind With std::function</a>
+          </li>
         
           <li>
             <a href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/">禁止程序多实例并存并且自动激活第一个实例</a>
@@ -536,10 +523,6 @@
             <a href="/2017/04/12/use-ffmpeg-to-reencode-videos/">使用 ffmpeg 压制视频</a>
           </li>
         
-          <li>
-            <a href="/2017/04/02/monthly-read-posts-in-mar-2017/">Monthly Read Posts in Mar 2017</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -559,7 +542,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 
