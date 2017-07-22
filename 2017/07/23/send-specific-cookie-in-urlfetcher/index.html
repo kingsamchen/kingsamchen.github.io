@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Send Specific Cookie in URLFetcher | KC的废墟堆</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="使用 URLFetcher 作为网络请求的基础组件有一个优势：如果 server 的 response header 指明了 set-cookie，那么 URLFetcher 在发出下一个请求时会自动往 request header 中设置 cookie。 这为使用某些需要在请求时附带 cookie 的 API 提供了便利；但是同时也在某一些场合下导致了一些问题。 如果你需要为某个 API 请求的">
+<meta name="keywords" content="chromium,urlfetcher,cookie">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Send Specific Cookie in URLFetcher">
+<meta property="og:url" content="http://kingsamchen.github.io/2017/07/23/send-specific-cookie-in-urlfetcher/index.html">
+<meta property="og:site_name" content="KC的废墟堆">
+<meta property="og:description" content="使用 URLFetcher 作为网络请求的基础组件有一个优势：如果 server 的 response header 指明了 set-cookie，那么 URLFetcher 在发出下一个请求时会自动往 request header 中设置 cookie。 这为使用某些需要在请求时附带 cookie 的 API 提供了便利；但是同时也在某一些场合下导致了一些问题。 如果你需要为某个 API 请求的">
+<meta property="og:updated_time" content="2017-07-22T16:41:07.362Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Send Specific Cookie in URLFetcher">
+<meta name="twitter:description" content="使用 URLFetcher 作为网络请求的基础组件有一个优势：如果 server 的 response header 指明了 set-cookie，那么 URLFetcher 在发出下一个请求时会自动往 request header 中设置 cookie。 这为使用某些需要在请求时附带 cookie 的 API 提供了便利；但是同时也在某一些场合下导致了一些问题。 如果你需要为某个 API 请求的">
+  
+    <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  
+
+</head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">KC的废墟堆</a>
+      </h1>
+      
+        <h2 id="subtitle-wrap">
+          <a href="/" id="subtitle">Will you serve in Heaven, or rule in Hell</a>
+        </h2>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-send-specific-cookie-in-urlfetcher" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/07/23/send-specific-cookie-in-urlfetcher/" class="article-date">
+  <time datetime="2017-07-22T16:14:34.000Z" itemprop="datePublished">2017-07-23</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Send Specific Cookie in URLFetcher
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>使用 <code>URLFetcher</code> 作为网络请求的基础组件有一个优势：如果 server 的 response header 指明了 <code>set-cookie</code>，那么 <code>URLFetcher</code> 在发出下一个请求时会自动往 request header 中设置 cookie。</p>
+<p>这为使用某些需要在请求时附带 cookie 的 API 提供了便利；但是同时也在某一些场合下导致了一些问题。</p>
+<p>如果你需要为某个 API 请求的 request header 中携带自定义的 cookie 数据，例如 <code>cookie: buvid=xxxx</code>，那么，即使你在发送请求前通过 <code>AddExtraRequestHeader()</code> 添加了 cookie 头，你也会惊奇地发现，出去的请求并没有携带你设置的 cookie，而是只有 <code>URLFetcher</code> 自己设置的，服务端提供的 cookie 值。</p>
+<p>不要问为什么这个时候要用 cookie 传递这个信息，而不是某个独有的 request header，亦或者 query-string；你永远不知道和你对接的人是一个怎样的智障；毕竟，没有谁会真的去读 RFC。</p>
+<p>自定义 cookie 丢失的原因大概如下：</p>
+<ol>
+<li>你首先设置了 cookie，然后发出请求</li>
+<li><code>URLFetcher</code> 在内部实际进行网络请求前，会设置服务端的 cookie 值（因为之前的请求存在 <code>set-cookie</code>）</li>
+<li>因为 RFC 规定，一个 request header 中， cookie header line 有且仅有一个，也就是说</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">cookie: buvid=xxx</div><div class="line">cookie: sig=xxx</div></pre></td></tr></table></figure>
+<p>是不合法的；虽然可以通过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">cookie: buvid=xxx; sig=xxx</div></pre></td></tr></table></figure>
+<p>来传递多个value，但是这要求 <code>URLFetcher</code> 在添加 cookie 时要能够 aware 到这点；很可惜，根据情况来看这点不成立</p>
+<ol>
+<li>于是 <code>URLFetcher</code> 粗暴的替换了你设置的 cookie 值</li>
+</ol>
+<p>扫了一遍代码之后，我想到一个 workaround，实践证明确实可以：</p>
+<p>发请求前设置 <code>URLFetcher</code> 的 load flag，加上 <code>LOAD_DO_NOT_SEND_COOKIE</code>，阻止 <code>URLFetcher</code> 自己设置 cookie 的行为，完全由自己控制请求的 cookie。</p>
+<p>话说用 <code>URLFetcher</code> 被坑了好多次（算上 chromium 其他的 lib，次数可以翻翻），还好每次都能够凭借“优秀工程师的第六感”蒙中问题的 root cause，进而化险为夷。我突然感觉自己理解了什么叫 <em>文章本天成，妙笔偶得之</em>。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/07/23/send-specific-cookie-in-urlfetcher/" data-id="cj5fisvn30021644nn2t585hy" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/07/23/send-specific-cookie-in-urlfetcher/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chromium/">chromium</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cookie/">cookie</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2017/07/07/bypass-proxy-in-urlfetcher/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Bypass Proxy in URLFetcher</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+<section id="comments">
+  <div id="disqus_thread">
+    <noscript>Please enable JavaScript to view the <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  </div>
+</section>
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2017/07/23/send-specific-cookie-in-urlfetcher/">Send Specific Cookie in URLFetcher</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/07/bypass-proxy-in-urlfetcher/">Bypass Proxy in URLFetcher</a>
+          </li>
+        
+          <li>
+            <a href="/2017/07/02/monthly-read-posts-in-jun-2017/">Monthly Read Posts in June 2017</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/15/use-base-bind-with-std-function/">Use base::Bind With std::function</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/">禁止程序多实例并存并且自动激活第一个实例</a>
+          </li>
+        
+          <li>
+            <a href="/2017/06/03/monthly-read-posts-in-may-2017/">Monthly Read Posts in May 2017</a>
+          </li>
+        
+          <li>
+            <a href="/2017/05/08/fix-full-minidump-issue-of-breakpad/">修复 Breakpad 不能启用 Full Minidump</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/07/">July 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/06/">June 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/05/">May 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/04/">April 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/03/">March 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/02/">February 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/01/">January 2017</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/12/">December 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/11/">November 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/10/">October 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/09/">September 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/07/">July 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/06/">June 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/05/">May 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/04/">April 2016</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title">Blog Rolls</h3>
+    <div class="widget">
+    <ul>
+      <li><a href="http://www.daozhihun.com/">刀之魂 | 大木老师成长日记</a></li>
+      <li><a href="http://blog.mistysoul.net/">Sean | 大木老师的私人保姆</a></li>
+      <li><a href="http://blog.nlogn.cn/">帧哥 | 硅谷谈撸管</a></li>
+      <li><a href="https://blog.chichou.me/">ChiChou | 首席安全地球仪切图总奸</a></li>
+      <li><a href="http://www.fleurer-lee.com">Fleurer-lee | F叔的读书笔记（大量干货）</a></li>
+      <li><a href="http://vizee.org/">Vizee | 即将走上人生巅峰推萝莉的章总</a></li>
+      <li><a href="http://thecjw.0ginr.com/blog/">TheCJW | 爱弹棉花的小伟</a></li>
+      <li><a href="http://newbiecoder.0ginr.com/blog/">Newbie Coder | 萌萌哒的炉子</a></li>
+      <li><a href="http://madstrawberry.me/">裴草莓 | 愤怒的老司机</a></li>
+      <li><a href="http://beanbee.net/">陈老师 | Beanbee.Max</a></li>
+      <li><a href="http://sunus.me/">Sunus | 李师傅食品厂CEO</a></li>
+      <li><a href="http://www.tolower.net/">Lower | 喊大木大哥的小弟</a></li>
+      <li><a href="http://mrljdx.com/">Mrljdx | 大保健老司机</a></li>
+    </ul>
+  </div>
+</div>
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2017 Kingsley Chen<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+<script>
+  var disqus_shortname = 'kingsamchen-github-io';
+  
+  var disqus_url = 'http://kingsamchen.github.io/2017/07/23/send-specific-cookie-in-urlfetcher/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+<script type="text/x-mathjax-config"> 
+MathJax.Hub.Config({ 
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]} 
+}); 
+</script>
+<script type="text/javascript"
+   src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+  </div>
+</body>
+</html>
