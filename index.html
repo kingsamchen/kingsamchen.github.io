@@ -68,6 +68,71 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-an-example-of-bad-api-design-getenvironmentvariable" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/08/08/an-example-of-bad-api-design-getenvironmentvariable/" class="article-date">
+  <time datetime="2017-08-08T15:52:40.000Z" itemprop="datePublished">2017-08-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/08/08/an-example-of-bad-api-design-getenvironmentvariable/">GetEnvironmentVariable, API 设计的反面教材</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>本次 post 的主角 <code>GetEnvironmentVariableW()</code> 用于获取某个环境变量的值，它的文档可以参见<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683188.aspx" target="_blank" rel="external">这里</a>，看的时候记得仔细研究一下返回值细节。</p>
+<p>这个 API 的设计可以说是一个生动的反面教材。</p>
+<p>根据 MSDN，它的返回值如下：</p>
+<ul>
+<li>如果成功，则返回保存到缓存中的值的字符数，<strong>不包括 terminating null character</strong></li>
+<li>如果缓冲区不够，那么就返回需要的缓冲区大小，以字符数计数，且<strong>包含 terminating null character</strong></li>
+<li>如果函数失败，则<strong>返回 0</strong> （具体细节由 <code>GetLastError()</code> 给出）</li>
+</ul>
+<p>这里不吐槽在返回值非 0 的前提下，存在两种计数的返回值，我们考虑一种很 rare 的情况：环境变量的值是一个 empty string 时，这个 API 应该返回什么</p>
+<p>Windows 上是可以通过 <code>SetEnvironmentVariableW()</code> 将某个环境变量的值设置为空字符串的</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span>* env_name = <span class="string">L"KCPath"</span>;</div><div class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span>* str = <span class="string">L""</span>;</div><div class="line">BOOL rv = SetEnvironmentVariableW(env_name, str);</div><div class="line">assert(rv);</div></pre></td></tr></table></figure>
+<p>那么此时用 <code>GetEnvironmentVariableW()</code> 获取值时，会返回 0 （因为不包含 terminating null，字符数为 0）。那么问题来了，如果我事先不知道这是一个空字符串，那么我怎么知道这个返回 0 意味着失败还是空字符串？</p>
+<p>答案是没法区分，即使你再进一步调用 <code>GetLastError()</code>。</p>
+<p>为什么？</p>
+<p>因为 <code>GetLastError()</code> 的文档说的很清楚：在大部分 API <strong>失败</strong>时， calling thread 的 last error code 会被设置；而有部分（少量）API在成功时，也会设置 last error code。</p>
+<p>但是很遗憾，通过实验验证，环境变量相关的 API 不属于后者。</p>
+<p>这意味着存在一种可能：首先调用了某个环境变量的API，例如 <code>GetEnvironmentVariableW()</code>，但是他失败了，于是 last error code 被设置了；然后紧接着的代码片段利用 <code>GetEnvironmentVariableW()</code> 获取了某个环境变量的值，而这个值是 empty string，于是 API 返回 0；此时你调用了一下 <code>GetLastError()</code>，他返回了一开始调用 API 错误设置的那个错误值，于是这下你就以为后面的调用失败了….</p>
+<p>来上一个 PoC 吧</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">wchar_t</span>* env_name = <span class="string">L"KCPath"</span>;</div><div class="line">    <span class="keyword">const</span> <span class="keyword">wchar_t</span>* str = <span class="string">L""</span>;</div><div class="line"></div><div class="line">    <span class="comment">// Failed, and last error code will be set.</span></div><div class="line">    DWORD size_needed = GetEnvironmentVariableW(env_name, <span class="literal">nullptr</span>, <span class="number">0</span>);</div><div class="line">    assert(size_needed == <span class="number">0</span>);</div><div class="line">    assert(GetLastError() == ERROR_ENVVAR_NOT_FOUND);</div><div class="line"></div><div class="line">    <span class="comment">// set an empty string.</span></div><div class="line">    BOOL rv = SetEnvironmentVariableW(env_name, str);</div><div class="line">    assert(rv);</div><div class="line"></div><div class="line">    <span class="comment">// Request buffer size from the API.</span></div><div class="line">    <span class="comment">// Returned size includes null-terminate character.</span></div><div class="line">    size_needed = GetEnvironmentVariableW(env_name, <span class="literal">nullptr</span>, <span class="number">0</span>);</div><div class="line">    assert(size_needed == <span class="number">1</span>);</div><div class="line"></div><div class="line">    <span class="keyword">wchar_t</span> buf[MAX_PATH] &#123;<span class="number">0</span>&#125;;</div><div class="line">    DWORD size_read = GetEnvironmentVariableW(env_name, buf, MAX_PATH);</div><div class="line"></div><div class="line">    <span class="comment">// WAT? is last call failed?</span></div><div class="line">    assert(size_read == <span class="number">0</span>);</div><div class="line"></div><div class="line">    <span class="keyword">auto</span> err = GetLastError();</div><div class="line">    <span class="comment">// Boom!</span></div><div class="line">    assert(err == ERROR_ENVVAR_NOT_FOUND);</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个故事告诉我们，一个接口的返回值语义的清晰和不重叠是多么的重要。</p>
+<p>最后：这个故事来自于我一个很意外的单元测试用例；我一开始一度以为问题出在 <code>GetEnvironmentVariableW()</code> 不能正确处理空字符串值，以至于这篇 post 最开始的标题是 <em>the werid behavior of GetEnvironmentVariable</em>；但是在我编写 PoC 的阶段我却发现问题怎么也复现不出来…经过快有半小时的跟踪分析后，我才最终确定真正的 root cause；这也告诉我们一个道理，verification 是多么的重要…</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/08/08/an-example-of-bad-api-design-getenvironmentvariable/" data-id="cj63sjk2t0000m84nr06h5g4r" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/08/08/an-example-of-bad-api-design-getenvironmentvariable/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/design/">design</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/environment/">environment</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/windows/">windows</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-monthly-read-posts-in-july-2017" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/08/01/monthly-read-posts-in-july-2017/" class="article-date">
@@ -129,7 +194,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/08/01/monthly-read-posts-in-july-2017/" data-id="cj5tqy2pd001xa04ns38ii4ix" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/08/01/monthly-read-posts-in-july-2017/" data-id="cj63sii07001tqs4ni0d1zra9" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/08/01/monthly-read-posts-in-july-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -187,7 +252,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/07/24/terminate-child-processes-on-close-using-job-object/" data-id="cj5tqy2pz002pa04ntwnuf6mc" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/07/24/terminate-child-processes-on-close-using-job-object/" data-id="cj63sii0r002nqs4naibsg9ay" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/07/24/terminate-child-processes-on-close-using-job-object/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -251,7 +316,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/07/23/send-specific-cookie-in-urlfetcher/" data-id="cj5tqy2pz002ma04n4atzxk02" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/07/23/send-specific-cookie-in-urlfetcher/" data-id="cj63sii0n002eqs4nf0j80o4g" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/07/23/send-specific-cookie-in-urlfetcher/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -305,7 +370,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/07/07/bypass-proxy-in-urlfetcher/" data-id="cj5tqy2oi000ha04ni8joxc37" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/07/07/bypass-proxy-in-urlfetcher/" data-id="cj63sihzc000fqs4nbpq0uqha" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/07/07/bypass-proxy-in-urlfetcher/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -387,7 +452,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/07/02/monthly-read-posts-in-jun-2017/" data-id="cj5tqy2pd001oa04ngcj3pzfa" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/07/02/monthly-read-posts-in-jun-2017/" data-id="cj63sii09001xqs4nzjgut9ss" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/07/02/monthly-read-posts-in-jun-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -441,70 +506,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/" data-id="cj5tqy2pz002ua04nnj7sbllv" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/" data-id="cj63sii0u002uqs4ncev4nowh" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chromium/">chromium</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/function-object/">function object</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/std-function/">std::function</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-activate-the-first-application-instance-when-there-is-one" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/" class="article-date">
-  <time datetime="2017-06-04T16:00:09.000Z" itemprop="datePublished">2017-06-05</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/">禁止程序多实例并存并且自动激活第一个实例</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>多实例检测非常常规，在程序启动时直接检查用来标记的内核对象是否存在即可，一般都是使用 <code>Mutex</code>。</p>
-<p>麻烦的点在于如何激活第一个实例，显示它的主窗口。</p>
-<p>某直播姬一开始的想法是利用 Pipe 建立 IPC 通讯连接，然后后续实例通过发送消息，让主实例 activate 自己的窗口。</p>
-<p>嗯，看起来没毛病，但是做起来问题很多。</p>
-<p>首先，IPC 建立需要时间，通讯需要时间，并且断开 IPC 后主实例（Windows 下）一定得需要重新创建一个 Pipe；更加诡异的是，我在本地编译的 Rlease 版本明明可以工作，利用构建机编译出来的版本，子实例管道连接一直失败….</p>
-<p>于是看起来 IPC 是一个很自然地选择，实际上却是一个导致复杂度暴涨的下策。</p>
-<p>另一个思路是创建一个 Event 内核对象，后续实例直接通过 signal 这个 event 内核对象来通知主实例。</p>
-<p>但是这里实现起来有个麻烦的地方：如果要追求简单化，那么就需要一个单独的线程 wait 在这个内核对象上，负责接收通知，缺点是要浪费掉一个线程；如果不想资源浪费，那么考虑到很多框架都提供了 async i/o 的 wrapper，所以可以利用这个点，你开心的话可以挂到 IOCP 上。</p>
-<p>嗯，等等，我们是想做啥来着？！</p>
-<p>绕了一圈最后想想还是这样算了:</p>
-<p>利用 <code>RegisterWindowMessage()</code> 注册一个自定义消息，主实例在 UI message loop / window message procedure 里监听这个消息；子实例启动后就利用 <code>BroadcastMessage()</code> 或者 <code>PostMessage()</code> 广播一下这个消息。</p>
-<p>这样有个额外的好处，主实例收到消息直接是在 UI 线程，省掉一次 post task。</p>
-<p>某直播姬最后采用的就是这个方案，为此我加了一个 class 起了个名字叫 <em>SingleInstanceGuarantor</em>，嗯，有点中二的感觉。</p>
-<p>最后要注意一点，如果框架封装了 window procedure，将几个活动窗口的 window procedure 聚合到一个 message handler 里的话，可能会收到多条消息，可以利用消息的 timestamp 过滤一下。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/06/05/activate-the-first-application-instance-when-there-is-one/" data-id="cj5tqy2n70000a04n9ynhnwz6" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2017/06/05/activate-the-first-application-instance-when-there-is-one/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/">Windows</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li></ul>
 
     </footer>
   </div>
@@ -539,6 +546,10 @@
       <ul>
         
           <li>
+            <a href="/2017/08/08/an-example-of-bad-api-design-getenvironmentvariable/">GetEnvironmentVariable, API 设计的反面教材</a>
+          </li>
+        
+          <li>
             <a href="/2017/08/01/monthly-read-posts-in-july-2017/">Monthly Read Posts in June 2017</a>
           </li>
         
@@ -562,10 +573,6 @@
             <a href="/2017/06/15/use-base-bind-with-std-function/">Use base::Bind With std::function</a>
           </li>
         
-          <li>
-            <a href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/">禁止程序多实例并存并且自动激活第一个实例</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -585,7 +592,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 
