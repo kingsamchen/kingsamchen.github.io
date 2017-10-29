@@ -5,17 +5,17 @@
   
   <title>Emulate Haskell Infix Operator in CPP | KC的废墟堆</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Usage at a glance 123456789101112131415161718#include &amp;lt;iostream&amp;gt;#include &amp;lt;vector&amp;gt;#include &quot;infix_op.h&quot;int main()&amp;#123;    auto find = Infix([](const auto&amp;amp; container, const auto&amp;amp; va">
+  <meta name="description" content="Usage at a glance #include &amp;lt;iostream&amp;gt; #include &amp;lt;vector&amp;gt;  #include &quot;infix_op.h&quot;  int main() {     auto find = Infix([](const auto&amp;amp; container, const auto&amp;amp; value) {         return std">
 <meta name="keywords" content="cpp,haskell,infix operator">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Emulate Haskell Infix Operator in CPP">
 <meta property="og:url" content="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/index.html">
 <meta property="og:site_name" content="KC的废墟堆">
-<meta property="og:description" content="Usage at a glance 123456789101112131415161718#include &amp;lt;iostream&amp;gt;#include &amp;lt;vector&amp;gt;#include &quot;infix_op.h&quot;int main()&amp;#123;    auto find = Infix([](const auto&amp;amp; container, const auto&amp;amp; va">
-<meta property="og:updated_time" content="2017-10-29T12:07:53.605Z">
+<meta property="og:description" content="Usage at a glance #include &amp;lt;iostream&amp;gt; #include &amp;lt;vector&amp;gt;  #include &quot;infix_op.h&quot;  int main() {     auto find = Infix([](const auto&amp;amp; container, const auto&amp;amp; value) {         return std">
+<meta property="og:updated_time" content="2017-10-29T13:20:54.026Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Emulate Haskell Infix Operator in CPP">
-<meta name="twitter:description" content="Usage at a glance 123456789101112131415161718#include &amp;lt;iostream&amp;gt;#include &amp;lt;vector&amp;gt;#include &quot;infix_op.h&quot;int main()&amp;#123;    auto find = Infix([](const auto&amp;amp; container, const auto&amp;amp; va">
+<meta name="twitter:description" content="Usage at a glance #include &amp;lt;iostream&amp;gt; #include &amp;lt;vector&amp;gt;  #include &quot;infix_op.h&quot;  int main() {     auto find = Infix([](const auto&amp;amp; container, const auto&amp;amp; value) {         return std">
   
     <link rel="alternate" href="/atom.xml" title="KC的废墟堆" type="application/atom+xml">
   
@@ -95,15 +95,73 @@
     <div class="article-entry" itemprop="articleBody">
       
         <p>Usage at a glance</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"infix_op.h"</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    <span class="keyword">auto</span> find = Infix([](<span class="keyword">const</span> <span class="keyword">auto</span>&amp; container, <span class="keyword">const</span> <span class="keyword">auto</span>&amp; value) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="built_in">std</span>::find(container.begin(), container.end(), value);</div><div class="line">    &#125;);</div><div class="line"></div><div class="line">    <span class="keyword">auto</span> seq = <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">int</span>&gt; &#123; <span class="number">1</span>, <span class="number">3</span>, <span class="number">5</span>, <span class="number">7</span>, <span class="number">9</span> &#125;;</div><div class="line"></div><div class="line">    <span class="keyword">bool</span> found = (seq | find | <span class="number">7</span>) != seq.cend();</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; found &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;</span></span>
+
+<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-string" style="color: rgb(162, 252, 162);">"infix_op.h"</span></span>
+
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
+</span>{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> find = Infix([](<span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>&amp; container, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>&amp; value) {
+        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::find(container.begin(), container.end(), value);
+    });
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> seq = <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">vector</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span>&gt; { <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">3</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">5</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">7</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">9</span> };
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">bool</span> found = (seq | find | <span class="hljs-number" style="color: rgb(211, 99, 99);">7</span>) != seq.cend();
+    <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">cout</span> &lt;&lt; found &lt;&lt; <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">endl</span>;
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
+}</pre>
+
 <p>Implementation:</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">#pragma once</div><div class="line"></div><div class="line">#include &lt;xutility&gt;</div><div class="line"></div><div class="line">template&lt;typename BinaryFn&gt;</div><div class="line">struct InfixOp &#123;</div><div class="line">    explicit InfixOp(BinaryFn&amp;&amp; fn)</div><div class="line">        : fn_(std::forward&lt;BinaryFn&gt;(fn))</div><div class="line">    &#123;&#125;</div><div class="line"></div><div class="line">    BinaryFn fn_;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">template&lt;typename BinaryFn&gt;</div><div class="line">InfixOp&lt;BinaryFn&gt; Infix(BinaryFn&amp;&amp; fn)</div><div class="line">&#123;</div><div class="line">    return InfixOp&lt;BinaryFn&gt;(std::forward&lt;BinaryFn&gt;(fn));</div><div class="line">&#125;</div><div class="line"></div><div class="line">template&lt;typename T, typename BinaryFn&gt;</div><div class="line">struct InfixExpr &#123;</div><div class="line">    InfixExpr(T&amp;&amp; lhs, BinaryFn&amp;&amp; op)</div><div class="line">        : lhs_(std::forward&lt;T&gt;(lhs)), op_(std::forward&lt;BinaryFn&gt;(op))</div><div class="line">    &#123;&#125;</div><div class="line"></div><div class="line">    template&lt;typename U&gt;</div><div class="line">    decltype(auto) operator|(U&amp;&amp; rhs)</div><div class="line">    &#123;</div><div class="line">        return op_(lhs_, std::forward&lt;U&gt;(rhs));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    T lhs_;</div><div class="line">    BinaryFn op_;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">template&lt;typename T, typename BinaryFn&gt;</div><div class="line">InfixExpr&lt;T, BinaryFn&gt; operator|(T&amp;&amp; lhs, InfixOp&lt;BinaryFn&gt; op)</div><div class="line">&#123;</div><div class="line">    return InfixExpr&lt;T, BinaryFn&gt;(std::forward&lt;T&gt;(lhs), std::move(op.fn_));</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">pragma</span> once</span>
+
+<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;xutility&gt;</span></span>
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">struct</span> InfixOp {
+    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">explicit</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">InfixOp</span><span class="hljs-params">(BinaryFn&amp;&amp; fn)</span>
+        : <span class="hljs-title" style="color: rgb(255, 255, 170);">fn_</span><span class="hljs-params">(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(fn)</span>)
+    </span>{}
+
+    BinaryFn fn_;
+};
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
+InfixOp&lt;BinaryFn&gt; Infix(BinaryFn&amp;&amp; fn)
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> InfixOp&lt;BinaryFn&gt;(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(fn));
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> T, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">struct</span> InfixExpr {
+    InfixExpr(T&amp;&amp; lhs, BinaryFn&amp;&amp; op)
+        : lhs_(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;T&gt;(lhs)), op_(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(op))
+    {}
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> U&gt;
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">decltype</span>(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(U&amp;&amp; rhs)
+    {
+        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> op_(lhs_, <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;U&gt;(rhs));
+    }
+
+    T lhs_;
+    BinaryFn op_;
+};
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> T, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
+InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(T&amp;&amp; lhs, InfixOp&lt;BinaryFn&gt; op)
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> InfixExpr&lt;T, BinaryFn&gt;(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;T&gt;(lhs), <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::move(op.fn_));
+}</pre>
+
 <p>Have fun.</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/" data-id="cj9cpncgw000sz84nvoh98tlq" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/" data-id="cj9cr03q30010ug4nllrxbrqu" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/#disqus_thread" class="article-comment-link">Comments</a>
       
