@@ -68,6 +68,98 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-cpp-is-fine-it-is-you-that-suck" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/" class="article-date">
+  <time datetime="2016-09-03T09:10:39.000Z" itemprop="datePublished">2016-09-03</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/">C++ is fine, it&#39;s you that suck</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这篇主要内容是吐槽，干货不多。</p>
+<p>曾经我以为只要是我设计的代码结构里，基本不会碰到需要 multiple inheritance 的情况，更不用说需要 virtual inheritance，结果没想到这周就被啪啪啪打脸了。</p>
+<p>起因在于我要为底层的 obs properties 体系设计一个 wrapper，为上层提供类似的等价物。</p>
+<p>properties 描述了一个 obs source 所具备的特性集合，不同的 obs source 拥有不同的 properties；而 properties 实质上又是一个由众多不同类型的 property 构成的集合，因此不同类型的 property 才是操作的基本单位。</p>
+<p>一个 source 的 properties 可能实际上包含：</p>
+<ul>
+<li>描述数值类型的 int-property or float-property</li>
+<li>描述文字信息的 text-property</li>
+<li>描述一系列子属性的 list-property</li>
+<li>etc.</li>
+</ul>
+<p>但是蛋疼的地方在于，在 obs core 这一层，逻辑上不同类型的 property 却具有相同类型的数据类型，都由 <code>obs_property_t</code> 来表示；</p>
+<p>于是，除了通吃的诸如 <code>get_name()</code>, <code>get_description()</code> 操作之外，obs 还提供了返回具体类型的函数接口，以及分别针对某个类型的一组操作函数接口。</p>
+<p>考虑到几个原则</p>
+<ul>
+<li>proxy layer 本身是一个屏蔽底层细节的模块，只能在边界暴露必要的接口</li>
+<li>properties 要反映出是 property 的序列容器（能够便利定位到某个 property）</li>
+<li>property 无论是共有的操作还是特定的操作都要暴露给外界，并且要屏蔽底层实现 property 的细节</li>
+</ul>
+<p>最适合我的实现反而是拥有如下两条 hierarchical path 的多继承设计</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">                 Property [pure]</div><div class="line">                 /        \</div><div class="line">                /          \</div><div class="line">SpecificProperty[pure]     PropertyImpl [实现基础操作，兼容 properties 的存储]</div><div class="line">                \          /</div><div class="line">                 \        /</div><div class="line">             SpecificPropertyImpl</div></pre></td></tr></table></figure>
+<p>左侧两个基类都是 pure abstract class，负责对外暴露接口，右侧的 impl class 是在 proxy layer 中的实际类型。</p>
+<p>由于考虑到 <em>properties contains a series of property</em> 的事实，<code>PropertyImpl</code> 实际上对外表现出值类型语义（嗯哼，我才不会说我硬生生的在另外的 <code>properties</code> wrapper 上给加上了迭代器支持…）。</p>
+<p>上面继承出现了菱形继承，于是 virtual inheritance 就进来了，不然 <code>Property</code> 的析构函数就有两份，并且还会执行两次。</p>
+<p>考虑上层在某些时候需要从 <code>Property</code> 获得更为具体的 <code>SpecificProperty</code>，以执行一些特定的属性操作，这个时候就需要利用 <code>dynamic_cast</code> 做一些 down-cast。</p>
+<p>然而…..这是不可能的，因为整个程序是基于 chromium 的框架开发，而 chromium 强制把 RTTI 关闭了…</p>
+<p>于是一个晚上加上一个白天，最后终于想出一个 workaround 给绕了过去…而在构想最终的 workaround 期间，我甚至有冲动要自己艹 memory layout 来计算偏移…</p>
+<p>关闭 RTTI 是一个非常具有代表性的行为，和多重继承，虚继承类似，很多人认为这些东西是非常 evil 的；因为他们不光带来了性能开销，并且实际作用都可以藉由各种 workaround 实现。于是先把你的设计批判一番，再接着滔滔不绝的给你讲解各种可能可以用得上的 idioms…</p>
+<p>然而，工程设计是非常 non-trivial 的，现实世界是非常 cruel 的，你永远不知道你面临的会是什么问题，尤其是遇到你的 code base 中存在来源于其他不受控制的代码的时候。</p>
+<p>或许是对这种人已经感到了厌倦，甚至是无语，Bjarne Stroustrup 特意在他的 FAQ 里提到了这么两点：</p>
+<ul>
+<li>language-supported inheritance is typically superior to workarounds for ease of programming, for detecting logical problems, for maintainability, and often for performance <a href="https://isocpp.org/wiki/faq/multiple-inheritance#mi-needed" target="_blank" rel="external">FAQ</a></li>
+<li>It <em>really</em> bothers me when people think they know what’s best for <em>your</em> problem even though they’ve never seen <em>your</em> problem!! How can anybody possibly know that multiple inheritance won’t help <em>you</em> accomplish <em>your</em> goals without knowing <em>your</em> goals?!?!?!?!!! <a href="https://isocpp.org/wiki/faq/multiple-inheritance#mi-not-evil" target="_blank" rel="external">FAQ</a></li>
+</ul>
+<p>C++ 之所以发展成今天这样，成为一个 multi-paradigm 的语言，本就来源于 BS 认为世界太过 undeterministic，依靠单一的范式很难精准有效的解决大部分问题。</p>
+<p>回到前面 RTTI 的问题，十来年前，各大主流编译器 （MSVC, GCC 等）是默认关闭 RTTI 的，理由是 for better performance；而现在，RTTI 的是默认打开的，这至少意味着主流编译器认为 RTTI 所带来的 side-effect penalty 已经是 negligible。</p>
+<p>打开 RTTI 的副作用是什么呢？所有 <strong>polymorphic class</strong> 的 vtable 多了一个 slot 专门存放类型信息。</p>
+<p><em>If you don’t want to use a feature, just don’t use it</em></p>
+<p>相较之下，禁用异常就真的是非常不理智的行为了。</p>
+<p>更重要的，不要因为存在某个 feature 就不明真相的乱用，掉坑里了又愤愤不平的搞个大新闻，四处宣扬这个 feature 简直是 shit，并且 C++ 是 a pile of shit。</p>
+<p><strong><em>Remember, C++ is fine, it is you that suck</em></strong></p>
+<h3 id="Bonus"><a href="#Bonus" class="headerlink" title="Bonus"></a>Bonus</h3><p>最后贴两个 presentation，分别是 Bjarne Stroustrup 和 Herb Sutter 在 CppCon 2015 上的分享。</p>
+<ul>
+<li><a href="https://www.youtube.com/watch?v=1OEu9C51K2A" target="_blank" rel="external">Bjarne Stroustrup: Writing Good C++ 14</a></li>
+<li><a href="https://www.youtube.com/watch?v=hEx5DNLWGgA" target="_blank" rel="external">Herb Sutter: Writing Good C++ 14 By Default</a></li>
+</ul>
+<p>作为开篇分享，这两个 talks 应该说是为 write moder c++ programs 奠定了一个基调，里面对 resource ownership, type safety, data-safety 都做了非常精彩的叙述，并且还联手提炼了一个 C++ Core Guidelines 出来。</p>
+<p>当然里面也有各种私货，例如 BS 吐槽 xx coding style，BS 推销 VS 的静态分析功能…</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/" data-id="cj9smab4e000wxw4no12dw2x5" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2016/09/03/cpp-is-fine-it-is-you-that-suck/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/rant/">rant</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-get-correct-system-version-on-windows-10" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2016/07/30/get-correct-system-version-on-windows-10/" class="article-date">
@@ -115,7 +207,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="cj9imo6vm0041bo4nhczhwxia" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/" data-id="cj9smab4u001exw4n7wlraedf" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/30/get-correct-system-version-on-windows-10/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -175,7 +267,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="cj9imo6uo001cbo4nk9n8y9sl" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/" data-id="cj9smab4u001hxw4ny2894d2h" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/23/gibberish-on-kadblockengine/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -244,7 +336,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="cj9imo6uc000ubo4ndo4ghipb" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/" data-id="cj9smab4u0011xw4niox2scvm" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/10/do-not-intermingle-owner-with-view-semantics/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -316,7 +408,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="cj9imo6x1006cbo4nkl54vkmn" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/" data-id="cj9smab65003pxw4nx3srdwxs" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/07/05/wicked-data-type-promotion/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -402,7 +494,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="cj9imo6wq005sbo4n0c3c9mu8" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/" data-id="cj9smab5p003axw4nhbia58e3" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -471,7 +563,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/" data-id="cj9imo6x0006abo4nyeq34ek7" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/" data-id="cj9smab65003uxw4nxtbmc9j0" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2016/05/23/why-git-flow-model-is-considered-harmful/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -485,70 +577,10 @@
 
 
   
-    <article id="post-a-potential-danger-lurking-in-android-process-reuse-mechanism" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/" class="article-date">
-  <time datetime="2016-05-08T07:42:18.000Z" itemprop="datePublished">2016-05-08</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/">记一次被 Android 进程复用坑的经历</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>因为需求需要，把某个功能拆分成一个独立的服务，并由一个全局的 <code>service manager</code> 去控制这个服务；服务对客户端暴露的实现也是通过 <code>service manager</code>。</p>
-<p>因为服务不需要运行在一个独立进程，manager 和 service 直接通过一个包含服务对象的 local binder 相互通信，看上去大概就这样：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</div><div class="line"></div><div class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalBinder</span> <span class="keyword">extends</span> <span class="title">Binder</span> </span>&#123;</div><div class="line">        <span class="function">LocalService <span class="title">getService</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">return</span> LocalService.<span class="keyword">this</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mBinder;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="keyword">final</span> IBinder mBinder = <span class="keyword">new</span> LocalBinder();</div><div class="line"></div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="comment">// This class is in fact a singleton.</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceManager</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> LocalService.LocalBinder mServiceBridge;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> ServiceConnection mConnection = <span class="keyword">new</span> ServiceConnection() &#123;</div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName className, IBinder service)</span> </span>&#123;</div><div class="line">            mServiceBridge = (LocalService.LocalBinder)service;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceDisconnected</span><span class="params">(ComponentName className)</span> </span>&#123;</div><div class="line">            mServiceBridge = <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startService</span><span class="params">()</span> </span>&#123;</div><div class="line">        bindService(...);</div><div class="line">    &#125;</div><div class="line">    </div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopService</span><span class="params">()</span> </span>&#123;</div><div class="line">        unbindService(...);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>考虑到语义的逻辑，我一开始选择了在自定义的 <code>MainApplication</code> 的 <code>onCreate</code> 中启动服务；并且为了避免不必要的消耗，在用户从主 activity 退出时，会停止这个服务。</p>
-<p>过了几天，有同事在测试过程中反馈说，每次正常从 app 退出后，再次打开 app 运行涉及服务的功能都会抛 <code>mServiceBridge</code> 的空指针访问异常，但是下一次打开 app，相关功能又是好的。</p>
-<p>我一开始觉得莫名其妙，因为对象空指针只能意味着服务没有被启动，但是启动服务是在 <code>Application.onCreate</code> 中进行的，这说不过去。</p>
-<p>后来我不小心瞥到 DDMS 的进程列表，发现即使关闭了所有的 activity 退出了应用，相应的进程并没有退出…正如牛逼顿被苹果砸到的那个瞬间，一个想法一闪而过。</p>
-<p>经过 demo 验证，问题出在 android 的进程复用上。</p>
-<p>和传统 PC 上的做法不同，考虑到移动设备的特殊环境，即使所有的 activity 退出了，系统也不会马上回收 app 所在的进程。进程的资源、状态仍被保留，只是会进入一个不稳定状态：系统随时都能回收这个进程。</p>
-<p>而如果在进程被系统回收前又打开了 app，那么系统会复用之前的进程。因为进程并没有被重新创建，所以 <code>onCreate</code> 函数被跳过了。在上面的环境下，就会跳过启动服务，导致 <code>mServiceBridge</code> 对象为空。</p>
-<p>解决方案有两个：</p>
-<ul>
-<li>把启动服务的操作放到某个 activity 启动中，例如 the infamous splash activity</li>
-<li>主 activity 结束后强行退出进程</li>
-</ul>
-<p>另外，根据上面的情况起码要明白，如果某个行为（例如一些设施的初始化）要放在 <code>Application.onCreate</code> 中完成，那么语义上这个操作形成的作用是跟随整个进程生命周期的；而进程的生命周期在 android 上是不可知的，所以相应的，这个行为的设计也要考虑到这点。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/" data-id="cj9imo6tl0001bo4njqaejggy" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/5/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/7/">__('next') &raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/5/">&laquo; __('prev')</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/">__('next') &raquo;</a>
   </nav>
 </section>
         
@@ -569,6 +601,10 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/">发现一个（疑似）VS 2013 lambda 实现的 Bug</a>
+          </li>
         
           <li>
             <a href="/2017/11/02/monthly-read-posts-in-oct-2017/">Monthly Read Posts in Oct 2017</a>
@@ -594,10 +630,6 @@
             <a href="/2017/09/02/monthly-read-posts-in-aug-2017/">Monthly Read Posts in Aug 2017</a>
           </li>
         
-          <li>
-            <a href="/2017/08/15/controlled-type-injection-in-cpp/">Controlled Type Injection in C++</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -617,7 +649,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/allocator/">allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bililive/">bililive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/clang/">clang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpp/">cpp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/curl/">curl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epoll/">epoll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flow-control/">flow control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/haskell/">haskell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infix-operator/">infix operator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/self-management/">self-management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-library/">shared library</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-pointer/">smart pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traits/">traits</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-injection/">type injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/typedef/">typedef</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/uuid/">uuid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/allocator/">allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bililive/">bililive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bug/">bug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/clang/">clang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpp/">cpp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/curl/">curl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epoll/">epoll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flow-control/">flow control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/haskell/">haskell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infix-operator/">infix operator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/self-management/">self-management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-library/">shared library</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-pointer/">smart pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traits/">traits</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-injection/">type injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/typedef/">typedef</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/uuid/">uuid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visual-studio/">visual studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 
