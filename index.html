@@ -68,6 +68,59 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-eliminate-local-python-dependency-for-building-bililive-win" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/" class="article-date">
+  <time datetime="2017-11-26T13:00:53.000Z" itemprop="datePublished">2017-11-26</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/">使用项目自带的 python 编译 bililive-win</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>众所周知，Google 喜欢拿 python 做各种工具链，比如构建系统；然而 G 家用的又是 python 2.x，并且目测在未来一段时间内都不会做升级，因此相关的工具链环境也被锁死在了 python 2.x。</p>
+<p>某直播姬因为用的 chromium 的框架，部分资源文件的构建就依赖 python 2.x。</p>
+<p>在系统安装 python 2.x 并且加入环境变量的情况下这不算个问题；然而如果想把 python 3.x 作为主 python 环境，那么构建一定会失败，哪怕项目的 third-party 下自己附带了一个 python 2.6….</p>
+<p>研究了一下发现可以强制使用项目自带的 python 2.6：</p>
+<p>找到目标项目的 vcxproj 文件，用编辑器（例如 VS Code）打开，搜索 python，确认是调用，将 python 改为指向 third-party 下的 exe。</p>
+<p>例如，将 <code>call python &quot;..\tools\grit\grit.py</code> 替换为 <code>call $(SolutionDir)..\third_party\python_26\python.exe</code></p>
+<p>对于涉及到 cygwin 的调用，就先将 third-party/python2_6 加入环境变量</p>
+<p>将 <code>call &quot;$(ProjectDir)..\third_party\cygwin\setup_env.bat&quot; &amp;amp;&amp;amp; set CYGWIN=nontsec&amp;amp;&amp;amp;</code> 替换为 <code>set PATH=..\..\third_party\python_26;%PATH% &amp;amp;&amp;amp; call &quot;$(ProjectDir)..\third_party\cygwin\setup_env.bat&quot; &amp;amp;&amp;amp; set CYGWIN=nontsec&amp;amp;&amp;amp;</code></p>
+<p>保存后生效</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/" data-id="cjagugvxo000m6c4n5r4dcw5r" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/chromium/">chromium</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/python/">python</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-replay-a-postmortem-on-a-crash-dump" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/11/12/replay-a-postmortem-on-a-crash-dump/" class="article-date">
@@ -157,7 +210,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/" data-id="cj9x1embb003e2w4nrwt72gev" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/" data-id="cjagugvz8003a6c4n2g0natu2" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -235,7 +288,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/" data-id="cj9x1em9z00172w4n4jed3ac3" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/" data-id="cjagugvy100166c4no5ha59a7" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -304,7 +357,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/02/monthly-read-posts-in-oct-2017/" data-id="cj9x1emb3002w2w4n2hv3c14j" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/11/02/monthly-read-posts-in-oct-2017/" data-id="cjagugvz600336c4nabg2iv4s" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/11/02/monthly-read-posts-in-oct-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -411,7 +464,7 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/" data-id="cj9x1em9t000z2w4nowleddo4" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/" data-id="cjagugvxs000t6c4nrxntxy3u" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -462,7 +515,7 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/10/21/implement-bililive-command-mapping-macros/" data-id="cj9x1emac001q2w4nb8i2d5u4" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/10/21/implement-bililive-command-mapping-macros/" data-id="cjagugvy9001k6c4nuzuqvzt1" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/10/21/implement-bililive-command-mapping-macros/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -526,67 +579,12 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/10/01/monthly-read-posts-in-sep-2017/" data-id="cj9x1emb1002t2w4nz8q8dyhr" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/10/01/monthly-read-posts-in-sep-2017/" data-id="cjagugvz2002t6c4n3u66hsqv" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/10/01/monthly-read-posts-in-sep-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/allocator/">allocator</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/covariance/">covariance</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/curl/">curl</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/http/">http</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/typedef/">typedef</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-fix-incomplete-type-when-using-gdb-with-clang" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/" class="article-date">
-  <time datetime="2017-09-03T09:25:27.000Z" itemprop="datePublished">2017-09-03</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/">Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="现象描述"><a href="#现象描述" class="headerlink" title="现象描述"></a>现象描述</h3><p>系统是 Linux mint 18，其实就是 ubuntu 16.04 LTS，所用的 clang 版本是 apt 默认的 3.8；gdb 使用系统自带。</p>
-<p>使用 clang 编译出来的二进制，哪怕开启了 <code>-g</code> 生成调试信息，在 gdb 下 <code>std::string</code> 始终显示为 <em>incomplete type</em>；而 primitive 类型的值可以正确显示</p>
-<p>并且通过 apt 安装 lldb，使用 lldb 调试能够看到变量的值。</p>
-<p>因此基本可以确定问题发生在 gdb 和 clang 这一对上</p>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>来自路边社的资料：clang 的 linux 版本输出调试信息时，默认去掉了标准库相关的组件信息 （？？？ MMP）</p>
-<p>在编译时追加 <code>-fno-limit-debug-info</code> 标志，就可以保证输出完整的调试信息</p>
-<h3 id="安利时刻"><a href="#安利时刻" class="headerlink" title="安利时刻"></a>安利时刻</h3><p>为什么使用 clang 编译的原因很简单，ubuntu 16.04 上的 apt 默认的 gcc/g++ 5.4 有 bug，编译我的项目代码一定会出错…对比直接从 ppa test 安装 gcc 6.x/7.x 而言，安装 clang 无疑最省事儿…</p>
-<p>另外我发现这个问题的解决方案得益于 <a href="https://github.com/vadimcn/vscode-lldb" target="_blank" rel="external">vscode-lldb-debugger</a> 这个扩展。</p>
-<p>正是这个扩展在输出里通过 warning 告诉我需要用相关的编译开关输出完整调试信息，这个问题才的可以解决。（从侧面说明程序员还是应该关注一下 warning XD）</p>
-<p>最后安利一个 gdb gui 前端：<a href="https://wiki.gnome.org/Apps/Nemiver" target="_blank" rel="external">Nemiver</a></p>
-<p>不过现在看起来 linux 上最好的 gdb/lldb 前端应该是 vscode -.-</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/" data-id="cj9x1em9w00142w4nbnv0zs7u" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/clang/">clang</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/gdb/">gdb</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/">linux</a></li></ul>
 
     </footer>
   </div>
@@ -621,6 +619,10 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
       <ul>
         
           <li>
+            <a href="/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/">使用项目自带的 python 编译 bililive-win</a>
+          </li>
+        
+          <li>
             <a href="/2017/11/12/replay-a-postmortem-on-a-crash-dump/">一次 dump 分析的复盘</a>
           </li>
         
@@ -642,10 +644,6 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
         
           <li>
             <a href="/2017/10/01/monthly-read-posts-in-sep-2017/">Monthly Read Posts in Sep 2017</a>
-          </li>
-        
-          <li>
-            <a href="/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/">Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type</a>
           </li>
         
       </ul>
