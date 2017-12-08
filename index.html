@@ -68,6 +68,151 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-add-bitwise-operations-for-enum-types-automatically" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/12/08/add-bitwise-operations-for-enum-types-automatically/" class="article-date">
+  <time datetime="2017-12-08T13:43:06.000Z" itemprop="datePublished">2017-12-08</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/12/08/add-bitwise-operations-for-enum-types-automatically/">自动为 enum 类型添加位运算操作符</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>有时候需要在 C++ 里用 <code>enum (class)</code> 表示 flags，进行基础的 bitwise 运算，而哪怕是支持自动到 underlying integer 转换的 traditional enum，也需要额外的 cast 才能实现，所以在需要的时候为 <code>enum</code> 添加位运算支持还是有一定市场的。</p>
+<p>单独为每个需要的 <code>enum</code> 提供相关重载可以实现细粒度的控制，并且必要的时候可以加上 range-check 的校验。</p>
+<p>然而这里有两个问题：</p>
+<ol>
+<li>大部分情况下不需要 range-check 这种检查，因为通常不会在接口这一层暴露</li>
+<li>如果一个 module 里会用到两个以上的 enum-based-flags，那么单独实现会很蛋疼</li>
+</ol>
+<p>所以一个解决方案是，提供基于函数模板的重载，并且利用 ADL 将这部分重载锁在一个具体的 namespace 内，例如马上（C++ 20）就要被废弃的 <code>rel_ops</code>。</p>
+<p>同时，我们希望这部分重载只对 <code>enum / enum class</code> 有效，其他类型不进行应用。可以通过 SFINAE 实现这点。</p>
+<p>利用快下班的时间做了一个基本的实现：</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-comment" style="color: rgb(136, 136, 136);">// Casts an enum value into an equivalent integer.</span>
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">enum_cast</span><span class="hljs-params">(E e)</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+</span>{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">static_cast</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">underlying_type_t</span>&lt;E&gt;&gt;(e);
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops {
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) | enum_cast(rhs));
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    lhs = E(enum_cast(lhs) | enum_cast(rhs));
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>&amp;(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) &amp; enum_cast(rhs));
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>&amp;=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    lhs = E(enum_cast(lhs) &amp; enum_cast(rhs));
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>^(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) ^ enum_cast(rhs));
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>^=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    lhs = E(enum_cast(lhs) ^ enum_cast(rhs));
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>~(E op) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(~enum_cast(op));
+}
+
+}   <span class="hljs-comment" style="color: rgb(136, 136, 136);">// namespace enum_ops</span></pre>
+
+<p>测试代码：</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">enum</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> ChangeLevel : <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> {
+    None = <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>,
+    Local = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>,
+    Server = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>,
+    All = Local | Server
+};
+
+TEST(EnumOps, General)
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops;
+
+    ChangeLevel level = ChangeLevel::None;
+    level |= ChangeLevel::Local;
+    level |= ChangeLevel::Server;
+
+    EXPECT_TRUE(level == ChangeLevel::All);
+    EXPECT_TRUE(enum_cast(level &amp; ChangeLevel::Local) != <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>);
+    EXPECT_TRUE(enum_cast(level &amp; ChangeLevel::Server) != <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>);
+}
+
+TEST(EnumOps, NonEnumType)
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops;
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> l = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>;
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> r = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>;
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> rv = l | r;
+    EXPECT_EQ(<span class="hljs-number" style="color: rgb(211, 99, 99);">3</span>, rv);
+
+    <span class="hljs-comment" style="color: rgb(136, 136, 136);">// can't compile</span>
+    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//std::string s1 = "hello";</span>
+    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//std::string s2 = "world";</span>
+    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//s1 | s2;</span>
+}</pre>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/" data-id="cjaxzjlwp0000944ny32n05l9" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/bitwise，-SFINAE/">bitwise， SFINAE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/enum/">enum</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/flag/">flag</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-monthly-read-posts-in-nov-2017" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/12/02/monthly-read-posts-in-nov-2017/" class="article-date">
@@ -116,7 +261,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/" data-id="cjapja8n4006eos4n6897076b" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/" data-id="cjaxzjlz20030944nr6oigdnp" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -170,7 +315,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/" data-id="cjapja8kr000tos4nz0wkri2w" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/" data-id="cjaxzjlxk000s944nrf7n8rx5" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -223,7 +368,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/" data-id="cjapja8kx0010os4n99bc5lk6" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/" data-id="cjaxzjly00018944n56c9cdv5" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -326,7 +471,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/" data-id="cjapja8ny007gos4nhvktk4zt" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/" data-id="cjaxzjlzh003o944ndowiij5g" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -404,7 +549,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/" data-id="cjapja8l00015os4nbn0pd9pp" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/" data-id="cjaxzjly0001i944nyi2rxsp2" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -473,119 +618,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/02/monthly-read-posts-in-oct-2017/" data-id="cjapja8na006oos4namv494hg" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/11/02/monthly-read-posts-in-oct-2017/" data-id="cjaxzjlz20032944nbhf2jkkc" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/11/02/monthly-read-posts-in-oct-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/epoll/">epoll</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lambda/">lambda</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/minidump/">minidump</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/traits/">traits</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-emulate-haskell-infix-operator-in-cpp" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/10/29/emulate-haskell-infix-operator-in-cpp/" class="article-date">
-  <time datetime="2017-10-29T12:03:06.000Z" itemprop="datePublished">2017-10-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/10/29/emulate-haskell-infix-operator-in-cpp/">Emulate Haskell Infix Operator in CPP</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Usage at a glance</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
-<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;</span></span>
-
-<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-string" style="color: rgb(162, 252, 162);">"infix_op.h"</span></span>
-
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
-</span>{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> find = Infix([](<span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>&amp; container, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>&amp; value) {
-        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::find(container.begin(), container.end(), value);
-    });
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> seq = <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">vector</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span>&gt; { <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">3</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">5</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">7</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">9</span> };
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">bool</span> found = (seq | find | <span class="hljs-number" style="color: rgb(211, 99, 99);">7</span>) != seq.cend();
-    <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">cout</span> &lt;&lt; found &lt;&lt; <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">endl</span>;
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
-}</pre>
-
-<p>Implementation:</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">pragma</span> once</span>
-
-<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;xutility&gt;</span></span>
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">struct</span> InfixOp {
-    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">explicit</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">InfixOp</span><span class="hljs-params">(BinaryFn&amp;&amp; fn)</span>
-        : <span class="hljs-title" style="color: rgb(255, 255, 170);">fn_</span><span class="hljs-params">(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(fn)</span>)
-    </span>{}
-
-    BinaryFn fn_;
-};
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
-InfixOp&lt;BinaryFn&gt; Infix(BinaryFn&amp;&amp; fn)
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> InfixOp&lt;BinaryFn&gt;(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(fn));
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> T, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">struct</span> InfixExpr {
-    InfixExpr(T&amp;&amp; lhs, BinaryFn&amp;&amp; op)
-        : lhs_(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;T&gt;(lhs)), op_(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(op))
-    {}
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> U&gt;
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">decltype</span>(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(U&amp;&amp; rhs)
-    {
-        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> op_(lhs_, <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;U&gt;(rhs));
-    }
-
-    T lhs_;
-    BinaryFn op_;
-};
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> T, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
-InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(T&amp;&amp; lhs, InfixOp&lt;BinaryFn&gt; op)
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> InfixExpr&lt;T, BinaryFn&gt;(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;T&gt;(lhs), <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::move(op.fn_));
-}</pre>
-
-<p>Have fun.</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/" data-id="cjapja8l3001cos4njvpay15t" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2017/10/29/emulate-haskell-infix-operator-in-cpp/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cpp/">cpp</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/haskell/">haskell</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/infix-operator/">infix operator</a></li></ul>
 
     </footer>
   </div>
@@ -620,6 +658,10 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
       <ul>
         
           <li>
+            <a href="/2017/12/08/add-bitwise-operations-for-enum-types-automatically/">自动为 enum 类型添加位运算操作符</a>
+          </li>
+        
+          <li>
             <a href="/2017/12/02/monthly-read-posts-in-nov-2017/">Monthly Read Posts in Nov 2017</a>
           </li>
         
@@ -643,10 +685,6 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
             <a href="/2017/11/02/monthly-read-posts-in-oct-2017/">Monthly Read Posts in Oct 2017</a>
           </li>
         
-          <li>
-            <a href="/2017/10/29/emulate-haskell-infix-operator-in-cpp/">Emulate Haskell Infix Operator in CPP</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -666,7 +704,7 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/allocator/">allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bililive/">bililive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bug/">bug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/clang/">clang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpp/">cpp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/crash-dump/">crash-dump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/curl/">curl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epoll/">epoll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flow-control/">flow control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/haskell/">haskell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infix-operator/">infix operator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/localhost/">localhost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postmortem/">postmortem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/self-management/">self-management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-library/">shared library</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-pointer/">smart pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traits/">traits</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-injection/">type injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/typedef/">typedef</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unicode/">unicode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/uuid/">uuid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visual-studio/">visual studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wireshark/">wireshark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/allocator/">allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bililive/">bililive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitwise，-SFINAE/">bitwise， SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bug/">bug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/clang/">clang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpp/">cpp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/crash-dump/">crash-dump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/curl/">curl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/enum/">enum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epoll/">epoll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flag/">flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flow-control/">flow control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/haskell/">haskell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infix-operator/">infix operator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/localhost/">localhost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postmortem/">postmortem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/self-management/">self-management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-library/">shared library</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-pointer/">smart pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traits/">traits</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-injection/">type injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/typedef/">typedef</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unicode/">unicode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/uuid/">uuid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visual-studio/">visual studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wireshark/">wireshark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 
