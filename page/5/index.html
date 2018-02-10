@@ -11,6 +11,7 @@
 <meta property="og:url" content="http://kingsamchen.github.io/page/5/index.html">
 <meta property="og:site_name" content="KC的废墟堆">
 <meta property="og:description" content="Gone with the ruins">
+<meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="KC的废墟堆">
 <meta name="twitter:description" content="Gone with the ruins">
@@ -68,6 +69,61 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-generate-video-thumbnails-by-using-ffmpeg" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/" class="article-date">
+  <time datetime="2017-05-06T14:21:18.000Z" itemprop="datePublished">2017-05-06</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/">用 FFMpeg 生成视频缩略图</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>除了可以使用 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">ffmpeg 压制视频外</a>，还能利用 ffmpeg 生成某个视频的缩略图。</p>
+<p>利用命令行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg.exe -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 9 -c:v mjpeg &quot;output_dir\thumb_%d.jpg&quot;</span><br></pre></td></tr></table></figure>
+<p>就可以在 <code>output_dir</code> 这个目录下为视频文件 <em>some_video.mp4</em> 从头开始生成最多不超过9张关键帧缩略图，文件名分别是 <code>thumb_1.jpg</code> ~ <code>thumb_9.jpg</code>。</p>
+<p>这个默认策略适合长度较短的视频（比如半分钟或一分钟内），对于长视频，很可能跑完9张关键帧缩略图，正片都还没开始…</p>
+<p>所以，这个时候的生成策略应该考虑能够尽可能的均匀分布于视频内容。</p>
+<p>首先利用这个 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">post</a> 里提到的做法，用 <code>ffprobe.exe</code> 获得视频的长度，记为 <strong><em>T</em></strong>（单位，秒）。</p>
+<p>将 <strong><em>T</em></strong> 均分为 10（9+1）个片段，取 $ t_i = \frac{T}{10} * i, i = 1, 2, \cdots 9 $，这么做的原因是避免取到开头和结尾。</p>
+<p>最后针对每个 $ t_i $，运行 ffmpeg</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg.exe -ss t_i -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 1 -c:v mjpeg &quot;output_dir\thumb_i.jpg&quot;</span><br></pre></td></tr></table></figure>
+<p>唯一麻烦的地方在于输出文件名序列需要我们自己指定。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/" data-id="cjdh5l8yy001o0c4nn7jfyjun" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/thumbnails/">thumbnails</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-monthly-read-posts-in-apr-2017" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2017/05/02/monthly-read-posts-in-apr-2017/" class="article-date">
@@ -94,23 +150,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="https://kristerw.blogspot.jp/2017/03/the-cost-of-conditional-moves-and.html" target="_blank" rel="external">The Cost of Conditional Moves and Branches</a></p>
+        <p><a href="https://kristerw.blogspot.jp/2017/03/the-cost-of-conditional-moves-and.html" target="_blank" rel="noopener">The Cost of Conditional Moves and Branches</a></p>
 <p>Conditional moves 指令并不一定能提升性能，有时候甚至会导致性能衰减。</p>
-<p>Post 里直接援引了 StackOverflow 上的这个<a href="http://stackoverflow.com/questions/14805641/why-does-changing-const-ull-to-const-ull-in-function-parameter-result-in-pe/" target="_blank" rel="external">案例</a></p>
+<p>Post 里直接援引了 StackOverflow 上的这个<a href="http://stackoverflow.com/questions/14805641/why-does-changing-const-ull-to-const-ull-in-function-parameter-result-in-pe/" target="_blank" rel="noopener">案例</a></p>
 <hr>
-<p><a href="https://randomascii.wordpress.com/2016/11/27/cpu-performance-counters-on-windows/" target="_blank" rel="external">Cpu Performance Counters on Windows</a></p>
+<p><a href="https://randomascii.wordpress.com/2016/11/27/cpu-performance-counters-on-windows/" target="_blank" rel="noopener">Cpu Performance Counters on Windows</a></p>
 <p>The ETW(Event Tracing for Windows) now supports CPU performance counters.</p>
 <hr>
-<p><a href="https://developer.github.com/v3/" target="_blank" rel="external">GitHub Restful API References</a><br><a href="https://zhuanlan.zhihu.com/p/25647039" target="_blank" rel="external">RESTful API最佳实践</a><br><a href="https://zhuanlan.zhihu.com/p/20034107" target="_blank" rel="external">撰写安全合格的REST API</a><br><a href="http://cizixs.com/2016/12/12/restful-api-design-guide" target="_blank" rel="external">跟着 Github 学习 Restful HTTP API 设计</a><br><a href="https://blog.igevin.info/posts/restful-api-get-started-to-write/" target="_blank" rel="external">RESTful API 编写指南</a></p>
+<p><a href="https://developer.github.com/v3/" target="_blank" rel="noopener">GitHub Restful API References</a><br><a href="https://zhuanlan.zhihu.com/p/25647039" target="_blank" rel="noopener">RESTful API最佳实践</a><br><a href="https://zhuanlan.zhihu.com/p/20034107" target="_blank" rel="noopener">撰写安全合格的REST API</a><br><a href="http://cizixs.com/2016/12/12/restful-api-design-guide" target="_blank" rel="noopener">跟着 Github 学习 Restful HTTP API 设计</a><br><a href="https://blog.igevin.info/posts/restful-api-get-started-to-write/" target="_blank" rel="noopener">RESTful API 编写指南</a></p>
 <p>如何编写正确的 Restful APIs 以及，一个优秀的 Restful APIs 的范例</p>
 <hr>
-<p><a href="https://www.youtube.com/watch?v=e08kOj2kISU" target="_blank" rel="external">Tech Talk: How to Speed up a Python Program 114,000 times</a></p>
+<p><a href="https://www.youtube.com/watch?v=e08kOj2kISU" target="_blank" rel="noopener">Tech Talk: How to Speed up a Python Program 114,000 times</a></p>
 <p>讲道理这个 tech talk 我跳着看了一部分就放弃了，原因很简单，如果真的需要 talk 里提到的那些方法来克服 python 的性能缺点，我选择使用 C++ 重写…</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/" data-id="cjd5daip3002b7o4nk3g0txyt" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/" data-id="cjdh5l8zt002d0c4nf8pko4sq" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/05/02/monthly-read-posts-in-apr-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -158,7 +214,7 @@
 <li>压制首先涉及到利用 <code>ffprobe.exe</code> 检测视频的 meta-info，符合压制条件并且用户确认后利用 meta-info 作为压制的部分输入信息；中间涉及到几个线程间的交互</li>
 <li>因为压制功能和视频上传在逻辑上具有先后顺序，并且都需要有专门的 worker thread，因此他们可以共用一个线程池；而支持多任务并行操作，又要求线程池的调度策略要足够“及时”（事实上，这个要求有一部分锅来自 chromium net 的 <code>URLFetcher</code>，which requires 网络操作运行的线程在 URLFetcher context 生命周期内是唯一且固定的，因此会出现一个上传任务只要不结束，就会一直霸占一个线程的情况；另有一部分锅来自 chromium base 的 <code>scoped_reptr</code>，居然没有考虑对外暴露自己 ref-count 信息，无形中加大了实现线程池的困难）</li>
 </ul>
-<p>因此在项目提测结束，基本验收通过之后，我想籍由这个功能，重新回忆一下 C# 和 WPF （噫，怎么老是再回忆这个…），所以花了一个周末，就有了 <a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleVideoEncoder" target="_blank" rel="external">SimpleVideoEncoder</a></p>
+<p>因此在项目提测结束，基本验收通过之后，我想籍由这个功能，重新回忆一下 C# 和 WPF （噫，怎么老是再回忆这个…），所以花了一个周末，就有了 <a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleVideoEncoder" target="_blank" rel="noopener">SimpleVideoEncoder</a></p>
 <p>但是在实现过程中我发现，纵使有 async/await，它也不是银弹，也有他覆盖不了的 case；而我对 C#/.NET 的多线程模型实在是完全不懂，导致某些细节完全没法下手（只能说某些case 下，CSP 真是好用到想哭，还好 WPF 的 UI-thread 提供了一个 <code>Dispatcher</code> 支持了对 UI 线程的 CSP；再将需求简化到 Demo 程度后，勉强实现了出来。</p>
 <p><img src="/img/ffmpeg-encode.png" alt=""></p>
 <p>上层界面基于 WPF，但是没有走 MVVM。</p>
@@ -169,7 +225,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/" data-id="cjd5daiqe004g7o4n7uoyvb93" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/" data-id="cjdh5l91b004g0c4nyoxq8gxv" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -209,11 +265,11 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="http://playfulprogramming.blogspot.hk/2017/01/generate-lambdas-for-clarity-and.html" target="_blank" rel="external">Generate lambdas for clarity and performance</a></p>
+        <p><a href="http://playfulprogramming.blogspot.hk/2017/01/generate-lambdas-for-clarity-and.html" target="_blank" rel="noopener">Generate lambdas for clarity and performance</a></p>
 <p>Generate a class of lambdas with auto-return-type deduction.</p>
 <p>唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 <code>std::function&lt;&gt;</code> 来做 workaround</p>
 <hr>
-<p><a href="http://nullprogram.com/blog/2016/08/03/" target="_blank" rel="external">Appending to a File from Multiple Processes</a></p>
+<p><a href="http://nullprogram.com/blog/2016/08/03/" target="_blank" rel="noopener">Appending to a File from Multiple Processes</a></p>
 <p>经验问题，写客户端的 logger 轮子时应该会经常需要考虑到这个问题。</p>
 <p>文章针对的是 POSIX 系统，不过不同系统在一些具体策略/细节上也有区别。</p>
 <p>另，Windows 上这个场景有直接的 API 调用保证。</p>
@@ -221,17 +277,17 @@
 <hr>
 <p>OAuth 2.0 Protocol</p>
 <ol>
-<li><a href="http://tutorials.jenkov.com/oauth2/authorization.html" target="_blank" rel="external">oauth2 authorization</a></li>
-<li><a href="https://taozj.org/201605/principle-of-oauth2.html" target="_blank" rel="external">principle-of-oauth2</a></li>
-<li><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="external">oauth_2_0</a></li>
+<li><a href="http://tutorials.jenkov.com/oauth2/authorization.html" target="_blank" rel="noopener">oauth2 authorization</a></li>
+<li><a href="https://taozj.org/201605/principle-of-oauth2.html" target="_blank" rel="noopener">principle-of-oauth2</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="noopener">oauth_2_0</a></li>
 </ol>
 <p>第二篇文章基本可以看作第一篇的翻译，但是很多地方都没有翻译出来，所以推荐主要看第一篇文章，把第二、三篇作为补充材料</p>
 <hr>
-<p><a href="https://channel9.msdn.com/Events/GoingNative/2013/Inheritance-Is-The-Base-Class-of-Evil" target="_blank" rel="external">Inheritance Is The Base Class of Evil</a></p>
+<p><a href="https://channel9.msdn.com/Events/GoingNative/2013/Inheritance-Is-The-Base-Class-of-Evil" target="_blank" rel="noopener">Inheritance Is The Base Class of Evil</a></p>
 <p>C9 上的一个 Tech Talk，speaker 是 Adobe 的技术大佬，但是我觉得有标题党之嫌。</p>
 <p>Talk 中展现出来的哲学观挺有意思的，比如那句 <em>There is no polymorphic type, just polymorphic use of types</em>。</p>
 <hr>
-<p><a href="https://channel9.msdn.com/Shows/C9-GoingNative/GoingNative-53-Learning-STL-Multithreading" target="_blank" rel="external">Learning STL Multithreading</a></p>
+<p><a href="https://channel9.msdn.com/Shows/C9-GoingNative/GoingNative-53-Learning-STL-Multithreading" target="_blank" rel="noopener">Learning STL Multithreading</a></p>
 <p>虽然标题是 STL Multithreading，但是里面的核心内容基本都是原理性的，通用的。</p>
 <p>对于 mutex/condition-variable 这类比较高级的 synchronization primitives 和低级的 atomic variables 均有涉及，并且也给了实践建议。</p>
 <p>话说右边那个胖胖的小哥的口音听起来真的是容易懂…</p>
@@ -240,7 +296,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/" data-id="cjd5daipj002y7o4nclvo7q2e" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/" data-id="cjdh5l90g002z0c4nsv8coyqj" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/04/02/monthly-read-posts-in-mar-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -286,26 +342,26 @@
 <li>针对具体业务的 response parser；因为 HTTP 是文本协议，无论 response data 基于何种格式（例如 JSON），我们都要针对具体的业务逻辑场景进行解析</li>
 </ul>
 <p>假设我们希望请求的 callback 足够友好，直接将 client 需要的数据通过函数原型暴露出来，例如</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnCheckUpdateComplete</span><span class="params">(<span class="keyword">bool</span> succeeded, <span class="keyword">int</span> last_build_no)</span></span>;</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnCheckUpdateComplete</span><span class="params">(<span class="keyword">bool</span> succeeded, <span class="keyword">int</span> last_build_no)</span></span>;</span><br></pre></td></tr></table></figure>
 <p>那么我们的 reponse parser 也要相应的能够返回符合 callback signature 的数据，在 C++ 中，我们可以用 <code>std::tuple</code> 来保存 parsed result：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="built_in">std</span>::tuple&lt;<span class="keyword">bool</span>, <span class="keyword">int</span>&gt; ParseCheckUpdateResponse(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; data);</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::tuple&lt;<span class="keyword">bool</span>, <span class="keyword">int</span>&gt; ParseCheckUpdateResponse(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; data);</span><br></pre></td></tr></table></figure>
 <p>但是很不巧的，<code>RequestConnection</code> 是业务无关的，而业务相关的 callback/response-parser 则是通过依赖注入的方式（例如通过模板参数）进入 <code>RequestConnection</code>；这意味着我们需要一个通用的方法能够在编译期完成如下事情：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Presume magic function Apply</span></div><div class="line"><span class="built_in">std</span>::<span class="built_in">string</span> response_data;</div><div class="line">Apply(ResponseHandler, ResponseParser(response_data));</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Presume magic function Apply</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> response_data;</span><br><span class="line">Apply(ResponseHandler, ResponseParser(response_data));</span><br></pre></td></tr></table></figure>
 <p>神奇函数 <code>Apply()</code> 能够调用一个函数，并且将一个 <code>std::tuple</code> 里的元素按照顺序转换为对应的实参。</p>
-<p>简言之，这就是 C++ 17 要引入的 <a href="http://en.cppreference.com/w/cpp/utility/apply" target="_blank" rel="external">std::apply</a> 所做的事情。</p>
+<p>简言之，这就是 C++ 17 要引入的 <a href="http://en.cppreference.com/w/cpp/utility/apply" target="_blank" rel="noopener">std::apply</a> 所做的事情。</p>
 <p>但是如果我们的 codebase 是 C++ 11的，那又如何呢？</p>
 <h2 id="How-to-implement-apply-in-C-11"><a href="#How-to-implement-apply-in-C-11" class="headerlink" title="How to implement apply in C++ 11"></a>How to implement apply in C++ 11</h2><p>在 C++ 11 里实现 <code>apply()</code>，我们要做两步：</p>
 <ol>
 <li>实现 index-sequence （C++ 14 开始标准库附带了这个实现）</li>
 <li>实现 apply</li>
 </ol>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div></pre></td><td class="code"><pre><div class="line">#include &lt;tuple&gt;</div><div class="line">#include &lt;type_traits&gt;</div><div class="line"></div><div class="line">template&lt;size_t... Ints&gt;</div><div class="line">struct index_sequence &#123;</div><div class="line">    using type = index_sequence;</div><div class="line">    using value_type = size_t;</div><div class="line"></div><div class="line">    static std::size_t size()</div><div class="line">    &#123;</div><div class="line">        return sizeof...(Ints);</div><div class="line">    &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line">template&lt;class Sequence1, class Sequence2&gt;</div><div class="line">struct merge_and_renumber;</div><div class="line"></div><div class="line">template&lt;size_t... I1, size_t... I2&gt;</div><div class="line">struct merge_and_renumber&lt;index_sequence&lt;I1...&gt;, index_sequence&lt;I2...&gt;&gt;</div><div class="line">    : index_sequence&lt;I1..., (sizeof...(I1) + I2)...&gt;</div><div class="line">&#123;&#125;;</div><div class="line"></div><div class="line">template&lt;size_t N&gt;</div><div class="line">struct make_index_sequence</div><div class="line">    : merge_and_renumber&lt;typename make_index_sequence&lt;N / 2&gt;::type,</div><div class="line">                         typename make_index_sequence&lt;N - N / 2&gt;::type&gt;</div><div class="line">&#123;&#125;;</div><div class="line"></div><div class="line">template&lt;&gt;</div><div class="line">struct make_index_sequence&lt;0&gt; : index_sequence&lt;&gt;</div><div class="line">&#123;&#125;;</div><div class="line"></div><div class="line">template&lt;&gt;</div><div class="line">struct make_index_sequence&lt;1&gt; : index_sequence&lt;0&gt;</div><div class="line">&#123;&#125;;</div><div class="line"></div><div class="line">template&lt;typename Func, typename Tuple, std::size_t... index&gt;</div><div class="line">auto apply_helper(Func&amp;&amp; func, Tuple&amp;&amp; tuple, index_sequence&lt;index...&gt;) -&gt;</div><div class="line">    decltype(func(std::get&lt;index&gt;(std::forward&lt;Tuple&gt;(tuple))...))</div><div class="line">&#123;</div><div class="line">    return func(std::get&lt;index&gt;(std::forward&lt;Tuple&gt;(tuple))...);</div><div class="line">&#125;</div><div class="line"></div><div class="line">template&lt;typename Func, typename Tuple&gt;</div><div class="line">auto apply(Func&amp;&amp; func, Tuple&amp;&amp; tuple) -&gt;</div><div class="line">    decltype(apply_helper(std::forward&lt;Func&gt;(func),</div><div class="line">                          std::forward&lt;Tuple&gt;(tuple),</div><div class="line">                          make_index_sequence&lt;std::tuple_size&lt;typename std::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;))</div><div class="line">&#123;</div><div class="line">    return apply_helper(std::forward&lt;Func&gt;(func),</div><div class="line">                        std::forward&lt;Tuple&gt;(tuple),</div><div class="line">                        make_index_sequence&lt;std::tuple_size&lt;typename std::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tuple&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;type_traits&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span>... Ints&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">index_sequence</span> &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = index_sequence;</span><br><span class="line">    <span class="keyword">using</span> value_type = <span class="keyword">size_t</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="keyword">size_t</span> size()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">sizeof</span>...(Ints);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Sequence1</span>, <span class="title">class</span> <span class="title">Sequence2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">merge_and_renumber</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span>... I1, <span class="keyword">size_t</span>... I2&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">merge_and_renumber</span>&lt;index_sequence&lt;I1...&gt;, index_sequence&lt;I2...&gt;&gt;</span></span><br><span class="line"><span class="class">    :</span> index_sequence&lt;I1..., (<span class="keyword">sizeof</span>...(I1) + I2)...&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span> N&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span></span></span><br><span class="line"><span class="class">    :</span> merge_and_renumber&lt;<span class="keyword">typename</span> make_index_sequence&lt;N / <span class="number">2</span>&gt;::type,</span><br><span class="line">                         <span class="keyword">typename</span> make_index_sequence&lt;N - N / <span class="number">2</span>&gt;::type&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span>&lt;0&gt; :</span> index_sequence&lt;&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span>&lt;1&gt; :</span> index_sequence&lt;<span class="number">0</span>&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Tuple, <span class="built_in">std</span>::<span class="keyword">size_t</span>... index&gt;</span><br><span class="line">auto apply_helper(Func&amp;&amp; func, Tuple&amp;&amp; tuple, index_sequence&lt;index...&gt;) -&gt;</span><br><span class="line">    <span class="keyword">decltype</span>(func(<span class="built_in">std</span>::get&lt;index&gt;(<span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple))...))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> func(<span class="built_in">std</span>::get&lt;index&gt;(<span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple))...);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Tuple&gt;</span><br><span class="line">auto apply(Func&amp;&amp; func, Tuple&amp;&amp; tuple) -&gt;</span><br><span class="line">    <span class="keyword">decltype</span>(apply_helper(<span class="built_in">std</span>::forward&lt;Func&gt;(func),</span><br><span class="line">                          <span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple),</span><br><span class="line">                          make_index_sequence&lt;<span class="built_in">std</span>::tuple_size&lt;<span class="keyword">typename</span> <span class="built_in">std</span>::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> apply_helper(<span class="built_in">std</span>::forward&lt;Func&gt;(func),</span><br><span class="line">                        <span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple),</span><br><span class="line">                        make_index_sequence&lt;<span class="built_in">std</span>::tuple_size&lt;<span class="keyword">typename</span> <span class="built_in">std</span>::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>以上代码就是我在某直播姬的网络框架里所用的实现；根据实际是用来看，quite awesome</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/" data-id="cjd5daioo001v7o4n4lrq2e5i" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/" data-id="cjdh5l8ze00220c4n93kt4nuh" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/03/04/implement-apply-in-cpp-11/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -345,15 +401,15 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="http://insights.thoughtworkers.org/security-issues-in-restful/" target="_blank" rel="external">RESTful架构风格下的4大常见安全问题</a></p>
+        <p><a href="http://insights.thoughtworkers.org/security-issues-in-restful/" target="_blank" rel="noopener">RESTful架构风格下的4大常见安全问题</a></p>
 <ul>
 <li>Don’t forget to check correlations between resources in request URL</li>
 <li>Some rare used HTTP headers might be helpful</li>
 <li>Restrict API request frequency</li>
 </ul>
-<p>这篇略水，某些常见的问题反而都没有提到，例如大木老师遇到的<a href="http://www.daozhihun.com/p/2119" target="_blank" rel="external">这个问题</a></p>
+<p>这篇略水，某些常见的问题反而都没有提到，例如大木老师遇到的<a href="http://www.daozhihun.com/p/2119" target="_blank" rel="noopener">这个问题</a></p>
 <hr>
-<p><a href="http://preshing.com/20150324/safe-bitfields-in-cpp/" target="_blank" rel="external">Safe Bitfields in C++</a></p>
+<p><a href="http://preshing.com/20150324/safe-bitfields-in-cpp/" target="_blank" rel="noopener">Safe Bitfields in C++</a></p>
 <p>Main observation: Use union to implement/simulate bitfields.</p>
 <p>Each bitfield is implemented by using a single union member with mask and bit-length being set up initially.</p>
 <p>非常 stunning 的一个实现，但是很可惜，根据 comments 这个实现仍然是 undefined behavior，because <em>it call member functions on inactive union members</em>.</p>
@@ -361,7 +417,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/" data-id="cjd5daipj002q7o4nmqr6eaew" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/" data-id="cjdh5l90g00360c4nlgh9ul7j" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/03/02/monthly-read-posts-in-feb-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -401,7 +457,7 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="http://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking/" target="_blank" rel="external">Library order in static linking</a></p>
+        <p><a href="http://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking/" target="_blank" rel="noopener">Library order in static linking</a></p>
 <p>An object file both provides (exports) external symbols to other objects and libraries, and expects (imports) symbols from other objects and libraries.</p>
 <p>During linking, the linker maintains a symbol table, which keeps two important lists:</p>
 <ul>
@@ -430,21 +486,21 @@
 <p>Use flags such as <code>--start-group</code> and <code>--end-group</code> to repeatedly scan libraries, until no new import symbol was found.</p>
 <p>But may take significant time to finish linking.</p>
 <hr>
-<p><a href="http://www.lurklurk.org/linkers/linkers.html" target="_blank" rel="external">Beginners’ guide to linkers</a></p>
+<p><a href="http://www.lurklurk.org/linkers/linkers.html" target="_blank" rel="noopener">Beginners’ guide to linkers</a></p>
 <p>和前一篇着重分析链接顺序不同，这篇（其实更像是一个短 paper）介绍了整个链接的基础知识，适合扫盲。</p>
 <p>但是如果有一定基础的话，这篇反而没有什么让人觉得惊奇的点。</p>
 <hr>
-<p><a href="http://shaharmike.com/cpp/unique-ptr/" target="_blank" rel="external">Exploring std::unique_ptr</a></p>
+<p><a href="http://shaharmike.com/cpp/unique-ptr/" target="_blank" rel="noopener">Exploring std::unique_ptr</a></p>
 <p>同样是一篇基础扫盲 posts，适用于检查自己是否对 <code>std::unique_ptr</code> 的必备知识存在缺漏的情况。</p>
-<p>如果认真阅读过 Scott Meyers 的 <a href="https://book.douban.com/subject/25923597/" target="_blank" rel="external">Effective Modern C++</a>，那么 post 里提到的，诸如“为什么使用 <code>std::make_unique()</code> 可以带来异常安全” 这种高级议题就变得显而易见了。</p>
+<p>如果认真阅读过 Scott Meyers 的 <a href="https://book.douban.com/subject/25923597/" target="_blank" rel="noopener">Effective Modern C++</a>，那么 post 里提到的，诸如“为什么使用 <code>std::make_unique()</code> 可以带来异常安全” 这种高级议题就变得显而易见了。</p>
 <p>另外 post 对 custom deleter 的叙述的反而不够详细。</p>
 <hr>
-<p><a href="http://www.jmarshall.com/easy/http/" target="_blank" rel="external">HTTP Made Easy</a></p>
+<p><a href="http://www.jmarshall.com/easy/http/" target="_blank" rel="noopener">HTTP Made Easy</a></p>
 <p>非常赞的 HTTP 协议扫盲文章</p>
 <p>这篇 post 从 HTTP 1.0 开始讲起，然后过渡到 HTTP 1.1，所以对于 HTTP 1.1 为什么要求 request header 一定要带 <code>Host</code> header 提供了一个非常直观的解释。</p>
 <p>此外 post 还增加了 chunked transfer encoding 部分，印象中 Top-down approach 那本 computer networking 是没有提及这部分内容的。</p>
 <hr>
-<p><a href="http://www.csdn.net/article/2015-12-03/2826381" target="_blank" rel="external">C++ 11 之美</a></p>
+<p><a href="http://www.csdn.net/article/2015-12-03/2826381" target="_blank" rel="noopener">C++ 11 之美</a></p>
 <p>这篇 post 主要有三个点</p>
 <ul>
 <li>编译期的类成员存在性检查 &amp; 利用 SFINAE 做静态的分支选择（我的<a href="https://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">这篇 post</a> 里的实现就是从这篇 post 改进而来）</li>
@@ -452,7 +508,7 @@
 <li>演示了如何将字符串 <code>&quot;hello/test/20&quot;</code> 转换为函数调用 <code>hello(&quot;test&quot;, 20)</code></li>
 </ul>
 <hr>
-<p><a href="http://www.trinea.cn/android/android-image-cache-compare/" target="_blank" rel="external">Android 三大图片缓存原理、特性对比</a></p>
+<p><a href="http://www.trinea.cn/android/android-image-cache-compare/" target="_blank" rel="noopener">Android 三大图片缓存原理、特性对比</a></p>
 <p>讲道理这篇文章很水….</p>
 <p>一开始 mark 这篇文章是因为当时还在做安卓直播姬，转眼9个月过去了….</p>
 <p>现在为了借鉴文中几个库的架构设计从 pocket 的回收站里挖出来看了一遍，不过想想也就那么回事了….</p>
@@ -460,75 +516,12 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/" data-id="cjd5daipj002t7o4n727icu5x" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/" data-id="cjdh5l90b002p0c4nr55a3ibz" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/android/">android</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linker/">linker</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-check-if-has-member-at-compile-time-in-cpp" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/" class="article-date">
-  <time datetime="2017-01-29T16:32:42.000Z" itemprop="datePublished">2017-01-30</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">编译期判断是否存在某个成员函数</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>之前在<a href="https://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/">某篇</a>文章描述了一个实际上不是那么好用的检查某个模板类型参数是否存在某个函数的方法。</p>
-<p>这次会介绍一个相对有用的，在编译期检查某个类是否存在给定成员函数的做法，并且可以根据检查的结果执行不同的代码。</p>
-<p>（简而言之就是如何拙劣的模拟一下 duck typing）</p>
-<p>假设我们要检查某个类 <code>class Foo</code> 是否存在成员数 <code>bar(int)</code></p>
-<p>实现辅助设施</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">template&lt;typename T, typename... Args&gt;</div><div class="line">struct has_member_bar &#123;</div><div class="line">    template&lt;typename U&gt;</div><div class="line">    constexpr static auto check(const void*)-&gt;</div><div class="line">        decltype(std::declval&lt;U&gt;().bar(std::declval&lt;Args&gt;()...), std::true_type());</div><div class="line"></div><div class="line">    template&lt;typename U&gt;</div><div class="line">    constexpr static std::false_type check(...);</div><div class="line"></div><div class="line">    static constexpr bool value = decltype(check&lt;T&gt;(nullptr))::value;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>检查的方法是尝试生成函数 <code>T::bar</code> 的返回类型，如果不存在相应函数，则 <code>check()</code> 的重载决议会匹配到第二个函数上。</p>
-<p>这里引入 variadic template 的原因是我们希望能够检查时同时确定函数的 signature（注意 signature 是不包含返回类型的）。</p>
-<p>使用方法：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">constexpr</span> <span class="keyword">bool</span> has_bar = has_member_bar&lt;Foo, <span class="keyword">int</span>&gt;::value;</div></pre></td></tr></table></figure>
-<p>如果想把这部分做成通用的设施，那只能引入宏，根据需要生成辅助结构的代码；因为一个辅助结构只能检查一个函数成员。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">#define DECLARE_HAS_CLASS_MEMBER(NAME)                                                  \</div><div class="line">template&lt;typename T, typename... Args&gt;                                                  \</div><div class="line">struct has_member_##NAME &#123;                                                              \</div><div class="line">    template&lt;typename U&gt;                                                                \</div><div class="line">    constexpr static auto check(const void*)-&gt;                                          \</div><div class="line">        decltype(std::declval&lt;U&gt;().NAME(std::declval&lt;Args&gt;()...), std::true_type());    \</div><div class="line">                                                                                        \</div><div class="line">    template&lt;typename U&gt;                                                                \</div><div class="line">    constexpr static std::false_type check(...);                                        \</div><div class="line">                                                                                        \</div><div class="line">    static constexpr bool value = decltype(check&lt;T&gt;(nullptr))::value;                   \</div><div class="line">&#125;</div><div class="line"></div><div class="line">#define HAS_CLASS_MEMBER(CLASS, MEMBER, ...) \</div><div class="line">    has_member_##MEMBER&lt;CLASS, __VA_ARGS__&gt;::value</div></pre></td></tr></table></figure>
-<p>使用前需要先用 <code>DECLARE_HAS_CLASS_MEMBER(class_name)</code> 来创建一个辅助结构，再利用 <code>HAS_CLASS_MEMBER(Foo, bar, int)</code> 来判断是否存在 <code>Foo::bar(int)</code>。</p>
-<p>如果希望能利用上面的设施在编译期做到根据函数是否存在执行不同的操作，那么则可以借助 SFINAE 来实现：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line">DECLARE_HAS_CLASS_MEMBER(foo);</div><div class="line">DECLARE_HAS_CLASS_MEMBER(bar);</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Foo</span> &#123;</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;&#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Bar</span> &#123;</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Bar::bar()\n"</span>; &#125;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Bar::foo(const std::string&amp;, int)\n"</span>; &#125;</div><div class="line">&#125;;</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">typename</span> <span class="built_in">std</span>::enable_if&lt;HAS_CLASS_MEMBER(T, foo, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)&gt;::<span class="function">type <span class="title">RunFoo</span><span class="params">(T&amp; obj)</span></span></div><div class="line">&#123;</div><div class="line">    obj.foo(<span class="string">"hello world"</span>, <span class="number">1</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div><div class="line"><span class="keyword">typename</span> <span class="built_in">std</span>::enable_if&lt;!HAS_CLASS_MEMBER(T, foo, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)&gt;::<span class="function">type <span class="title">RunFoo</span><span class="params">(T&amp; obj)</span></span></div><div class="line">&#123;</div><div class="line">    obj.bar();</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></div><div class="line">&#123;</div><div class="line">    Bar bar;</div><div class="line">    RunFoo(bar);</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
-<p>但是如果想将 SFINAE 这部分做成通用的 static-if，还是比较 tricky 的；我一开始利用 lambda + SFINAE 倒是模拟了一个，但是因为 lambda 直接被无条件编译，导致即使在编译期已经确定不用某个分支的 lambda，仍然会编译这个 lambda 的代码，使得 static-if 功能大减。</p>
-<p>我猜想使用 generic lambda 应该可以绕过去，但是实现上可能会更加 tricky，并且使用上不会太直观，或者满地坑。</p>
-<p>其实 <code>HAS_CLASS_MEMBER</code> 最好的作用是等到 C++ 17 普及了 if-constexpr，这样整个流程都变得清晰了。</p>
-<p>另外有一点不得不说，其实很多你认为需要通过编译期判断是否存在某个成员函数才能解决的问题，压根就走不到需要自己实现 SFINAE 那一步，通过一些（可能不是那么优雅）简单的构造，就可以利用 type traits 解决，例如，我在实现 <a href="https://github.com/kingsamchen/KBase/blob/master/src/kbase/singleton.h" target="_blank" rel="external">KBase Singleton</a> 的方案。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/" data-id="cjd5daio8000v7o4nut9n5zz5" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/template/">template</a></li></ul>
 
     </footer>
   </div>
@@ -563,6 +556,10 @@
       <ul>
         
           <li>
+            <a href="/2018/02/10/acquire-crashed-module-name-and-address-offset/">在 Windows 上获取崩溃的模块名和模块内地址偏移</a>
+          </li>
+        
+          <li>
             <a href="/2018/02/02/monthly-read-posts-in-jan-2018/">Monthly Read Posts in Jan 2018</a>
           </li>
         
@@ -586,10 +583,6 @@
             <a href="/2017/12/02/monthly-read-posts-in-nov-2017/">Monthly Read Posts in Nov 2017</a>
           </li>
         
-          <li>
-            <a href="/2017/11/29/capture-network-packets-over-localhost-with-wireshark/">用 Wirshark 捕捉分析经过 localhost 的网络包</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -609,7 +602,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/allocator/">allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic-operations/">atomic operations</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic-flag/">atomic_flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomics/">atomics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bililive/">bililive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitwise，-SFINAE/">bitwise， SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bug/">bug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/clang/">clang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/constexpr/">constexpr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpp/">cpp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/crash-dump/">crash-dump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/curl/">curl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/enum/">enum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epoll/">epoll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fiddler/">fiddler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flag/">flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flow-control/">flow control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/future/">future</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/haskell/">haskell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infix-operator/">infix operator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/localhost/">localhost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postmortem/">postmortem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/private-inheritance/">private inheritance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/self-management/">self-management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-library/">shared library</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-pointer/">smart pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-bind/">std::bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traits/">traits</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-injection/">type injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/typedef/">typedef</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unicode/">unicode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unittest/">unittest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/uuid/">uuid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visual-studio/">visual studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows-thread/">windows thread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wireshark/">wireshark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/allocator/">allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic-operations/">atomic operations</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic-flag/">atomic_flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomics/">atomics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bililive/">bililive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitwise，-SFINAE/">bitwise， SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bug/">bug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/clang/">clang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/constexpr/">constexpr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpp/">cpp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/crash/">crash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/crash-dump/">crash-dump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/curl/">curl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/enum/">enum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epoll/">epoll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fiddler/">fiddler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flag/">flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flow-control/">flow control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/future/">future</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/haskell/">haskell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infix-operator/">infix operator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/localhost/">localhost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postmortem/">postmortem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/private-inheritance/">private inheritance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/self-management/">self-management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-library/">shared library</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-pointer/">smart pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-bind/">std::bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traits/">traits</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-injection/">type injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/typedef/">typedef</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unicode/">unicode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unittest/">unittest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/uuid/">uuid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visual-studio/">visual studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows-thread/">windows thread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wireshark/">wireshark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 

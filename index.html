@@ -11,6 +11,7 @@
 <meta property="og:url" content="http://kingsamchen.github.io/index.html">
 <meta property="og:site_name" content="KC的废墟堆">
 <meta property="og:description" content="Gone with the ruins">
+<meta property="og:locale" content="default">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="KC的废墟堆">
 <meta name="twitter:description" content="Gone with the ruins">
@@ -68,6 +69,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-acquire-crashed-module-name-and-address-offset" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/02/10/acquire-crashed-module-name-and-address-offset/" class="article-date">
+  <time datetime="2018-02-10T08:35:01.000Z" itemprop="datePublished">2018-02-10</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2018/02/10/acquire-crashed-module-name-and-address-offset/">在 Windows 上获取崩溃的模块名和模块内地址偏移</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>如果应用程序存在多个模块，那么有很大的可能通过 <code>SetUnhandledException()</code> 安装的崩溃处理函数和发生崩溃的地址不在一个模块内，因此直接在 crash handler 里使用当前模块地址是错误的做法。</p>
+<p>一个可行的方法是，利用崩溃时的上下文信息 <code>EXCEPTION_POINTERS</code>，拿到触发崩溃的地址 EIP/RIP，然后利用 Windows 7 新增的 <code>GetMappedFileNameW()</code> 拿到某个地址所在的模块的完整设备路径。</p>
+<p>接下来通过简单的字符串处理就可以获得模块名。</p>
+<p>剩下的就是模块内地址偏移。</p>
+<p>因为 Windows 程序的 DLL 在加载时很有可能因为 <em>preferred base address</em> 被占用了导致 DLL 的符号地址需要先经过一次 rebase；再考虑 ASLR 的影响，崩溃时的 EIP/RIP 基本上是不能拿来作为崩溃标识的，因为同一处崩溃的地址可能每次运行都会变。</p>
+<p>解决方案是通过 <code>GetModuleHandleW()</code> 拿到模块实际的加载地址，然后再和前面的崩溃地址做一次 distance 运算就可以拿到了模块内地址偏移。</p>
+<p>这样，name+offset 基本上可以作为 key 用来做崩溃信息的聚合。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://kingsamchen.github.io/2018/02/10/acquire-crashed-module-name-and-address-offset/" data-id="cjdh5l8x100040c4n4hs2nw9e" class="article-share-link">Share</a>
+      
+        <a href="http://kingsamchen.github.io/2018/02/10/acquire-crashed-module-name-and-address-offset/#disqus_thread" class="article-comment-link">Comments</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Windows/">Windows</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/crash/">crash</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-monthly-read-posts-in-jan-2018" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2018/02/02/monthly-read-posts-in-jan-2018/" class="article-date">
@@ -94,23 +146,23 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="https://solarianprogrammer.com/2017/12/27/cpp-17-constexpr-everything-as-much-as-the-compiler-can/" target="_blank" rel="external">C++17 constexpr everything (or as much as the compiler can)</a></p>
+        <p><a href="https://solarianprogrammer.com/2017/12/27/cpp-17-constexpr-everything-as-much-as-the-compiler-can/" target="_blank" rel="noopener">C++17 constexpr everything (or as much as the compiler can)</a></p>
 <p>名字不明觉厉结果是入门级读物，有点水…</p>
 <hr>
-<p><a href="https://blogs.msdn.microsoft.com/satyem/2012/08/13/threads-stack/" target="_blank" rel="external">Thread’s Stack</a></p>
+<p><a href="https://blogs.msdn.microsoft.com/satyem/2012/08/13/threads-stack/" target="_blank" rel="noopener">Thread’s Stack</a></p>
 <p>Windows 线程栈内存的布局，包括 guard page 来提示栈溢出的一些细节</p>
 <hr>
 <p><strong>下面是一些 Talk</strong></p>
-<p><a href="https://www.youtube.com/watch?v=LIb3L4vKZ7U" target="_blank" rel="external">allocator Is to Allocation what vector Is to Vexation - Andrei Alexandrescu - CppCon 2015</a></p>
+<p><a href="https://www.youtube.com/watch?v=LIb3L4vKZ7U" target="_blank" rel="noopener">allocator Is to Allocation what vector Is to Vexation - Andrei Alexandrescu - CppCon 2015</a></p>
 <p>只能说不明觉厉，因为学不到什么有用的东西…</p>
-<p><a href="https://www.youtube.com/watch?v=TRgWJuQhkQo" target="_blank" rel="external">CLANG C2 for Windows - Jim Radigan - CppCon 2015</a></p>
+<p><a href="https://www.youtube.com/watch?v=TRgWJuQhkQo" target="_blank" rel="noopener">CLANG C2 for Windows - Jim Radigan - CppCon 2015</a></p>
 <p>演讲者似乎是这个项目的主导，并且实现了 MSVC 的 coroutine。</p>
 <p>期待什么时候 clang/c2 可以作为 MSVC 的默认配置…</p>
 <p>另：演讲者长得有点像 house of cards S4 里的 Mark Usher，很 charming</p>
-<p><a href="https://www.youtube.com/watch?v=-ROXIG4raiA" target="_blank" rel="external">Applying functional programming in code design - Michał Dominiak - CppCon 2015</a></p>
+<p><a href="https://www.youtube.com/watch?v=-ROXIG4raiA" target="_blank" rel="noopener">Applying functional programming in code design - Michał Dominiak - CppCon 2015</a></p>
 <p>很糟糕的一个 talk，难以想象这么有意思的 topic，talk 全程居然没有一行代码的展示….</p>
 <p>不过里面提到的 node-based data structures 适合用来实现 functional programming 的一些基础设施，我一开始完全是懵逼的，直到看了 Seven Concurrency in Seven Weeks 里的第一章还是第二章，才意识到核心是什么。可见这个 talk 是多么的不友好。</p>
-<p><a href="https://www.youtube.com/watch?v=DS2m7T6NKZQ" target="_blank" rel="external">C++11, 14, 17 Atomics - the Deep Dive - Michael Wong - CppCon 2015</a></p>
+<p><a href="https://www.youtube.com/watch?v=DS2m7T6NKZQ" target="_blank" rel="noopener">C++11, 14, 17 Atomics - the Deep Dive - Michael Wong - CppCon 2015</a></p>
 <p>作者是 IBM compiler team 的 director，说话有点意思。</p>
 <p>另外这个 talk 的 PPT 值得研究一下，尤其是涉及到 happens-before / synchronized-with .etc 这类同步语义的内容</p>
 <hr>
@@ -119,7 +171,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2018/02/02/monthly-read-posts-in-jan-2018/" data-id="cjd5daip3002k7o4nlcxnesne" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2018/02/02/monthly-read-posts-in-jan-2018/" data-id="cjdh5l90d002s0c4n7eq9lgvc" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2018/02/02/monthly-read-posts-in-jan-2018/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -161,21 +213,21 @@
       
         <p>根据标准文档的要求，<code>std::atomic_flag</code> 只有利用 <code>ATOMIC_FLAG_INIT</code> 初始化之后，才获得一个确定的初始状态。</p>
 <p>现在假设我们要自己实现一个 spin-lock，那么只需要利用 <code>std::atomic_flag</code> 实现一个 spin-mutex：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></div><div class="line"><span class="keyword">public</span>:</div><div class="line">    SpinMutex()</div><div class="line">        : flag_(ATOMIC_FLAG_INIT)</div><div class="line">    &#123;&#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</div><div class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line"><span class="keyword">private</span>:</div><div class="line">    <span class="built_in">std</span>::atomic_flag flag_;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    SpinMutex()</span><br><span class="line">        : flag_(ATOMIC_FLAG_INIT)</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>事实上，知名著作 <em>C++ Concurrency in Action 1st Edition</em> 中介绍 <code>std::atomic_flag</code> 时用的也是一模一样的代码。</p>
 <p>然而，这段代码在比较新的 C++ 编译器上会编译失败。</p>
 <p>VS2017 直接提示失败，Clang 3.9 出现一个警告。</p>
 <p>问题的根源是，标准委员会对：如何时用 <code>ATOMIC_FLAG_INIT</code> 初始化 <code>std::atomic_flag</code> 存在分歧和反复，导致 C++ 11 和 C++ 14 在这个点上存在不一致。</p>
-<p>万能的 StackOverflow 刚好有一个<a href="https://stackoverflow.com/questions/24437396/stdatomic-flag-as-member-variable" target="_blank" rel="external">相关的问题</a></p>
+<p>万能的 StackOverflow 刚好有一个<a href="https://stackoverflow.com/questions/24437396/stdatomic-flag-as-member-variable" target="_blank" rel="noopener">相关的问题</a></p>
 <h3 id="正确的做法"><a href="#正确的做法" class="headerlink" title="正确的做法"></a>正确的做法</h3><p>正确的做法仍然是遵循标准要求的 <em>used in the copy-initialized context</em>，即：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></div><div class="line"><span class="keyword">public</span>:</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</div><div class="line">    &#125;</div><div class="line"> </div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</div><div class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</div><div class="line">    &#125;</div><div class="line"> </div><div class="line"><span class="keyword">private</span>:</div><div class="line">    <span class="comment">// Initialize to clear state.</span></div><div class="line">    <span class="comment">// Don't use initialization list for `flag_`.</span></div><div class="line">    <span class="built_in">std</span>::atomic_flag flag_ = ATOMIC_FLAG_INIT;</div><div class="line">&#125;;</div></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// Initialize to clear state.</span></span><br><span class="line">    <span class="comment">// Don't use initialization list for `flag_`.</span></span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_ = ATOMIC_FLAG_INIT;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <h3 id="MISC"><a href="#MISC" class="headerlink" title="MISC"></a>MISC</h3><p>在 VS2017 中，可以在 member initialization list 中用 <code>{}</code> 而不是 <code>()</code> 初始化，能正常编译通过。但是同一做法在其他编译器上没有效果。</p>
 <p>因此，在这种涉及 unspecified 的点上，尽量使用标准的做法，避免之后更换编译器踩坑。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2018/01/23/initialize-atom-flag-the-right-way/" data-id="cjd5daioo001y7o4niqiy76n9" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2018/01/23/initialize-atom-flag-the-right-way/" data-id="cjdh5l8zt00240c4njipp6v0y" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2018/01/23/initialize-atom-flag-the-right-way/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -242,7 +294,7 @@
 <p>编译会提示出错，错误信息类似：_Failed to specialize function template ‘unknown-type std::_Binder<std::_unforced,void (__cdecl="" base::*="" )(int),const="" std::_ph<1=""> &amp;,int&gt;::operator ()(<em>Unbound &amp;&amp;…) const’</em></std::_unforced,void></p>
 <p>根本原因是，即使前面使用了 <code>using Base::Foo;</code>, 也只是改变了这个函数在子类中的可见性，影响名字查找；并没有真的在子类中添加了这个函数，因此 <code>&amp;Derived::Foo</code> 实际上获取的类型是 <code>void (Base::*)(int)</code>，而正是这个类型影响了 <code>std::bind()</code> 的实例化。</p>
 <p>因此当后面用 <code>Derived</code> 的实例去调用 function object 时会失败。</p>
-<p>Stackoverflow 上有一个<a href="https://stackoverflow.com/questions/36263159/binding-to-privately-inherited-member-function" target="_blank" rel="external">类似的问题</a>，可以参考。</p>
+<p>Stackoverflow 上有一个<a href="https://stackoverflow.com/questions/36263159/binding-to-privately-inherited-member-function" target="_blank" rel="noopener">类似的问题</a>，可以参考。</p>
 <h2 id="Workaround"><a href="#Workaround" class="headerlink" title="Workaround"></a>Workaround</h2><p><strong>(1) 子类增加一个 call-wrapper</strong></p>
 <p>然而大多数采用 private-inheritance 而不是 composition 的情况下，都是避免添加各种 call-wrapper</p>
 <p><strong>(2) 绑定 lambda 而不是函数指针</strong></p>
@@ -253,7 +305,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2018/01/15/the-issue-binding-to-privately-inherited-member-function/" data-id="cjd5daipz00477o4nwgffzo12" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2018/01/15/the-issue-binding-to-privately-inherited-member-function/" data-id="cjdh5l90v004c0c4n1trftfzc" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2018/01/15/the-issue-binding-to-privately-inherited-member-function/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -293,13 +345,13 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>C++ 11 Concurrency: <a href="https://baptiste-wicht.com/posts/2012/03/cpp11-concurrency-part1-start-threads.html" target="_blank" rel="external">Part 1</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/03/cp11-concurrency-tutorial-part-2-protect-shared-data.html" target="_blank" rel="external">Part 2</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/04/c11-concurrency-tutorial-advanced-locking-and-condition-variables.html" target="_blank" rel="external">Part 3</a></p>
+        <p>C++ 11 Concurrency: <a href="https://baptiste-wicht.com/posts/2012/03/cpp11-concurrency-part1-start-threads.html" target="_blank" rel="noopener">Part 1</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/03/cp11-concurrency-tutorial-part-2-protect-shared-data.html" target="_blank" rel="noopener">Part 2</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/04/c11-concurrency-tutorial-advanced-locking-and-condition-variables.html" target="_blank" rel="noopener">Part 3</a></p>
 <p>本来想作为 C++ Concurrency in Action 的一个补充，但是发现这个 series （迄今）写得实在是太一般了…看看后续有没有改进</p>
 <hr>
-<p><a href="http://blog.poetries.top/2017/11/04/fiddler/" target="_blank" rel="external">使用Fiddler做抓包分析</a></p>
+<p><a href="http://blog.poetries.top/2017/11/04/fiddler/" target="_blank" rel="noopener">使用Fiddler做抓包分析</a></p>
 <p>除了 auto-responder ，其他部分内容感觉都好一般</p>
 <hr>
-<p><a href="https://zhuanlan.zhihu.com/p/21348220" target="_blank" rel="external">高并发性能调试经验分享</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/21348220" target="_blank" rel="noopener">高并发性能调试经验分享</a></p>
 <p>文章不短，但是核心还是调试那几板斧：</p>
 <ul>
 <li>尝试重现/增加重现概率</li>
@@ -309,32 +361,32 @@
 <p>文章开头说这类问题适合筛应届生，纯属胡说八道。</p>
 <p>首先前面说的那几点虽然是很容易回答，毕竟提纲挈领，但是实际解决过这类多线程/高并发的问题的人都知道，很多时候问题都是高度上下文相关的，换一个上下文很多之前的假设推断手段什么的都没效果，毕竟这是一个强经验相关的 domain。指望碰到一个应届生能熟练解决这类问题（停留在打嘴炮阶段不算），还不如指望哪天出现强 AI。</p>
 <hr>
-<p><a href="https://www.keakon.net/2015/09/07/%E5%88%9D%E6%8E%A2Python3%E7%9A%84%E5%BC%82%E6%AD%A5IO%E7%BC%96%E7%A8%8B" target="_blank" rel="external">初探 Python 3 的异步 IO 编程</a><br><a href="https://www.ziwenxie.site/2016/12/19/python-asyncio/" target="_blank" rel="external">Python并发编程之协程/异步IO</a></p>
+<p><a href="https://www.keakon.net/2015/09/07/%E5%88%9D%E6%8E%A2Python3%E7%9A%84%E5%BC%82%E6%AD%A5IO%E7%BC%96%E7%A8%8B" target="_blank" rel="noopener">初探 Python 3 的异步 IO 编程</a><br><a href="https://www.ziwenxie.site/2016/12/19/python-asyncio/" target="_blank" rel="noopener">Python并发编程之协程/异步IO</a></p>
 <p>口水文，还好是在地铁上看完的。</p>
 <hr>
-<p><a href="https://tech.meituan.com/about-desk-io.html" target="_blank" rel="external">磁盘I/O那些事</a></p>
+<p><a href="https://tech.meituan.com/about-desk-io.html" target="_blank" rel="noopener">磁盘I/O那些事</a></p>
 <p>实战那部分写的不错</p>
 <p>另外，文章 url 的 desk 目测是 disk 的 typo</p>
 <hr>
-<p><a href="https://garbagecollected.org/2014/09/14/how-google-authenticator-works/" target="_blank" rel="external">How Google Authenticator Works</a></p>
+<p><a href="https://garbagecollected.org/2014/09/14/how-google-authenticator-works/" target="_blank" rel="noopener">How Google Authenticator Works</a></p>
 <p>看完想自己写一个</p>
 <hr>
-<p><a href="https://www.youtube.com/watch?v=C4Z3c4Sv52U" target="_blank" rel="external">A Few Good Types - Neil MacIntosh - CppCon 2015</a></p>
+<p><a href="https://www.youtube.com/watch?v=C4Z3c4Sv52U" target="_blank" rel="noopener">A Few Good Types - Neil MacIntosh - CppCon 2015</a></p>
 <p>介绍了一波 <code>array_view</code> 和 <code>string_vew</code></p>
 <p>可惜 <code>array_view</code> 没有进标准</p>
 <hr>
-<p><a href="https://www.youtube.com/watch?v=u5senBJUkPc" target="_blank" rel="external">All Your Tests Are Terrible - Titus Winters and Hyrum Wright - CppCon 2015</a></p>
+<p><a href="https://www.youtube.com/watch?v=u5senBJUkPc" target="_blank" rel="noopener">All Your Tests Are Terrible - Titus Winters and Hyrum Wright - CppCon 2015</a></p>
 <p>又名：单元测试的几条军规</p>
 <p>基本覆盖了实现单元测试 case 的一些基本准则。两个演说者很逗，将相声一样</p>
 <p>不过我其实更关心部分这个 talk 并没有涉及到，比如涉及 GUI 的交互逻辑怎么做 ut；负责模块上粒度上怎么抽诸如此类..</p>
 <hr>
-<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD04V009" target="_blank" rel="external">Futures from Scratch - Arthur O’Dwyer - CppCon 2015</a></p>
+<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD04V009" target="_blank" rel="noopener">Futures from Scratch - Arthur O’Dwyer - CppCon 2015</a></p>
 <p>一些和 <code>future</code> 有关实现细节</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2018/01/01/monthly-read-posts-in-dec-2017/" data-id="cjd5daipj002o7o4nxoe2z6my" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2018/01/01/monthly-read-posts-in-dec-2017/" data-id="cjdh5l90a002n0c4nyv3e085i" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2018/01/01/monthly-read-posts-in-dec-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -479,7 +531,7 @@ TEST(EnumOps, NonEnumType)
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/" data-id="cjd5dain600007o4n9vkjl7xi" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/" data-id="cjdh5l8wm00010c4nmm432y2j" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/#disqus_thread" class="article-comment-link">Comments</a>
       
@@ -519,19 +571,19 @@ TEST(EnumOps, NonEnumType)
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p><a href="https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/" target="_blank" rel="external">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)</a><br><a href="https://channel9.msdn.com/Events/CPP/C-PP-Con-2014/Unicode-in-CPP" target="_blank" rel="external">CppCon 2014: Unicode in CPP</a></p>
+        <p><a href="https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/" target="_blank" rel="noopener">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)</a><br><a href="https://channel9.msdn.com/Events/CPP/C-PP-Con-2014/Unicode-in-CPP" target="_blank" rel="noopener">CppCon 2014: Unicode in CPP</a></p>
 <p>编码这块的内容基本这两个 post 就足够了</p>
 <hr>
-<p><a href="https://blog.eleven-labs.com/en/understanding-ssltls-part-1/" target="_blank" rel="external">UNDERSTANDING SSL/TLS: PART 1 - WHAT IS IT?</a></p>
+<p><a href="https://blog.eleven-labs.com/en/understanding-ssltls-part-1/" target="_blank" rel="noopener">UNDERSTANDING SSL/TLS: PART 1 - WHAT IS IT?</a></p>
 <p>预警：作者只写了 part 1 之后就太监了…</p>
 <hr>
-<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD01V001" target="_blank" rel="external">CppCon 2015: Implementation of a component-based entity system in modern C++</a></p>
+<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD01V001" target="_blank" rel="noopener">CppCon 2015: Implementation of a component-based entity system in modern C++</a></p>
 <p>不明觉厉的东西，没看太明白，似乎游戏开发用的多？</p>
 <hr>
-<p><a href="https://www.youtube.com/watch?v=WXeu4fj3zOs" target="_blank" rel="external">CppCon 2015: Lambdas from First Principles</a></p>
+<p><a href="https://www.youtube.com/watch?v=WXeu4fj3zOs" target="_blank" rel="noopener">CppCon 2015: Lambdas from First Principles</a></p>
 <p>几乎是最好的 lambda 深入浅出型 talk</p>
 <hr>
-<p><a href="https://www.youtube.com/watch?v=uhRWMGBjlO8" target="_blank" rel="external">CppCon 2015: Racing the Filesystem</a></p>
+<p><a href="https://www.youtube.com/watch?v=uhRWMGBjlO8" target="_blank" rel="noopener">CppCon 2015: Racing the Filesystem</a></p>
 <p>各家系统文件系统操作的各种坑，顺带推销做着自己的 Boost.AFIO 库</p>
 <p>然而我想了一下，好似平时都没怎么考虑过这些 racing conditions…</p>
 <hr>
@@ -541,66 +593,12 @@ TEST(EnumOps, NonEnumType)
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/" data-id="cjd5daipz003h7o4nnw51c01o" class="article-share-link">Share</a>
+      <a data-url="http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/" data-id="cjdh5l90g003c0c4nt0xd2ocp" class="article-share-link">Share</a>
       
         <a href="http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/#disqus_thread" class="article-comment-link">Comments</a>
       
       
   <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/c/">c++</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/https/">https</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/lambda/">lambda</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/unicode/">unicode</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-  
-    <article id="post-capture-network-packets-over-localhost-with-wireshark" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2017/11/29/capture-network-packets-over-localhost-with-wireshark/" class="article-date">
-  <time datetime="2017-11-29T15:47:50.000Z" itemprop="datePublished">2017-11-29</time>
-</a>
-    
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/PROGRAMMING/">PROGRAMMING</a>
-  </div>
-
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/11/29/capture-network-packets-over-localhost-with-wireshark/">用 Wirshark 捕捉分析经过 localhost 的网络包</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>最近写 WinAntHttp 的时候需要用 Wireshark 捕捉并分析发往 mock server 的 http 请求。</p>
-<p>然而因为 mock server 是直接跑在本机 localhost 上的，而在 Windows 上，发往 localhost 的网络包都不会经过网卡，所以 wireshark 基本无法捕捉。</p>
-<p>研究了一会儿之后发现两个解决方案：</p>
-<p>第一个是安装 <a href="https://github.com/nmap/npcap/releases" target="_blank" rel="external">npcap</a>，这个是 wincap 的一个 alternative，但是支持本地请求。</p>
-<p>不过因为这个需要替换掉原来的 wincap，所以我并没有采用。</p>
-<p>第二个是使用 <a href="http://www.netresec.com/?page=RawCap" target="_blank" rel="external">RawCap</a>，这货能抓到本地网络包，并且输出的格式是 wireshark-compatible</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"># administrator privilege is required!</div><div class="line">RawCap.exe 127.0.0.1 network_cap.pcap</div></pre></td></tr></table></figure>
-<p>考虑到使用频率和侵入性等因素，最终选择使用 RawCap</p>
-<p>抓到包之后 wireshark 不能马上直接看到 http 请求，因为普通的 http 请求是和 server 的 80 端口通信，mock server 的 Flask 默认使用 5000 作为通信端口。</p>
-<p>通过菜单 <code>Analyze - Decode As</code>，将 TCP 5000 端口按照 HTTP 协议解析，这样 wireshark 就可以正常的从 tcp packets 中拆出正确的 http message 了。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/" data-id="cjd5daio8000p7o4nrhtb6ld8" class="article-share-link">Share</a>
-      
-        <a href="http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/#disqus_thread" class="article-comment-link">Comments</a>
-      
-      
-  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/localhost/">localhost</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/wireshark/">wireshark</a></li></ul>
 
     </footer>
   </div>
@@ -635,6 +633,10 @@ TEST(EnumOps, NonEnumType)
       <ul>
         
           <li>
+            <a href="/2018/02/10/acquire-crashed-module-name-and-address-offset/">在 Windows 上获取崩溃的模块名和模块内地址偏移</a>
+          </li>
+        
+          <li>
             <a href="/2018/02/02/monthly-read-posts-in-jan-2018/">Monthly Read Posts in Jan 2018</a>
           </li>
         
@@ -658,10 +660,6 @@ TEST(EnumOps, NonEnumType)
             <a href="/2017/12/02/monthly-read-posts-in-nov-2017/">Monthly Read Posts in Nov 2017</a>
           </li>
         
-          <li>
-            <a href="/2017/11/29/capture-network-packets-over-localhost-with-wireshark/">用 Wirshark 捕捉分析经过 localhost 的网络包</a>
-          </li>
-        
       </ul>
     </div>
   </div>
@@ -681,7 +679,7 @@ TEST(EnumOps, NonEnumType)
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/allocator/">allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic-operations/">atomic operations</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic-flag/">atomic_flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomics/">atomics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bililive/">bililive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitwise，-SFINAE/">bitwise， SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bug/">bug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/clang/">clang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/constexpr/">constexpr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpp/">cpp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/crash-dump/">crash-dump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/curl/">curl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/enum/">enum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epoll/">epoll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fiddler/">fiddler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flag/">flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flow-control/">flow control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/future/">future</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/haskell/">haskell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infix-operator/">infix operator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/localhost/">localhost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postmortem/">postmortem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/private-inheritance/">private inheritance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/self-management/">self-management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-library/">shared library</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-pointer/">smart pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-bind/">std::bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traits/">traits</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-injection/">type injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/typedef/">typedef</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unicode/">unicode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unittest/">unittest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/uuid/">uuid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visual-studio/">visual studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows-thread/">windows thread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wireshark/">wireshark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/C/">C#</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/C-17/">C++ 17</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/DRY/">DRY</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/HTTP/">HTTP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Hexo/">Hexo</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/MVP/">MVP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/SFINAE/">SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Windows/">Windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/algorithms/">algorithms</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/allocator/">allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/android/">android</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/appending-file/">appending file</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic-operations/">atomic operations</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomic-flag/">atomic_flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/atomics/">atomics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/base-Bind/">base::Bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bash-on-windows/">bash on windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bililive/">bililive</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitfields/">bitfields</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bitwise，-SFINAE/">bitwise， SFINAE</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/blog/">blog</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/breakpad/">breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/buddy-allocator/">buddy-allocator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/bug/">bug</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/c/">c++</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cant/">cant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/chromium/">chromium</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/clang/">clang</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/computer-architecture/">computer architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/conditional-move/">conditional move</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/connection-management/">connection management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/constexpr/">constexpr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cookie/">cookie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/coroutine/">coroutine</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/covariance/">covariance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cpp/">cpp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/cppcon/">cppcon</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/crash/">crash</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/crash-dump/">crash-dump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/csapp/">csapp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/curl/">curl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-type-promotion/">data type promotion</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/data-structures/">data-structures</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/design/">design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/enum/">enum</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/environment/">environment</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/epoll/">epoll</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/exception/">exception</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ffmpeg/">ffmpeg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/fiddler/">fiddler</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flag/">flag</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/flow-control/">flow control</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-object/">function object</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/function-pointer/">function pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/future/">future</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gdb/">gdb</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/gibberish/">gibberish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git/">git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/git-pages/">git-pages</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/google-breakpad/">google-breakpad</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/haskell/">haskell</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/heap/">heap</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/http/">http</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/https/">https</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/incomplete-type/">incomplete type</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/infix-operator/">infix operator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/inno-setup/">inno setup</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/installer/">installer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/invalid-paramter/">invalid paramter</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/iterator/">iterator</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/job/">job</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/lambda/">lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linker/">linker</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/linux/">linux</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/localhost/">localhost</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/minidump/">minidump</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mix-in/">mix-in</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/mixin/">mixin</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/monthly-read-posts/">monthly read posts</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/move-safety/">move safety</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multiple-instance/">multiple instance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/multithreading/">multithreading</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/net-lib/">net lib</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-blocking/">non-blocking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/non-capturing-lambda/">non-capturing lambda</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/oauth-2-0/">oauth 2.0</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/obs-studio/">obs-studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/operator/">operator[]</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/owner-semantics/">owner semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/path/">path</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/performance/">performance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/postmortem/">postmortem</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/private-inheritance/">private inheritance</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/proxy/">proxy</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/python/">python</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/rant/">rant</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resignation/">resignation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/restful-api/">restful api</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/resumable-download/">resumable download</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/self-management/">self-management</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-library/">shared library</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/shared-ptr/">shared_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-poiner/">smart poiner</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/smart-pointer/">smart pointer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack/">stack</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stack-frame-layout/">stack frame layout</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-apply/">std::apply</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-bind/">std::bind</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-function/">std::function</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/std-unique-ptr/">std::unique_ptr</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/stl/">stl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/string-view/">string_view</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/system-version/">system version</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tcp/">tcp</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/template/">template</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ternary-search-tree/">ternary-search-tree</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/thumbnails/">thumbnails</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tokenizer/">tokenizer</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/traits/">traits</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/trie/">trie</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/tuple/">tuple</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/type-injection/">type injection</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/typedef/">typedef</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unicode/">unicode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/unittest/">unittest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlfetcher/">urlfetcher</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/urlrequest/">urlrequest</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/uuid/">uuid</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/view-semantics/">view semantics</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/visual-studio/">visual studio</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windbg/">windbg</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows/">windows</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/windows-thread/">windows thread</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wireshark/">wireshark</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/work-flow/">work flow</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wsl/">wsl</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/x86-64-ABI/">x86-64 ABI</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ycm/">ycm</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/断点下载/">断点下载</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/视频压制/">视频压制</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/造轮子/">造轮子</a></li></ul>
     </div>
   </div>
 
