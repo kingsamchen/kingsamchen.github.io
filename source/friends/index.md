@@ -12,7 +12,7 @@ date: 2018-03-01 15:37:12
 [TheCJW | 爱弹棉花的小伟](http://thecjw.0ginr.com/blog/)
 [Newbie Coder | 萌萌哒的炉子](http://newbiecoder.0ginr.com/blog/)
 [裴草莓 | 愤怒的老司机](http://madstrawberry.me/)
-[陈老师 | Beanbee.Max](http://beanbee.net/)
+[陈老师 | Beanbee.Max](https://beanbee.me/)
 [Sunus | 李师傅食品厂CEO](http://sunus.me/)
 [Lower | 喊大木大哥的小弟](http://www.tolower.net/)
 [Mrljdx | 大保健老司机](http://mrljdx.com/)
