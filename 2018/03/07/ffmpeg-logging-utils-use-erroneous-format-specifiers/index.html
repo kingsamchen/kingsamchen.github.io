@@ -17,10 +17,12 @@
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="被 FFmpeg 的日志模块撞了一下腰"/>
 
 
 
+
+  <meta name="keywords" content="crash, windows, ffmpeg, KC的废墟堆" />
 
 
 
@@ -40,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/archives/page/7/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -77,11 +79,7 @@
 
 
 
-    <title>
-  
-    归档 - KC的废墟堆
-  
-</title>
+    <title> 被 FFmpeg 的日志模块撞了一下腰 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -193,182 +191,115 @@
           <div id="content" class="content">
             
   
-  <section id="archive" class="archive">
-    
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          被 FFmpeg 的日志模块撞了一下腰
+        
+      </h1>
 
-    
-      
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-07
+        </span>
         
-        
-
-        
-          
-          <div class="collection-title">
-            <h2 class="archive-year">2017</h2>
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
           </div>
         
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            01-14
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2017/01/14/automatically-start-installation-using-inno-setup/" class="archive-post-link">
-            自动开始安装 Inno Setup 打包的安装程序
-          </a>
-        </span>
+        
       </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        <p>周末的时候客服同学反馈有个用户出现了崩溃，并且要来了崩溃 dmp 文件。</p>
+<p>挂上 windbg 后发现崩溃原因是 CRT 的 <code>invalid-parameter</code> 异常，第一现场是输出 ffmpeg 的 avcodec 模块的日志。</p>
+<p>省略中间若干分析过程，直击结论：FFmpeg 的 Windows 构建并不是用 MSVC 编译的，因此在类似 <code>printf()</code> 函数的 format specifier 使用上出现了偏差。</p>
+<p>代码使用 <code>%td</code> 输出 <code>ptrdiff_t</code> 类型，而 VS2017 之前的版本并不支持这个 format specifier，因此函数调用 <code>_vsnprintf_p()</code> 出现了参数异常，导致程序挂掉。</p>
+<p>虽然 VS 2017 很厚道的支持了这个格式，但是某直播姬的工具链是 VS 2013，且短时间不可能调整，因此最后的解决方案是，上层安装的 logging hook 在输出日志时，首先修正一遍 format 里的 specifier，替换为 VS 2013 支持的 <code>%Id</code>。</p>
+<p>注意，类似的还有 <code>size_t</code> 的 format specifier。</p>
+
+      
+    </div>
+
     
       
-        
-        
-
-        
       
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            01-11
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/" class="archive-post-link">
-            自动将 non-capturing lambda 转换为函数指针
-          </a>
-        </span>
-      </div>
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/">http://kingsamchen.github.io/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
     
-      
-        
-        
 
-        
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            01-04
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2017/01/04/monthly-read-posts-in-dec-2016/" class="archive-post-link">
-            Monthly Read Posts in Dec 2016
-          </a>
-        </span>
-      </div>
     
-      
+      <footer class="post-footer">
         
-        
-
-        
-          
-          <div class="collection-title">
-            <h2 class="archive-year">2016</h2>
+          <div class="post-tags">
+            
+              <a href="/tags/crash/">crash</a>
+            
+              <a href="/tags/windows/">windows</a>
+            
+              <a href="/tags/ffmpeg/">ffmpeg</a>
+            
           </div>
         
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            12-18
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" class="archive-post-link">
-            利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader
-          </a>
-        </span>
-      </div>
-    
-      
         
         
-
-        
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            12-04
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/12/04/monthly-read-posts-in-nov-2016/" class="archive-post-link">
-            Monthly Read Posts in Nov 2016
-          </a>
-        </span>
-      </div>
-    
-      
-        
-        
-
-        
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            11-20
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" class="archive-post-link">
-            避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理
-          </a>
-        </span>
-      </div>
-    
-      
-        
-        
-
-        
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            11-19
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" class="archive-post-link">
-            推荐 CSAPP:3e 课程视频以及 Bomb Lab
-          </a>
-        </span>
-      </div>
-    
-  </section>
-
-  
-  <nav class="pagination">
-    
-      <a class="prev" href="/archives/page/6/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text">上一页</span>
-      </a>
+  <nav class="post-nav">
     
     
-      <a class="next" href="/archives/page/8/">
-        <span class="next-text">下一页</span>
+      <a class="next" href="/2018/03/04/display-utf-8-string-in-vs-debugger/">
+        <span class="next-text nav-default">在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
   </nav>
 
+      </footer>
+    
+
+  </article>
 
 
           </div>
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
       </main>
@@ -448,6 +379,27 @@
     </div>
 
     
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/';
+        this.page.identifier = '2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/';
+        this.page.title = '被 FFmpeg 的日志模块撞了一下腰';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
 
 
     
