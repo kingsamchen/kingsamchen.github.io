@@ -17,10 +17,12 @@
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="Tiny Concurrent Http Server on Windows and Linux"/>
 
 
 
+
+  <meta name="keywords" content="windows, linux, tcp, epoll, iocp, concurrent, KC的废墟堆" />
 
 
 
@@ -40,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/archives/2018/02/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -77,11 +79,7 @@
 
 
 
-    <title>
-  
-    归档 - KC的废墟堆
-  
-</title>
+    <title> Tiny Concurrent Http Server on Windows and Linux - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -193,135 +191,119 @@
           <div id="content" class="content">
             
   
-  <section id="archive" class="archive">
-    
-      
-        <div class="archive-title">
-          <span class="archive-post-counter">
-            目前共计 67 篇日志
-          </span>
-        </div>
-      
-    
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Tiny Concurrent Http Server on Windows and Linux
+        
+      </h1>
 
-    
-      
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-08
+        </span>
         
-        
-
-        
-          
-          <div class="collection-title">
-            <h2 class="archive-year">2018</h2>
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
           </div>
         
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            02-26
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/02/26/the-new-dark-age/" class="archive-post-link">
-            靴子落地
-          </a>
-        </span>
+        
       </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        <p>前段时间趁着春节，分别基于 IOCP 和 epoll 实现了 demo 级别的 http server（在遵守 http 1.1 socket 复用基础上只提供了某个指定目录下文件的 GET），算是简单的过了一下 proactor 和 reactor 模型下的 TCP 并发服务。</p>
+<p>功能做的很粗糙，并且没有封装类似 event-loop 的东西，连接管理也基本算是纸糊的，原因还是前面说过的，只是想过一下两种模型，并且，在不研究当前流行的 paradigm 的前提下，凭借自己的 first understanding / hunch 去实现；等对这块有一段时间的研究后，作为参照，来回对比以加深理解。</p>
+<p>我觉得这是一种不错的学习方式。</p>
+<p>代码可以看 <a href="https://github.com/kingsamchen/Eureka/tree/master/ConcurrentHttpServer" target="_blank" rel="noopener">这里</a></p>
+
+      
+    </div>
+
     
       
-        
-        
-
-        
       
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            02-18
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/02/18/retrospection-of-the-2017/" class="archive-post-link">
-            2017 小结
-          </a>
-        </span>
-      </div>
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/">http://kingsamchen.github.io/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
     
-      
-        
-        
 
-        
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            02-14
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/02/14/using-winsock-extension-api-the-right-way/" class="archive-post-link">
-            使用 Winsock Extension API 的正确姿势
-          </a>
-        </span>
-      </div>
     
-      
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/windows/">windows</a>
+            
+              <a href="/tags/linux/">linux</a>
+            
+              <a href="/tags/tcp/">tcp</a>
+            
+              <a href="/tags/epoll/">epoll</a>
+            
+              <a href="/tags/iocp/">iocp</a>
+            
+              <a href="/tags/concurrent/">concurrent</a>
+            
+          </div>
         
         
-
         
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            02-10
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/02/10/acquire-crashed-module-name-and-address-offset/" class="archive-post-link">
-            在 Windows 上获取崩溃的模块名和模块内地址偏移
-          </a>
-        </span>
-      </div>
+  <nav class="post-nav">
     
-      
-        
-        
-
-        
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            02-02
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/02/02/monthly-read-posts-in-jan-2018/" class="archive-post-link">
-            Monthly Read Posts in Jan 2018
-          </a>
-        </span>
-      </div>
     
-  </section>
-
-  
-  <nav class="pagination">
-    
+      <a class="next" href="/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/">
+        <span class="next-text nav-default">被 FFmpeg 的日志模块撞了一下腰</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
     
   </nav>
 
+      </footer>
+    
+
+  </article>
 
 
           </div>
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
       </main>
@@ -401,6 +383,27 @@
     </div>
 
     
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/';
+        this.page.identifier = '2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/';
+        this.page.title = 'Tiny Concurrent Http Server on Windows and Linux';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
 
 
     

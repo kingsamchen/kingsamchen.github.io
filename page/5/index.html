@@ -195,6 +195,71 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/07/23/send-specific-cookie-in-urlfetcher/">Send Specific Cookie in URLFetcher</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-07-23
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>使用 <code>URLFetcher</code> 作为网络请求的基础组件有一个优势：如果 server 的 response header 指明了 <code>set-cookie</code>，那么 <code>URLFetcher</code> 在发出下一个请求时会自动往 request header 中设置 cookie。</p>
+<p>这为使用某些需要在请求时附带 cookie 的 API 提供了便利；但是同时也在某一些场合下导致了一些问题。</p>
+<p>如果你需要为某个 API 请求的 request header 中携带自定义的 cookie 数据，例如 <code>cookie: buvid=xxxx</code>，那么，即使你在发送请求前通过 <code>AddExtraRequestHeader()</code> 添加了 cookie 头，你也会惊奇地发现，出去的请求并没有携带你设置的 cookie，而是只有 <code>URLFetcher</code> 自己设置的，服务端提供的 cookie 值。</p>
+<p>不要问为什么这个时候要用 cookie 传递这个信息，而不是某个独有的 request header，亦或者 query-string；你永远不知道和你对接的人是一个怎样的智障；毕竟，没有谁会真的去读 RFC。</p>
+<p>自定义 cookie 丢失的原因大概如下：</p>
+<ol>
+<li>你首先设置了 cookie，然后发出请求</li>
+<li><code>URLFetcher</code> 在内部实际进行网络请求前，会设置服务端的 cookie 值（因为之前的请求存在 <code>set-cookie</code>）</li>
+<li>因为 RFC 规定，一个 request header 中， cookie header line 有且仅有一个，也就是说</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cookie: buvid=xxx</span><br><span class="line">cookie: sig=xxx</span><br></pre></td></tr></table></figure>
+<p>是不合法的；虽然可以通过</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cookie: buvid=xxx; sig=xxx</span><br></pre></td></tr></table></figure>
+<p>来传递多个value，但是这要求 <code>URLFetcher</code> 在添加 cookie 时要能够 aware 到这点；很可惜，根据情况来看这点不成立</p>
+<ol>
+<li>于是 <code>URLFetcher</code> 粗暴的替换了你设置的 cookie 值</li>
+</ol>
+<p>扫了一遍代码之后，我想到一个 workaround，实践证明确实可以：</p>
+<p>发请求前设置 <code>URLFetcher</code> 的 load flag，加上 <code>LOAD_DO_NOT_SEND_COOKIE</code>，阻止 <code>URLFetcher</code> 自己设置 cookie 的行为，完全由自己控制请求的 cookie。</p>
+<p>话说用 <code>URLFetcher</code> 被坑了好多次（算上 chromium 其他的 lib，次数可以翻翻），还好每次都能够凭借“优秀工程师的第六感”蒙中问题的 root cause，进而化险为夷。我突然感觉自己理解了什么叫 <em>文章本天成，妙笔偶得之</em>。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/07/07/bypass-proxy-in-urlfetcher/">Bypass Proxy in URLFetcher</a>
         
       </h1>
@@ -552,62 +617,6 @@
 <p>缺失的代码就是下面这段…</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// If the client requests a full memory dump, we will write a normal mini</span></span><br><span class="line"><span class="comment">// dump and a full memory dump. Both dump files use the same uuid as file</span></span><br><span class="line"><span class="comment">// name prefix.</span></span><br><span class="line"><span class="keyword">if</span> (client.dump_type() &amp; MiniDumpWithFullMemory) &#123;</span><br><span class="line">  <span class="built_in">std</span>::wstring full_dump_path;</span><br><span class="line">  <span class="keyword">if</span> (!dump_generator.GenerateFullDumpFile(&amp;full_dump_path)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>另外，开启了 full minidump 模式之后，完整的 dump 体积会暴增到 200MB 上下，要做好心理准备。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/">用 FFMpeg 生成视频缩略图</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-05-06
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>除了可以使用 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">ffmpeg 压制视频外</a>，还能利用 ffmpeg 生成某个视频的缩略图。</p>
-<p>利用命令行：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg.exe -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 9 -c:v mjpeg &quot;output_dir\thumb_%d.jpg&quot;</span><br></pre></td></tr></table></figure>
-<p>就可以在 <code>output_dir</code> 这个目录下为视频文件 <em>some_video.mp4</em> 从头开始生成最多不超过9张关键帧缩略图，文件名分别是 <code>thumb_1.jpg</code> ~ <code>thumb_9.jpg</code>。</p>
-<p>这个默认策略适合长度较短的视频（比如半分钟或一分钟内），对于长视频，很可能跑完9张关键帧缩略图，正片都还没开始…</p>
-<p>所以，这个时候的生成策略应该考虑能够尽可能的均匀分布于视频内容。</p>
-<p>首先利用这个 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">post</a> 里提到的做法，用 <code>ffprobe.exe</code> 获得视频的长度，记为 <strong><em>T</em></strong>（单位，秒）。</p>
-<p>将 <strong><em>T</em></strong> 均分为 10（9+1）个片段，取 $ t_i = \frac{T}{10} * i, i = 1, 2, \cdots 9 $，这么做的原因是避免取到开头和结尾。</p>
-<p>最后针对每个 $ t_i $，运行 ffmpeg</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg.exe -ss t_i -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 1 -c:v mjpeg &quot;output_dir\thumb_i.jpg&quot;</span><br></pre></td></tr></table></figure>
-<p>唯一麻烦的地方在于输出文件名序列需要我们自己指定。</p>
 
         
       
