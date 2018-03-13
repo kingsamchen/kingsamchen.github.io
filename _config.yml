@@ -73,3 +73,12 @@ deploy:
   branch: master
 
 disqus_shortname: kingsamchen-github-io
+
+feed:
+  type: atom
+  path: atom.xml
+  limit: 20
+  hub:
+  content:
+  content_limit: 140
+  content_limit_delim: ' '
