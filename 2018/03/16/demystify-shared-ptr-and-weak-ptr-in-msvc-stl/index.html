@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="浅析 shared_ptr：MSVC STL 篇"/>
+
+
+
+
+  <meta name="keywords" content="c++, shared_ptr, shared_ptr-internals, source-code-study, weak_ptr, visual studio, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> 浅析 shared_ptr：MSVC STL 篇 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          浅析 shared_ptr：MSVC STL 篇
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-16
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#How-shared-ptr-new-T-differs-from-make-shared"><span class="toc-text">How shared_ptr(new T()) differs from make_shared()</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-Virtual-Dtor-is-Not-Necessary-When-Deleting-From-a-Base-Pointer"><span class="toc-text">Why Virtual Dtor is Not Necessary When Deleting From a Base Pointer</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-Custom-Deleter-Works-and-Why-It-Is-Not-Part-of-the-Type"><span class="toc-text">How Custom Deleter Works and Why It Is Not Part of the Type</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-enable-shared-from-this-works"><span class="toc-text">How enable_shared_from_this works</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-Reference-Counting-Works"><span class="toc-text">How Reference Counting Works</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#How-weak-ptr-relates-with-shared-ptr"><span class="toc-text">How weak_ptr relates with shared_ptr</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Thread-safety-of-shared-ptr-Instances"><span class="toc-text">Thread-safety of shared_ptr Instances</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Epilogue"><span class="toc-text">Epilogue</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
+<p>因为这是系列第一篇，所以会带一些功能的 demo，以方便叙述。</p>
+<h2 id="How-shared-ptr-new-T-differs-from-make-shared"><a href="#How-shared-ptr-new-T-differs-from-make-shared" class="headerlink" title="How shared_ptr(new T()) differs from make_shared()"></a>How shared_ptr<t>(new T()) differs from make_shared<t>()</t></t></h2><p>首先考虑 <code>shared_ptr</code> 对象的创建，对于给定类型 <code>T</code>，假设通过</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> ptr = <span class="built_in">std</span>::make_shared&lt;T&gt;(...);</span><br></pre></td></tr></table></figure>
+<p>创建一个实例。</p>
+<p>看一下函数代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty</span>,</span></span><br><span class="line"><span class="class">         <span class="title">class</span>... _<span class="title">Types</span>&gt;</span></span><br><span class="line"><span class="class">_<span class="title">NODISCARD</span> <span class="title">inline</span> <span class="title">shared_ptr</span>&lt;_Ty&gt; <span class="title">make_shared</span>(_<span class="title">Types</span>&amp;&amp;... _<span class="title">Args</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// make a shared_ptr</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">auto</span> _Rx = <span class="keyword">new</span> _Ref_count_obj&lt;_Ty&gt;(_STD forward&lt;_Types&gt;(_Args)...);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;_Ty&gt; _Ret;</span><br><span class="line">    _Ret._Set_ptr_rep_and_enable_shared(_Rx-&gt;_Getptr(), _Rx);</span><br><span class="line">    <span class="keyword">return</span> (_Ret);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里首先在 heap 上创建了一个 <code>_Ref_count_obj&lt;_Ty&gt;</code> 对象，通过 <code>std::forward()</code> 将 <code>make_shared()</code> 的参数转发作为构造函数；接着通过 default contructor 创建了一个 <code>shared_ptr&lt;_Ty&gt;</code>，并调用 <code>_Set_ptr_rep_and_enable_shared()</code> 设置相关数据。</p>
+<p>因为创建 <code>_Ty</code> 实例需要的参数 <code>_Args</code> 被转发到了 <code>_Ref_count_obj</code> 的构造函数中，且 <code>shared_ptr</code> 的 default constructor 实质上是一个 <em>constexpr function</em>，因此猜测 <code>shared_ptr</code> 自身并不负责创建其管理的 object instance，而是将这部分操作“委托”给 <code>_Ref_count_obj</code>。</p>
+<p>下面看一下 <code>_Ref_count_obj</code> 的结构</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> _<span class="title">Ref_count_base</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">	<span class="keyword">virtual</span> <span class="keyword">void</span> _Destroy() _NOEXCEPT = <span class="number">0</span>;</span><br><span class="line">	<span class="keyword">virtual</span> <span class="keyword">void</span> _Delete_this() _NOEXCEPT = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// _Atomic_counter_t is actually unsigned long</span></span><br><span class="line">	_Atomic_counter_t _Uses;</span><br><span class="line">	_Atomic_counter_t _Weaks;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> _<span class="title">Ref_count_obj</span></span></span><br><span class="line"><span class="class">    :</span> <span class="keyword">public</span> _Ref_count_base &#123;</span><br><span class="line">    ...</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">aligned_union_t</span>&lt;<span class="number">1</span>, _Ty&gt; _Storage;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>引用计数的信息保存在了基类 <code>_Ref_count_base</code> 中，并且只是一个普通的 <code>unsigned long</code>，估计加减的相关原子操作是直接利用 <code>Interlocked*</code> 系列的 API 来完成。</p>
+<p>计数相关的细节后面会分析，这里先略过。</p>
+<p><code>_Ref_count_obj</code> 自己只有一个成员，不过这个成员很有意思。</p>
+<p><code>aligned_union_t&lt;1, _Ty&gt;</code> 会在内部提供一个</p>
+<ul>
+<li>地址按照 <code>_Ty</code> 要求对齐</li>
+<li>大小为 <code>max(1, sizeof(_Ty))</code> 的 buffer</li>
+</ul>
+<p>所以 <code>_Storage</code> 其实就是一个大小可以容纳一个 <code>_Ty</code> 实例，且地址经过对齐的 buffer，并且这个 buffer 就是用来保存 <code>shared_ptr</code> 要管理的 <code>_Ty</code> 的实例。</p>
+<p>这可以结合 <code>_Ref_count_obj</code> 的构造函数看出：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span>... _<span class="title">Types</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">explicit</span> _<span class="title">Ref_count_obj</span>(_<span class="title">Types</span>&amp;&amp;... _<span class="title">Args</span>)</span></span><br><span class="line"><span class="class">    :</span> _Ref_count_base()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// construct from argument list</span></span><br><span class="line">    ::<span class="keyword">new</span> (<span class="keyword">static_cast</span>&lt;<span class="keyword">void</span> *&gt;(&amp;_Storage)) _Ty(_STD forward&lt;_Types&gt;(_Args)...);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_Ty * _Getptr()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// get pointer</span></span><br><span class="line">    <span class="keyword">return</span> (<span class="keyword">reinterpret_cast</span>&lt;_Ty *&gt;(&amp;_Storage));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>构造函数里通过 <em>placement new</em> 在前面说的 buffer 里构造了出了目标实例。</p>
+<p>并且，<strong>实例和（计数）控制块实质上是一起存放在一块“大”内存上的</strong>。</p>
+<p>至此，<code>_Rx</code> 的构造就结束了。</p>
+<p>接下来看一下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">shared_ptr</span>&lt;_Ty&gt; _Ret;</span><br><span class="line">_Ret._Set_ptr_rep_and_enable_shared(_Rx-&gt;_Getptr(), _Rx);</span><br></pre></td></tr></table></figure>
+<p>是如何将 <code>_Rx</code> 和自己关联上的。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// From class shared_ptr</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ux</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Set_ptr_rep_and_enable_shared</span>(_<span class="title">Ux</span>* _<span class="title">Px</span>, _<span class="title">Ref_count_base</span>* _<span class="title">Rx</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// take ownership of _Px</span></span><br><span class="line">    <span class="keyword">this</span>-&gt;_Set_ptr_rep(_Px, _Rx);</span><br><span class="line">    _Enable_shared_from_this(*<span class="keyword">this</span>, _Px);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> _<span class="title">Ptr_base</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">using</span> element_type = <span class="keyword">remove_extent_t</span>&lt;_Ty&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> _Set_ptr_rep(element_type* _Other_ptr, _Ref_count_base* _Other_rep)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">// take new resource</span></span><br><span class="line">        _Ptr = _Other_ptr;</span><br><span class="line">        _Rep = _Other_rep;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    element_type* _Ptr &#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">    _Ref_count_base* _Rep &#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>可以看出，<code>shared_ptr</code> 的基类 <code>_Ptr_base</code> 有且仅有两个成员，分别是 1) 指向 object instance 的指针 2) 指向 ref-counted 控制块的指针；这两个指针被分别设置为前面 <code>_Ref_count_obj</code> 有关的地址。</p>
+<p>最后那个 <code>_Enable_shared_from_this()</code> 调用和 <code>std::enable_shared_from_this</code> 有关，后面会分析，这里先忽略。</p>
+<p>到这里，函数 <code>std::make_shared()</code> 的整个流程我们已经清楚了，接下来就是研究并且对比一下，直接通过构造函数创建会有什么不同，亦即：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;T&gt; sp(<span class="keyword">new</span> T(...));</span><br></pre></td></tr></table></figure>
+<p>对应调用的构造函数是：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ux</span>,</span></span><br><span class="line"><span class="class">    <span class="title">enable_if_t</span>&lt;conjunction_v&lt;conditional_t&lt;is_array_v&lt;_Ty&gt;, _Can_array_delete&lt;_Ux&gt;, _Can_scalar_delete&lt;_Ux&gt;&gt;,</span></span><br><span class="line"><span class="class">    _SP_convertible&lt;_Ux, _Ty&gt;&gt;, int&gt; = 0&gt;</span></span><br><span class="line"><span class="class">    <span class="title">explicit</span> <span class="title">shared_ptr</span>(_<span class="title">Ux</span>* _<span class="title">Px</span>)</span></span><br><span class="line"><span class="class">&#123;</span>	<span class="comment">// construct shared_ptr object that owns _Px</span></span><br><span class="line">    _Setp(_Px, is_array&lt;_Ty&gt;&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>通过实现我们至少可以发现两点：</p>
+<ol>
+<li>没有专门（dedicated）的通过 <code>_Ty*</code> 创建对象的构造函数，而且凡是能够 implicit cast 到 <code>_Ty*</code> 的 <code>_Ux*</code> 都是被支持的</li>
+<li>C++ 17 开始 <code>shared_ptr</code> 能够<a href="http://en.cppreference.com/w/cpp/memory/shared_ptr/shared_ptr" target="_blank" rel="noopener">支持数组类型</a>了。不知道这是个好消息还是坏消息……</li>
+</ol>
+<p>由于 C++ 17 还没全面铺开，这里假设当作 C++ 11/14，不考虑类型是数组的 case。</p>
+<p>接下来看一下 <code>_Setp()</code> 这个函数</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ux</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Setp</span>(_<span class="title">Ux</span>* _<span class="title">Px</span>, <span class="title">false_type</span>) &#123;</span>  <span class="comment">// take ownership of _Px</span></span><br><span class="line">  _TRY_BEGIN                        <span class="comment">// allocate control block and set</span></span><br><span class="line">      _Set_ptr_rep_and_enable_shared(_Px, <span class="keyword">new</span> _Ref_count&lt;_Ux&gt;(_Px));</span><br><span class="line">  _CATCH_ALL  <span class="comment">// allocation failed, delete resource</span></span><br><span class="line">      <span class="keyword">delete</span> _Px;</span><br><span class="line">  _RERAISE;</span><br><span class="line">  _CATCH_END</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>函数 <code>_Set_ptr_rep_and_enable_shared()</code> 前面分析过，是用来关联 <code>shared_ptr</code> instance 和它的 ref-count 控制块。</p>
+<p>这里做了一个异常处理，应该是考虑到 <code>new _Ref_count&lt;_Ux&gt;(_Px))</code> 可能会出现异常。</p>
+<p>类型 <code>_Ref_count</code> 和前面分析过的 <code>_Ref_count_obj</code> 一样，都是 <code>_Ref_count_base</code> 的子类：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CLASS TEMPLATE _Ref_count</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> _<span class="title">Ref_count</span> :</span> <span class="keyword">public</span> _Ref_count_base &#123;  <span class="comment">// handle reference counting for</span></span><br><span class="line">                                             <span class="comment">// pointer without deleter</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">explicit</span> _Ref_count(_Ty* _Px) : _Ref_count_base(), _Ptr(_Px) &#123;  <span class="comment">// construct</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">virtual</span> <span class="keyword">void</span> _Destroy() _NOEXCEPT override &#123;  <span class="comment">// destroy managed resource</span></span><br><span class="line">    <span class="keyword">delete</span> _Ptr;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">virtual</span> <span class="keyword">void</span> _Delete_this() _NOEXCEPT override &#123;  <span class="comment">// destroy self</span></span><br><span class="line">    <span class="keyword">delete</span> <span class="keyword">this</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _Ty* _Ptr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>整个类结构比较简单，只有一个指针成员，指向一开始 heap 上分配的对象。</p>
+<p>Conclusion: 通过上面的分析，我们可以看出，两种方式的影响主要在于 <code>shared_ptr</code> 内部使用的 ref-count control block。</p>
+<p>通过 <code>make_shared()</code> 创建，使用的是 <code>_Ref_count_obj</code>，内部已经包含了对象实例的内存区域，整体上只有一次内存分配。</p>
+<p>而通过构造函数创建，使用的是 <code>_Ref_count</code>，内部仅有一个指针引用预先创建的对象；整体上有两次内存分配。</p>
+<h2 id="Why-Virtual-Dtor-is-Not-Necessary-When-Deleting-From-a-Base-Pointer"><a href="#Why-Virtual-Dtor-is-Not-Necessary-When-Deleting-From-a-Base-Pointer" class="headerlink" title="Why Virtual Dtor is Not Necessary When Deleting From a Base Pointer"></a>Why Virtual Dtor is Not Necessary When Deleting From a Base Pointer</h2><p>通过构造函数创建 <code>shared_ptr</code> 对象有一个牛逼的副作用：<code>shared_ptr</code> 可以正确地通过基类指针析构整个对象，即使基类没有定义 virtual destructor。</p>
+<p>换句话说：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Base</span> &#123;</span></span><br><span class="line">    <span class="comment">// no virtual here</span></span><br><span class="line">    ~Base()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">"~Base\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Derived</span> :</span> Base &#123;</span><br><span class="line">    ~Derived()</span><br><span class="line">    &#123;</span><br><span class="line">    	<span class="built_in">printf</span>(<span class="string">"~Derived\n"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Would call ~Derived() then ~Base() once sp goes out of scope.</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Base&gt; sp(<span class="keyword">new</span> Derived());</span><br></pre></td></tr></table></figure>
+<p>这个“特性”目前是 <code>shared_ptr</code> 独有的，我们可以通过研究代码来理解为什么可以这样做。</p>
+<p>回顾前面分析<em>从构造函数创建 <code>shared_ptr</code></em> 的代码，可以发现，从一开始 <code>shared_ptr</code> 的构造函数到这里的 <code>_Ref_count</code>，所有相关函数都是 template，类型逐层传递保证 <code>_Ref_count::_Ptr</code> 是 heap 对象的<strong>实际类型</strong>，这意味着这个 <code>shared_ptr</code> 实现了在内部保存了管理对象的实际类型，并且 <code>_Ref_count::_Destroy()</code> 是直接对实际类型进行 delete expression。</p>
+<p>所以，哪怕基类的析构函数不是 virtual，<code>sp</code> 一样能够正确析构。</p>
+<p>Note，释放相关的细节因为和引用计数有关，留到后面说。</p>
+<h2 id="How-Custom-Deleter-Works-and-Why-It-Is-Not-Part-of-the-Type"><a href="#How-Custom-Deleter-Works-and-Why-It-Is-Not-Part-of-the-Type" class="headerlink" title="How Custom Deleter Works and Why It Is Not Part of the Type"></a>How Custom Deleter Works and Why It Is Not Part of the Type</h2><p>假设我们有一个 custom deleter，我们可以这样使用：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">custom_deleter</span> &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">operator</span><span class="params">()</span><span class="params">(C* ptr)</span> <span class="keyword">const</span> </span>&#123;</span><br><span class="line">        <span class="comment">// ...</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;C&gt; sp(<span class="keyword">new</span> C(), custom_deleter());</span><br></pre></td></tr></table></figure>
+<p>看一下目标构造函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ux</span>,</span></span><br><span class="line"><span class="class">          <span class="title">class</span> _<span class="title">Dx</span>,</span></span><br><span class="line"><span class="class">          <span class="title">enable_if_t</span>&lt;conjunction_v&lt;is_move_constructible&lt;_Dx&gt;,</span></span><br><span class="line"><span class="class">                                    _Can_call_function_object&lt;_Dx&amp;, _Ux*&amp;&gt;,</span></span><br><span class="line"><span class="class">                                    _SP_convertible&lt;_Ux, _Ty&gt;&gt;,</span></span><br><span class="line"><span class="class">                      int&gt; = 0&gt;</span></span><br><span class="line"><span class="class"><span class="title">shared_ptr</span>(_<span class="title">Ux</span>* _<span class="title">Px</span>, _<span class="title">Dx</span> _<span class="title">Dt</span>) &#123;</span>  <span class="comment">// construct with _Px, deleter</span></span><br><span class="line">  _Setpd(_Px, _STD move(_Dt));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Aside：由于 deleter 的定位一直是 function object，所以正确的实现是要支持 value semantics 并且控制拷贝的 cost，所以这里直接传值 + move。</p>
+<p>这里通过函数 <code>_Setpd()</code> 设置对象指针和 deleter。</p>
+<p>这个函数是不是觉得似曾相识？前面仅设置对象指针的函数叫 <code>_Setp()</code>，因此我们可以大胆猜测，相关的函数序列应该是形如 <code>_Setxyz()</code>，并且用 <code>p</code> 表示对象指针，<code>d</code> 表示 deleter；如果后面要研究 custom allocator，那么就会看到用 <code>a</code> 代替 allocator。</p>
+<p>继续看一下 <code>_Setpd()</code> 函数：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">UxptrOrNullptr</span>, <span class="title">class</span> _<span class="title">Dx</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Setpd</span>(_<span class="title">UxptrOrNullptr</span> _<span class="title">Px</span>,</span></span><br><span class="line"><span class="class">            _<span class="title">Dx</span> _<span class="title">Dt</span>) &#123;</span>  <span class="comment">// take ownership of _Px, deleter _Dt</span></span><br><span class="line">  _TRY_BEGIN            <span class="comment">// allocate control block and set</span></span><br><span class="line">      _Set_ptr_rep_and_enable_shared(</span><br><span class="line">          _Px,</span><br><span class="line">          <span class="keyword">new</span> _Ref_count_resource&lt;_UxptrOrNullptr, _Dx&gt;(_Px, _STD move(_Dt)));</span><br><span class="line">  _CATCH_ALL  <span class="comment">// allocation failed, delete resource</span></span><br><span class="line">      _Dt(_Px);</span><br><span class="line">  _RERAISE;</span><br><span class="line">  _CATCH_END</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整体实现和 <code>_Setp()</code> 非常像。不过 ref-count 的数据类型换成了 <code>_Ref_count_resource</code>，靠猜都知道它肯定也是 <code>_Ref_count_base</code> 的子类。</p>
+<p>另外，因为要兼容对象指针为 <code>nullptr</code> 的情况，因此这里模板参数将指针类型整体保存了下来，即 <code>_UxptrOrNullptr</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CLASS TEMPLATE _Ref_count_resource</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Resource</span>,</span></span><br><span class="line"><span class="class">          <span class="title">class</span> _<span class="title">Dx</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> _<span class="title">Ref_count_resource</span></span></span><br><span class="line"><span class="class">    :</span> <span class="keyword">public</span> _Ref_count_base &#123;  <span class="comment">// handle reference counting for object with</span></span><br><span class="line">                                <span class="comment">// deleter</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  _Ref_count_resource(_Resource _Px, _Dx _Dt)</span><br><span class="line">      : _Ref_count_base(),</span><br><span class="line">        _Mypair(_One_then_variadic_args_t(),</span><br><span class="line">                _STD move(_Dt),</span><br><span class="line">                _Px) &#123;  <span class="comment">// construct</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// omit other irrelavent code</span></span><br><span class="line"></span><br><span class="line">  _Compressed_pair&lt;_Dx, _Resource&gt; _Mypair;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>类似的，这里的管理对象的类型 <code>_Dx</code> 也是对象的实际类型。</p>
+<p>比较有意思的是 <code>_Compressed_pair</code>，它是 MSVC utility 内部使用而一个辅助结构，核心就是一个 pair，不过和标准的 <code>std::pair</code> 不同，<code>_Compressed_pair</code> 做了EBO，亦即：当 <code>_Dx</code> 是一个空结构的情况下，压缩成员，只保留一个对象指针。</p>
+<p>到这里就可以下结论：(custom) deleter 保存在 <code>_Ref_count_resource</code> 中，通过 <code>_Ptr_base</code> 的 <code>_Ref_count_base*</code> 去引用。因为 <code>_Ptr_base</code> 这个基类的存在，使得最外层的 <code>shared_ptr</code> 无需通过自身保存 deleter 类型的方式就可以访问到 deleter。</p>
+<p>这种 indirection layer 实在是太常见了。</p>
+<h2 id="How-enable-shared-from-this-works"><a href="#How-enable-shared-from-this-works" class="headerlink" title="How enable_shared_from_this works"></a>How enable_shared_from_this works</h2><p>如果一个类需要在某个成员函数中返回指向自己 (this) 的 <code>shared_ptr</code>（常见于需要在成员函数中通过 <code>std::bind()</code> 创建一个 function object），那么就需要使用 <code>std::enable_shared_from_this</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">SharedThisD</span> :</span> <span class="built_in">std</span>::enable_shared_from_this&lt;SharedThisD&gt; &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;SharedThisD&gt; getptr() &#123;</span><br><span class="line">        <span class="keyword">return</span> shared_from_this();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> sp = <span class="built_in">std</span>::make_shared&lt;SharedThisD&gt;();</span><br><span class="line"><span class="keyword">auto</span> sp2 = sp.getptr();</span><br></pre></td></tr></table></figure>
+<p>不过这里要注意的是，对象本身一定要首先是通过 <code>shared_ptr</code> 托管的，后面会看到为什么。</p>
+<p>首先简单过一下 <code>enable_shared_from_this</code> 这个类的基本结构（略去无关代码):</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CLASS TEMPLATE enable_shared_from_this</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">enable_shared_from_this</span> &#123;</span>  <span class="comment">// provide member functions that create</span></span><br><span class="line">                                 <span class="comment">// shared_ptr to this</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="comment">// &lt;-- 记住这个 type alias</span></span><br><span class="line">  <span class="keyword">using</span> _Esft_type = enable_shared_from_this;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Omit irrelavent code</span></span><br><span class="line"></span><br><span class="line"> <span class="keyword">protected</span>:</span><br><span class="line">  constexpr enable_shared_from_this() _NOEXCEPT : _Wptr() &#123;  // construct</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  enable_shared_from_this(<span class="keyword">const</span> enable_shared_from_this&amp;) _NOEXCEPT</span><br><span class="line">      : _Wptr() &#123;  <span class="comment">// construct (must value-initialize _Wptr)</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  enable_shared_from_this&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> enable_shared_from_this&amp;)</span><br><span class="line">      _NOEXCEPT &#123;  <span class="comment">// assign (must not change _Wptr)</span></span><br><span class="line">    <span class="keyword">return</span> (*<span class="keyword">this</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  ~enable_shared_from_this() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="comment">// &lt;-- 注意这个 friend</span></span><br><span class="line">  <span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Other</span>, <span class="title">class</span> _<span class="title">Yty</span>&gt;</span></span><br><span class="line"><span class="class">  <span class="title">friend</span> <span class="title">void</span> _<span class="title">Enable_shared_from_this1</span>(<span class="title">const</span> <span class="title">shared_ptr</span>&lt;_Other&gt;&amp; _<span class="title">This</span>,</span></span><br><span class="line"><span class="class">                                        _<span class="title">Yty</span>* _<span class="title">Ptr</span>,</span></span><br><span class="line"><span class="class">                                        <span class="title">true_type</span>);</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">mutable</span> weak_ptr&lt;_Ty&gt; _Wptr;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>整个类很简单，default constructor 甚至都是强安全的；但是这里存了一个 <code>weak_ptr</code>，所以我们再看一下 <code>weak_ptr</code> 的简单结构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CLASS TEMPLATE weak_ptr</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">weak_ptr</span> :</span> <span class="keyword">public</span> _Ptr_base&lt;</span><br><span class="line">                     _Ty&gt; &#123;  <span class="comment">// class for pointer to reference counted resource</span></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">constexpr</span> <span class="title">weak_ptr</span><span class="params">()</span> _NOEXCEPT </span>&#123;  <span class="comment">// construct empty weak_ptr object</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Omit irrelavent code</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p><code>weak_ptr</code> 一样是 <code>_Ptr_base</code> 的子类，这点和 <code>shared_ptr</code> 同构。</p>
+<p>回顾前面第一节 <em>How shared_ptr\<t>(new T()) differs from make_shared\<t>()</t></t></em> 里我们留了一个点，</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// From class shared_ptr</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ux</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Set_ptr_rep_and_enable_shared</span>(_<span class="title">Ux</span>* _<span class="title">Px</span>, _<span class="title">Ref_count_base</span>* _<span class="title">Rx</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// take ownership of _Px</span></span><br><span class="line">    <span class="keyword">this</span>-&gt;_Set_ptr_rep(_Px, _Rx);</span><br><span class="line">    _Enable_shared_from_this(*<span class="keyword">this</span>, _Px);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>_Enable_shared_from_this()</code>，这个函数就是 <code>enable_shared_from_this</code> 能够正常运转的核心。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Other</span>, <span class="title">class</span> _<span class="title">Yty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Enable_shared_from_this</span>(<span class="title">const</span> <span class="title">shared_ptr</span>&lt;_Other&gt;&amp; _<span class="title">This</span>,</span></span><br><span class="line"><span class="class">                              _<span class="title">Yty</span>* _<span class="title">Ptr</span>) &#123;</span>  <span class="comment">// possibly enable shared_from_this</span></span><br><span class="line">  _Enable_shared_from_this1(</span><br><span class="line">      _This, _Ptr,</span><br><span class="line">      _Conjunction_t&lt;negation&lt;is_array&lt;_Other&gt;&gt;, negation&lt;is_volatile&lt;_Yty&gt;&gt;,</span><br><span class="line">                     _Can_enable_shared&lt;_Yty&gt;&gt;&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>前面我们知道无论管理的对象是否使用 <code>enable_shared_from_this</code>，都会调用这个函数，那么为了做到正确区分，这里使用了 SFINAE。</p>
+<p>如果不考虑 array 和 volatile 的情况，那么判断核心就是 <code>_Can_enable_shared</code>：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Yty</span>, <span class="title">class</span> = <span class="title">void</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> _<span class="title">Can_enable_shared</span></span></span><br><span class="line"><span class="class">    :</span> false_type &#123;  <span class="comment">// detect unambiguous and accessible inheritance from</span></span><br><span class="line">                    <span class="comment">// enable_shared_from_this</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Yty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> _<span class="title">Can_enable_shared</span>&lt;_Yty, void_t&lt;typename _Yty::_Esft_type&gt;&gt;</span></span><br><span class="line"><span class="class">    :</span> is_convertible&lt;<span class="keyword">remove_cv_t</span>&lt;_Yty&gt;*,</span><br><span class="line">                     <span class="keyword">typename</span> _Yty::_Esft_type*&gt;::type &#123;  <span class="comment">// is_convertible is</span></span><br><span class="line">                                                          <span class="comment">// necessary to verify</span></span><br><span class="line">                                                          <span class="comment">// unambiguous</span></span><br><span class="line">                                                          <span class="comment">// inheritance</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>通过这个 SFINAE 看出，匹配的原则是： <code>_Esft_type*</code> （其实就是 <code>class enable_shared_from_this</code>）能够 cast 到 <code>_Yty*</code>；这个做法其实也是自己实现 <code>is_derived</code> 常用的技法。</p>
+<p>Aside：这里用了 C++ 17 引入的 <code>void_t</code>，部分程度上简化了 SFINAE 的构造。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Other</span>, <span class="title">class</span> _<span class="title">Yty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Enable_shared_from_this1</span>(<span class="title">const</span> <span class="title">shared_ptr</span>&lt;_Other&gt;&amp; _<span class="title">This</span>,</span></span><br><span class="line"><span class="class">                               _<span class="title">Yty</span>* _<span class="title">Ptr</span>,</span></span><br><span class="line"><span class="class">                               <span class="title">true_type</span>) &#123;</span>  <span class="comment">// enable shared_from_this</span></span><br><span class="line">  <span class="keyword">if</span> (_Ptr &amp;&amp; _Ptr-&gt;_Wptr.expired()) &#123;</span><br><span class="line">    _Ptr-&gt;_Wptr = <span class="built_in">shared_ptr</span>&lt;<span class="keyword">remove_cv_t</span>&lt;_Yty&gt;&gt;(</span><br><span class="line">        _This, <span class="keyword">const_cast</span>&lt;<span class="keyword">remove_cv_t</span>&lt;_Yty&gt;*&gt;(_Ptr));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Other</span>, <span class="title">class</span> _<span class="title">Yty</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Enable_shared_from_this1</span>(<span class="title">const</span> <span class="title">shared_ptr</span>&lt;_Other&gt;&amp;,</span></span><br><span class="line"><span class="class">                               _<span class="title">Yty</span>*,</span></span><br><span class="line"><span class="class">                               <span class="title">false_type</span>) &#123;</span>  <span class="comment">// don't enable shared_from_this</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为管理实例对象是 <code>enable_shared_from_this</code> 的子类，而 <code>_Enable_shared_from_this1()</code> 这个函数又是一个 friend（往前翻翻），所以可以直接访问到 <code>_Wptr</code>。</p>
+<p>接着是非常精彩的一幕：将 <code>eanble_shared_from_this</code> 的 <code>weak_ptr _Wptr</code> 和前面创建完的整个 <code>shared_ptr</code> 关联。</p>
+<p>这个关联涉及两个点：</p>
+<ol>
+<li>通过 <code>_This</code> 和 <code>_Ptr</code> aliasing contruct 一个 <code>shared_ptr</code></li>
+<li>将 (1) 创建的 <code>shared_ptr</code> 转存为 <code>weak_ptr</code></li>
+</ol>
+<p>两步的核心代码结合在一起如下：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">shared_ptr</span>(<span class="title">const</span> <span class="title">shared_ptr</span>&lt;_Ty2&gt;&amp; _<span class="title">Right</span>, <span class="title">element_type</span>* _<span class="title">Px</span>)</span></span><br><span class="line"><span class="class">    _<span class="title">NOEXCEPT</span> &#123;</span>  <span class="comment">// construct shared_ptr object that aliases _Right</span></span><br><span class="line">  <span class="keyword">this</span>-&gt;_Alias_construct_from(_Right, _Px);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Alias_construct_from</span>(</span></span><br><span class="line"><span class="class">    <span class="title">const</span> <span class="title">shared_ptr</span>&lt;_Ty2&gt;&amp; _<span class="title">Other</span>,</span></span><br><span class="line"><span class="class">    <span class="title">element_type</span>* _<span class="title">Px</span>) &#123;</span>  <span class="comment">// implement shared_ptr's aliasing ctor</span></span><br><span class="line">  <span class="keyword">if</span> (_Other._Rep) &#123;</span><br><span class="line">    _Other._Rep-&gt;_Incref();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _Ptr = _Px;</span><br><span class="line">  _Rep = _Other._Rep;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Weakly_construct_from</span>(</span></span><br><span class="line"><span class="class">    <span class="title">const</span> _<span class="title">Ptr_base</span>&lt;_Ty2&gt;&amp; _<span class="title">Other</span>) &#123;</span>  <span class="comment">// implement weak_ptr's ctors</span></span><br><span class="line">  <span class="keyword">if</span> (_Other._Rep) &#123;</span><br><span class="line">    _Other._Rep-&gt;_Incwref();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _Ptr = _Other._Ptr;   <span class="comment">// &lt;-- 管理对象的指针</span></span><br><span class="line">  _Rep = _Other._Rep;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果画一下</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> sp = <span class="built_in">std</span>::make_shared&lt;SharedThisD&gt;();</span><br></pre></td></tr></table></figure>
+<p>sp 的结构图，那么大概是这样（部分手绘，忽略渣效果）：</p>
+<p><img src="/img/enable_shared_from_this_msvc.png" alt=""></p>
+<p>可以看出，完成构造之后 <code>enable_shared_from_this</code> 保存了指向子类的 weak-ptr，加上用来管理的 <code>shared_ptr</code>，ref-count 控制块里：</p>
+<ul>
+<li>use-count 是 1</li>
+<li>weak-count 是 2</li>
+</ul>
+<p>因为没有修改 use-count，所以不会阻碍实例的正确清理。</p>
+<p>Bonus：这里可以想一下，如果 <code>enable_shared_from_this</code> 里存的是 <code>shared_ptr</code> 会怎么样。</p>
+<p>同时，那个 weak-ptr 里（via <code>_Ptr_base</code>）保存了子类实例的地址。</p>
+<p>在当前的例子里，如果考虑 sp 和 sp 里头存的 <code>_Ref_count_obj</code>，那么就有三分实例地址信息。</p>
+<p>NOTE：上面几个信息可以很方便的在 VS 里通过调试器检查验证。</p>
+<p>接着看一下 <code>shared_from_this()</code> 这个函数是怎么实现的：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">_NODISCARD <span class="built_in">shared_ptr</span>&lt;_Ty&gt; shared_from_this() &#123;  <span class="comment">// return shared_ptr</span></span><br><span class="line">  <span class="keyword">return</span> (<span class="built_in">shared_ptr</span>&lt;_Ty&gt;(_Wptr));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">_NODISCARD <span class="built_in">shared_ptr</span>&lt;<span class="keyword">const</span> _Ty&gt; shared_from_this()</span><br><span class="line">    <span class="keyword">const</span> &#123;  <span class="comment">// return shared_ptr</span></span><br><span class="line">  <span class="keyword">return</span> (<span class="built_in">shared_ptr</span>&lt;<span class="keyword">const</span> _Ty&gt;(_Wptr));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以看出这个函数的核心就是直接通过 <code>weak_ptr _Wptr</code> 构造了一个 <code>shared_ptr</code> 对象。</p>
+<p>Conclusion：概括一下使用 <code>enable_shared_from_this</code> 的核心是这个类作为子类之后内部的 <code>weak_ptr</code> 保存了对外部实例进行管理的 <code>shared_ptr</code> 的引用。</p>
+<h2 id="How-Reference-Counting-Works"><a href="#How-Reference-Counting-Works" class="headerlink" title="How Reference Counting Works"></a>How Reference Counting Works</h2><p>终于到了大家都关心的如何实现引用计数的部份。</p>
+<p>回顾前面我们知道，<code>shared_ptr</code> 内部保存了一个指向引用技术块 <code>_Ref_count_base</code> 的指针，而计数相关的实现就是由 <code>_Ref_count_base</code> 提供。</p>
+<p>现在看一下这个基类的结构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CLASS _Ref_count_base</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> _<span class="title">Ref_count_base</span> &#123;</span>  <span class="comment">// common code for reference counting</span></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">virtual</span> <span class="keyword">void</span> _Destroy() _NOEXCEPT = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">virtual</span> <span class="keyword">void</span> _Delete_this() _NOEXCEPT = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  _Atomic_counter_t _Uses;</span><br><span class="line">  _Atomic_counter_t _Weaks;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">protected</span>:</span><br><span class="line">  _Ref_count_base()</span><br><span class="line">      : _Uses(<span class="number">1</span>),</span><br><span class="line">        _Weaks(<span class="number">1</span>)  <span class="comment">// non-atomic initializations construct</span></span><br><span class="line">  &#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">virtual</span> ~_Ref_count_base() _NOEXCEPT &#123;  <span class="comment">// TRANSITION, should be non-virtual</span></span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">bool</span></span><br><span class="line">  _Incref_nz() &#123;  <span class="comment">// increment use count if not zero, return true if successful</span></span><br><span class="line">    <span class="keyword">for</span> (;;) &#123;    <span class="comment">// loop until state is known</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> _USE_INTERLOCKED_REFCOUNTING</span></span><br><span class="line">      _Atomic_integral_t _Count =</span><br><span class="line">          <span class="keyword">static_cast</span>&lt;<span class="keyword">volatile</span> _Atomic_counter_t&amp;&gt;(_Uses);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (_Count == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> (<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (<span class="keyword">static_cast</span>&lt;_Atomic_integral_t&gt;(_InterlockedCompareExchange(</span><br><span class="line">              <span class="keyword">reinterpret_cast</span>&lt;<span class="keyword">volatile</span> <span class="keyword">long</span>*&gt;(&amp;_Uses), _Count + <span class="number">1</span>, _Count)) ==</span><br><span class="line">          _Count)</span><br><span class="line">        <span class="keyword">return</span> (<span class="literal">true</span>);</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span>  <span class="comment">/* _USE_INTERLOCKED_REFCOUNTING */</span></span></span><br><span class="line">      _Atomic_integral_t _Count = _Load_atomic_counter(_Uses);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (_Count == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> (<span class="literal">false</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> (_Compare_increment_atomic_counter(_Uses, _Count))</span><br><span class="line">        <span class="keyword">return</span> (<span class="literal">true</span>);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span> <span class="comment">/* _USE_INTERLOCKED_REFCOUNTING */</span></span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> _Incref() &#123;  <span class="comment">// increment use count</span></span><br><span class="line">    _MT_INCR(_Uses);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> _Incwref() &#123;  <span class="comment">// increment weak reference count</span></span><br><span class="line">    _MT_INCR(_Weaks);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> _Decref() &#123;  <span class="comment">// decrement use count</span></span><br><span class="line">    <span class="keyword">if</span> (_MT_DECR(_Uses) ==</span><br><span class="line">        <span class="number">0</span>) &#123;  <span class="comment">// destroy managed resource, decrement weak reference count</span></span><br><span class="line">      _Destroy();</span><br><span class="line">      _Decwref();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">void</span> _Decwref() &#123;  <span class="comment">// decrement weak reference count</span></span><br><span class="line">    <span class="keyword">if</span> (_MT_DECR(_Weaks) == <span class="number">0</span>) &#123;</span><br><span class="line">      _Delete_this();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Omit irrelavent code.</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>类初始化的时候，uses 和 weaks 都是 1；引用计数的增减操作是直接利用 <code>_InterlockedIncrement()</code> 和 <code>_InterlockedDecrement()</code> 这两个 intrinsic API。</p>
+<p>减计数涉及到对象的销毁，因此逻辑会多一些。从上面可以看出，通常时候，uses 和 weaks 的增减是独立的；除了计数递减至 0 时。</p>
+<p>（1） 如果 uses 计数递减归零，则会<strong>销毁</strong>管理的对象，同时减少 weaks。</p>
+<p>注意，这里的销毁不一定会释放管理对象的资源，具体的操作和子类重写的函数有关。</p>
+<p>比如，前面提到的 <code>_Ref_count_obj</code> 的 <code>_Destroy()</code> 仅仅调用了自己的析构函数，不释放内存，因为对象的内存和控制块在一起。</p>
+<p>（2）如果 weaks 计数递减归零，那么说明整块引用计数控制块都没有存在的必要了，于是就可以“自杀”释放了内存了。</p>
+<p>考虑到 uses 计数也是存放在技术控制块中，因此可以发现：<strong>当且仅当 weaks 计数归零时，才是真正意义上 <code>shared_ptr</code> 对象的释放</strong>。</p>
+<p>所以这里可以看出使用 <code>make_shared()</code> 创建对象的一个缺点：只要有一个 <code>weak_ptr</code> 关联着，哪怕对象实例已经归天了，整块内存还是活得好好的。</p>
+<p>接下来可以看一下这几个引用计数的增减函数在何时会被上头调用：</p>
+<ul>
+<li><code>_Incref()</code> 会在“从一个 <code>shared_ptr</code> 构造”时被调用，无论是 copy construction 还是 aliasing construction</li>
+<li><code>_Decref()</code> 仅会在 <code>shared_ptr</code> 实例析构的时候被调用，不过这里有点意思是的是，<code>shared_ptr</code> 调用的是 <code>_Ptr_base</code> 自己定义的 <code>_Decref()</code>， which internally 调用了真正干活的 <code>_Decref()</code></li>
+<li><code>_Incwref()</code> 仅会在函数 <code>_Weakly_construct_from()</code> 中被调用</li>
+<li><code>_Decwref()</code> 会在一个 <code>weak_ptr</code> 析构时；或 uses 计数归零时被调用；类似的 <code>_Ptr_base</code> 自己也定义了一层 <code>_Decwref()</code></li>
+</ul>
+<p>还有一个 <code>_Incref_nz()</code> 和 <code>weak_ptr</code> 到 <code>shared_ptr</code> 的 promotion 有关，后面再分析。</p>
+<h2 id="How-weak-ptr-relates-with-shared-ptr"><a href="#How-weak-ptr-relates-with-shared-ptr" class="headerlink" title="How weak_ptr relates with shared_ptr"></a>How weak_ptr relates with shared_ptr</h2><p>众所周知，一个 <code>weak_ptr</code> 可以从一个 <code>shared_ptr</code> 构造；同时也可以从一个 <code>weak_ptr</code> 提升得到 <code>shared_ptr</code>。</p>
+<p>先看看第一点。</p>
+<p>因为标准规定 <code>weak_ptr::operator=(const shared_ptr&amp; r)</code> 等价于 <code>std::weak_ptr&lt;T&gt;(r).swap(*this)</code>，所以需要分析的标准接口只有构造函数一个。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty2</span>,</span></span><br><span class="line"><span class="class">          <span class="title">enable_if_t</span>&lt;_SP_pointer_compatible&lt;_Ty2, _Ty&gt;::value, int&gt; = 0&gt;</span></span><br><span class="line"><span class="class"><span class="title">weak_ptr</span>(<span class="title">const</span> <span class="title">shared_ptr</span>&lt;_Ty2&gt;&amp; _<span class="title">Other</span>)</span></span><br><span class="line"><span class="class">    _<span class="title">NOEXCEPT</span> &#123;</span>  <span class="comment">// construct weak_ptr object for resource owned by _Other</span></span><br><span class="line">  <span class="keyword">this</span>-&gt;_Weakly_construct_from(_Other);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// _Ptr_base</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Weakly_construct_from</span>(</span></span><br><span class="line"><span class="class">    <span class="title">const</span> _<span class="title">Ptr_base</span>&lt;_Ty2&gt;&amp; _<span class="title">Other</span>) &#123;</span>  <span class="comment">// implement weak_ptr's ctors</span></span><br><span class="line">  <span class="keyword">if</span> (_Other._Rep) &#123;</span><br><span class="line">    _Other._Rep-&gt;_Incwref();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _Ptr = _Other._Ptr;</span><br><span class="line">  _Rep = _Other._Rep;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>复制了一下两个成员，以及底层 weaks 计数。</p>
+<p>因为 <code>weak_ptr</code> 和 <code>shared_ptr</code> 同源（<code>_Ptr_base</code>），所以信息交换的时候不需要啥中间商。</p>
+<p>接着看一下很重要的 promotion 过程，这部分操作由 <code>weak_ptr::lock()</code> 提供：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">_NODISCARD <span class="built_in">shared_ptr</span>&lt;_Ty&gt; lock() <span class="keyword">const</span> _NOEXCEPT &#123;  <span class="comment">// convert to shared_ptr</span></span><br><span class="line">  <span class="built_in">shared_ptr</span>&lt;_Ty&gt; _Ret;</span><br><span class="line">  (<span class="keyword">void</span>)_Ret._Construct_from_weak(*<span class="keyword">this</span>);</span><br><span class="line">  <span class="keyword">return</span> (_Ret);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>重担又还到了 <code>shared_ptr::_Construct_from_weak()</code> 身上。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// from _Ptr_base</span></span><br><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">bool</span> _<span class="title">Construct_from_weak</span>(<span class="title">const</span> <span class="title">weak_ptr</span>&lt;_Ty2&gt;&amp; _<span class="title">Other</span>) &#123;</span></span><br><span class="line">  <span class="comment">// implement shared_ptr's ctor from weak_ptr, and weak_ptr::lock()</span></span><br><span class="line">  <span class="keyword">if</span> (_Other._Rep &amp;&amp; _Other._Rep-&gt;_Incref_nz()) &#123;</span><br><span class="line">    _Ptr = _Other._Ptr;</span><br><span class="line">    _Rep = _Other._Rep;</span><br><span class="line">    <span class="keyword">return</span> (<span class="literal">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> (<span class="literal">false</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个时候可以回顾一下前面分析 <code>weak_ptr</code> 提到的 <code>_Incref_nz()</code> 了。</p>
+<p>函数操作很简单，如果 uses 计数为 0，说明管理的对象已经死了，那么这个时候直接返回。</p>
+<p>如果对象还在，那么就通过 CAS 对计数进行自增。</p>
+<p>为什么这里要用 CAS 而不是简单的 increment，留到后面分析 thread-safe 的时候再说。</p>
+<p>Conclusion：说到底其实还是引用计数的事儿，不过因为牵扯到一些线程安全的问题，所以有点说不清道不明。</p>
+<h2 id="Thread-safety-of-shared-ptr-Instances"><a href="#Thread-safety-of-shared-ptr-Instances" class="headerlink" title="Thread-safety of shared_ptr Instances"></a>Thread-safety of shared_ptr Instances</h2><p>先抛结论：</p>
+<ol>
+<li>多个线程同时读写多个（引用同一个管理对象）<code>shared_ptr</code> 实例是线程安全的</li>
+<li>多个线程同时读写一个 <code>shared_ptr</code> 实例是非线程安全的</li>
+</ol>
+<p>且以上仅针对 <code>shared_ptr</code> 自身而言，非期管理的对象。</p>
+<p>先看 case 2，假设有代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// global</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Foo&gt; g_ptr;</span><br><span class="line"></span><br><span class="line"><span class="comment">// locals</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Foo&gt; x;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Foo&gt; y;</span><br><span class="line"></span><br><span class="line">x = g_ptr;</span><br><span class="line">g_ptr = y</span><br></pre></td></tr></table></figure>
+<p><code>shared_ptr::operator=</code> 内部会创建临时对象，内部通过 <code>_Copy_construct_from()</code> 完成复制：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">void</span> _<span class="title">Copy_construct_from</span>(</span></span><br><span class="line"><span class="class">    <span class="title">const</span> <span class="title">shared_ptr</span>&lt;_Ty2&gt;&amp;</span></span><br><span class="line"><span class="class">        _<span class="title">Other</span>) &#123;</span>  <span class="comment">// implement shared_ptr's (converting) copy ctor</span></span><br><span class="line">  <span class="keyword">if</span> (_Other._Rep) &#123;</span><br><span class="line">    _Other._Rep-&gt;_Incref();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  _Ptr = _Other._Ptr;</span><br><span class="line">  _Rep = _Other._Rep;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从代码可以看出，<code>_Ptr</code> 和 <code>_Rep</code> 的更新期间， <code>_Other</code> 完全可以发生改变，引用计数的增减原子性在这里没有什么卵用。</p>
+<p>再考虑 case 1，假设我们有一个 sp 管理一个对象实例，那么符合的情况大抵只有：</p>
+<ol>
+<li>sp 的某个 <code>shared_ptr</code> 的拷贝对象析构了</li>
+<li>某个引用 sp 的 <code>weak_ptr</code> 通过 <code>lock()</code> 获得了一个 <code>shared_ptr</code></li>
+</ol>
+<p>对于第一点，析构会调用前面说的 <code>_Decref()</code>，对 uses 计数做原子减操作，这一步是安全的。</p>
+<p>那么有没有可能存在递减为0之后要执行 <code>_Destroy()</code> 的时候和其他打算做递增的操作冲突呢？</p>
+<p>答案是不存在。</p>
+<p>原因如下：我们已经排除了多个线程对同一个 sp 读写的可能（因为已经论证了这个是非线程安全），那么说明至少存在一个 sp 的拷贝，因此 uses 的计数恒大于等于 2。</p>
+<p>第二点也是类似的情况，除了 —— 要考虑 promotion 的时候对象已经消亡了。</p>
+<p>因为，<code>lock()</code> 当且仅当在 uses 还有效时才会做一次递增，而这种“判断-递增”操作是需要 CAS 才能保证原子性的。</p>
+<h2 id="Epilogue"><a href="#Epilogue" class="headerlink" title="Epilogue"></a>Epilogue</h2><p>至此，MSVC STL 版本的 <code>shared_ptr</code> 和 <code>weak_ptr</code> 几处核心代码就分析完了。</p>
+<p>To be continued…</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/shared-ptr/">shared_ptr</a>
+            
+              <a href="/tags/shared-ptr-internals/">shared_ptr-internals</a>
+            
+              <a href="/tags/source-code-study/">source-code-study</a>
+            
+              <a href="/tags/weak-ptr/">weak_ptr</a>
+            
+              <a href="/tags/visual-studio/">visual studio</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2018/03/13/shared-ptr-internals-introduction/">
+        <span class="next-text nav-default">浅析 shared_ptr：序论</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/';
+        this.page.identifier = '2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/';
+        this.page.title = '浅析 shared_ptr：MSVC STL 篇';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

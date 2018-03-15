@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>KC的废墟堆</title>
+  
+  <subtitle>Will you serve in Heaven, or rule in Hell</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://kingsamchen.github.io/"/>
+  <updated>2018-03-15T16:57:08.056Z</updated>
+  <id>http://kingsamchen.github.io/</id>
+  
+  <author>
+    <name>Kingsley Chen</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>浅析 shared_ptr：MSVC STL 篇</title>
+    <link href="http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/"/>
+    <id>http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/</id>
+    <published>2018-03-15T16:52:05.000Z</published>
+    <updated>2018-03-15T16:57:08.056Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;序言请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;因为这是系列第一篇，所以会带一些功能的
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
+    
+      <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
+    
+      <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
+    
+      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
+    
+      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>浅析 shared_ptr：序论</title>
+    <link href="http://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/"/>
+    <id>http://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/</id>
+    <published>2018-03-13T01:03:14.000Z</published>
+    <updated>2018-03-13T16:10:51.293Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;单看标准库而言，&lt;code&gt;shared_ptr&lt;/code&gt;/&lt;code&gt;weak_ptr&lt;/code&gt;（后文除特指外，不再同时带上 &lt;code&gt;weak_ptr&lt;/code&gt;） 一开始作为 TR1 的一员引入，低调行事多年后自 C++ 11
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
+    
+      <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
+    
+      <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
+    
+      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Tiny Concurrent Http Server on Windows and Linux</title>
+    <link href="http://kingsamchen.github.io/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/"/>
+    <id>http://kingsamchen.github.io/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/</id>
+    <published>2018-03-08T15:46:41.000Z</published>
+    <updated>2018-03-08T16:10:48.455Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;前段时间趁着春节，分别基于 IOCP 和 epoll 实现了 demo 级别的 http server（在遵守 http 1.1 socket 复用基础上只提供了某个指定目录下文件的 GET），算是简单的过了一下 proactor 和 reactor 模型下的 TCP
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+      <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
+    
+      <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="iocp" scheme="http://kingsamchen.github.io/tags/iocp/"/>
+    
+      <category term="concurrent" scheme="http://kingsamchen.github.io/tags/concurrent/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>被 FFmpeg 的日志模块撞了一下腰</title>
+    <link href="http://kingsamchen.github.io/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/"/>
+    <id>http://kingsamchen.github.io/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/</id>
+    <published>2018-03-06T16:00:55.000Z</published>
+    <updated>2018-03-06T16:09:20.081Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;周末的时候客服同学反馈有个用户出现了崩溃，并且要来了崩溃 dmp 文件。&lt;/p&gt;
+&lt;p&gt;挂上 windbg 后发现崩溃原因是 CRT 的 &lt;code&gt;invalid-parameter&lt;/code&gt; 异常，第一现场是输出 ffmpeg 的 avcodec
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="crash" scheme="http://kingsamchen.github.io/tags/crash/"/>
+    
+      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+      <category term="ffmpeg" scheme="http://kingsamchen.github.io/tags/ffmpeg/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</title>
+    <link href="http://kingsamchen.github.io/2018/03/04/display-utf-8-string-in-vs-debugger/"/>
+    <id>http://kingsamchen.github.io/2018/03/04/display-utf-8-string-in-vs-debugger/</id>
+    <published>2018-03-04T14:13:31.000Z</published>
+    <updated>2018-03-04T14:42:06.731Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;众所周知，UTF-8 在 Windows 上一直都不是一等公民，在 MSVC 的调试器里，&lt;code&gt;std::string&lt;/code&gt; 默认按照本地编码解释，在中文系统上是 GBK 或 GB2312。&lt;/p&gt;
+&lt;p&gt;于是，如果一个
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="Visual Studio" scheme="http://kingsamchen.github.io/tags/Visual-Studio/"/>
+    
+      <category term="debugger" scheme="http://kingsamchen.github.io/tags/debugger/"/>
+    
+      <category term="UTF-8" scheme="http://kingsamchen.github.io/tags/UTF-8/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in Feb 2018</title>
+    <link href="http://kingsamchen.github.io/2018/03/02/monthly-read-posts-in-feb-2018/"/>
+    <id>http://kingsamchen.github.io/2018/03/02/monthly-read-posts-in-feb-2018/</id>
+    <published>2018-03-02T15:52:26.000Z</published>
+    <updated>2018-03-02T16:09:53.243Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a href=&quot;https://baptiste-wicht.com/posts/2012/07/c11-concurrency-tutorial-part-4-atomic-type.html&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;C++11
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
+    
+      <category term="memory fence" scheme="http://kingsamchen.github.io/tags/memory-fence/"/>
+    
+      <category term="memory order" scheme="http://kingsamchen.github.io/tags/memory-order/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>靴子落地</title>
+    <link href="http://kingsamchen.github.io/2018/02/26/the-new-dark-age/"/>
+    <id>http://kingsamchen.github.io/2018/02/26/the-new-dark-age/</id>
+    <published>2018-02-26T07:04:19.000Z</published>
+    <updated>2018-03-01T14:00:55.334Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;2018年2月25日&lt;/p&gt;
+&lt;p&gt;是日&lt;/p&gt;
+&lt;p&gt;靴子落地&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://music.163.com/#/song?id=93175&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="gibberish" scheme="http://kingsamchen.github.io/tags/gibberish/"/>
+    
+      <category term="dark-age" scheme="http://kingsamchen.github.io/tags/dark-age/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>2017 小结</title>
+    <link href="http://kingsamchen.github.io/2018/02/18/retrospection-of-the-2017/"/>
+    <id>http://kingsamchen.github.io/2018/02/18/retrospection-of-the-2017/</id>
+    <published>2018-02-18T15:48:02.000Z</published>
+    <updated>2018-03-01T14:00:55.333Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;上一次写年终总结大概在三四年前，因为老博客数据没有备份的缘故，具体是什么时候也记不清了。&lt;/p&gt;
+&lt;p&gt;BTW，其实我也不是很记得一开始为什么要在春节期间而不是元旦时写上一年的总结。可能和往常元旦时还未放假有关。&lt;/p&gt;
+&lt;p&gt;17年总体上还算符合个人发展的预期：&lt;/p&gt;
+
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="gibberish" scheme="http://kingsamchen.github.io/tags/gibberish/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用 Winsock Extension API 的正确姿势</title>
+    <link href="http://kingsamchen.github.io/2018/02/14/using-winsock-extension-api-the-right-way/"/>
+    <id>http://kingsamchen.github.io/2018/02/14/using-winsock-extension-api-the-right-way/</id>
+    <published>2018-02-14T09:21:40.000Z</published>
+    <updated>2018-03-01T14:00:55.334Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;所谓的 Winsock Extension API 指的是微软专门额外添加，由应用层 mswsock.dll 导出的函数集，包括 &lt;code&gt;AcceptEx()&lt;/code&gt;, &lt;code&gt;DisconnectEx()&lt;/code&gt; .etc&lt;/p&gt;
+&lt;p&gt;使用这部分
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="winsock" scheme="http://kingsamchen.github.io/tags/winsock/"/>
+    
+      <category term="network programming" scheme="http://kingsamchen.github.io/tags/network-programming/"/>
+    
+      <category term="socket" scheme="http://kingsamchen.github.io/tags/socket/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>在 Windows 上获取崩溃的模块名和模块内地址偏移</title>
+    <link href="http://kingsamchen.github.io/2018/02/10/acquire-crashed-module-name-and-address-offset/"/>
+    <id>http://kingsamchen.github.io/2018/02/10/acquire-crashed-module-name-and-address-offset/</id>
+    <published>2018-02-10T08:35:01.000Z</published>
+    <updated>2018-02-10T09:23:13.160Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;如果应用程序存在多个模块，那么有很大的可能通过 &lt;code&gt;SetUnhandledException()&lt;/code&gt; 安装的崩溃处理函数和发生崩溃的地址不在一个模块内，因此直接在 crash handler
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="Windows" scheme="http://kingsamchen.github.io/tags/Windows/"/>
+    
+      <category term="crash" scheme="http://kingsamchen.github.io/tags/crash/"/>
+    
+      <category term="breakpad" scheme="http://kingsamchen.github.io/tags/breakpad/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in Jan 2018</title>
+    <link href="http://kingsamchen.github.io/2018/02/02/monthly-read-posts-in-jan-2018/"/>
+    <id>http://kingsamchen.github.io/2018/02/02/monthly-read-posts-in-jan-2018/</id>
+    <published>2018-02-02T03:13:33.000Z</published>
+    <updated>2018-02-02T03:25:20.326Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a href=&quot;https://solarianprogrammer.com/2017/12/27/cpp-17-constexpr-everything-as-much-as-the-compiler-can/&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
+    
+      <category term="windows thread" scheme="http://kingsamchen.github.io/tags/windows-thread/"/>
+    
+      <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
+    
+      <category term="atomics" scheme="http://kingsamchen.github.io/tags/atomics/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>正确地初始化 std::atomic_flag</title>
+    <link href="http://kingsamchen.github.io/2018/01/23/initialize-atom-flag-the-right-way/"/>
+    <id>http://kingsamchen.github.io/2018/01/23/initialize-atom-flag-the-right-way/</id>
+    <published>2018-01-23T07:01:46.000Z</published>
+    <updated>2018-02-02T03:10:12.314Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;根据标准文档的要求，&lt;code&gt;std::atomic_flag&lt;/code&gt; 只有利用 &lt;code&gt;ATOMIC_FLAG_INIT&lt;/code&gt; 初始化之后，才获得一个确定的初始状态。&lt;/p&gt;
+&lt;p&gt;现在假设我们要自己实现一个 spin-lock，那么只需要利用
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="atomic_flag" scheme="http://kingsamchen.github.io/tags/atomic-flag/"/>
+    
+      <category term="atomic operations" scheme="http://kingsamchen.github.io/tags/atomic-operations/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Binding to Privately Inherited Member Functions</title>
+    <link href="http://kingsamchen.github.io/2018/01/15/the-issue-binding-to-privately-inherited-member-function/"/>
+    <id>http://kingsamchen.github.io/2018/01/15/the-issue-binding-to-privately-inherited-member-function/</id>
+    <published>2018-01-15T10:36:22.000Z</published>
+    <updated>2018-02-02T03:10:12.314Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;考虑代码&lt;/p&gt;
+&lt;pre class=&quot;hljs&quot; style=&quot;display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255,
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="std::bind" scheme="http://kingsamchen.github.io/tags/std-bind/"/>
+    
+      <category term="private inheritance" scheme="http://kingsamchen.github.io/tags/private-inheritance/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in Dec 2017</title>
+    <link href="http://kingsamchen.github.io/2018/01/01/monthly-read-posts-in-dec-2017/"/>
+    <id>http://kingsamchen.github.io/2018/01/01/monthly-read-posts-in-dec-2017/</id>
+    <published>2018-01-01T11:58:49.000Z</published>
+    <updated>2018-01-01T13:07:27.787Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;C++ 11 Concurrency: &lt;a href=&quot;https://baptiste-wicht.com/posts/2012/03/cpp11-concurrency-part1-start-threads.html&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
+    
+      <category term="fiddler" scheme="http://kingsamchen.github.io/tags/fiddler/"/>
+    
+      <category term="future" scheme="http://kingsamchen.github.io/tags/future/"/>
+    
+      <category term="unittest" scheme="http://kingsamchen.github.io/tags/unittest/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>自动为 enum 类型添加位运算操作符</title>
+    <link href="http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/"/>
+    <id>http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/</id>
+    <published>2017-12-08T13:43:06.000Z</published>
+    <updated>2017-12-08T14:08:03.370Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;有时候需要在 C++ 里用 &lt;code&gt;enum (class)&lt;/code&gt; 表示 flags，进行基础的 bitwise 运算，而哪怕是支持自动到 underlying integer 转换的 traditional enum，也需要额外的 cast
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="enum" scheme="http://kingsamchen.github.io/tags/enum/"/>
+    
+      <category term="flag" scheme="http://kingsamchen.github.io/tags/flag/"/>
+    
+      <category term="bitwise， SFINAE" scheme="http://kingsamchen.github.io/tags/bitwise%EF%BC%8C-SFINAE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in Nov 2017</title>
+    <link href="http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/"/>
+    <id>http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/</id>
+    <published>2017-12-02T15:59:08.000Z</published>
+    <updated>2017-12-02T16:09:23.229Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
+    
+      <category term="https" scheme="http://kingsamchen.github.io/tags/https/"/>
+    
+      <category term="unicode" scheme="http://kingsamchen.github.io/tags/unicode/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>用 Wirshark 捕捉分析经过 localhost 的网络包</title>
+    <link href="http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/"/>
+    <id>http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/</id>
+    <published>2017-11-29T15:47:50.000Z</published>
+    <updated>2017-11-29T16:01:20.779Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;最近写 WinAntHttp 的时候需要用 Wireshark 捕捉并分析发往 mock server 的 http 请求。&lt;/p&gt;
+&lt;p&gt;然而因为 mock server 是直接跑在本机 localhost 上的，而在 Windows 上，发往 localhost
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="wireshark" scheme="http://kingsamchen.github.io/tags/wireshark/"/>
+    
+      <category term="localhost" scheme="http://kingsamchen.github.io/tags/localhost/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>使用项目自带的 python 编译 bililive-win</title>
+    <link href="http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/"/>
+    <id>http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/</id>
+    <published>2017-11-26T13:00:53.000Z</published>
+    <updated>2017-11-26T14:12:43.784Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;众所周知，Google 喜欢拿 python 做各种工具链，比如构建系统；然而 G 家用的又是 python 2.x，并且目测在未来一段时间内都不会做升级，因此相关的工具链环境也被锁死在了 python 2.x。&lt;/p&gt;
+&lt;p&gt;某直播姬因为用的 chromium
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
+    
+      <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一次 dump 分析的复盘</title>
+    <link href="http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/"/>
+    <id>http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/</id>
+    <published>2017-11-12T15:16:58.000Z</published>
+    <updated>2017-11-12T17:31:16.551Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;首先有主站的运营同学反馈某个用户的投稿工具一选择上传视频就崩溃，100% 重现。&lt;/p&gt;
+&lt;p&gt;要到 crash dump 之后挂上 windbg，首先用 &lt;code&gt;lmvm bililive&lt;/code&gt; 检查一下用户使用的版本：&lt;/p&gt;
+&lt;figure
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="windbg" scheme="http://kingsamchen.github.io/tags/windbg/"/>
+    
+      <category term="crash-dump" scheme="http://kingsamchen.github.io/tags/crash-dump/"/>
+    
+      <category term="postmortem" scheme="http://kingsamchen.github.io/tags/postmortem/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>发现一个（疑似）VS 2013 lambda 实现的 Bug</title>
+    <link href="http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/"/>
+    <id>http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/</id>
+    <published>2017-11-09T14:56:25.000Z</published>
+    <updated>2017-11-09T15:18:48.262Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;考虑如下代码段：&lt;/p&gt;
+&lt;pre class=&quot;hljs&quot; style=&quot;display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255,
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
+    
+      <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
+    
+      <category term="bug" scheme="http://kingsamchen.github.io/tags/bug/"/>
+    
+  </entry>
+  
+</feed>
