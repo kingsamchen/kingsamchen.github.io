@@ -7,7 +7,7 @@ date: 2018-03-01 15:37:12
 [Sean | 大木老师的私人保姆](http://blog.mistysoul.net/)
 [帧哥 | 硅谷谈撸管](http://blog.nlogn.cn/)
 [ChiChou | 首席安全地球仪切图总奸](https://blog.chichou.me/)
-[Fleurer-lee | F叔的读书笔记（大量干货）](http://www.fleurer-lee.com)
+[Fleurer-lee | F叔的读书笔记（大量干货）](https://fleurer.github.io/)
 [Vizee | 即将走上人生巅峰推萝莉的章总](http://vizee.org/)
 [TheCJW | 爱弹棉花的小伟](http://thecjw.0ginr.com/blog/)
 [Newbie Coder | 萌萌哒的炉子](http://newbiecoder.0ginr.com/blog/)
