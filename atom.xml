@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-03-15T16:57:08.056Z</updated>
+  <updated>2018-03-29T17:00:12.142Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,47 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>浅析 shared_ptr：Libstdc++ 篇</title>
+    <link href="http://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/"/>
+    <id>http://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/</id>
+    <published>2018-03-29T16:58:44.000Z</published>
+    <updated>2018-03-29T17:00:12.142Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;序言请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;MSVC STL 的分析版本请移步&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
+    
+      <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
+    
+      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
+    
+      <category term="libstdc++" scheme="http://kingsamchen.github.io/tags/libstdc/"/>
+    
+      <category term="gcc" scheme="http://kingsamchen.github.io/tags/gcc/"/>
+    
+      <category term="clang" scheme="http://kingsamchen.github.io/tags/clang/"/>
+    
+  </entry>
   
   <entry>
     <title>浅析 shared_ptr：MSVC STL 篇</title>
@@ -41,11 +82,11 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
       <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
@@ -77,11 +118,11 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
       <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
@@ -146,9 +187,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="crash" scheme="http://kingsamchen.github.io/tags/crash/"/>
-    
       <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+      <category term="crash" scheme="http://kingsamchen.github.io/tags/crash/"/>
     
       <category term="ffmpeg" scheme="http://kingsamchen.github.io/tags/ffmpeg/"/>
     
@@ -362,9 +403,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
       <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
@@ -623,39 +664,6 @@
       <category term="crash-dump" scheme="http://kingsamchen.github.io/tags/crash-dump/"/>
     
       <category term="postmortem" scheme="http://kingsamchen.github.io/tags/postmortem/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>发现一个（疑似）VS 2013 lambda 实现的 Bug</title>
-    <link href="http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/"/>
-    <id>http://kingsamchen.github.io/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/</id>
-    <published>2017-11-09T14:56:25.000Z</published>
-    <updated>2017-11-09T15:18:48.262Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;考虑如下代码段：&lt;/p&gt;
-&lt;pre class=&quot;hljs&quot; style=&quot;display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255,
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
-    
-      <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
-    
-      <category term="bug" scheme="http://kingsamchen.github.io/tags/bug/"/>
     
   </entry>
   
