@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-03-29T17:00:12.142Z</updated>
+  <updated>2018-04-01T04:10:11.628Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,46 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in Mar 2018</title>
+    <link href="http://kingsamchen.github.io/2018/04/01/monthly-read-posts-in-mar-2018/"/>
+    <id>http://kingsamchen.github.io/2018/04/01/monthly-read-posts-in-mar-2018/</id>
+    <published>2018-04-01T04:03:00.000Z</published>
+    <updated>2018-04-01T04:10:11.628Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a href=&quot;http://akumuli.org/akumuli/2015/03/19/sequencer/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Sorting, caching and
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
+    
+      <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
+    
+      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
+    
+      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
+    
+      <category term="actor" scheme="http://kingsamchen.github.io/tags/actor/"/>
+    
+      <category term="c10k" scheme="http://kingsamchen.github.io/tags/c10k/"/>
+    
+      <category term="pthread" scheme="http://kingsamchen.github.io/tags/pthread/"/>
+    
+      <category term="technical debt" scheme="http://kingsamchen.github.io/tags/technical-debt/"/>
+    
+  </entry>
   
   <entry>
     <title>浅析 shared_ptr：Libstdc++ 篇</title>
@@ -403,9 +443,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
-    
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
     
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
@@ -632,38 +672,6 @@
       <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
     
       <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一次 dump 分析的复盘</title>
-    <link href="http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/"/>
-    <id>http://kingsamchen.github.io/2017/11/12/replay-a-postmortem-on-a-crash-dump/</id>
-    <published>2017-11-12T15:16:58.000Z</published>
-    <updated>2017-11-12T17:31:16.551Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;首先有主站的运营同学反馈某个用户的投稿工具一选择上传视频就崩溃，100% 重现。&lt;/p&gt;
-&lt;p&gt;要到 crash dump 之后挂上 windbg，首先用 &lt;code&gt;lmvm bililive&lt;/code&gt; 检查一下用户使用的版本：&lt;/p&gt;
-&lt;figure
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="windbg" scheme="http://kingsamchen.github.io/tags/windbg/"/>
-    
-      <category term="crash-dump" scheme="http://kingsamchen.github.io/tags/crash-dump/"/>
-    
-      <category term="postmortem" scheme="http://kingsamchen.github.io/tags/postmortem/"/>
     
   </entry>
   
