@@ -17,12 +17,12 @@
 
 
 
-  <meta name="description" content="浅析 shared_ptr：序论"/>
+  <meta name="description" content="利用 vcpkg 编译带汇编优化的 libx264"/>
 
 
 
 
-  <meta name="keywords" content="c++, shared_ptr-internals, source-code-study, shared_ptr, weak_ptr, KC的废墟堆" />
+  <meta name="keywords" content="windows, visual studio, libx264, vcpkg, KC的废墟堆" />
 
 
 
@@ -42,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -79,7 +79,7 @@
 
 
 
-    <title> 浅析 shared_ptr：序论 - KC的废墟堆 </title>
+    <title> 利用 vcpkg 编译带汇编优化的 libx264 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -195,13 +195,13 @@
     <header class="post-header">
       <h1 class="post-title">
         
-          浅析 shared_ptr：序论
+          利用 vcpkg 编译带汇编优化的 libx264
         
       </h1>
 
       <div class="post-meta">
         <span class="post-time">
-          2018-03-13
+          2018-04-03
         </span>
         
           <div class="post-category">
@@ -219,33 +219,23 @@
 
     <div class="post-content">
       
-        <p>单看标准库而言，<code>shared_ptr</code>/<code>weak_ptr</code>（后文除特指外，不再同时带上 <code>weak_ptr</code>） 一开始作为 TR1 的一员引入，低调行事多年后自 C++ 11 开始成为标准库正式成员。</p>
-<p>在历史意义上，引入 <code>shared_ptr</code> 不光规范化了 resource ownership 作为 abstraction conception，同时解决了困扰广大 C++ programmers 多年的难题：<em>如何知道一个对象已经被析构了</em>。</p>
-<p>此外，<code>shared_ptr</code> 的某些独特实现技巧，也提供了一些神奇的 idioms，例如</p>
-<ul>
-<li>deleter 不作为自身类型的一部分</li>
-<li>可以正确的析构 cast 到基类的子类对象，即使基类没有提供 virtual destructor</li>
-<li>.etc</li>
-</ul>
-<p>前几天偶然有个想法，既然自己用了这么久的 <code>shared_ptr</code>，那为什么不去看看它内部是如何实现的呢？能涨涨姿势也是好的嘛。</p>
-<p>为了让目标更明确，不至于迷失在浩瀚细节中，我整理了一下当前几个比较重要且有意思的点，作为代码阅读的 targets：</p>
+        <p>使用 vcpkg 编译 libx264 有一个很重要的原因：可以获得 PDB，而且构建流程被大大精简了。</p>
+<p>但是这里有一个坑：vcpkg 上的 libx264 模块编译默认是开启了 <code>--disable-asm</code>，意味着构建之后的二进制不会使用 SIMD 指令集，所以性能上会有很大的问题。</p>
+<p>研究了一番之后找到了开启汇编优化的方案。</p>
 <ol>
-<li>How <code>shared_ptr&lt;T&gt;(new T())</code> differs from <code>make_shared&lt;T&gt;()</code></li>
-<li>Why virtual dtor is not necessary to correctly destruct a casted derived object instance</li>
-<li>How custom deleter works and why it is not part of the pointer type</li>
-<li>How <code>enable_shared_from_this</code> works</li>
-<li>How reference counting works</li>
-<li>How <code>weak_ptr</code> relates with <code>shared_ptr</code> (promotes <code>weak_ptr</code> to <code>shared_ptr</code>)</li>
-<li>Thread-safety of <code>shared_ptr</code> instances</li>
+<li><p>从官网下载并安装 nasm-2.13</p>
+<p> vcpkg 上通过 acquire-program 提供的 nasm 只有 2.12；而编译 vcpkg 上提供的 libx264-152 需要 nasm-2.13</p>
+</li>
+<li><p>编辑 libx264 的 portfile.cmake 文件</p>
+<p> 在 set bash 的后面加一行</p>
+ <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(ENV&#123;PATH&#125; <span class="string">"c:/Programs/NASM/;$ENV&#123;PATH&#125;"</span>)</span><br></pre></td></tr></table></figure>
+<p> 这里注意替换你的真实安装目录</p>
+<p> 然后去掉构建参数中的 <code>--disable-asm</code></p>
+</li>
 </ol>
-<p>考虑到存在多方的实现和平台的常见程度，目前选择了 4 个实现版本：</p>
-<ul>
-<li>MSVC STL：Windows 上使用 Visual Studio 的版本</li>
-<li>Libstdc++：Linux 上的标配</li>
-<li>Boost：先驱者</li>
-<li>Chromium Base：严格来说 Chromium Base 的实现和标准库的完全不同，放在这里只是因为我对 chromium 这个项目有一种特殊的情感/好感。这个团队是真的知道工程化团队的重要性以及能够推进团队工程化，代码一致性极高，很少出现炫技的情况（望向 Facebook 和 Microsoft）。即使部分代码的架构和实现不能算是 C++ Best Practices，也不能掩盖他们整体的工程能力。</li>
-</ul>
-<p>后面会为每个实现版本写一篇单独的 post，至于最后有没有一篇 summing up，就看后面有没有时间，或者这个必要了 :-)</p>
+<p>如果还有地方出错，记得根据提示查日志！</p>
+<p>开启汇编优化后生成的二进制会略大，大概 900 多 KB</p>
+<p>最后赞扬一下微软出品的 vcpkg，真是解决了 Windows 下编译一众开源软件的痛点。</p>
 
       
     </div>
@@ -261,7 +251,7 @@
     </p>
     <p class="copyright-item">
       <span>原文链接: </span>
-      <a href="http://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">http://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/</a>
+      <a href="http://kingsamchen.github.io/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/">http://kingsamchen.github.io/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/</a>
     </p>
     <p class="copyright-item">
       <span>许可协议: </span>
@@ -281,15 +271,13 @@
         
           <div class="post-tags">
             
-              <a href="/tags/c/">c++</a>
+              <a href="/tags/windows/">windows</a>
             
-              <a href="/tags/shared-ptr-internals/">shared_ptr-internals</a>
+              <a href="/tags/visual-studio/">visual studio</a>
             
-              <a href="/tags/source-code-study/">source-code-study</a>
+              <a href="/tags/libx264/">libx264</a>
             
-              <a href="/tags/shared-ptr/">shared_ptr</a>
-            
-              <a href="/tags/weak-ptr/">weak_ptr</a>
+              <a href="/tags/vcpkg/">vcpkg</a>
             
           </div>
         
@@ -297,15 +285,9 @@
         
   <nav class="post-nav">
     
-      <a class="prev" href="/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text nav-default">浅析 shared_ptr：MSVC STL 篇</span>
-        <span class="prev-text nav-mobile">上一篇</span>
-      </a>
     
-    
-      <a class="next" href="/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/">
-        <span class="next-text nav-default">Tiny Concurrent Http Server on Windows and Linux</span>
+      <a class="next" href="/2018/04/01/monthly-read-posts-in-mar-2018/">
+        <span class="next-text nav-default">Monthly Read Posts in Mar 2018</span>
         <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
@@ -412,9 +394,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/';
-        this.page.identifier = '2018/03/13/shared-ptr-internals-introduction/';
-        this.page.title = '浅析 shared_ptr：序论';
+        this.page.url = 'http://kingsamchen.github.io/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/';
+        this.page.identifier = '2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/';
+        this.page.title = '利用 vcpkg 编译带汇编优化的 libx264';
     };
     (function() {
     var d = document, s = d.createElement('script');

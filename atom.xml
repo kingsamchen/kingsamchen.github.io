@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-04-01T04:10:11.628Z</updated>
+  <updated>2018-04-03T13:02:35.284Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,39 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>利用 vcpkg 编译带汇编优化的 libx264</title>
+    <link href="http://kingsamchen.github.io/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/"/>
+    <id>http://kingsamchen.github.io/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/</id>
+    <published>2018-04-03T12:51:22.000Z</published>
+    <updated>2018-04-03T13:02:35.284Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;使用 vcpkg 编译 libx264 有一个很重要的原因：可以获得 PDB，而且构建流程被大大精简了。&lt;/p&gt;
+&lt;p&gt;但是这里有一个坑：vcpkg 上的 libx264 模块编译默认是开启了
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
+    
+      <category term="libx264" scheme="http://kingsamchen.github.io/tags/libx264/"/>
+    
+      <category term="vcpkg" scheme="http://kingsamchen.github.io/tags/vcpkg/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in Mar 2018</title>
@@ -40,13 +73,13 @@
     
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
-      <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
-    
       <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
     
       <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
     
       <category term="actor" scheme="http://kingsamchen.github.io/tags/actor/"/>
+    
+      <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
     
       <category term="c10k" scheme="http://kingsamchen.github.io/tags/c10k/"/>
     
@@ -81,11 +114,11 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
       <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
@@ -122,15 +155,15 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
+      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
     
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
       <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
     
-      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
-      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
+      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
   </entry>
   
@@ -158,11 +191,11 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
       <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
@@ -643,35 +676,6 @@
       <category term="wireshark" scheme="http://kingsamchen.github.io/tags/wireshark/"/>
     
       <category term="localhost" scheme="http://kingsamchen.github.io/tags/localhost/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>使用项目自带的 python 编译 bililive-win</title>
-    <link href="http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/"/>
-    <id>http://kingsamchen.github.io/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/</id>
-    <published>2017-11-26T13:00:53.000Z</published>
-    <updated>2017-11-26T14:12:43.784Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;众所周知，Google 喜欢拿 python 做各种工具链，比如构建系统；然而 G 家用的又是 python 2.x，并且目测在未来一段时间内都不会做升级，因此相关的工具链环境也被锁死在了 python 2.x。&lt;/p&gt;
-&lt;p&gt;某直播姬因为用的 chromium
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
-    
-      <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
     
   </entry>
   
