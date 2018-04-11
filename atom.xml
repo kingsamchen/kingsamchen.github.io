@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-04-03T13:02:35.284Z</updated>
+  <updated>2018-04-11T12:23:55.578Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Use Lambda With PostTask</title>
+    <link href="http://kingsamchen.github.io/2018/04/11/use-lambda-with-post-task/"/>
+    <id>http://kingsamchen.github.io/2018/04/11/use-lambda-with-post-task/</id>
+    <published>2018-04-11T12:03:59.000Z</published>
+    <updated>2018-04-11T12:23:55.578Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;曾经为了能在 &lt;code&gt;PostTask()&lt;/code&gt; 里使用 lambda，实现了一个自动将 non-capturing lambda decay 到对应函数指针，在利用 &lt;code&gt;base::Bind()&lt;/code&gt; 的方案&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
+    
+      <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
+    
+      <category term="base" scheme="http://kingsamchen.github.io/tags/base/"/>
+    
+  </entry>
   
   <entry>
     <title>利用 vcpkg 编译带汇编优化的 libx264</title>
@@ -114,11 +146,11 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
+    
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
       <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
-    
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
@@ -155,13 +187,13 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
+    
       <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
     
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
       <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
-    
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
@@ -191,11 +223,11 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
+    
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
       <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
-    
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
@@ -476,9 +508,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
       <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
@@ -647,35 +679,6 @@
       <category term="https" scheme="http://kingsamchen.github.io/tags/https/"/>
     
       <category term="unicode" scheme="http://kingsamchen.github.io/tags/unicode/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>用 Wirshark 捕捉分析经过 localhost 的网络包</title>
-    <link href="http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/"/>
-    <id>http://kingsamchen.github.io/2017/11/29/capture-network-packets-over-localhost-with-wireshark/</id>
-    <published>2017-11-29T15:47:50.000Z</published>
-    <updated>2017-11-29T16:01:20.779Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;最近写 WinAntHttp 的时候需要用 Wireshark 捕捉并分析发往 mock server 的 http 请求。&lt;/p&gt;
-&lt;p&gt;然而因为 mock server 是直接跑在本机 localhost 上的，而在 Windows 上，发往 localhost
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="wireshark" scheme="http://kingsamchen.github.io/tags/wireshark/"/>
-    
-      <category term="localhost" scheme="http://kingsamchen.github.io/tags/localhost/"/>
     
   </entry>
   
