@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-04-11T12:23:55.578Z</updated>
+  <updated>2018-05-01T10:03:00.593Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,72 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Post in Apr 2018</title>
+    <link href="http://kingsamchen.github.io/2018/05/01/monthly-read-posts-in-apr-2018/"/>
+    <id>http://kingsamchen.github.io/2018/05/01/monthly-read-posts-in-apr-2018/</id>
+    <published>2018-05-01T09:50:11.000Z</published>
+    <updated>2018-05-01T10:03:00.593Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a href=&quot;https://www.digitalocean.com/community/tutorials/what-is-load-balancing&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;What is Load
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="load balancing" scheme="http://kingsamchen.github.io/tags/load-balancing/"/>
+    
+      <category term="random" scheme="http://kingsamchen.github.io/tags/random/"/>
+    
+      <category term="cache coherency" scheme="http://kingsamchen.github.io/tags/cache-coherency/"/>
+    
+      <category term="consistent hashing" scheme="http://kingsamchen.github.io/tags/consistent-hashing/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>std::function Must be Copyable</title>
+    <link href="http://kingsamchen.github.io/2018/04/23/std-funcion-must-be-copyable/"/>
+    <id>http://kingsamchen.github.io/2018/04/23/std-funcion-must-be-copyable/</id>
+    <published>2018-04-23T15:55:09.000Z</published>
+    <updated>2018-05-01T09:49:24.132Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;前几天在写一个 &lt;a href=&quot;https://github.com/kingsamchen/Eureka/tree/master/TinyThreadPool&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;ThreadPool
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="std::function" scheme="http://kingsamchen.github.io/tags/std-function/"/>
+    
+      <category term="packaged_task" scheme="http://kingsamchen.github.io/tags/packaged-task/"/>
+    
+      <category term="thread-pool" scheme="http://kingsamchen.github.io/tags/thread-pool/"/>
+    
+  </entry>
   
   <entry>
     <title>Use Lambda With PostTask</title>
@@ -187,9 +253,9 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
       <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
@@ -508,9 +574,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
-    
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
     
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
@@ -615,70 +681,6 @@
       <category term="future" scheme="http://kingsamchen.github.io/tags/future/"/>
     
       <category term="unittest" scheme="http://kingsamchen.github.io/tags/unittest/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>自动为 enum 类型添加位运算操作符</title>
-    <link href="http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/"/>
-    <id>http://kingsamchen.github.io/2017/12/08/add-bitwise-operations-for-enum-types-automatically/</id>
-    <published>2017-12-08T13:43:06.000Z</published>
-    <updated>2017-12-08T14:08:03.370Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;有时候需要在 C++ 里用 &lt;code&gt;enum (class)&lt;/code&gt; 表示 flags，进行基础的 bitwise 运算，而哪怕是支持自动到 underlying integer 转换的 traditional enum，也需要额外的 cast
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="enum" scheme="http://kingsamchen.github.io/tags/enum/"/>
-    
-      <category term="flag" scheme="http://kingsamchen.github.io/tags/flag/"/>
-    
-      <category term="bitwise， SFINAE" scheme="http://kingsamchen.github.io/tags/bitwise%EF%BC%8C-SFINAE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Nov 2017</title>
-    <link href="http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/"/>
-    <id>http://kingsamchen.github.io/2017/12/02/monthly-read-posts-in-nov-2017/</id>
-    <published>2017-12-02T15:59:08.000Z</published>
-    <updated>2017-12-02T16:09:23.229Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;a
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
-    
-      <category term="https" scheme="http://kingsamchen.github.io/tags/https/"/>
-    
-      <category term="unicode" scheme="http://kingsamchen.github.io/tags/unicode/"/>
     
   </entry>
   
