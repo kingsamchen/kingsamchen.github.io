@@ -1,6 +1,6 @@
 ---
 title: 浅析 RefCounted 和 WeakPtr：Chromium Base 篇
-categories: CODE-LIFE
+categories: PROGRAMMING
 date: 2018-05-14 14:47:38
 tags: [shared_ptr-internals, source-code-study, shared_ptr, weak_ptr, c++, chromium, base lib]
 ---
