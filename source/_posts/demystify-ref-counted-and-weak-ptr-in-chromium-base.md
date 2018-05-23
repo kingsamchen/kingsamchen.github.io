@@ -58,7 +58,7 @@ private:
 可以看出核心 `ref_count_` 类型是 `uint32_t`
 
 ctor 和 dtor 都被定义为 protected，说明这类使用做基类；同时提供了 `AddRef()` 和 `Release()`，进行内部的计数增减。
-
+<!-- more -->
 ```cpp
 void AddRef() const {
 #if DCHECK_IS_ON()

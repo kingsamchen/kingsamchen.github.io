@@ -37,7 +37,7 @@ _NODISCARD inline shared_ptr<_Ty> make_shared(_Types&&... _Args)
 这里首先在 heap 上创建了一个 `_Ref_count_obj<_Ty>` 对象，通过 `std::forward()` 将 `make_shared()` 的参数转发作为构造函数；接着通过 default contructor 创建了一个 `shared_ptr<_Ty>`，并调用 `_Set_ptr_rep_and_enable_shared()` 设置相关数据。
 
 因为创建 `_Ty` 实例需要的参数 `_Args` 被转发到了 `_Ref_count_obj` 的构造函数中，且 `shared_ptr` 的 default constructor 实质上是一个 _constexpr function_，因此猜测 `shared_ptr` 自身并不负责创建其管理的 object instance，而是将这部分操作“委托”给 `_Ref_count_obj`。
-
+<!-- more -->
 下面看一下 `_Ref_count_obj` 的结构
 
 ```c++

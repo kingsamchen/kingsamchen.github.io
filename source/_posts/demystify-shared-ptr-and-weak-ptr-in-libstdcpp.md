@@ -17,7 +17,7 @@ MSVC STL 的分析版本请移步[此处](https://kingsamchen.github.io/2018/03/
 这个版本的系统上源包默认提供的是 GCC 5.4 和 clang 3.8，跟随的 libstdc++ 的大版本是 6。
 
 考虑到 Linux 上 clang 也是默认使用 libstdc++，且 GCC 6/7/8 使用的 libstdc++ 的大版本都是 6，因此直接选用目录 `/usr/include/c++/5` 下的源码作为研究对象。
-
+<!-- more -->
 
 ## How shared_ptr(new T()) differs from make_shared()
 

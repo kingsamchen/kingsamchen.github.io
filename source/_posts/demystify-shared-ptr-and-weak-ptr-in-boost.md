@@ -40,7 +40,7 @@ private:
     boost::detail::shared_count pn;    // reference counter
 };
 ```
-
+<!-- more -->
 ## How shared_ptr(new T()) differs from make_shared()
 
 同样的，先看 `make_shared()`，位于 `boost/smart_ptr/make_shared_object.hpp`
