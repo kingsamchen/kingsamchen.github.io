@@ -409,9 +409,9 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
-    
       <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
+    
+      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
     
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
