@@ -195,6 +195,236 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/03/04/display-utf-8-string-in-vs-debugger/">在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>众所周知，UTF-8 在 Windows 上一直都不是一等公民，在 MSVC 的调试器里，<code>std::string</code> 默认按照本地编码解释，在中文系统上是 GBK 或 GB2312。</p>
+<p>于是，如果一个 <code>std::string</code> 或者 <code>char[]</code> 里存储的是 UTF-8 编码的字符串，那么非 ASCII 部分就会乱码。这在调试中是一个非常不好的体验。</p>
+<p>研究了一下发现早在 VS 2005，调试器实际上就已经支持了对 UTF-8 字符串的显示，只是不作为默认的编码。</p>
+<p>按照 UTF-8 进行解释的方式很简单，在 watch 中添加<strong>字符串起始地址</strong>，后接 <code>, s8</code> 即可。</p>
+<p>注意的是，对于 <code>std::string</code>，要用 <code>std::string::c_str()</code> 或者 <code>std::string::data()</code> 获取字符串起始地址。</p>
+<p>更简单的做法是在 intermedaite window 中，使用 <code>? str.c_str(), s8</code></p>
+<p>注：如果变量被优化后提示 <code>c_str()</code> 或 <code>data()</code> 无法访问到有效数据，则可以使用 <code>&amp;str[0]</code>。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/03/02/monthly-read-posts-in-feb-2018/">Monthly Read Posts in Feb 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://baptiste-wicht.com/posts/2012/07/c11-concurrency-tutorial-part-4-atomic-type.html" target="_blank" rel="noopener">C++11 Concurrency Tutorial - Part 4: Atomic Types</a></p>
+<p>WTF ??</p>
+<hr>
+<p><a href="https://www.zhihu.com/question/24301047" target="_blank" rel="noopener">如何理解 C++11 的六种 memory order？</a></p>
+<p>参考意义不大，还是老老实实是看官方 reference 或者 <em>C++ Concurrency in Action</em> 形式化的描述吧。</p>
+<hr>
+<p><a href="http://cbloomrants.blogspot.hk/2012/05/05-30-12-on-c-atomic-fences.html" target="_blank" rel="noopener">05-30-12 - On C++ Atomic Fences</a></p>
+<p>可配合书阅读，稍作了解即可。</p>
+<p>C++ 中 atomic 附带的 ordering operations 和直接的 fences 还是有明显差别的。</p>
+<hr>
+<p><a href="http://www.cl.cam.ac.uk/~pes20/cpp/cpp0xmappings.html" target="_blank" rel="noopener">C/C++11 mappings to processors</a></p>
+<p>仅供参考，实际意义不大，除非要做非 x86 的 lock-free</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/02/26/the-new-dark-age/">靴子落地</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-02-26
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>2018年2月25日</p>
+<p>是日</p>
+<p>靴子落地</p>
+<p><a href="https://music.163.com/#/song?id=93175" target="_blank" rel="noopener">https://music.163.com/#/song?id=93175</a></p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/02/18/retrospection-of-the-2017/">2017 小结</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-02-18
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>上一次写年终总结大概在三四年前，因为老博客数据没有备份的缘故，具体是什么时候也记不清了。</p>
+<p>BTW，其实我也不是很记得一开始为什么要在春节期间而不是元旦时写上一年的总结。可能和往常元旦时还未放假有关。</p>
+<p>17年总体上还算符合个人发展的预期：</p>
+<p>上半年接了原来主站投稿工具的锅，和另外一个同事花了一个月多，完全从头开始硬生生的做了一个新版本的投稿工具，还带着新版本要求的压制功能。后续又迭代了两三个版本，后面最新的 v2.0 甚至都已经开始支持简单的视频编辑。</p>
+<p>虽然因为业务上的调（zhan）整（dui），8月份开始不再迭代新的功能，但是这三四个月的时间也刷了不少 HTTP uplaod，multithreading，architecture design 等相关经验。</p>
+<p>这段时间的后期，还抽了一些时间，重写了项目整套 HTTP API 网络通信层，基本上擦干净了原来某个能力不行的前同事堆的一坨屎，还了16年底的一个心愿。</p>
+<p>这一通重写又刷了不少设计架构的经验，同时对 HTTP 协议有了更深的理解，毕竟用的 chromium net 实在是太 building block 了。不过同时又一次证明了：<strong>绝知此事要躬行</strong> 以及 <strong>汝欲学诗，功夫在诗外</strong> 的真理。</p>
+<p>下半年开始，因为业务调整，基本只有直播姬一个项目，并且因为自己还是侧重技术，所以对业务需求不是太感冒，项目上主要还是挑了一些技术债清理，解决一些没人愿意做的差事。</p>
+<p>因为对接的专项产品还算靠谱的缘故，直播姬自身的迭代也一直在小步前进，甚至年底时做了一次大更新，版本跳上了 v2.0。</p>
+<p>与此同时自己也小刷了一把管理（product &amp; people）的经验，发现自己虽然不是什么管理奇才，但也至少耳聪目明，悟的快，学的快，当年在北京时老领导的各种饭桌谈话中展现方法论也逐渐纳入了自己的技能包。</p>
+<p>Once again，相比下，我还是更喜欢技术，技术无论多复杂，比起管理的人而言，远远没有那么多不确定性。</p>
+<p>接近年底时部门发生了一次大震荡，一轮 reorg 后，老领导从主站调到了直播任技术总监，那会儿我大概能猜到高层对这块业务带来的营收期望有多高，以及，对原来业务贡献的不满；以及 —— 未来部门将有大变化，这大概也应该是 18 年的部门主旋律。</p>
+<p>国庆前后经历了一次校招，被发配到了武汉和广州。上一次经历校招是四年前，而这次我的角色变成了面试官。</p>
+<p>参与校招想来只有一个好处：练习自己辨人的能力。或许未来某一天这个能力会变成我的基本要求之一。</p>
+<p>不过参加了这次校招，面了不少 985/211 的应届毕业生之后，我至少发现当年没有读研究生的决定是非常正确的，毕竟我（当年）已经没有资本再荒废另一个三年了。</p>
+<p>17年年底一直到2月初，和一个前同事帮另外一个前同事做了一个 demo，以方便他去争（hu）取（you）创业投资，中间断断续续占用了一些私人时间，不过最后还好是按照预期做出来了。虽然我对这事儿没有太大想法，但是万一突然那天变成了一块额外收入也说不定呢~</p>
+<p>回想生活上，3月份捡了小区一只大概7个月的流浪橘猫，起了个名字叫 Turing，喂养了两个月成功从一开始 2KG 不到涨到了 4KG 多，遗憾是5月12号那天打算带他去打第二针疫苗的时候，他从猫包里挣脱出来，头也不回的一路跑进了小区北门的一片草丛里。</p>
+<p>我找了一下午，还是没有发现他的踪迹，也为此伤心了几天。</p>
+<p>四天后，在豆瓣上看到有人发了小奶猫的领养帖子，按捺不住心中的冲动，当天就联系了发帖人，带回了一只小奶猫，后来媳妇儿给起了个名字叫<em>小石榴</em>。</p>
+<p>小石榴一开始身体不是很好，又是拉稀又是腹胀，精心照顾了一个月，小家伙才慢慢开始茁壮成长，并一发不可收拾…</p>
+<p>后来又过了一个月，发帖人联系我，问我能不能在领养最后剩下的两只奶猫，我心一横就答应了，于是就有了后来的 小荷花（花花）和 小天（黑黑）。</p>
+<p>犹记得花花和黑黑刚来到家时，小石榴护着自己食物的样子，让人捧腹。你们可都是一个娘胎出来的亲生姊妹啊！</p>
+<p>混熟后，我和三只喵喵开始了没羞没臊的生活，直到 —— 三只喵越长越大我开始感到有压力后把黑黑送给了游戏部的一个同事。</p>
+<p>虽然很久没有打听黑黑的近况了，但是我还是衷心希望她能够健康成长，和她两个快要变成猪的姐姐一样 :)</p>
+<p>由于提早给石榴和花花做了绝育手术，因此她们直接躲过了第一次发情，她们至今都开心得和一个100公斤的姑娘一样~</p>
+<p>最后展望一下 18 年（再不结束我要睡着了…），希望今年能顺利转服务端，继续自己的技术追求之路；同时喵喵们也健康快乐的成长。</p>
+<p>最后的最后，希望能早日搬进杭州的房子，每天和媳妇儿在沙发上看看电影拌拌嘴，撸着石榴和花花。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/02/14/using-winsock-extension-api-the-right-way/">使用 Winsock Extension API 的正确姿势</a>
         
       </h1>
@@ -405,370 +635,6 @@ LPFN_DISCONNECTEX DisconnectEx = <span class="hljs-literal" style="color: rgb(25
 <p>另外这个 talk 的 PPT 值得研究一下，尤其是涉及到 happens-before / synchronized-with .etc 这类同步语义的内容</p>
 <hr>
 <p>因为一月份快接近年底了，事情比较多，也很杂，所以自己的学习进度明显被拖慢了，希望从2月份开始能够迅速回到正常节奏。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/23/initialize-atom-flag-the-right-way/">正确地初始化 std::atomic_flag</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>根据标准文档的要求，<code>std::atomic_flag</code> 只有利用 <code>ATOMIC_FLAG_INIT</code> 初始化之后，才获得一个确定的初始状态。</p>
-<p>现在假设我们要自己实现一个 spin-lock，那么只需要利用 <code>std::atomic_flag</code> 实现一个 spin-mutex：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    SpinMutex()</span><br><span class="line">        : flag_(ATOMIC_FLAG_INIT)</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>事实上，知名著作 <em>C++ Concurrency in Action 1st Edition</em> 中介绍 <code>std::atomic_flag</code> 时用的也是一模一样的代码。</p>
-<p>然而，这段代码在比较新的 C++ 编译器上会编译失败。</p>
-<p>VS2017 直接提示失败，Clang 3.9 出现一个警告。</p>
-<p>问题的根源是，标准委员会对：如何时用 <code>ATOMIC_FLAG_INIT</code> 初始化 <code>std::atomic_flag</code> 存在分歧和反复，导致 C++ 11 和 C++ 14 在这个点上存在不一致。</p>
-<p>万能的 StackOverflow 刚好有一个<a href="https://stackoverflow.com/questions/24437396/stdatomic-flag-as-member-variable" target="_blank" rel="noopener">相关的问题</a></p>
-<h3 id="正确的做法"><a href="#正确的做法" class="headerlink" title="正确的做法"></a>正确的做法</h3><p>正确的做法仍然是遵循标准要求的 <em>used in the copy-initialized context</em>，即：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// Initialize to clear state.</span></span><br><span class="line">    <span class="comment">// Don't use initialization list for `flag_`.</span></span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_ = ATOMIC_FLAG_INIT;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="MISC"><a href="#MISC" class="headerlink" title="MISC"></a>MISC</h3><p>在 VS2017 中，可以在 member initialization list 中用 <code>{}</code> 而不是 <code>()</code> 初始化，能正常编译通过。但是同一做法在其他编译器上没有效果。</p>
-<p>因此，在这种涉及 unspecified 的点上，尽量使用标准的做法，避免之后更换编译器踩坑。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/15/the-issue-binding-to-privately-inherited-member-function/">Binding to Privately Inherited Member Functions</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-15
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>考虑代码</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;functional&gt;</span></span>
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Base {
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
-    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Foo</span><span class="hljs-params">(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> n)</span>
-    </span>{
-        <span class="hljs-built_in" style="color: rgb(255, 255, 170);">printf</span>(<span class="hljs-string" style="color: rgb(162, 252, 162);">"the value is %d"</span>, n);
-    }
-};
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Derived : Base {
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> Base::Foo;
-};
-
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
-</span>{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> f = <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::bind(&amp;Derived::Foo, <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::placeholders::_1, <span class="hljs-number" style="color: rgb(211, 99, 99);">10</span>);
-    Derived o;
-    f(&amp;o);
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
-}</pre>
-
-<p>编译会提示出错，错误信息类似：_Failed to specialize function template ‘unknown-type std::_Binder&lt;std::_Unforced,void (__cdecl Base::* )(int),const std::_Ph<1> &amp;,int&gt;::operator ()(<em>Unbound &amp;&amp;…) const’</em></1></p>
-<p>根本原因是，即使前面使用了 <code>using Base::Foo;</code>, 也只是改变了这个函数在子类中的可见性，影响名字查找；并没有真的在子类中添加了这个函数，因此 <code>&amp;Derived::Foo</code> 实际上获取的类型是 <code>void (Base::*)(int)</code>，而正是这个类型影响了 <code>std::bind()</code> 的实例化。</p>
-<p>因此当后面用 <code>Derived</code> 的实例去调用 function object 时会失败。</p>
-<p>Stackoverflow 上有一个<a href="https://stackoverflow.com/questions/36263159/binding-to-privately-inherited-member-function" target="_blank" rel="noopener">类似的问题</a>，可以参考。</p>
-<h2 id="Workaround"><a href="#Workaround" class="headerlink" title="Workaround"></a>Workaround</h2><p><strong>(1) 子类增加一个 call-wrapper</strong></p>
-<p>然而大多数采用 private-inheritance 而不是 composition 的情况下，都是避免添加各种 call-wrapper</p>
-<p><strong>(2) 绑定 lambda 而不是函数指针</strong></p>
-<p>这是一个推荐的做法</p>
-<p><strong>(3) 强行用 reinterpret_cast&lt;&gt;</strong></p>
-<p>呃… let’s don’t be evil</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/01/monthly-read-posts-in-dec-2017/">Monthly Read Posts in Dec 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>C++ 11 Concurrency: <a href="https://baptiste-wicht.com/posts/2012/03/cpp11-concurrency-part1-start-threads.html" target="_blank" rel="noopener">Part 1</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/03/cp11-concurrency-tutorial-part-2-protect-shared-data.html" target="_blank" rel="noopener">Part 2</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/04/c11-concurrency-tutorial-advanced-locking-and-condition-variables.html" target="_blank" rel="noopener">Part 3</a></p>
-<p>本来想作为 C++ Concurrency in Action 的一个补充，但是发现这个 series （迄今）写得实在是太一般了…看看后续有没有改进</p>
-<hr>
-<p><a href="http://blog.poetries.top/2017/11/04/fiddler/" target="_blank" rel="noopener">使用Fiddler做抓包分析</a></p>
-<p>除了 auto-responder ，其他部分内容感觉都好一般</p>
-<hr>
-<p><a href="https://zhuanlan.zhihu.com/p/21348220" target="_blank" rel="noopener">高并发性能调试经验分享</a></p>
-<p>文章不短，但是核心还是调试那几板斧：</p>
-<ul>
-<li>尝试重现/增加重现概率</li>
-<li>脑补可能的 root cause</li>
-<li>通过实验排除</li>
-</ul>
-<p>文章开头说这类问题适合筛应届生，纯属胡说八道。</p>
-<p>首先前面说的那几点虽然是很容易回答，毕竟提纲挈领，但是实际解决过这类多线程/高并发的问题的人都知道，很多时候问题都是高度上下文相关的，换一个上下文很多之前的假设推断手段什么的都没效果，毕竟这是一个强经验相关的 domain。指望碰到一个应届生能熟练解决这类问题（停留在打嘴炮阶段不算），还不如指望哪天出现强 AI。</p>
-<hr>
-<p><a href="https://www.keakon.net/2015/09/07/%E5%88%9D%E6%8E%A2Python3%E7%9A%84%E5%BC%82%E6%AD%A5IO%E7%BC%96%E7%A8%8B" target="_blank" rel="noopener">初探 Python 3 的异步 IO 编程</a><br><a href="https://www.ziwenxie.site/2016/12/19/python-asyncio/" target="_blank" rel="noopener">Python并发编程之协程/异步IO</a></p>
-<p>口水文，还好是在地铁上看完的。</p>
-<hr>
-<p><a href="https://tech.meituan.com/about-desk-io.html" target="_blank" rel="noopener">磁盘I/O那些事</a></p>
-<p>实战那部分写的不错</p>
-<p>另外，文章 url 的 desk 目测是 disk 的 typo</p>
-<hr>
-<p><a href="https://garbagecollected.org/2014/09/14/how-google-authenticator-works/" target="_blank" rel="noopener">How Google Authenticator Works</a></p>
-<p>看完想自己写一个</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=C4Z3c4Sv52U" target="_blank" rel="noopener">A Few Good Types - Neil MacIntosh - CppCon 2015</a></p>
-<p>介绍了一波 <code>array_view</code> 和 <code>string_vew</code></p>
-<p>可惜 <code>array_view</code> 没有进标准</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=u5senBJUkPc" target="_blank" rel="noopener">All Your Tests Are Terrible - Titus Winters and Hyrum Wright - CppCon 2015</a></p>
-<p>又名：单元测试的几条军规</p>
-<p>基本覆盖了实现单元测试 case 的一些基本准则。两个演说者很逗，将相声一样</p>
-<p>不过我其实更关心部分这个 talk 并没有涉及到，比如涉及 GUI 的交互逻辑怎么做 ut；负责模块上粒度上怎么抽诸如此类..</p>
-<hr>
-<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD04V009" target="_blank" rel="noopener">Futures from Scratch - Arthur O’Dwyer - CppCon 2015</a></p>
-<p>一些和 <code>future</code> 有关实现细节</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/12/08/add-bitwise-operations-for-enum-types-automatically/">自动为 enum 类型添加位运算操作符</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-12-08
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>有时候需要在 C++ 里用 <code>enum (class)</code> 表示 flags，进行基础的 bitwise 运算，而哪怕是支持自动到 underlying integer 转换的 traditional enum，也需要额外的 cast 才能实现，所以在需要的时候为 <code>enum</code> 添加位运算支持还是有一定市场的。</p>
-<p>单独为每个需要的 <code>enum</code> 提供相关重载可以实现细粒度的控制，并且必要的时候可以加上 range-check 的校验。</p>
-<p>然而这里有两个问题：</p>
-<ol>
-<li>大部分情况下不需要 range-check 这种检查，因为通常不会在接口这一层暴露</li>
-<li>如果一个 module 里会用到两个以上的 enum-based-flags，那么单独实现会很蛋疼</li>
-</ol>
-<p>所以一个解决方案是，提供基于函数模板的重载，并且利用 ADL 将这部分重载锁在一个具体的 namespace 内，例如马上（C++ 20）就要被废弃的 <code>rel_ops</code>。</p>
-<p>同时，我们希望这部分重载只对 <code>enum / enum class</code> 有效，其他类型不进行应用。可以通过 SFINAE 实现这点。</p>
-<p>利用快下班的时间做了一个基本的实现：</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-comment" style="color: rgb(136, 136, 136);">// Casts an enum value into an equivalent integer.</span>
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">enum_cast</span><span class="hljs-params">(E e)</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
-</span>{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">static_cast</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">underlying_type_t</span>&lt;E&gt;&gt;(e);
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops {
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) | enum_cast(rhs));
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
-{
-    lhs = E(enum_cast(lhs) | enum_cast(rhs));
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>&amp;(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) &amp; enum_cast(rhs));
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>&amp;=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
-{
-    lhs = E(enum_cast(lhs) &amp; enum_cast(rhs));
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>^(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) ^ enum_cast(rhs));
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>^=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
-{
-    lhs = E(enum_cast(lhs) ^ enum_cast(rhs));
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>~(E op) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(~enum_cast(op));
-}
-
-}   <span class="hljs-comment" style="color: rgb(136, 136, 136);">// namespace enum_ops</span></pre>
-
-<p>测试代码：</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">enum</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> ChangeLevel : <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> {
-    None = <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>,
-    Local = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>,
-    Server = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>,
-    All = Local | Server
-};
-
-TEST(EnumOps, General)
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops;
-
-    ChangeLevel level = ChangeLevel::None;
-    level |= ChangeLevel::Local;
-    level |= ChangeLevel::Server;
-
-    EXPECT_TRUE(level == ChangeLevel::All);
-    EXPECT_TRUE(enum_cast(level &amp; ChangeLevel::Local) != <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>);
-    EXPECT_TRUE(enum_cast(level &amp; ChangeLevel::Server) != <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>);
-}
-
-TEST(EnumOps, NonEnumType)
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops;
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> l = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>;
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> r = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>;
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> rv = l | r;
-    EXPECT_EQ(<span class="hljs-number" style="color: rgb(211, 99, 99);">3</span>, rv);
-
-    <span class="hljs-comment" style="color: rgb(136, 136, 136);">// can't compile</span>
-    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//std::string s1 = "hello";</span>
-    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//std::string s2 = "world";</span>
-    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//s1 | s2;</span>
-}</pre>
 
         
       

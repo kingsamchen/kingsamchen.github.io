@@ -195,6 +195,261 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/04/12/use-ffmpeg-to-reencode-videos/">使用 ffmpeg 压制视频</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-04-12
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>帮主站重写完投稿工具的上传模块后，Neo 和我说，我们这期版本还是得带上视频压制功能…</p>
+<p>这是我第一次知道原来 ffmpeg 还可以压制视频。因为重构的缘故，老版本的代码完全不能用（就算不考虑换上层 UI 框架的事儿，老版本那个代码质量…），所以只能抄一下他们的压制相关的驱动参数，自己从头把功能实现一遍。</p>
+<p>花了差不多刚好一周的时间提供了一个底层压制模块后，我发现，因为产品需求的因素，实现这部分功能居然可以很好的做为熟悉一个语言涉及操作层面的 roadmap，整理一下 feature list，算算差不多至少要能够提供：</p>
+<ul>
+<li>运行子进程，并且能够通过 IPC 读取并解析子进程的 stdout 和 stderr 数据；通常情况下，这意味着需要熟悉 Windows 的 Pipe</li>
+<li>压制首先涉及到利用 <code>ffprobe.exe</code> 检测视频的 meta-info，符合压制条件并且用户确认后利用 meta-info 作为压制的部分输入信息；中间涉及到几个线程间的交互</li>
+<li>因为压制功能和视频上传在逻辑上具有先后顺序，并且都需要有专门的 worker thread，因此他们可以共用一个线程池；而支持多任务并行操作，又要求线程池的调度策略要足够“及时”（事实上，这个要求有一部分锅来自 chromium net 的 <code>URLFetcher</code>，which requires 网络操作运行的线程在 URLFetcher context 生命周期内是唯一且固定的，因此会出现一个上传任务只要不结束，就会一直霸占一个线程的情况；另有一部分锅来自 chromium base 的 <code>scoped_reptr</code>，居然没有考虑对外暴露自己 ref-count 信息，无形中加大了实现线程池的困难）</li>
+</ul>
+<p>因此在项目提测结束，基本验收通过之后，我想籍由这个功能，重新回忆一下 C# 和 WPF （噫，怎么老是再回忆这个…），所以花了一个周末，就有了 <a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleVideoEncoder" target="_blank" rel="noopener">SimpleVideoEncoder</a></p>
+<p>但是在实现过程中我发现，纵使有 async/await，它也不是银弹，也有他覆盖不了的 case；而我对 C#/.NET 的多线程模型实在是完全不懂，导致某些细节完全没法下手（只能说某些case 下，CSP 真是好用到想哭，还好 WPF 的 UI-thread 提供了一个 <code>Dispatcher</code> 支持了对 UI 线程的 CSP；再将需求简化到 Demo 程度后，勉强实现了出来。</p>
+<p><img src="/img/ffmpeg-encode.png" alt=""></p>
+<p>上层界面基于 WPF，但是没有走 MVVM。</p>
+<p>实话说，经过一年半（距离上次写 EasyKeeper），自己主导过两个不大不小的项目后，对于为什么需要有 MVC/MVP/MVVM 有了一些更实际的想法，并且也能理解有时候过分追求这些反而是一种坑。</p>
+<p>考虑到目前应该是没法公开为投稿工具写的那部分代码（压制模块算起来大概有 1K+ lines of code），所以这个 <em>SimpleVideoEncoder</em> 的意义也大大折扣，基本只能作为一个 ffmpeg 压制功能的简单展示…</p>
+<p>不过最后还是要赞一下 C# 对 Pipe IPC 的封装，几行代码做了需要几十行 C++ 代码的事情；并且基于 event 的通知机制比起传统的 observer，更能准确的体现 OOP 中<strong>对象级别消息通信</strong>的内涵。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/04/02/monthly-read-posts-in-mar-2017/">Monthly Read Posts in Mar 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-04-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="http://playfulprogramming.blogspot.hk/2017/01/generate-lambdas-for-clarity-and.html" target="_blank" rel="noopener">Generate lambdas for clarity and performance</a></p>
+<p>Generate a class of lambdas with auto-return-type deduction.</p>
+<p>唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 <code>std::function&lt;&gt;</code> 来做 workaround</p>
+<hr>
+<p><a href="http://nullprogram.com/blog/2016/08/03/" target="_blank" rel="noopener">Appending to a File from Multiple Processes</a></p>
+<p>经验问题，写客户端的 logger 轮子时应该会经常需要考虑到这个问题。</p>
+<p>文章针对的是 POSIX 系统，不过不同系统在一些具体策略/细节上也有区别。</p>
+<p>另，Windows 上这个场景有直接的 API 调用保证。</p>
+<p>不过有点比较奇怪，chromium 的 base::logging 只提供了 Windows 下的多进程无锁 appending，POSIX/Mach 下依然用的是线程同步锁和全局锁，可能考虑的原因是实现起来坑比较大？</p>
+<hr>
+<p>OAuth 2.0 Protocol</p>
+<ol>
+<li><a href="http://tutorials.jenkov.com/oauth2/authorization.html" target="_blank" rel="noopener">oauth2 authorization</a></li>
+<li><a href="https://taozj.org/201605/principle-of-oauth2.html" target="_blank" rel="noopener">principle-of-oauth2</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="noopener">oauth_2_0</a></li>
+</ol>
+<p>第二篇文章基本可以看作第一篇的翻译，但是很多地方都没有翻译出来，所以推荐主要看第一篇文章，把第二、三篇作为补充材料</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Events/GoingNative/2013/Inheritance-Is-The-Base-Class-of-Evil" target="_blank" rel="noopener">Inheritance Is The Base Class of Evil</a></p>
+<p>C9 上的一个 Tech Talk，speaker 是 Adobe 的技术大佬，但是我觉得有标题党之嫌。</p>
+<p>Talk 中展现出来的哲学观挺有意思的，比如那句 <em>There is no polymorphic type, just polymorphic use of types</em>。</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Shows/C9-GoingNative/GoingNative-53-Learning-STL-Multithreading" target="_blank" rel="noopener">Learning STL Multithreading</a></p>
+<p>虽然标题是 STL Multithreading，但是里面的核心内容基本都是原理性的，通用的。</p>
+<p>对于 mutex/condition-variable 这类比较高级的 synchronization primitives 和低级的 atomic variables 均有涉及，并且也给了实践建议。</p>
+<p>话说右边那个胖胖的小哥的口音听起来真的是容易懂…</p>
+<p>另外有个挺有意思的细节，快到最后的时候胖小哥提到了 <code>async</code> 和 <code>future</code>，他说希望大家能优先考虑这俩玩意儿，但是说了几句话又欲言又止，最后无奈地说 <em>we will discuss these later</em>。。。估计他想了想，就目前标准给的设施和实现情况，要做到 task-based paralleilism，那坑大的都可以把自己埋进去了。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/03/04/implement-apply-in-cpp-11/">在 C++ 11 中实现 apply</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-03-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Why-apply-matters"><a href="#Why-apply-matters" class="headerlink" title="Why apply matters"></a>Why apply matters</h2><p>假设我们要实现一个和具体业务无关的 HTTP(S) 网络 (Restful)API 请求设施 <code>RequestConnection</code>，我们至少要提供两个实现：</p>
+<ul>
+<li>客户代码的请求结束时的回调 callback/handler</li>
+<li>针对具体业务的 response parser；因为 HTTP 是文本协议，无论 response data 基于何种格式（例如 JSON），我们都要针对具体的业务逻辑场景进行解析</li>
+</ul>
+<p>假设我们希望请求的 callback 足够友好，直接将 client 需要的数据通过函数原型暴露出来，例如</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnCheckUpdateComplete</span><span class="params">(<span class="keyword">bool</span> succeeded, <span class="keyword">int</span> last_build_no)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>那么我们的 reponse parser 也要相应的能够返回符合 callback signature 的数据，在 C++ 中，我们可以用 <code>std::tuple</code> 来保存 parsed result：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::tuple&lt;<span class="keyword">bool</span>, <span class="keyword">int</span>&gt; ParseCheckUpdateResponse(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; data);</span><br></pre></td></tr></table></figure>
+<p>但是很不巧的，<code>RequestConnection</code> 是业务无关的，而业务相关的 callback/response-parser 则是通过依赖注入的方式（例如通过模板参数）进入 <code>RequestConnection</code>；这意味着我们需要一个通用的方法能够在编译期完成如下事情：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Presume magic function Apply</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> response_data;</span><br><span class="line">Apply(ResponseHandler, ResponseParser(response_data));</span><br></pre></td></tr></table></figure>
+<p>神奇函数 <code>Apply()</code> 能够调用一个函数，并且将一个 <code>std::tuple</code> 里的元素按照顺序转换为对应的实参。</p>
+<p>简言之，这就是 C++ 17 要引入的 <a href="http://en.cppreference.com/w/cpp/utility/apply" target="_blank" rel="noopener">std::apply</a> 所做的事情。</p>
+<p>但是如果我们的 codebase 是 C++ 11的，那又如何呢？</p>
+<h2 id="How-to-implement-apply-in-C-11"><a href="#How-to-implement-apply-in-C-11" class="headerlink" title="How to implement apply in C++ 11"></a>How to implement apply in C++ 11</h2><p>在 C++ 11 里实现 <code>apply()</code>，我们要做两步：</p>
+<ol>
+<li>实现 index-sequence （C++ 14 开始标准库附带了这个实现）</li>
+<li>实现 apply</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tuple&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;type_traits&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span>... Ints&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">index_sequence</span> &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = index_sequence;</span><br><span class="line">    <span class="keyword">using</span> value_type = <span class="keyword">size_t</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="keyword">size_t</span> size()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">sizeof</span>...(Ints);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Sequence1</span>, <span class="title">class</span> <span class="title">Sequence2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">merge_and_renumber</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span>... I1, <span class="keyword">size_t</span>... I2&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">merge_and_renumber</span>&lt;index_sequence&lt;I1...&gt;, index_sequence&lt;I2...&gt;&gt;</span></span><br><span class="line"><span class="class">    :</span> index_sequence&lt;I1..., (<span class="keyword">sizeof</span>...(I1) + I2)...&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span> N&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span></span></span><br><span class="line"><span class="class">    :</span> merge_and_renumber&lt;<span class="keyword">typename</span> make_index_sequence&lt;N / <span class="number">2</span>&gt;::type,</span><br><span class="line">                         <span class="keyword">typename</span> make_index_sequence&lt;N - N / <span class="number">2</span>&gt;::type&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span>&lt;0&gt; :</span> index_sequence&lt;&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span>&lt;1&gt; :</span> index_sequence&lt;<span class="number">0</span>&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Tuple, <span class="built_in">std</span>::<span class="keyword">size_t</span>... index&gt;</span><br><span class="line">auto apply_helper(Func&amp;&amp; func, Tuple&amp;&amp; tuple, index_sequence&lt;index...&gt;) -&gt;</span><br><span class="line">    <span class="keyword">decltype</span>(func(<span class="built_in">std</span>::get&lt;index&gt;(<span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple))...))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> func(<span class="built_in">std</span>::get&lt;index&gt;(<span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple))...);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Tuple&gt;</span><br><span class="line">auto apply(Func&amp;&amp; func, Tuple&amp;&amp; tuple) -&gt;</span><br><span class="line">    <span class="keyword">decltype</span>(apply_helper(<span class="built_in">std</span>::forward&lt;Func&gt;(func),</span><br><span class="line">                          <span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple),</span><br><span class="line">                          make_index_sequence&lt;<span class="built_in">std</span>::tuple_size&lt;<span class="keyword">typename</span> <span class="built_in">std</span>::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> apply_helper(<span class="built_in">std</span>::forward&lt;Func&gt;(func),</span><br><span class="line">                        <span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple),</span><br><span class="line">                        make_index_sequence&lt;<span class="built_in">std</span>::tuple_size&lt;<span class="keyword">typename</span> <span class="built_in">std</span>::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码就是我在某直播姬的网络框架里所用的实现；根据实际是用来看，quite awesome</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/03/02/monthly-read-posts-in-feb-2017/">Monthly Read Posts in Feb 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-03-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="http://insights.thoughtworkers.org/security-issues-in-restful/" target="_blank" rel="noopener">RESTful架构风格下的4大常见安全问题</a></p>
+<ul>
+<li>Don’t forget to check correlations between resources in request URL</li>
+<li>Some rare used HTTP headers might be helpful</li>
+<li>Restrict API request frequency</li>
+</ul>
+<p>这篇略水，某些常见的问题反而都没有提到，例如大木老师遇到的<a href="http://www.daozhihun.com/p/2119" target="_blank" rel="noopener">这个问题</a></p>
+<hr>
+<p><a href="http://preshing.com/20150324/safe-bitfields-in-cpp/" target="_blank" rel="noopener">Safe Bitfields in C++</a></p>
+<p>Main observation: Use union to implement/simulate bitfields.</p>
+<p>Each bitfield is implemented by using a single union member with mask and bit-length being set up initially.</p>
+<p>非常 stunning 的一个实现，但是很可惜，根据 comments 这个实现仍然是 undefined behavior，because <em>it call member functions on inactive union members</em>.</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/02/01/monthly-read-posts-in-jan-2017/">Monthly Read Posts in Jan 2017</a>
         
       </h1>
@@ -407,332 +662,6 @@
 <h3 id="Rants"><a href="#Rants" class="headerlink" title="Rants"></a>Rants</h3><p>Inno Setup 这种试图通过提供一系列设置和受限的脚本的方式来生成安装包的行为，固然可以降低使用门槛，但是也增加了自定义的难度和复杂度。Joel Spolsky 那篇洞察一切的 <em>the law of leaky abstractions</em> 其实已经说明了一切。</p>
 <p>其实如果不是接手项目的时候安装包早就已经固定了，我很可能自己就用 C++ 给撸了，如果真这样，也没有这么多七七八八的事情…</p>
 <p>至于我为什么会亲自上阵做安装包…还不是因为没有人愿意做，并且之前的 iss 脚本质量实在一般，都快大坑小坑落玉盘了，总得有个人出来 clean the mess/ass，你说对伐（真怀念当年不想搞了可以把脏活直接丢给老大的日子…）。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/">自动将 non-capturing lambda 转换为函数指针</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-01-11
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>在开发某科学的直播姬的过程中，经常需要在 obs-studio 处理源之后紧接着做一些事情，例如针对大图片源做自动放缩等。</p>
-<p>obs-studio 采用一个专有的 graphics rendering thread 来渲染各种 visualizable sources，并且允许你根据需求，注册各种底层源操作事件的回调函数（obs-studio 自己称之为 signal handler）。</p>
-<p>我在 obs signal handler 之上，利用 <code>std::function</code> 构建了一层自己的 signal-handler，将原始的 obs 事件经过合理转换后得到语义更加明确的直播姬专属事件，并且通知上层。</p>
-<p>但是前面提到，各种源操作都是在 obs 专属的渲染线程上完成的，那么我们向 obs 注册的 handler 也必然运行在这个专属线程上；这显然不是一个好现象，因为在直播姬程序语义下，这部分操作应属于我们自己定义的 UI 线程，并且用户可见的 UI 元素的操作也必须只能在 UI 线程中完成。</p>
-<p>所以我们需要在 signal 转换的同时切换线程，让 <code>std::function</code> 的调用发生在指定的线程。</p>
-<p>于是这里遇到这个 post 要解决的问题：我们使用 chromium base lib 来完成各种线程操作，<strong>但是 <code>base::Bind()</code> 不接受 lambda 作为 currying 的载体</strong>，因为这套 lib 是在 C++ 11 标准化之前就实现的，因此 chromium team 实现这个轮子的时候并没有考虑 C++ 11 的 lambda expressions。</p>
-<p>方案1：使用独立的函数来产生 <code>base::Callback</code></p>
-<p>优点是直观明确而且很传统不容易出错；</p>
-<p>缺点是，每个函数平均只有5行不到的代码（毕竟只是通过调用 <code>std::function</code> 做一个转发），而且我们要写大量这样的函数。。。另外由于这些独立的函数都放到了源文件开头的 anonymous namespace 里，造成阅读代码时的上下文割裂。这也是当初引入 lambda 的一个很重要的原因。</p>
-<p>方案2：使用 non-capturing lambda，但是自己手动 cast 到函数指针</p>
-<p>优点是利用 lambda 来限制了这部分“转发”函数的可见性；</p>
-<p>缺点是，不仅会造成上下文割裂，而且手动 cast 非常的 tedious。</p>
-<p>思索片刻后我打算自己实现一个 <code>lambda_decay()</code>，来将 non-capturing lambda 自动转换为等价的函数指针。</p>
-<p>借助 template 和一个 trick 可以做到如下的效果</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> lpfn = <span class="keyword">void</span>(*)(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;);</span><br><span class="line"></span><br><span class="line"><span class="function">lpfn <span class="title">Foo</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> lambda_decay([](<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; s) &#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; s &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>; &#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> ptr = Foo();</span><br><span class="line">    ptr(<span class="string">"hello world"</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这样就可以直接将 lambda “嵌到” <code>base::Bind()</code> 里，极大提升幸福感。</p>
-<p>这里说两个我并不认为是缺点的局限性：</p>
-<ol>
-<li>不能使用在 capturing lambdas 上。这其实是我恰好需要的，因为 capturing lambda 会有各种安全隐患，配合 <code>base::Bind()</code> 一个不小心就容易出坑；另外我的目的本来就是转换得到能被 <code>base::Bind()</code> 使用的等价函数指针，而正常情况下从 non-capturing lambdas cast 得到一个函数指针是良好定义的十分明确的行为。</li>
-<li>不能使用在 generic lambdas 上。generic lambdas 很好很有用，但是它不是银弹，尤其在配合 <code>base::Bind()</code> 使用的情况下。</li>
-</ol>
-<p>接下来是实现方法</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dememberize</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> R, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dememberize</span>&lt;R(C::*)(Args...) const&gt; &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = R(*)(Args...);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">lambda_pointerize_impl</span> &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = <span class="keyword">typename</span> dememberize&lt;<span class="keyword">decltype</span>(&amp;T::<span class="keyword">operator</span>())&gt;::type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">using</span> lambda_pointerize = <span class="keyword">typename</span> lambda_pointerize_impl&lt;T&gt;::type;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">lambda_pointerize&lt;F&gt; lambda_decay(F lambda)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> lambda_pointerize&lt;F&gt;(lambda);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>其实如果 VS 2013 支持 <code>constexpr</code> 的话，其实用起来会更优雅。</p>
-<p>另：我发现英文在自创单词上简直太有感觉了。。。。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/01/04/monthly-read-posts-in-dec-2016/">Monthly Read Posts in Dec 2016</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-01-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://ithare.com/c-performance-common-wisdoms-and-common-wisdoms/" target="_blank" rel="noopener">C++ Performance: Common Wisdoms and Common “Wisdoms”</a></p>
-<p>The post discusses some oftenly-argued performance related aspects of C++.</p>
-<p>Topics/objects include:</p>
-<ul>
-<li>C++ Exceptions – (Almost-)Zero-Cost until Thrown</li>
-<li>Smart Pointers and STL: Allocations are Still Evil</li>
-<li>Using boost:: – Case by Case and Only If You Do Need It</li>
-<li>Polymorphism – Two-Fold Impact</li>
-<li>RTTI – Can be Easily Avoided Most of the Time</li>
-<li>On Branch (mis)-Predictions and Pipeline Stalls</li>
-<li>On inline asm and SSE</li>
-<li>On inlines and force-inlines</li>
-<li>On templates</li>
-<li>On compiler flags</li>
-<li>On Manual Loop Unrolling</li>
-<li>“For-free” Optimizations a.k.a. Avoiding Premature Pessimization</li>
-</ul>
-<p>All suggestion based on a fundamental pre-requisite: Three things Really Matter for performance.</p>
-<p>The first one is Algorithm, the second one is your code being Non-Blocking, and the third one is Data Locality.</p>
-<p>The rest of the tricks, while potentially useful, should be used only on case-by-case basis, when a bottleneck is identified. Otherwise it will be a Premature Optimisation.</p>
-<p>Note: 作者是一个游戏开发者，上述观点也是结合游戏开发阐述的，因此对相当一部分高性能应用也有参考意义。</p>
-<hr>
-<p><a href="http://nvie.com/posts/iterators-vs-generators/" target="_blank" rel="noopener">Iterables vs. Iterators vs. Generators</a></p>
-<p>Key points:</p>
-<p>Anything that <strong>can return an iterator</strong> (usually via overriding <code>__iter__()</code>) is <em>iterable</em>.</p>
-<p>Anything that <strong>can be iterated</strong> (usually via overriding <code>__next__()</code>, or overriding <code>next()</code> in python 2.x) is an <em>iterator</em>.</p>
-<p>A generator is a <strong>special kind of iterator</strong>; it make you avoid writing <code>__netxt__()</code> and <code>__iter__()</code>.</p>
-<p>Two types of generator:</p>
-<ul>
-<li>Generator function: A function with yield to return value, the return value of the functio call is a generator</li>
-<li>Generator expression: A expression using comprehension-syntax</li>
-</ul>
-<p>Note：有 C++ STL 背景基本看这种问题都秒懂…</p>
-<hr>
-<p><a href="http://michael-j.net/2016/12/15/%E6%9E%B6%E6%9E%84%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E8%85%90%E5%8C%96/" target="_blank" rel="noopener">架构为什么会腐化</a></p>
-<p><strong>文中观点</strong></p>
-<ul>
-<li>不理解项目业务价值，对于实际需求把握不明确</li>
-<li>过度设计，导致扩展性差</li>
-<li>懒于重构</li>
-</ul>
-<p><strong>个人观点</strong></p>
-<ul>
-<li>明确/理解需求是第一位</li>
-<li>过度设计导致扩展性差存疑，实际上过度设计往往来源于需求把握不准</li>
-<li>初始架构设计很重要，对项目领导者要求较高</li>
-<li>重构可参考最小滑坡原则（每次离开一段代码，代码都要比刚接手时更清晰整洁）</li>
-</ul>
-<hr>
-<p><a href="https://akrzemi1.wordpress.com/2016/06/29/competing-constructors/" target="_blank" rel="noopener">Competing constructors</a></p>
-<p>Competing constructor: two constructors that would take the same sequence of arguments (if one is somehow made invisible), but also that they do different, incompatible things.</p>
-<p>Main observations:</p>
-<ul>
-<li>Competing functions complicate resolution for human beings</li>
-<li>Don’t write competing constructors, or even competing functions.</li>
-<li>Take care of class template function, one instantiation may turn into a competing function.</li>
-<li>Use tag with overload function can benefit from more clearer semantics</li>
-</ul>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/">利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-12-18
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>最近因为要实现某直播姬的自动更新功能，于是就要求客户端能够自动下载安装包，所以就要实现一个简单的支持续传的下载功能。</p>
-<p>因为用了 chromium 的框架，所以自然是基于 chromium net lib 去实现；稍微翻了一下源码目录，最后决定在 <code>net::URLRequest</code> 的基础上自己封装一个 <code>URLDownloader</code>。</p>
-<p>虽然之前某豹浏览器也有恶意魔改过的下载，但是相关功能一直和我没关系，所以这次基本算是 from scratch，期间也因为资料文档基本没有，绕了一些弯路，全靠一边看源码一遍自己通过demo调试去学习…</p>
-<p>为了方便可能的后来人，这里稍作记录。</p>
-<p>完整的demo源码可以看这里：<a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleDownloader" target="_blank" rel="noopener">SimpleDownloader</a></p>
-<p>把 <code>URLDownloader</code> 的头文件单独摘出来</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> DOWNLOADER_URL_DOWNLOADER_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DOWNLOADER_URL_DOWNLOADER_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/basictypes.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/files/file_path.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/memory/ref_counted.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/threading/thread_checker.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"net/base/io_buffer.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"net/url_request/url_request.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"net/url_request/url_request_context.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"url/gurl.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> downloader &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The user of URLDownloader must ensure that the construction and operations of an URLDownloader</span></span><br><span class="line"><span class="comment">// instance are performed on a same thread.</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">URLDownloader</span> :</span> <span class="keyword">public</span> net::URLRequest::Delegate &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">CompleteCallback</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="keyword">virtual</span> ~CompleteCallback() &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnDownloadSuccess</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnDownloadFailure</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The caller of this constructor must make sure:</span></span><br><span class="line">    <span class="comment">// - `save_path` is writable;</span></span><br><span class="line">    <span class="comment">// - the object `callback` refers to is alive during the entire lifecycle of URLDownloader, since</span></span><br><span class="line">    <span class="comment">//   the class itself doesn't acquire the ownership for the `callback`.</span></span><br><span class="line">    URLDownloader(<span class="keyword">const</span> GURL&amp; url, <span class="keyword">const</span> base::FilePath&amp; save_path, CompleteCallback* callback);</span><br><span class="line"></span><br><span class="line">    ~URLDownloader() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Starts or resumes the download.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Stops the download.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Stop</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnResponseStarted</span><span class="params">(net::URLRequest* request)</span> override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnReadCompleted</span><span class="params">(net::URLRequest* request, <span class="keyword">int</span> bytes_read)</span> override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Saves received network data (stored in `buf_`) to disk write cache, and writes to disk</span></span><br><span class="line">    <span class="comment">// if necessary.</span></span><br><span class="line">    <span class="comment">// It is legal to call this function with 0 passed in as `bytes_received`, when you want to</span></span><br><span class="line">    <span class="comment">// force flushing cache to disk.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SaveReceivedChunk</span><span class="params">(<span class="keyword">int</span> bytes_received, <span class="keyword">bool</span> force_write_to_disk)</span></span>;</span><br><span class="line"></span><br><span class="line">    DISALLOW_COPY_AND_ASSIGN(URLDownloader);</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    GURL url_;</span><br><span class="line">    base::FilePath save_path_;</span><br><span class="line">    base::FilePath tmp_save_path_;</span><br><span class="line">    CompleteCallback* complete_callback_;</span><br><span class="line">    <span class="keyword">size_t</span> downloaded_bytes_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt; disk_write_cache_;</span><br><span class="line">    scoped_refptr&lt;net::IOBuffer&gt; buf_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;net::URLRequestContext&gt; request_context_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;net::URLRequest&gt; request_;</span><br><span class="line">    base::ThreadChecker thread_checker_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125;   <span class="comment">// namespace bililive</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>  <span class="comment">// DOWNLOADER_URL_DOWNLOADER_H_</span></span></span><br></pre></td></tr></table></figure>
-<p>核心只有四个函数：<code>URLRequest::Start()</code>, <code>OnResponseStarted()</code>, <code>URLRequest::Read()</code>，和 <code>OnReadCompleted()</code>。</p>
-<p>这四个函数的 interactions 大概如下：</p>
-<ul>
-<li><code>Start()</code> 执行后内部会调用 <code>OnResponseStarted()</code></li>
-<li>在 <code>OnResponseStarted()</code> 中，如果 request 和 response 的通信都没有什么问题，则要用 <code>Read()</code> 读取接收到的网络 IO 数据，接着调用 <code>OnReadCompleted()</code> 切换状态；这个步骤称之为 initial reading</li>
-<li>在 <code>OnReadCompleted()</code> 中，反复利用 <code>Read()</code> 读取网络数据</li>
-</ul>
-<p><code>Read()</code> 和 <code>OnReadCompleted()</code> 之间有一个容易被忽略的细节： 利用 <code>Read()</code> 从读取网络 IO 数据时</p>
-<ol>
-<li>如果数据立即可用，则 <code>Read()</code> 会正常读取数据</li>
-<li>如果数据当前不可用，则会触发 asynchronous reading，但是 <code>Read()</code> 函数会马上返回；等到底层获取到 IO 数据后，内部自己会调用 <code>OnReadCompleted()</code></li>
-</ol>
-<p>除此之外，还要注意 <code>URLRequest</code> 对象的<strong>构造和操作</strong>必须在同一个线程。</p>
-<p>至于续传，本质就是利用了 HTTP request header 的 range，具体请参考代码。</p>
-<p>最后说一句，如果你的目的是实现一套和服务端 RESTFul API 通信的设施，那么直接使用 <code>net::URLFetcher</code> 是个更好的选择；因为后者是在 <code>net::URLRequest</code> 基础之上针对字符处理加的一个wrapper，屏蔽了具体的 IO data read 细节。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-12-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64" target="_blank" rel="noopener">Stack Frame Layout on X86-64</a></p>
-<p><strong>Main observations</strong></p>
-<p>For AMD64 X64 ABI compiliant platforms (such as Linux), the major changes include:</p>
-<ul>
-<li>Introduces a red-zone storage area on the stack</li>
-<li>Officially makes frame pointer explicitly optional</li>
-</ul>
-<p>For Windows X64 ABI(though depictated in supplementary):</p>
-<ul>
-<li>No red-zone; instead, a pre-allocated home-space is enforced for every function call</li>
-<li>Cleanup of old calling convention legacy; no more worry about cdecl/fastcall/stdcall etc.</li>
-</ul>
-<p><a href="http://www.golgi.io/security-ssl-tls/" target="_blank" rel="noopener">Understanding Security in IoT: SSL/TLS</a><br><a href="http://insights.thoughtworkers.org/talk-about-https/" target="_blank" rel="noopener">我也想来谈谈HTTPS</a></p>
-<p><strong>Why HTTPS</strong></p>
-<p>Why HTTP is not secure?</p>
-<p>Because it transports information in plain text and with no anti-eavesdroping protection.</p>
-<p><strong>How does it work</strong></p>
-<p>After TCP connection is established, the client and server will futher start TLS/SSL handshake:</p>
-<ol>
-<li>Client-Hello</li>
-<li>Server-Hello</li>
-<li>Authentication and Key Exchange</li>
-<li>Server-Finish</li>
-<li>Client-Finish</li>
-</ol>
-<p><strong>Extra Bonus</strong></p>
-<p>How to use openssl for https.</p>
-<p>帧哥在他的<a href="http://blog.syscallx.com" target="_blank" rel="noopener">技术博客分站</a>上有三篇和 TLS/SSL 协议实现相关的 posts，可以放到下个月的 reading list 里</p>
-<p><a href="http://thereignn.ghost.io/on-dry-and-the-cost-of-wrongful-abstractions/" target="_blank" rel="noopener">ON DRY AND THE COST OF WRONGFUL ABSTRACTIONS</a></p>
-<p><strong>Insight</strong></p>
-<p>Duplicating code sometimes can be a good thing (when the cost imposed by abstractions is too high); namely, context matters.</p>
-<p><strong>Reasons</strong></p>
-<p>Programmers spend far more time reading code (to understand logic behind) than writing code.</p>
-<p>Abstractions cut both ways: every abstraction comes at a cost.</p>
-<p>Every abstraction imposes an extra layer of knowledge, which places cognitive load on brain, and in turn, increases the time spent on understanding that piece of code.</p>
-<p>In some extreme cases(everything is encapsulated in abstractions), the abstraction lost its value, and became a wrongful one.</p>
-<p><strong>Conclusion</strong></p>
-<p>Always abstract if the cost of abstraction does not surpass the cost of duplicating code.</p>
-<p>But, it’s just hard to get it right in real practice.</p>
-<p><strong>Extra Comments</strong></p>
-<p>之前看过一篇类似的 post，标题大概是 <em>dependency versus redundancy</em>，印象中里面叙述的观点比这边更加的具体。</p>
 
         
       

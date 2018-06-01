@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Monthly Read Posts in May 2018"/>
+
+
+
+
+  <meta name="keywords" content="linux, concurrency, lock-free, 面试, 技术选型, hash table, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2018/06/01/monthly-read-posts-in-may-2018/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Monthly Read Posts in May 2018 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Monthly Read Posts in May 2018
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-06-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#System-amp-Architecture"><span class="toc-text">System &amp; Architecture</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Data-Structures-amp-Algorithms"><span class="toc-text">Data Structures &amp; Algorithms</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Programming-Language"><span class="toc-text">Programming Language</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Concurrency-amp-Multithreading"><span class="toc-text">Concurrency &amp; Multithreading</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h3 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h3><p><a href="http://mindhacks.cn/2011/11/04/how-to-interview-a-person-for-two-years/" target="_blank" rel="noopener">怎样花两年时间去面试一个人</a></p>
+<p>当前行业招聘的不靠谱，招揽优秀人员的难度大。</p>
+<p>脱颖而出的核心：良好的阅读习惯 + Github 项目</p>
+<p>这里说的两年是针对应届生来说的，对于已经工作的人来说，可以当作是虚指。</p>
+<p>不过文中提到的，拥抱变化的三个核心点：</p>
+<ol>
+<li>触动内心的大象</li>
+<li>建立清晰明确的目标</li>
+<li>扫清前进道路的障碍</li>
+</ol>
+<p>颇有道理。</p>
+<hr>
+<p><a href="http://gulu-dev.com/post/2014-07-28-tech-evaluation" target="_blank" rel="noopener">何判断一个技术(中间件/库/工具)的靠谱程度？</a></p>
+<p>如何做技术选型</p>
+<h3 id="System-amp-Architecture"><a href="#System-amp-Architecture" class="headerlink" title="System &amp; Architecture"></a>System &amp; Architecture</h3><p><a href="https://0xffffff.org/2017/05/01/41-linux-io/" target="_blank" rel="noopener">聊聊Linux IO</a></p>
+<p>A brief introduction to Linux I/O stack.</p>
+<p>这篇 post 的质量在国内技术博客里算是少有的干货。</p>
+<p>另，关于 page cache 和 buffer cache 的最新的内容，可以参考 Robert Love 在 quora 上的一个<a href="http://qr.ae/TUTNCz" target="_blank" rel="noopener">回答</a></p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=k12BJGSc2Nc" target="_blank" rel="noopener">CppCon 2015: John Farrier “Demystifying Floating Point”</a></p>
+<p>工程实践上使用浮点数（IEEE-754）需要注意的一些坑。</p>
+<p>看之前最好翻一下 CSAPP 中关于浮点数 IEEE-754 模型的基础知识<br><a id="more"></a></p>
+<h3 id="Data-Structures-amp-Algorithms"><a href="#Data-Structures-amp-Algorithms" class="headerlink" title="Data Structures &amp; Algorithms"></a>Data Structures &amp; Algorithms</h3><p><a href="http://preshing.com/20110504/hash-collision-probabilities/" target="_blank" rel="noopener">Hash Collision Probabilities</a></p>
+<p><a href="http://preshing.com/20110603/hash-table-performance-tests/" target="_blank" rel="noopener">Hash Table Performance Tests</a></p>
+<p><a href="http://pzemtsov.github.io/2015/12/14/choosing-the-hash-maps-capacity.html" target="_blank" rel="noopener">Choosing the hash map’s capacity</a></p>
+<p>关于同为搜索类数据结构，（一般情况下）hash table 优于 search tree 的原因是：现代计算机体系结构下，前者比后者要更加 cache friendly</p>
+<h3 id="Programming-Language"><a href="#Programming-Language" class="headerlink" title="Programming Language"></a>Programming Language</h3><p><a href="http://insanecoding.blogspot.co.uk/2010/07/simplifying-bootstrapping-for-virtual.html" target="_blank" rel="noopener">Simplifying bootstrapping for virtual constructors</a></p>
+<p>core idea 1: 使用 template function 实现 factory functioni</p>
+<p>core idea 2: 使用一个 construct-interface 去解决 multiple constructors 的情况</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=zt7ThwVfap0" target="_blank" rel="noopener">CppCon 2015: Stephan T. Lavavej “functional: What’s New, And Proper Usage”</a></p>
+<p>关于 <code>&lt;functional&gt;</code> 里主要设施的介绍。</p>
+<p>大量干货。</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=H9gAaNRoon4" target="_blank" rel="noopener">CppCon 2015: Marshall Clow “string_view”</a></p>
+<p><code>string_view</code> introduction。</p>
+<p>对于什么是 <code>string_view</code> 以及为什么要有 <code>string_view</code> 解释的比较详细了。</p>
+<p>听 talk 的时候还发现了 <code>string_view::to_string()</code> 被移除了，转而往 <code>basic_string</code> 的构造函数增加通过 sv 创建的路子；talk 里面也解释了为什么。</p>
+<h3 id="Concurrency-amp-Multithreading"><a href="#Concurrency-amp-Multithreading" class="headerlink" title="Concurrency &amp; Multithreading"></a>Concurrency &amp; Multithreading</h3><p><a href="http://www.parallellabs.com/2010/01/31/pthreads-programming-spin-lock-vs-mutex-performance-analysis/" target="_blank" rel="noopener">Pthreads并行编程之spin lock与mutex性能对比分析</a></p>
+<p>文章内容就是标题了。</p>
+<p>不过多嘴提一句，用户态实现 spinlock 很容易跑飞，这点也可以见文章的 comments。</p>
+<p>另外，mutex 啥的其实不慢，而且比较稳妥，所以 use mutex whenever possible 应该算是正确的做法了。</p>
+<hr>
+<p><a href="https://blogs.msdn.microsoft.com/oldnewthing/20180329-00/?p=98375" target="_blank" rel="noopener">What’s up with compare_exchange_weak anyway?</a></p>
+<p><a href="https://blogs.msdn.microsoft.com/oldnewthing/20180330-00/?p=98395" target="_blank" rel="noopener">How do I choose between the strong and weak versions of compare-exchange?</a></p>
+<p>Why compare-and-exchange instruction may fail, and when should we prefer the weak version over the strong.</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=FtaD0maxwec" target="_blank" rel="noopener">CppCon 2015: Pedro Ramalhete “How to make your data structures wait-free for reads”</a></p>
+<p>大量干货。</p>
+<p>核心大概是阐述 left-right pattern，一种分离读写操作针对优化的同步手法。</p>
+<p>为了引出 left-right，前面讲了大量干货铺垫，例如 lock-free, wait-free, starvation-free, reader-writer lock, copy-and-write .etc</p>
+<p>基本没听懂细节，只能先标记一下…这个 talk 可以和 <em>The Art of Multiprocessor Programming</em> 一起看(不懂)了</p>
+<hr>
+<p><a href="https://software.intel.com/en-us/articles/8-simple-rules-for-designing-threaded-applications/" target="_blank" rel="noopener">8 Simple Rules for Designing Threaded Applications</a></p>
+<p>除了 Rule 2 （<em>Implement concurrency at highest level possible</em>） 需要看一下解释指外，其余7条规则只需要看标题就知道主旨了</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/06/01/monthly-read-posts-in-may-2018/">http://kingsamchen.github.io/2018/06/01/monthly-read-posts-in-may-2018/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/linux/">linux</a>
+            
+              <a href="/tags/concurrency/">concurrency</a>
+            
+              <a href="/tags/lock-free/">lock-free</a>
+            
+              <a href="/tags/面试/">面试</a>
+            
+              <a href="/tags/技术选型/">技术选型</a>
+            
+              <a href="/tags/hash-table/">hash table</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2018/05/30/build-your-own-thread-pool-with-cpp/">
+        <span class="next-text nav-default">Build Your Own Threadpool With C++</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/06/01/monthly-read-posts-in-may-2018/';
+        this.page.identifier = '2018/06/01/monthly-read-posts-in-may-2018/';
+        this.page.title = 'Monthly Read Posts in May 2018';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

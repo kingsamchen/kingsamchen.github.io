@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Build Your Own Threadpool With C++"/>
+
+
+
+
+  <meta name="keywords" content="c++, thread-pool, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2018/05/30/build-your-own-thread-pool-with-cpp/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Build Your Own Threadpool With C++ - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Build Your Own Threadpool With C++
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-05-30
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Why-Threadpool-Matters"><span class="toc-text">Why Threadpool Matters</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#What-Should-a-Threadpool-Provide"><span class="toc-text">What Should a Threadpool Provide</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Specifying-Pool-Size"><span class="toc-text">Specifying Pool Size</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Worker-Thread-Running-Pattern"><span class="toc-text">Worker Thread Running Pattern</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Submitting-Tasks"><span class="toc-text">Submitting Tasks</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Teardown"><span class="toc-text">Teardown</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Usage-At-a-Glance"><span class="toc-text">Usage At a Glance</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="Why-Threadpool-Matters"><a href="#Why-Threadpool-Matters" class="headerlink" title="Why Threadpool Matters"></a>Why Threadpool Matters</h2><p>Why on the earth do we need thread-pool? The answer is obvious: for doing jobs behind the scenes.</p>
+<p>That is, saying, you have a constant stream of incoming tasks to complete, and most of which either incur heavy computation or invovle device I/O, you definitely don’t want to execute them on your main thread, because it will block your main thread until the job is done, making your application less responsive.</p>
+<p>However, with thread-pool, you can simply submit a task to the pool, then continue what was doing; the task will eventually be completed on a thread of the thread-pool.</p>
+<p>If your processor has multiple cores, the task is possibly performed concurrently with your jobs on the main thread.</p>
+<h2 id="What-Should-a-Threadpool-Provide"><a href="#What-Should-a-Threadpool-Provide" class="headerlink" title="What Should a Threadpool Provide"></a>What Should a Threadpool Provide</h2><p>Before we switch our focus to editor, we are better to think twice about what we can do with the thread-pool we will build.<br><a id="more"></a></p>
+<h3 id="Specifying-Pool-Size"><a href="#Specifying-Pool-Size" class="headerlink" title="Specifying Pool Size"></a>Specifying Pool Size</h3><p>The number of running threads in the pool should be customizable to users, and this number usually depends on your available hardware cores and your current threading model.</p>
+<p>So our TinyThreadPool should have a ctor that receives a size parameter.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">explicit</span> <span class="title">TinyThreadPool</span><span class="params">(<span class="keyword">size_t</span> num)</span></span>;</span><br></pre></td></tr></table></figure>
+<h3 id="Worker-Thread-Running-Pattern"><a href="#Worker-Thread-Running-Pattern" class="headerlink" title="Worker Thread Running Pattern"></a>Worker Thread Running Pattern</h3><p>Essentially, the running pattern of worker threads is a simple producer-consumer model:</p>
+<ul>
+<li>the pool maintains a task-queue storing incoming tasks</li>
+<li>users are producers submiting a task to the queue</li>
+<li>worker threads are consumers that extract a task out of the queue and execute it</li>
+</ul>
+<p>and of course, operations on the task-queue are thread-safe.</p>
+<p>Each worker thread runs a loop, and it</p>
+<ol>
+<li>blocks if the task-queue is empty</li>
+<li>wakes up (if had went to sleep) and extracts a task to execute</li>
+</ol>
+<p>For the task-queue, <code>std::deque&lt;&gt;</code> may not be the best, but neither will it be a bad choice; and for simplicity, we just ignore the case in which the task-queue is flooded by pending tasks, and simply leave it unbounded.</p>
+<p>Synchronization operations on the task-queue can be done with <code>std::mutex</code> and <code>std::condition_variable</code>, which happens to be the foundation of classic blocking-queue implementation.</p>
+<h3 id="Submitting-Tasks"><a href="#Submitting-Tasks" class="headerlink" title="Submitting Tasks"></a>Submitting Tasks</h3><p>Our submitting task interface, <code>PostTask()</code>, accepts a callable object and its variadic arguments, and all of these are passed as forwarded via <code>std::forward()</code>.</p>
+<p>Internally, we wrap the callable object in a <code>Task</code> instance, defined as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">using</span> Task = <span class="built_in">std</span>::function&lt;<span class="keyword">void</span>()&gt;;</span><br></pre></td></tr></table></figure>
+<p>and therefore, the task-queue is defined as:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">deque</span>&lt;Task&gt; task_queue_;</span><br></pre></td></tr></table></figure>
+<p>To keep communication with submitted tasks, we use <code>std::future&lt;&gt;</code> as the intermedia, which brings us two more problems:</p>
+<ol>
+<li>we need to figure out the return type of a task, which instantiates a <code>std::future&lt;&gt;</code> instance; and <code>std::result_of</code> is made for this.</li>
+<li>we also need a way to create a future object; to keep implementation simple, we choose <code>std::packaged_task</code></li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="built_in">std</span>::future&lt;<span class="built_in">std</span>::<span class="keyword">result_of_t</span>&lt;F(Args...)&gt;&gt; PostTask(F&amp;&amp; fn, Args&amp;&amp;... args)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> R = <span class="built_in">std</span>::<span class="keyword">result_of_t</span>&lt;F(Args...)&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We have to manage the packaged_task with shared_ptr, because std::function&lt;&gt;</span></span><br><span class="line">    <span class="comment">// requires being copy-constructible and copy-assignable.</span></span><br><span class="line">    <span class="keyword">auto</span> task_fn = <span class="built_in">std</span>::make_shared&lt;<span class="built_in">std</span>::packaged_task&lt;R()&gt;&gt;(</span><br><span class="line">        <span class="built_in">std</span>::bind(<span class="built_in">std</span>::forward&lt;F&gt;(fn), <span class="built_in">std</span>::forward&lt;Args&gt;(args)...));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> future = task_fn-&gt;get_future();</span><br><span class="line"></span><br><span class="line">    Task task([task_fn=std::move(task_fn)] &#123; (*task_fn)(); &#125;);</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lock(pool_mutex_);</span><br><span class="line">        ENSURE(CHECK, running_).Require();</span><br><span class="line">        task_queue_.push_back(<span class="built_in">std</span>::move(task));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    not_empty_.notify_one();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> future;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Note the reason we use <code>shared_ptr</code> here.</p>
+<h3 id="Teardown"><a href="#Teardown" class="headerlink" title="Teardown"></a>Teardown</h3><p>When a thread-pool tears down, it is possible there still are tasks pending in the queue.</p>
+<p>Shall we pause to wait until all pending tasks get completed, or just abandon them.</p>
+<p>One compromise is that we introduce concept of shutdown-behavior, which can either be <code>BlockShutdown</code> or <code>SkipOnShutdown</code>.</p>
+<p>If a task chooses to block during shutdown, then the teardown blocks until all tasks in that behavior complete, and any skip-on-shutdown tasks will be skipped.</p>
+<p>Sure, thread-pool’s dtor will wait for all worker threads to quit</p>
+<h2 id="Usage-At-a-Glance"><a href="#Usage-At-a-Glance" class="headerlink" title="Usage At a Glance"></a>Usage At a Glance</h2><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"tiny_thread_pool.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Inc</span><span class="params">(<span class="keyword">int</span>&amp; i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    ++i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">PrintState</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* msg, <span class="built_in">std</span>::chrono::seconds delay)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::this_thread::sleep_for(delay);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"%s\n"</span>, msg);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>::chrono_literals;</span><br><span class="line"></span><br><span class="line">    <span class="function">TinyThreadPool <span class="title">pool</span><span class="params">(<span class="number">2</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    pool.PostTask(&amp;PrintState, <span class="string">"Prepare work 1"</span>, <span class="number">2</span>s);</span><br><span class="line">    pool.PostTask(&amp;PrintState, <span class="string">"Prepare work 2"</span>, <span class="number">2</span>s);</span><br><span class="line"></span><br><span class="line">    pool.PostTaskWithShutdownBehavior(TaskShutdownBehavior::SkipOnShutdown, &amp;PrintState, <span class="string">"Real work 1"</span>, <span class="number">0</span>s);</span><br><span class="line">    pool.PostTaskWithShutdownBehavior(TaskShutdownBehavior::SkipOnShutdown, &amp;PrintState, <span class="string">"Real work 2"</span>, <span class="number">1</span>s);</span><br><span class="line"></span><br><span class="line">    pool.PostTask(&amp;PrintState, <span class="string">"Real work 3"</span>, <span class="number">2</span>s);</span><br><span class="line">    pool.PostTask(&amp;PrintState, <span class="string">"Real work 4"</span>, <span class="number">0</span>s);</span><br><span class="line"></span><br><span class="line">    pool.PostTaskWithShutdownBehavior(TaskShutdownBehavior::SkipOnShutdown, &amp;PrintState, <span class="string">"Real work 5"</span>, <span class="number">1</span>s);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Full code can be found at <a href="https://github.com/kingsamchen/Eureka/tree/master/TinyThreadPool" target="_blank" rel="noopener">Eureka/TinyThreadPool</a></p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/05/30/build-your-own-thread-pool-with-cpp/">http://kingsamchen.github.io/2018/05/30/build-your-own-thread-pool-with-cpp/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/thread-pool/">thread-pool</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/06/01/monthly-read-posts-in-may-2018/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Monthly Read Posts in May 2018</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/">
+        <span class="next-text nav-default">浅析 RefCounted 和 WeakPtr：Chromium Base 篇</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/05/30/build-your-own-thread-pool-with-cpp/';
+        this.page.identifier = '2018/05/30/build-your-own-thread-pool-with-cpp/';
+        this.page.title = 'Build Your Own Threadpool With C++';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>
