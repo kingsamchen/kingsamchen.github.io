@@ -69,7 +69,7 @@ theme: even
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  repository: git@github.com:kingsamchen/kingsamchen.github.io.git
+  repository: https://github.com/kingsamchen/kingsamchen.github.io.git
   branch: master
 
 disqus_shortname: kingsamchen-github-io
