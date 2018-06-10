@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-06-01T14:43:08.903Z</updated>
+  <updated>2018-06-10T13:56:53.568Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Build Your Own HTTP Proxy Server Using Go</title>
+    <link href="http://kingsamchen.github.io/2018/06/10/build-your-own-http-proxy-using-go/"/>
+    <id>http://kingsamchen.github.io/2018/06/10/build-your-own-http-proxy-using-go/</id>
+    <published>2018-06-10T11:54:44.000Z</published>
+    <updated>2018-06-10T13:56:53.568Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Go is a quite awesome programming language for building network applications. So I built my own HTTP proxy server using go last week.&lt;/p&gt;
+&lt;p&gt;To grasp the essence of how HTTP proxy server works, I choosed to implement it on TCP transport layer, forwarding TCP traffic directly.&lt;/p&gt;
+&lt;p&gt;Essentially, it runs a server, accepting incoming TCP connections and from which the server extracts target host of a request by parsing HTTP protocol messages. The server then establishes a connection to the target host, and finally operates as an intermedia, forwarding traffic from one host to another.&lt;/p&gt;
+&lt;p&gt;Implementing a TCP server which is able to handle concurrent requests uing go is easier than you thought: just runs a loop to accept requests, launching a new goroutine for each new connection:&lt;/p&gt;
+&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;type&lt;/span&gt; Server &lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	addr     &lt;span class=&quot;keyword&quot;&gt;string&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	listener net.Listener&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(srv *Server)&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Start&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; err error&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	srv.listener, err = net.Listen(&lt;span class=&quot;string&quot;&gt;&quot;tcp&quot;&lt;/span&gt;, srv.addr)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; err != &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		log.Fatalf(&lt;span class=&quot;string&quot;&gt;&quot;Failed to listen at %s : %v&quot;&lt;/span&gt;, srv.addr, err)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	log.Printf(&lt;span class=&quot;string&quot;&gt;&quot;Proxy is listening at %s&quot;&lt;/span&gt;, srv.addr)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	srv.runLoop()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(srv *Server)&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;runLoop&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		conn, err := srv.listener.Accept()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		&lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; err != &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;			log.Printf(&lt;span class=&quot;string&quot;&gt;&quot;Failed to accept an incoming connection : %v&quot;&lt;/span&gt;, err)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;			&lt;span class=&quot;keyword&quot;&gt;continue&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		&lt;span class=&quot;keyword&quot;&gt;go&lt;/span&gt; srv.handleConnection(conn)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(srv *Server)&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;handleConnection&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(conn net.Conn)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	c := newConnection(conn)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	c.serve()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
+    
+      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in May 2018</title>
@@ -409,9 +437,9 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
       <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
+    
+      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
       <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
     
@@ -675,36 +703,6 @@
       <category term="network programming" scheme="http://kingsamchen.github.io/tags/network-programming/"/>
     
       <category term="socket" scheme="http://kingsamchen.github.io/tags/socket/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>在 Windows 上获取崩溃的模块名和模块内地址偏移</title>
-    <link href="http://kingsamchen.github.io/2018/02/10/acquire-crashed-module-name-and-address-offset/"/>
-    <id>http://kingsamchen.github.io/2018/02/10/acquire-crashed-module-name-and-address-offset/</id>
-    <published>2018-02-10T08:35:01.000Z</published>
-    <updated>2018-02-10T09:23:13.160Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;如果应用程序存在多个模块，那么有很大的可能通过 &lt;code&gt;SetUnhandledException()&lt;/code&gt; 安装的崩溃处理函数和发生崩溃的地址不在一个模块内，因此直接在 crash handler
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="Windows" scheme="http://kingsamchen.github.io/tags/Windows/"/>
-    
-      <category term="crash" scheme="http://kingsamchen.github.io/tags/crash/"/>
-    
-      <category term="breakpad" scheme="http://kingsamchen.github.io/tags/breakpad/"/>
     
   </entry>
   
