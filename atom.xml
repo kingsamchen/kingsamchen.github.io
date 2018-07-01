@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-07-01T14:53:15.654Z</updated>
+  <updated>2018-07-01T14:58:30.894Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -21,7 +21,7 @@
     <link href="http://kingsamchen.github.io/2018/07/01/monthly-read-posts-in-jun-2018/"/>
     <id>http://kingsamchen.github.io/2018/07/01/monthly-read-posts-in-jun-2018/</id>
     <published>2018-07-01T14:45:10.000Z</published>
-    <updated>2018-07-01T14:53:15.654Z</updated>
+    <updated>2018-07-01T14:58:30.894Z</updated>
     
     <summary type="html">
     
@@ -41,12 +41,34 @@
 &lt;p&gt;这个在之前的某个 cppcon talk 里有专门的介绍。&lt;/p&gt;
 &lt;p&gt;另外，文中更进一步，抽出专门的 constexpr validation functions，并通过 comma operator 串联。&lt;/p&gt;
 &lt;p&gt;C++ 14 支持多句之后，连 comma operatos 都可以免掉了。&lt;/p&gt;
-&lt;h2 id=&quot;&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;headerlink&quot; title=&quot;&quot;&gt;&lt;/a&gt;
+&lt;hr&gt;
     
     </summary>
     
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
+    
+      <category term="assert" scheme="http://kingsamchen.github.io/tags/assert/"/>
+    
+      <category term="RVO" scheme="http://kingsamchen.github.io/tags/RVO/"/>
+    
+      <category term="functional" scheme="http://kingsamchen.github.io/tags/functional/"/>
+    
+      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
+    
+      <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
+    
+      <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
+    
+      <category term="poll" scheme="http://kingsamchen.github.io/tags/poll/"/>
     
   </entry>
   

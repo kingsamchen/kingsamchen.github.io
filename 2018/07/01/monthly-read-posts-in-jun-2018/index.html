@@ -22,6 +22,8 @@
 
 
 
+  <meta name="keywords" content="c++, golang, epoll, compile-time, assert, RVO, functional, goroutine, threading model, select, poll, KC的废墟堆" />
+
 
 
 
@@ -217,7 +219,7 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-Language"><span class="toc-text">Programming Language</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#"><span class="toc-text"></span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrency"><span class="toc-text">Concurrency</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-Language"><span class="toc-text">Programming Language</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrency"><span class="toc-text">Concurrency</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
     </div>
   </div>
 
@@ -240,7 +242,9 @@
 <p>这个在之前的某个 cppcon talk 里有专门的介绍。</p>
 <p>另外，文中更进一步，抽出专门的 constexpr validation functions，并通过 comma operator 串联。</p>
 <p>C++ 14 支持多句之后，连 comma operatos 都可以免掉了。</p>
-<h2 id=""><a href="#" class="headerlink" title=""></a><a id="more"></a></h2><p><a href="http://ithare.com/c-on-using-int_t-as-overload-and-template-parameters/" target="_blank" rel="noopener">C++: On Using int*_t as Overload and Template Parameters</a></p>
+<hr>
+<a id="more"></a>
+<p><a href="http://ithare.com/c-on-using-int_t-as-overload-and-template-parameters/" target="_blank" rel="noopener">C++: On Using int*_t as Overload and Template Parameters</a></p>
 <p>Method 1: Choose use of fundamental types or <code>int_*</code> types, and then use it consistently, at least in your sub-project wide.</p>
 <p>Method 2: Build a mapping between fundamental types and <code>int_*</code> types.</p>
 <p>We can change name of a type as long as we preserve its behavior.</p>
@@ -343,6 +347,32 @@
 
     
       <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/epoll/">epoll</a>
+            
+              <a href="/tags/compile-time/">compile-time</a>
+            
+              <a href="/tags/assert/">assert</a>
+            
+              <a href="/tags/RVO/">RVO</a>
+            
+              <a href="/tags/functional/">functional</a>
+            
+              <a href="/tags/goroutine/">goroutine</a>
+            
+              <a href="/tags/threading-model/">threading model</a>
+            
+              <a href="/tags/select/">select</a>
+            
+              <a href="/tags/poll/">poll</a>
+            
+          </div>
         
         
         
