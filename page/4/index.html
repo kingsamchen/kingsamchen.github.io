@@ -195,6 +195,167 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/02/14/using-winsock-extension-api-the-right-way/">使用 Winsock Extension API 的正确姿势</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-02-14
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>所谓的 Winsock Extension API 指的是微软专门额外添加，由应用层 mswsock.dll 导出的函数集，包括 <code>AcceptEx()</code>, <code>DisconnectEx()</code> .etc</p>
+<p>使用这部分 API 的原因是它们通常支持更新更牛X的特性，且几乎大多数都是异步函数。</p>
+<p>但是因为这部分是应用层函数，直接链接 mswsock.dll 会导致每个函数调用内部都会进行一次由系统完成的动态的函数地址确定，相当于 <code>GetProcAddr()</code>，由此引发性能问题。</p>
+<p>由此衍生出，首先使用 <code>WSAIoctl()</code> 获取这部分 extension API 的函数地址，然后利用函数地址调用的做法。</p>
+<p>注：性能开销这部分可参考 <a href="https://stackoverflow.com/questions/4470645/acceptex-without-wsaioctl" target="_blank" rel="noopener">这里</a>。回答引用的 MSDN Magazine 上的文章已经不可访问了，算是一个遗憾。</p>
+<p>然而关于这块包括 MSDN 上都是一些不详尽的片段，或者根本没提到。</p>
+<p>例如我在学习这部分东西时，一个最大的问题就是 <code>WSAIoctl()</code> 函数无论如何需要一个 socket handle，然而这个需要和我们的目的其实没有关系。</p>
+<p>围绕这个 socket handle 就可以催生出各种问题，但是 MSDN 上甚至没有对这个做哪怕一些解释…</p>
+<p>通过翻查汇总各种相关的代码片段，以及结合 MSDN 上描述的内容，个人总结出了一个推荐的做法：</p>
+<ol>
+<li>使用一个全局的管理者来保存你需要的扩展函数指针。这里全局的管理者可以是一个 singleton，或者用 namespace 包裹的一些全局对象</li>
+<li>在初始化时机创建一个 TCP socket，利用这个 socket 去调用 <code>WSAIoctl()</code>，拿到扩展函数地址</li>
+<li>经过上一部之后，外界使用者就可以和使用普通的 API 一样使用这几个扩展函数</li>
+</ol>
+<p>至于是不是要回收刚才创建的 socket，这个看自己喜好…</p>
+<p>参考部分代码：</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> {
+
+ScopedSocketHandle sock;
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> P&gt;
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">GetExtensionFunctionPointer</span><span class="hljs-params">(P&amp; pfn, GUID guid)</span>
+</span>{
+    DWORD recv_bytes = <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> rv = WSAIoctl(sock.get(), SIO_GET_EXTENSION_FUNCTION_POINTER, &amp;guid, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">sizeof</span>(guid), &amp;pfn,
+                       <span class="hljs-keyword" style="color: rgb(252, 194, 140);">sizeof</span>(pfn), &amp;recv_bytes, <span class="hljs-literal" style="color: rgb(252, 194, 140);">nullptr</span>, <span class="hljs-literal" style="color: rgb(252, 194, 140);">nullptr</span>);
+    ENSURE(CHECK, rv == <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>)(rv)(WSAGetLastError()).Require();
+}
+
+}   <span class="hljs-comment" style="color: rgb(136, 136, 136);">// namespace</span>
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> winsock_ctx {
+
+LPFN_ACCEPTEX AcceptEx = <span class="hljs-literal" style="color: rgb(252, 194, 140);">nullptr</span>;
+LPFN_DISCONNECTEX DisconnectEx = <span class="hljs-literal" style="color: rgb(252, 194, 140);">nullptr</span>;
+
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Init</span><span class="hljs-params">()</span>
+</span>{
+    WSADATA data {<span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>};
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> result_code = WSAStartup(MAKEWORD(<span class="hljs-number" style="color: rgb(211, 99, 99);">2</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">2</span>), &amp;data);
+    ENSURE(THROW, result_code == <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>)(result_code).Require();
+
+    sock.reset(socket(AF_INET, SOCK_STREAM, <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>));
+    ENSURE(CHECK, !!sock)(WSAGetLastError()).Require();
+
+    GetExtensionFunctionPointer(AcceptEx, WSAID_ACCEPTEX);
+    GetExtensionFunctionPointer(DisconnectEx, WSAID_DISCONNECTEX);
+
+    sock.reset();
+
+    <span class="hljs-built_in" style="color: rgb(255, 255, 170);">printf</span>(<span class="hljs-string" style="color: rgb(162, 252, 162);">"-*- Windows Socket Library Initialized -*-\n"</span>);
+}
+
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Cleanup</span><span class="hljs-params">()</span>
+</span>{
+    WSACleanup();
+
+    <span class="hljs-built_in" style="color: rgb(255, 255, 170);">printf</span>(<span class="hljs-string" style="color: rgb(162, 252, 162);">"-*- Windows Socket Library Cleaned -*-\n"</span>);
+}
+
+}   <span class="hljs-comment" style="color: rgb(136, 136, 136);">// namespace winsock_ctx</span>
+</pre>
+
+<p>完整的 sample 可以看<a href="https://github.com/kingsamchen/Eureka/blob/master/ConcurrentHttpServer/ConcurrentHttpServerWin/src/winsock_ctx.h" target="_blank" rel="noopener">这里</a></p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/02/10/acquire-crashed-module-name-and-address-offset/">在 Windows 上获取崩溃的模块名和模块内地址偏移</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-02-10
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>如果应用程序存在多个模块，那么有很大的可能通过 <code>SetUnhandledException()</code> 安装的崩溃处理函数和发生崩溃的地址不在一个模块内，因此直接在 crash handler 里使用当前模块地址是错误的做法。</p>
+<p>一个可行的方法是，利用崩溃时的上下文信息 <code>EXCEPTION_POINTERS</code>，拿到触发崩溃的地址 EIP/RIP，然后利用 Windows 7 新增的 <code>GetMappedFileNameW()</code> 拿到某个地址所在的模块的完整设备路径。</p>
+<p>接下来通过简单的字符串处理就可以获得模块名。</p>
+<p>剩下的就是模块内地址偏移。</p>
+<p>因为 Windows 程序的 DLL 在加载时很有可能因为 <em>preferred base address</em> 被占用了导致 DLL 的符号地址需要先经过一次 rebase；再考虑 ASLR 的影响，崩溃时的 EIP/RIP 基本上是不能拿来作为崩溃标识的，因为同一处崩溃的地址可能每次运行都会变。</p>
+<p>解决方案是通过 <code>GetModuleHandleW()</code> 拿到模块实际的加载地址，然后再和前面的崩溃地址做一次 distance 运算就可以拿到了模块内地址偏移。</p>
+<p>这样，name+offset 基本上可以作为 key 用来做崩溃信息的聚合。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/02/02/monthly-read-posts-in-jan-2018/">Monthly Read Posts in Jan 2018</a>
         
       </h1>
@@ -608,124 +769,6 @@ TEST(EnumOps, NonEnumType)
     <span class="hljs-comment" style="color: rgb(136, 136, 136);">//std::string s2 = "world";</span>
     <span class="hljs-comment" style="color: rgb(136, 136, 136);">//s1 | s2;</span>
 }</pre>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/12/02/monthly-read-posts-in-nov-2017/">Monthly Read Posts in Nov 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-12-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/" target="_blank" rel="noopener">The Absolute Minimum Every Software Developer Absolutely, Positively Must Know About Unicode and Character Sets (No Excuses!)</a><br><a href="https://channel9.msdn.com/Events/CPP/C-PP-Con-2014/Unicode-in-CPP" target="_blank" rel="noopener">CppCon 2014: Unicode in CPP</a></p>
-<p>编码这块的内容基本这两个 post 就足够了</p>
-<hr>
-<p><a href="https://blog.eleven-labs.com/en/understanding-ssltls-part-1/" target="_blank" rel="noopener">UNDERSTANDING SSL/TLS: PART 1 - WHAT IS IT?</a></p>
-<p>预警：作者只写了 part 1 之后就太监了…</p>
-<hr>
-<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD01V001" target="_blank" rel="noopener">CppCon 2015: Implementation of a component-based entity system in modern C++</a></p>
-<p>不明觉厉的东西，没看太明白，似乎游戏开发用的多？</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=WXeu4fj3zOs" target="_blank" rel="noopener">CppCon 2015: Lambdas from First Principles</a></p>
-<p>几乎是最好的 lambda 深入浅出型 talk</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=uhRWMGBjlO8" target="_blank" rel="noopener">CppCon 2015: Racing the Filesystem</a></p>
-<p>各家系统文件系统操作的各种坑，顺带推销做着自己的 Boost.AFIO 库</p>
-<p>然而我想了一下，好似平时都没怎么考虑过这些 racing conditions…</p>
-<hr>
-<p>CppCon 2015: Effective C++ Implementation of Class Properties</p>
-<p>最后给的实现方式很巧妙。但是实话说，工程上使用这些东西是个风险，如果语言自身不提供相应语法糖，我宁愿自己手写 getter/setter</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/11/29/capture-network-packets-over-localhost-with-wireshark/">用 Wirshark 捕捉分析经过 localhost 的网络包</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-11-29
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>最近写 WinAntHttp 的时候需要用 Wireshark 捕捉并分析发往 mock server 的 http 请求。</p>
-<p>然而因为 mock server 是直接跑在本机 localhost 上的，而在 Windows 上，发往 localhost 的网络包都不会经过网卡，所以 wireshark 基本无法捕捉。</p>
-<p>研究了一会儿之后发现两个解决方案：</p>
-<p>第一个是安装 <a href="https://github.com/nmap/npcap/releases" target="_blank" rel="noopener">npcap</a>，这个是 wincap 的一个 alternative，但是支持本地请求。</p>
-<p>不过因为这个需要替换掉原来的 wincap，所以我并没有采用。</p>
-<p>第二个是使用 <a href="http://www.netresec.com/?page=RawCap" target="_blank" rel="noopener">RawCap</a>，这货能抓到本地网络包，并且输出的格式是 wireshark-compatible</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># administrator privilege is required!</span><br><span class="line">RawCap.exe 127.0.0.1 network_cap.pcap</span><br></pre></td></tr></table></figure>
-<p>考虑到使用频率和侵入性等因素，最终选择使用 RawCap</p>
-<p>抓到包之后 wireshark 不能马上直接看到 http 请求，因为普通的 http 请求是和 server 的 80 端口通信，mock server 的 Flask 默认使用 5000 作为通信端口。</p>
-<p>通过菜单 <code>Analyze - Decode As</code>，将 TCP 5000 端口按照 HTTP 协议解析，这样 wireshark 就可以正常的从 tcp packets 中拆出正确的 http message 了。</p>
 
         
       

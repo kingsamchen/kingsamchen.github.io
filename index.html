@@ -195,6 +195,130 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/07/01/monthly-read-posts-in-jun-2018/">Monthly Read Posts in Jun 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Programming-Language"><a href="#Programming-Language" class="headerlink" title="Programming Language"></a>Programming Language</h2><p><a href="https://www.youtube.com/watch?v=iLiDezv_Frk" target="_blank" rel="noopener">CppCon 2015: Richard Powell “Intro to the C++ Object Model”
+</a></p>
+<p>基本覆盖了 POD，无需函数类，单继承的情况，扫盲效果俱佳。</p>
+<p>至于为什么没有包含 multiple inheritance / virtual inheritance，作者说自己不是很 condifent with that。</p>
+<p>讲道理，MI / VI 在一般的设计里都会尽量避免，而且各种乱七八糟的 case 很多，这里不涉及反而是个正确的做法。</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/04/06/assertions/" target="_blank" rel="noopener">Assertions</a></p>
+<p>首先，我很赞同文中作者对于 assertion 是 <em>guarantees given by the author of a piece of code to himself/herself</em> 但是接下来的大部观点都不赞同。</p>
+<p>比如作者认为不应该 assert on precodintions &amp; postconditions，因为 assertion 是 for implementation details，这个思路其实不对。</p>
+<p>关于 assertion，目前看过最好的阐述还是 <a href="https://book.douban.com/subject/3406939/" target="_blank" rel="noopener">Writing Solid Code</a>，推荐去阅读这个。</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/05/06/compile-time-computations/" target="_blank" rel="noopener">Compile-time computations</a></p>
+<p>这篇 post 展示了 constexpr functions 错误报告的常见手段：抛异常。</p>
+<p>这个在之前的某个 cppcon talk 里有专门的介绍。</p>
+<p>另外，文中更进一步，抽出专门的 constexpr validation functions，并通过 comma operator 串联。</p>
+<p>C++ 14 支持多句之后，连 comma operatos 都可以免掉了。</p>
+<h2 id=""><a href="#" class="headerlink" title=""></a>
+          <div class="read-more">
+            <a href="/2018/07/01/monthly-read-posts-in-jun-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/06/19/modern-cmake/">Modern CMake</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-06-19
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>但凡有点历史的东西，在演进到一个新的阶段时，总会总结一套新的 practices 然后冠之以 modern，例如 modern C++，还有今天的主题 —— modern CMake。</p>
+<p>上周花了一点时间稍微研究了一下所谓的 modern cmake，然后将 KBase 在 POSIX 上的 cmake 文件都按照 modern cmake 的做法做了修改，结果可见<a href="https://github.com/kingsamchen/KBase/commit/da601fe5afaa54b151e64b3ae86faf515b1cae87" target="_blank" rel="noopener">此</a></p>
+<p>Modern cmake 有什么好处就不说了，有很多文献可以查，而且我觉得按照目前官方文档的尿性，modern cmake无非是换一种方式踩坑，虽然坑的数量少了不少。</p>
+<p>只说几个最核心的点。</p>
+<p>首先 modern cmake 推荐按照 module 的方式拆分一个大工程，一个 module 对应一个 CMakeLists.txt，可以是一个 lib，也可以是一个 executable。</p>
+<p>每个 module 抽象成一个 target，然后使用新的 <code>target_*</code> 属性去定义这个 target。并且每个 target 之间的属性是可以互相独立的。</p>
+<p>工程最顶端是一个 CMakeLists.txt，定义一些全局的属性，然后通过 <code>add_subdirectory()</code> 来关联所有的 module。</p>
+<p>几个自己研究过程中看过的一些资料：</p>
+<p><a href="https://gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1" target="_blank" rel="noopener">Effective Modern CMake</a></p>
+<p><a href="https://github.com/CppCon/CppCon2017/blob/master/Tutorials/Using%20Modern%20CMake%20Patterns%20to%20Enforce%20a%20Good%20Modular%20Design/Using%20Modern%20CMake%20Patterns%20to%20Enforce%20a%20Good%20Modular%20Design%20-%20Mathieu%20Ropert%20-%20CppCon%202017.pdf" target="_blank" rel="noopener">Using Modern CMake Patterns to Enforce a Good Modular Design - Mathieu Ropert - CppCon 2017</a></p>
+<p><a href="https://www.slideshare.net/DanielPfeifer1/cmake-48475415" target="_blank" rel="noopener">CMake - Introduction and best practices</a></p>
+<p><a href="https://www.slideshare.net/DanielPfeifer1/effective-cmake" target="_blank" rel="noopener">Effective CMake</a></p>
+<p>最后，虽然 CMake 看起来已经要成为 C++ 的 de facto build system，但是靠谱的资料却没多少，也缺少像 C++ Core Guideline 这种有影响力的半官方指南。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/06/10/build-your-own-http-proxy-using-go/">Build Your Own HTTP Proxy Server Using Go</a>
         
       </h1>
@@ -476,186 +600,6 @@
           <div class="read-more">
             <a href="/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/" class="read-more-link">阅读更多</a>
           </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/05/01/monthly-read-posts-in-apr-2018/">Monthly Read Post in Apr 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-05-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://www.digitalocean.com/community/tutorials/what-is-load-balancing" target="_blank" rel="noopener">What is Load Balancing?</a></p>
-<p>Digital Ocean 出品的良心文章，覆盖了：</p>
-<ul>
-<li>what is load balancing</li>
-<li>Why load balancing</li>
-<li>Traffic forwarding</li>
-<li>How does load balancer choose backend servers</li>
-<li>Avoid SPOF of load balancer itself</li>
-</ul>
-<hr>
-<p><a href="https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236" target="_blank" rel="noopener">Introduction to modern network load balancing and proxying</a></p>
-<p>非常详尽的一篇介绍 load balancing 的文章，前一篇的所有内容这篇都有，同时还做了一些深入的分析。</p>
-<p>例如：L4/L7 的区别；基于 lb 的 service discovery .etc</p>
-<p>尤其后面一大块讲网络拓扑的部分，没有实际经验的人表示看起来很痛苦。</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=Hjz1eBx91g8" target="_blank" rel="noopener">CppCon 2015: Gabriel Dos Reis “Contracts for Dependable C++”</a></p>
-<p>核心围绕着 interfaces as contract 来展开，针对三点：</p>
-<ul>
-<li>precondition</li>
-<li>invariants</li>
-<li>postcondition</li>
-</ul>
-<p>展开。</p>
-<p>同时提到了一些（想法）构建 programming by contract 的基础设施，例如通过 attribute 来增强语义 blahblah</p>
-<p>另，talk 有点无聊，看看 slider 就差不多了。</p>
-<hr>
-<p><a href="http://insanecoding.blogspot.co.uk/2014/05/dealing-with-randomness.html" target="_blank" rel="noopener">Dealing with randomness</a></p>
-<p>文章前半部份批判了很多不专业的现象，openssl 再次躺枪。</p>
-<p>后面提到了如果要做 cryptographic safe randomness，需要哪些东西。</p>
-<p>最后批判了一下随机数去取模这种做法。</p>
-<p>但是全文看半天也没有一个操作性很强的指导意见….</p>
-<hr>
-<p><a href="http://insanecoding.blogspot.co.uk/2014/05/a-good-idea-with-bad-usage-devurandom.html" target="_blank" rel="noopener">A good idea with bad usage: /dev/urandom</a></p>
-<p>包含 dev/random 和 /dev/urandom 的区别，以及：</p>
-<p>要从 /dev/urandom 中读取数据作为密码学安全的初始化种子应该如何正确的实现。</p>
-<hr>
-<p><a href="https://zhuanlan.zhihu.com/p/24146167" target="_blank" rel="noopener">浅论Lock 与X86 Cache 一致性</a></p>
-<p>Modern CAS implementation under the hood.</p>
-<p>稍稍覆盖了一下 MESI/MESIF 协议。</p>
-<p>但是总体来说感觉质量一般</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=WjTrfoiB0MQ" target="_blank" rel="noopener">CppCon 2015: Andrei Alexandrescu “Declarative Control Flow”</a></p>
-<p>这个 Talk 质量很高，核心就是：如何利用基础的 ScopeGuard 构建出 <code>ON_SCOPE_EXIT</code>，<code>ON_SCOPE_FAIL</code> 和 <code>ON_SCOPE_SUCCESS</code> 语义，并自动执行相应代码。</p>
-<p>RAII 这个特质在某个抽象角度上就是标题所说的 it is declarative</p>
-<p>这几个东西基本已经作为了 facebook 基础库 Folly 的一部分。</p>
-<p>最后提一下，使用 exception 作为 error reporting &amp; handling 机制还是很苦难的，需要依赖很多语言设施（RAII在这里得天独厚），根据语言提供的特性不同会有不同的坑，同时对使用者要求很高。</p>
-<p>目前看起来未来新语言使用异常作为核心错误处理机制的应该会越来越少。</p>
-<hr>
-<p><a href="http://insanecoding.blogspot.co.uk/2014/06/memory-management-in-c-and-auto.html" target="_blank" rel="noopener">Memory management in C and auto allocating sprintf() - asprintf()</a></p>
-<p>文章分两部分：</p>
-<p>第一部分叙述如何“正确”使用 <code>malloc</code> 和 <code>free</code>，核心包含</p>
-<ul>
-<li>需要处理 <code>malloc</code> 失败返回 NULL 的情况</li>
-<li>使用 <code>free</code> 释放内存之后应该把对应的 ptr 置 NULL，同时建议通过提供一个类似 <code>insane_free</code> 的宏来保证</li>
-</ul>
-<p>实话说这部分观点差不多仅适合使用 C 的情况，并且需要自己处理内存分配失败在大多数应用系统上显得过于 overkiil。</p>
-<p>C++ 在这点做的就比较好，直接抛出一个 <code>bad_alloc</code> 异常免得你有什么想法，不过我还是见过很多 catch bad_alloc 的代码。。。；chromium 的做法就比较激进了，在 Windows 上直接设置堆管理器，一旦内存分配失败就立马结束进程。</p>
-<p>第二部分是阐述，如何实现一个跨平台的 <code>asnprintf()</code>，格式化字符串时不需要外部手动设置 buffer 大小。</p>
-<p>这部分会涉及不少不同平台的 runtime 实现的差异性。</p>
-<hr>
-<p><a href="http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/" target="_blank" rel="noopener">Programmer’s Toolbox Part 3: Consistent Hashing</a></p>
-<p><a href="http://www.tom-e-white.com/2007/11/consistent-hashing.html" target="_blank" rel="noopener">Consistent Hashing</a></p>
-<p>两篇非常棒的讲解 consistent hashing 的文章，第一篇侧重概念和意义，第二篇侧重实践，并且还包含了一个简单的实现。</p>
-<hr>
-<p><a href="https://medium.com/vimeo-engineering-blog/improving-load-balancing-with-a-new-consistent-hashing-algorithm-9f1bd75709ed" target="_blank" rel="noopener">Improving load balancing with a new consistent-hashing algorithm</a></p>
-<p>一种结合 consistent hashing 和 least-connection 的负载均衡算法。</p>
-<hr>
-<p>How to read in a file in C++ <a href="http://insanecoding.blogspot.co.uk/2011/11/how-to-read-in-file-in-c.html" target="_blank" rel="noopener">1</a> &amp; <a href="http://insanecoding.blogspot.co.uk/2011/11/reading-in-entire-file-at-once-in-c.html" target="_blank" rel="noopener">2</a></p>
-<p>作者比较了几种从文件读取内容的方式（C file IO, C++ fstream, iterator .etc)以及对应的性能指标。</p>
-<p>针对同一个编译器的结果排名可以参考；跨跨编译器甚至随着编译器的优化可能结果会有不同，如果需要压榨性能最好还是做一个具体的 benchmark</p>
-<hr>
-<p><a href="https://bitmazing.com/bcblog/index.php?post/2018/04/13/Message-Only-Windows" target="_blank" rel="noopener">Message Only Windows</a></p>
-<p>message-only window 可以用来接受各种 windows 事件消息，作为 UI 消息泵使用。</p>
-<p>局限性：</p>
-<ul>
-<li>Not visible</li>
-<li>No z-order</li>
-<li>Cannot be enumerated</li>
-<li>Does not receive broadcast messages</li>
-</ul>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=sAJGoHN6Xx8" target="_blank" rel="noopener">CppCon 2015: Detlef Vollmann “Executors for C++ - A Long Story …”</a></p>
-<p>Executor proposal for C++.</p>
-<p>实话说这个 Talk 我感觉效果不好。主题不明确，听起来有点云里雾里莫名其妙；演讲者口音也是捉急…</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/04/23/std-funcion-must-be-copyable/">std::function Must be Copyable</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-04-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>前几天在写一个 <a href="https://github.com/kingsamchen/Eureka/tree/master/TinyThreadPool" target="_blank" rel="noopener">ThreadPool 的轮子</a>的时候，碰到一个问题：无论我用什么办法，都不能将 <code>std::packaged_task</code> 传递到 <code>std::function</code> 中，编译器始终提示访问了 <code>std::packaged_task</code> 被删除的拷贝构造函数。</p>
-<p>在这个点卡了许久，未果，翻了一下 cpp reference，突然发现一个细节：<code>std::function</code> 必须是支持复制的，顿时茅塞顿开。</p>
-<p><code>std::function</code> 包裹的函数对象必须足够轻量，使得 pass-by-value 的 context 下不会出现明显的大量开销，因此这个类型要求指语义是符合逻辑的。</p>
-<p>而 <code>std::packaged_task</code> 不是值语义，仅支持移动语义，因此无法作为 <code>std::function</code> 的一部分。</p>
-<p>最后的解决方案是引入一个 <code>std::shared_ptr</code> 作为中间层，通过 lambda 保存这个 <code>std::shared_ptr</code>。</p>
-<p>附注：本来打算开一个 post 来简单讲解一下如何从头实现一个简单可用的 thread-pool，但是因为懒癌发作，代码写完了也就不想动手写文字了。后面看看是不是有机会可以补上。</p>
-
         
       
     </div>

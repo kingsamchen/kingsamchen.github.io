@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-06-10T13:56:53.568Z</updated>
+  <updated>2018-07-01T14:53:15.654Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,69 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in Jun 2018</title>
+    <link href="http://kingsamchen.github.io/2018/07/01/monthly-read-posts-in-jun-2018/"/>
+    <id>http://kingsamchen.github.io/2018/07/01/monthly-read-posts-in-jun-2018/</id>
+    <published>2018-07-01T14:45:10.000Z</published>
+    <updated>2018-07-01T14:53:15.654Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Programming-Language&quot;&gt;&lt;a href=&quot;#Programming-Language&quot; class=&quot;headerlink&quot; title=&quot;Programming Language&quot;&gt;&lt;/a&gt;Programming Language&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=iLiDezv_Frk&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CppCon 2015: Richard Powell “Intro to the C++ Object Model”
+&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;基本覆盖了 POD，无需函数类，单继承的情况，扫盲效果俱佳。&lt;/p&gt;
+&lt;p&gt;至于为什么没有包含 multiple inheritance / virtual inheritance，作者说自己不是很 condifent with that。&lt;/p&gt;
+&lt;p&gt;讲道理，MI / VI 在一般的设计里都会尽量避免，而且各种乱七八糟的 case 很多，这里不涉及反而是个正确的做法。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://akrzemi1.wordpress.com/2011/04/06/assertions/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Assertions&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;首先，我很赞同文中作者对于 assertion 是 &lt;em&gt;guarantees given by the author of a piece of code to himself/herself&lt;/em&gt; 但是接下来的大部观点都不赞同。&lt;/p&gt;
+&lt;p&gt;比如作者认为不应该 assert on precodintions &amp;amp; postconditions，因为 assertion 是 for implementation details，这个思路其实不对。&lt;/p&gt;
+&lt;p&gt;关于 assertion，目前看过最好的阐述还是 &lt;a href=&quot;https://book.douban.com/subject/3406939/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Writing Solid Code&lt;/a&gt;，推荐去阅读这个。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://akrzemi1.wordpress.com/2011/05/06/compile-time-computations/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Compile-time computations&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这篇 post 展示了 constexpr functions 错误报告的常见手段：抛异常。&lt;/p&gt;
+&lt;p&gt;这个在之前的某个 cppcon talk 里有专门的介绍。&lt;/p&gt;
+&lt;p&gt;另外，文中更进一步，抽出专门的 constexpr validation functions，并通过 comma operator 串联。&lt;/p&gt;
+&lt;p&gt;C++ 14 支持多句之后，连 comma operatos 都可以免掉了。&lt;/p&gt;
+&lt;h2 id=&quot;&quot;&gt;&lt;a href=&quot;#&quot; class=&quot;headerlink&quot; title=&quot;&quot;&gt;&lt;/a&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+  </entry>
+  
+  <entry>
+    <title>Modern CMake</title>
+    <link href="http://kingsamchen.github.io/2018/06/19/modern-cmake/"/>
+    <id>http://kingsamchen.github.io/2018/06/19/modern-cmake/</id>
+    <published>2018-06-19T07:22:07.000Z</published>
+    <updated>2018-07-01T14:38:13.754Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;但凡有点历史的东西，在演进到一个新的阶段时，总会总结一套新的 practices 然后冠之以 modern，例如 modern C++，还有今天的主题 —— modern CMake。&lt;/p&gt;
+&lt;p&gt;上周花了一点时间稍微研究了一下所谓的 modern cmake，然后将
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+  </entry>
   
   <entry>
     <title>Build Your Own HTTP Proxy Server Using Go</title>
@@ -36,9 +99,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
-    
       <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
+    
+      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
@@ -643,66 +706,6 @@
       <category term="gibberish" scheme="http://kingsamchen.github.io/tags/gibberish/"/>
     
       <category term="dark-age" scheme="http://kingsamchen.github.io/tags/dark-age/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>2017 小结</title>
-    <link href="http://kingsamchen.github.io/2018/02/18/retrospection-of-the-2017/"/>
-    <id>http://kingsamchen.github.io/2018/02/18/retrospection-of-the-2017/</id>
-    <published>2018-02-18T15:48:02.000Z</published>
-    <updated>2018-03-01T14:00:55.333Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;上一次写年终总结大概在三四年前，因为老博客数据没有备份的缘故，具体是什么时候也记不清了。&lt;/p&gt;
-&lt;p&gt;BTW，其实我也不是很记得一开始为什么要在春节期间而不是元旦时写上一年的总结。可能和往常元旦时还未放假有关。&lt;/p&gt;
-&lt;p&gt;17年总体上还算符合个人发展的预期：&lt;/p&gt;
-
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="gibberish" scheme="http://kingsamchen.github.io/tags/gibberish/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>使用 Winsock Extension API 的正确姿势</title>
-    <link href="http://kingsamchen.github.io/2018/02/14/using-winsock-extension-api-the-right-way/"/>
-    <id>http://kingsamchen.github.io/2018/02/14/using-winsock-extension-api-the-right-way/</id>
-    <published>2018-02-14T09:21:40.000Z</published>
-    <updated>2018-03-01T14:00:55.334Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;所谓的 Winsock Extension API 指的是微软专门额外添加，由应用层 mswsock.dll 导出的函数集，包括 &lt;code&gt;AcceptEx()&lt;/code&gt;, &lt;code&gt;DisconnectEx()&lt;/code&gt; .etc&lt;/p&gt;
-&lt;p&gt;使用这部分
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="winsock" scheme="http://kingsamchen.github.io/tags/winsock/"/>
-    
-      <category term="network programming" scheme="http://kingsamchen.github.io/tags/network-programming/"/>
-    
-      <category term="socket" scheme="http://kingsamchen.github.io/tags/socket/"/>
     
   </entry>
   
