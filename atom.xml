@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-07-01T14:58:30.894Z</updated>
+  <updated>2018-07-07T09:57:23.047Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>在 Windows 上运行 Linux GUI 程序</title>
+    <link href="http://kingsamchen.github.io/2018/07/06/running-linux-gui-applications-on-windows/"/>
+    <id>http://kingsamchen.github.io/2018/07/06/running-linux-gui-applications-on-windows/</id>
+    <published>2018-07-06T14:43:29.000Z</published>
+    <updated>2018-07-07T09:57:23.047Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;自从 Windows 10 提供 WSL 之后，在 Windows 上运行 Linux CLI 程序并不是一个复杂的事情；然而俗话说饱暖思淫欲，既然可以做到在 Windows 上跑 Linux CLI 了，下一步自然想的是在 Windows 上跑 Linux GUI 程序。&lt;/p&gt;
+&lt;p&gt;之所以要跑 GUI 是因为，无论是 vscode 还是 CLion，写 C++ 的体验都比在 terminal 里开一个 vim 要好太多了，无论你是花了多少时间配置了 &lt;code&gt;.vimrc&lt;/code&gt;，在 CLion 面前都是战五渣。更何况我买了 Jetbrains 的 All product license，不用用难道留着过年吗。&lt;/p&gt;
+&lt;p&gt;这里先解答两个常见疑问：&lt;/p&gt;
+&lt;p&gt;Q：为什么不直接在虚拟机里使用？&lt;br&gt;A：因为 Linux 对 4K 屏原生支持太糟糕。哪怕 Mint 提供了 double scaling，解决了一些外观上的问题，我在 4K 的环境下一开 vscode 程序就崩溃，而且运行操作明显掉帧。&lt;br&gt;另外一个问题是，单纯的虚拟机操作和外界宿主太隔离，等于我得配置两套完全一样的环境（比如浏览器，常见的应用，甚至 SS 等），而且和宿主的交互非常不够便利。&lt;/p&gt;
+&lt;p&gt;Q：为什么不买 macbook？&lt;br&gt;A：？？你是认真的么？OS X 那么垃圾的系统。再说我要写 C++ server-end 的代码，要是可以用 OS X 我为什么不直接在 Windows 上跑?&lt;/p&gt;
+&lt;p&gt;另外有一个剧透：我尝试过运行 WSL 里的 Linux GUI 程序，例如 CLion，但是目前 WSL 的文件系统性能过于糟糕，CLion 一个劲的冒错误提示，所以，下面的环境假定是虚拟机里的 Linux 或者一台单独的 Linux 设备。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="ssh" scheme="http://kingsamchen.github.io/tags/ssh/"/>
+    
+      <category term="x11 forwarding" scheme="http://kingsamchen.github.io/tags/x11-forwarding/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in Jun 2018</title>
@@ -52,8 +79,6 @@
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
       <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
     
       <category term="assert" scheme="http://kingsamchen.github.io/tags/assert/"/>
@@ -65,6 +90,8 @@
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
     
@@ -697,37 +724,6 @@
       <category term="memory fence" scheme="http://kingsamchen.github.io/tags/memory-fence/"/>
     
       <category term="memory order" scheme="http://kingsamchen.github.io/tags/memory-order/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>靴子落地</title>
-    <link href="http://kingsamchen.github.io/2018/02/26/the-new-dark-age/"/>
-    <id>http://kingsamchen.github.io/2018/02/26/the-new-dark-age/</id>
-    <published>2018-02-26T07:04:19.000Z</published>
-    <updated>2018-03-01T14:00:55.334Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;2018年2月25日&lt;/p&gt;
-&lt;p&gt;是日&lt;/p&gt;
-&lt;p&gt;靴子落地&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://music.163.com/#/song?id=93175&quot; target=&quot;_blank&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="gibberish" scheme="http://kingsamchen.github.io/tags/gibberish/"/>
-    
-      <category term="dark-age" scheme="http://kingsamchen.github.io/tags/dark-age/"/>
     
   </entry>
   
