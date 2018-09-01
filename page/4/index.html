@@ -195,6 +195,164 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/03/04/display-utf-8-string-in-vs-debugger/">在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>众所周知，UTF-8 在 Windows 上一直都不是一等公民，在 MSVC 的调试器里，<code>std::string</code> 默认按照本地编码解释，在中文系统上是 GBK 或 GB2312。</p>
+<p>于是，如果一个 <code>std::string</code> 或者 <code>char[]</code> 里存储的是 UTF-8 编码的字符串，那么非 ASCII 部分就会乱码。这在调试中是一个非常不好的体验。</p>
+<p>研究了一下发现早在 VS 2005，调试器实际上就已经支持了对 UTF-8 字符串的显示，只是不作为默认的编码。</p>
+<p>按照 UTF-8 进行解释的方式很简单，在 watch 中添加<strong>字符串起始地址</strong>，后接 <code>, s8</code> 即可。</p>
+<p>注意的是，对于 <code>std::string</code>，要用 <code>std::string::c_str()</code> 或者 <code>std::string::data()</code> 获取字符串起始地址。</p>
+<p>更简单的做法是在 intermedaite window 中，使用 <code>? str.c_str(), s8</code></p>
+<p>注：如果变量被优化后提示 <code>c_str()</code> 或 <code>data()</code> 无法访问到有效数据，则可以使用 <code>&amp;str[0]</code>。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/03/02/monthly-read-posts-in-feb-2018/">Monthly Read Posts in Feb 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://baptiste-wicht.com/posts/2012/07/c11-concurrency-tutorial-part-4-atomic-type.html" target="_blank" rel="noopener">C++11 Concurrency Tutorial - Part 4: Atomic Types</a></p>
+<p>WTF ??</p>
+<hr>
+<p><a href="https://www.zhihu.com/question/24301047" target="_blank" rel="noopener">如何理解 C++11 的六种 memory order？</a></p>
+<p>参考意义不大，还是老老实实是看官方 reference 或者 <em>C++ Concurrency in Action</em> 形式化的描述吧。</p>
+<hr>
+<p><a href="http://cbloomrants.blogspot.hk/2012/05/05-30-12-on-c-atomic-fences.html" target="_blank" rel="noopener">05-30-12 - On C++ Atomic Fences</a></p>
+<p>可配合书阅读，稍作了解即可。</p>
+<p>C++ 中 atomic 附带的 ordering operations 和直接的 fences 还是有明显差别的。</p>
+<hr>
+<p><a href="http://www.cl.cam.ac.uk/~pes20/cpp/cpp0xmappings.html" target="_blank" rel="noopener">C/C++11 mappings to processors</a></p>
+<p>仅供参考，实际意义不大，除非要做非 x86 的 lock-free</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/02/26/the-new-dark-age/">靴子落地</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-02-26
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>2018年2月25日</p>
+<p>是日</p>
+<p>靴子落地</p>
+<p><a href="https://music.163.com/#/song?id=93175" target="_blank" rel="noopener">https://music.163.com/#/song?id=93175</a></p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/02/18/retrospection-of-the-2017/">2017 小结</a>
         
       </h1>
@@ -477,224 +635,6 @@ LPFN_DISCONNECTEX DisconnectEx = <span class="hljs-literal" style="color: rgb(25
 <p>另外这个 talk 的 PPT 值得研究一下，尤其是涉及到 happens-before / synchronized-with .etc 这类同步语义的内容</p>
 <hr>
 <p>因为一月份快接近年底了，事情比较多，也很杂，所以自己的学习进度明显被拖慢了，希望从2月份开始能够迅速回到正常节奏。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/23/initialize-atom-flag-the-right-way/">正确地初始化 std::atomic_flag</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>根据标准文档的要求，<code>std::atomic_flag</code> 只有利用 <code>ATOMIC_FLAG_INIT</code> 初始化之后，才获得一个确定的初始状态。</p>
-<p>现在假设我们要自己实现一个 spin-lock，那么只需要利用 <code>std::atomic_flag</code> 实现一个 spin-mutex：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    SpinMutex()</span><br><span class="line">        : flag_(ATOMIC_FLAG_INIT)</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>事实上，知名著作 <em>C++ Concurrency in Action 1st Edition</em> 中介绍 <code>std::atomic_flag</code> 时用的也是一模一样的代码。</p>
-<p>然而，这段代码在比较新的 C++ 编译器上会编译失败。</p>
-<p>VS2017 直接提示失败，Clang 3.9 出现一个警告。</p>
-<p>问题的根源是，标准委员会对：如何时用 <code>ATOMIC_FLAG_INIT</code> 初始化 <code>std::atomic_flag</code> 存在分歧和反复，导致 C++ 11 和 C++ 14 在这个点上存在不一致。</p>
-<p>万能的 StackOverflow 刚好有一个<a href="https://stackoverflow.com/questions/24437396/stdatomic-flag-as-member-variable" target="_blank" rel="noopener">相关的问题</a></p>
-<h3 id="正确的做法"><a href="#正确的做法" class="headerlink" title="正确的做法"></a>正确的做法</h3><p>正确的做法仍然是遵循标准要求的 <em>used in the copy-initialized context</em>，即：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// Initialize to clear state.</span></span><br><span class="line">    <span class="comment">// Don't use initialization list for `flag_`.</span></span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_ = ATOMIC_FLAG_INIT;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="MISC"><a href="#MISC" class="headerlink" title="MISC"></a>MISC</h3><p>在 VS2017 中，可以在 member initialization list 中用 <code>{}</code> 而不是 <code>()</code> 初始化，能正常编译通过。但是同一做法在其他编译器上没有效果。</p>
-<p>因此，在这种涉及 unspecified 的点上，尽量使用标准的做法，避免之后更换编译器踩坑。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/15/the-issue-binding-to-privately-inherited-member-function/">Binding to Privately Inherited Member Functions</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-15
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>考虑代码</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;functional&gt;</span></span>
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Base {
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
-    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Foo</span><span class="hljs-params">(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> n)</span>
-    </span>{
-        <span class="hljs-built_in" style="color: rgb(255, 255, 170);">printf</span>(<span class="hljs-string" style="color: rgb(162, 252, 162);">"the value is %d"</span>, n);
-    }
-};
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Derived : Base {
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> Base::Foo;
-};
-
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
-</span>{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> f = <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::bind(&amp;Derived::Foo, <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::placeholders::_1, <span class="hljs-number" style="color: rgb(211, 99, 99);">10</span>);
-    Derived o;
-    f(&amp;o);
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
-}</pre>
-
-<p>编译会提示出错，错误信息类似：_Failed to specialize function template ‘unknown-type std::_Binder&lt;std::_Unforced,void (__cdecl Base::* )(int),const std::_Ph<1> &amp;,int&gt;::operator ()(<em>Unbound &amp;&amp;…) const’</em></1></p>
-<p>根本原因是，即使前面使用了 <code>using Base::Foo;</code>, 也只是改变了这个函数在子类中的可见性，影响名字查找；并没有真的在子类中添加了这个函数，因此 <code>&amp;Derived::Foo</code> 实际上获取的类型是 <code>void (Base::*)(int)</code>，而正是这个类型影响了 <code>std::bind()</code> 的实例化。</p>
-<p>因此当后面用 <code>Derived</code> 的实例去调用 function object 时会失败。</p>
-<p>Stackoverflow 上有一个<a href="https://stackoverflow.com/questions/36263159/binding-to-privately-inherited-member-function" target="_blank" rel="noopener">类似的问题</a>，可以参考。</p>
-<h2 id="Workaround"><a href="#Workaround" class="headerlink" title="Workaround"></a>Workaround</h2><p><strong>(1) 子类增加一个 call-wrapper</strong></p>
-<p>然而大多数采用 private-inheritance 而不是 composition 的情况下，都是避免添加各种 call-wrapper</p>
-<p><strong>(2) 绑定 lambda 而不是函数指针</strong></p>
-<p>这是一个推荐的做法</p>
-<p><strong>(3) 强行用 reinterpret_cast&lt;&gt;</strong></p>
-<p>呃… let’s don’t be evil</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/01/monthly-read-posts-in-dec-2017/">Monthly Read Posts in Dec 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>C++ 11 Concurrency: <a href="https://baptiste-wicht.com/posts/2012/03/cpp11-concurrency-part1-start-threads.html" target="_blank" rel="noopener">Part 1</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/03/cp11-concurrency-tutorial-part-2-protect-shared-data.html" target="_blank" rel="noopener">Part 2</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/04/c11-concurrency-tutorial-advanced-locking-and-condition-variables.html" target="_blank" rel="noopener">Part 3</a></p>
-<p>本来想作为 C++ Concurrency in Action 的一个补充，但是发现这个 series （迄今）写得实在是太一般了…看看后续有没有改进</p>
-<hr>
-<p><a href="http://blog.poetries.top/2017/11/04/fiddler/" target="_blank" rel="noopener">使用Fiddler做抓包分析</a></p>
-<p>除了 auto-responder ，其他部分内容感觉都好一般</p>
-<hr>
-<p><a href="https://zhuanlan.zhihu.com/p/21348220" target="_blank" rel="noopener">高并发性能调试经验分享</a></p>
-<p>文章不短，但是核心还是调试那几板斧：</p>
-<ul>
-<li>尝试重现/增加重现概率</li>
-<li>脑补可能的 root cause</li>
-<li>通过实验排除</li>
-</ul>
-<p>文章开头说这类问题适合筛应届生，纯属胡说八道。</p>
-<p>首先前面说的那几点虽然是很容易回答，毕竟提纲挈领，但是实际解决过这类多线程/高并发的问题的人都知道，很多时候问题都是高度上下文相关的，换一个上下文很多之前的假设推断手段什么的都没效果，毕竟这是一个强经验相关的 domain。指望碰到一个应届生能熟练解决这类问题（停留在打嘴炮阶段不算），还不如指望哪天出现强 AI。</p>
-<hr>
-<p><a href="https://www.keakon.net/2015/09/07/%E5%88%9D%E6%8E%A2Python3%E7%9A%84%E5%BC%82%E6%AD%A5IO%E7%BC%96%E7%A8%8B" target="_blank" rel="noopener">初探 Python 3 的异步 IO 编程</a><br><a href="https://www.ziwenxie.site/2016/12/19/python-asyncio/" target="_blank" rel="noopener">Python并发编程之协程/异步IO</a></p>
-<p>口水文，还好是在地铁上看完的。</p>
-<hr>
-<p><a href="https://tech.meituan.com/about-desk-io.html" target="_blank" rel="noopener">磁盘I/O那些事</a></p>
-<p>实战那部分写的不错</p>
-<p>另外，文章 url 的 desk 目测是 disk 的 typo</p>
-<hr>
-<p><a href="https://garbagecollected.org/2014/09/14/how-google-authenticator-works/" target="_blank" rel="noopener">How Google Authenticator Works</a></p>
-<p>看完想自己写一个</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=C4Z3c4Sv52U" target="_blank" rel="noopener">A Few Good Types - Neil MacIntosh - CppCon 2015</a></p>
-<p>介绍了一波 <code>array_view</code> 和 <code>string_vew</code></p>
-<p>可惜 <code>array_view</code> 没有进标准</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=u5senBJUkPc" target="_blank" rel="noopener">All Your Tests Are Terrible - Titus Winters and Hyrum Wright - CppCon 2015</a></p>
-<p>又名：单元测试的几条军规</p>
-<p>基本覆盖了实现单元测试 case 的一些基本准则。两个演说者很逗，将相声一样</p>
-<p>不过我其实更关心部分这个 talk 并没有涉及到，比如涉及 GUI 的交互逻辑怎么做 ut；负责模块上粒度上怎么抽诸如此类..</p>
-<hr>
-<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD04V009" target="_blank" rel="noopener">Futures from Scratch - Arthur O’Dwyer - CppCon 2015</a></p>
-<p>一些和 <code>future</code> 有关实现细节</p>
 
         
       

@@ -195,6 +195,200 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2016/05/23/why-git-flow-model-is-considered-harmful/">为什么我反对使用 git flow</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-05-23
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>如果论知名度，<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="noopener">git flow</a> 绝对是现在数一数二的 git 协作模型。甚至直到不久之前，我也在用这个模型作为我在 github 上的几个项目的工作流。</p>
+<p>但是一段时间后，我越来越觉得这个 work flow 不仅过于冗余、繁琐，而且在实际操作中充满了艰险。这种想法在我到新公司后，和多个同事（5-7人）一起协作开发一款 android 直播客户端时达到顶峰。</p>
+<p>从核心点来看，git flow 的最大亮点是：</p>
+<ul>
+<li>一个始终稳定且代表可发布产品时刻的 master 分支</li>
+<li>各自独立的开发分支，例如各种 feature 分支</li>
+</ul>
+<h3 id="坑在何处"><a href="#坑在何处" class="headerlink" title="坑在何处"></a>坑在何处</h3><p>对于客户端项目来说，稳定可发布的 master 分支完全没有什么意义。因为客户端没有所谓的线上环境，产品发布有自己单独的发布渠道（例如应用市场，官方主页等），这部分版本更迭完全是天然隔离的。</p>
+<p>而服务端项目，虽然确实需要一个稳定的，对应线上环境的分支，但是其他 work flow 也完全可以做到。例如一个简单的 master 分支和对应开发的 develop 分支。</p>
+<p>其次，git flow 第二个所谓亮点会引发一个很严重的后果：后期合并代码时连锁的冲突问题。</p>
+<p>git flow 最大的亮点导致的一个核心问题就是，大家在各自独立的分支上展开工作，工作完毕了才合并到 develop 分支，导致<strong>每个人距离共同分支（他人修改）太远</strong>。</p>
+<p>这种对彼此的代码修改互相不可知的工作流程，在后期合并代码时简直是噩梦。通常来说，需要有一个专门的人负责合并代码，并且合并某个分支时，对应分支的开发人员要在场，否则对于大块大块陌生的代码，完全没法进行合并操作。</p>
+<p>于是你就会发现，在这一期需求的收尾阶段，你浪费了大量的时间和精力在合并代码上，并且还伴随着潜在的合并出错的风险。</p>
+<p>上一周不到三天的时间内，我已经做了两次修改远程仓库的历史，抹掉新来的同事提交的大块修改代码导致的问题，这只能用灾难来形容。</p>
+<p>现在回过头来想想 git flow 这种独立多 feature 到底有效解决了什么问题？答案是有效解决了一个人为臆想的问题，即：某个要做的需求大大超前于产品的版本。</p>
+<p>就现在的环境而言，出现这种需求，99%的情况下是产品需求不合理。所以正确的做法是，把产品按在地上暴打一顿。</p>
+<h3 id="化繁为简，返璞归真"><a href="#化繁为简，返璞归真" class="headerlink" title="化繁为简，返璞归真"></a>化繁为简，返璞归真</h3><p>个人建议的 git work flow 其实早在 SVN 时代就用的很普遍了：我们只需要一个用于开发的 master 分支。</p>
+<p>对于客户端，只需要一个这样的 master 分支即可，每次到发版本，切出一个发布分支，并在 master 上打上 tag 即可。</p>
+<p>而对于服务端，一个稳定的 master 分支，加上一个开发的 develop 分支即可。</p>
+<p>这种模式下，每个人需要把修改 push 到远程分支时，都需要利用 <code>fetch &amp;&amp; rebase</code> 同步他人修改，而就算此时发生冲突，冲突的范围也绝对是能在控制之中。</p>
+<p>所以这里的核心就是：<strong>减少和公共分支的距离，尽量缩小冲突的大小</strong>。</p>
+<p>Pop quiz: 多次解决小冲突比起一次性解决大冲突会有优势吗？</p>
+<p>妈的简直废话，你没学过什么叫 divide/decrease-and-conquer 吗？</p>
+<p>git flow 这种多分枝模型，给人的感觉就是，because I can，典型的不考虑实际生产环境。</p>
+<p>多说一句，chromium 这种巨型项目，用的就是一个稳定的 master 分支这种工作流。难以想象如果他们用 git flow，最后冲突会出现什么样天崩地裂的景象啊。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/">记一次被 Android 进程复用坑的经历</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-05-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>因为需求需要，把某个功能拆分成一个独立的服务，并由一个全局的 <code>service manager</code> 去控制这个服务；服务对客户端暴露的实现也是通过 <code>service manager</code>。</p>
+<p>因为服务不需要运行在一个独立进程，manager 和 service 直接通过一个包含服务对象的 local binder 相互通信，看上去大概就这样：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalService</span> <span class="keyword">extends</span> <span class="title">Service</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LocalBinder</span> <span class="keyword">extends</span> <span class="title">Binder</span> </span>&#123;</span><br><span class="line">        <span class="function">LocalService <span class="title">getService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> LocalService.<span class="keyword">this</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> IBinder <span class="title">onBind</span><span class="params">(Intent intent)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> mBinder;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> IBinder mBinder = <span class="keyword">new</span> LocalBinder();</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// This class is in fact a singleton.</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ServiceManager</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> LocalService.LocalBinder mServiceBridge;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> ServiceConnection mConnection = <span class="keyword">new</span> ServiceConnection() &#123;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceConnected</span><span class="params">(ComponentName className, IBinder service)</span> </span>&#123;</span><br><span class="line">            mServiceBridge = (LocalService.LocalBinder)service;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onServiceDisconnected</span><span class="params">(ComponentName className)</span> </span>&#123;</span><br><span class="line">            mServiceBridge = <span class="keyword">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">startService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        bindService(...);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">stopService</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        unbindService(...);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>考虑到语义的逻辑，我一开始选择了在自定义的 <code>MainApplication</code> 的 <code>onCreate</code> 中启动服务；并且为了避免不必要的消耗，在用户从主 activity 退出时，会停止这个服务。</p>
+<p>过了几天，有同事在测试过程中反馈说，每次正常从 app 退出后，再次打开 app 运行涉及服务的功能都会抛 <code>mServiceBridge</code> 的空指针访问异常，但是下一次打开 app，相关功能又是好的。</p>
+<p>我一开始觉得莫名其妙，因为对象空指针只能意味着服务没有被启动，但是启动服务是在 <code>Application.onCreate</code> 中进行的，这说不过去。</p>
+<p>后来我不小心瞥到 DDMS 的进程列表，发现即使关闭了所有的 activity 退出了应用，相应的进程并没有退出…正如牛逼顿被苹果砸到的那个瞬间，一个想法一闪而过。</p>
+<p>经过 demo 验证，问题出在 android 的进程复用上。</p>
+<p>和传统 PC 上的做法不同，考虑到移动设备的特殊环境，即使所有的 activity 退出了，系统也不会马上回收 app 所在的进程。进程的资源、状态仍被保留，只是会进入一个不稳定状态：系统随时都能回收这个进程。</p>
+<p>而如果在进程被系统回收前又打开了 app，那么系统会复用之前的进程。因为进程并没有被重新创建，所以 <code>onCreate</code> 函数被跳过了。在上面的环境下，就会跳过启动服务，导致 <code>mServiceBridge</code> 对象为空。</p>
+<p>解决方案有两个：</p>
+<ul>
+<li>把启动服务的操作放到某个 activity 启动中，例如 the infamous splash activity</li>
+<li>主 activity 结束后强行退出进程</li>
+</ul>
+<p>另外，根据上面的情况起码要明白，如果某个行为（例如一些设施的初始化）要放在 <code>Application.onCreate</code> 中完成，那么语义上这个操作形成的作用是跟随整个进程生命周期的；而进程的生命周期在 android 上是不可知的，所以相应的，这个行为的设计也要考虑到这点。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2016/05/03/an-unofficial-implementation-for-string-view-and-its-companion-tokenizer/">自己轮的 string_view 和它的小伙伴 tokenizer</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-05-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h3 id="String-View"><a href="#String-View" class="headerlink" title="String View"></a>String View</h3><p><code>string_view</code> 是 C++ 17 引入的一个基础设施，和 <code>array_view</code> 类似，表示一种 <em>non-owning object</em>。</p>
+<p>实际上，<code>StringPiece</code> 也是一种类似 <code>string_view</code> 的实现，并且一开始也作为提供 <code>string_view</code> 的范例实现之一出现在相关的 proposal 中。</p>
+<p>但是既然标准委员会已经钦定了 <code>string_view</code>，我们就应该用它。</p>
+<p>不过 VS 2015 update 2 附带的 STL 实现中并没有包含 <code>string_view</code>，于是出于其他需求，我做了如下两件小事：</p>
+<ol>
+<li>按照<a href="http://en.cppreference.com/w/cpp/string/basic_string_view" target="_blank" rel="noopener">标准要求</a>，自己轮了一个 <code>string_view</code> 的<a href="https://github.com/kingsamchen/KBase/blob/master/kbase/string_view.h" target="_blank" rel="noopener">实现</a>。</li>
+<li>移除了 <code>StringPiece</code>，并用自己实现的 <code>StringView</code> 替换。</li>
+</ol>
+<p>不过自己实现的代码，代码风格还是按照自己的偏好。</p>
+<h3 id="Tokenizer"><a href="#Tokenizer" class="headerlink" title="Tokenizer"></a>Tokenizer</h3><p>某个需求是这样的：从文本读入一段数据，数据用固定标记分隔成一段一段，需要对每段数据做相关处理。</p>
+<p>一种直接的方式是利用 <code>kbase::SplitString</code> 将数据分段。但是 <code>SplitString</code> 会一下将所有数据分段，在数据量很大的情况下会消耗不小的空间。而如果每段数据前后没有依赖关系，那么只要每次能获取到那一段的数据即可。</p>
+<p><code>Tokenizer</code> 就是在这种情况下被实现出来的。</p>
+<p><code>Tokenizer</code> 依赖前面提到的 <code>StringView</code>，因为它实际上也是一个 non-owning viewer，不会对原始数据造成任何可修改的影响。</p>
+<p><code>Tokenizer</code> 利用提供的 iterator 实现对数据段的遍历，并且利用标准的 <code>begin</code> <code>end</code> 可以直接支持 C++ 11 的 ranged-base for。额外的好处是让编译器对和 <code>end()</code> 比较的代码进行优化。</p>
+<p>虽然从标准而言，<code>begin()</code> 和 <code>end()</code> 应该具有常数时间复杂度，但是在以 token 为目标数据的条件下，<code>begin()</code> 很难做到常数时间复杂度，一般情况下需要 $O(l)$ 的复杂度，其中 $l$ 为数据段长度。不过好在初始调用并不频繁。</p>
+<p>一个简单的范例看起来大概是这样的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> str = <span class="string">"anything that cannot kill you makes you stronger.\n\tsaid by Bruce Wayne\n"</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; <span class="built_in">exp</span> &#123; <span class="string">"anything"</span>, <span class="string">"that"</span>, <span class="string">"cannot"</span>, <span class="string">"kill"</span>, <span class="string">"you"</span>, <span class="string">"makes"</span>, <span class="string">"you"</span>,</span><br><span class="line">                              <span class="string">"stronger"</span>, <span class="string">"said"</span>, <span class="string">"by"</span>, <span class="string">"Bruce"</span>, <span class="string">"Wayne"</span> &#125;;</span><br><span class="line"><span class="function">Tokenizer <span class="title">tokenizer</span><span class="params">(str, <span class="string">" .\n\t"</span>)</span></span>;</span><br><span class="line"><span class="keyword">size_t</span> i = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">auto</span>&amp;&amp; token : tokenizer) &#123;</span><br><span class="line">  <span class="keyword">if</span> (!token.empty()) &#123;</span><br><span class="line">    EXPECT_EQ(<span class="built_in">exp</span>[i], token.ToString());</span><br><span class="line">    ++i;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>具体实现见<a href="https://github.com/kingsamchen/KBase/blob/master/kbase/tokenizer.h" target="_blank" rel="noopener">这里</a>。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2016/04/25/recommend-google-samples-for-android-mvp-architecture/">推荐 google samples for android-architecture</a>
         
       </h1>
@@ -473,166 +667,6 @@ $$M(i)=\begin{cases}\max\left\{M(LC(i)),M(RC(i))\right\} & \text{otherwise}\\M(L
   </article>
 
     
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/03/24/trie-ternary-search-tree-and-autocomplete/">Trie, Ternary Search Tree, and Autocomplete</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-03-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Trie"><a href="#Trie" class="headerlink" title="Trie"></a>Trie</h2><p>对于给定前缀<em>p</em>要求返回集合中所有匹配该前缀的元素的一类问题，例如autocomplete和字典搜索，<a href="https://en.wikipedia.org/wiki/Trie" target="_blank" rel="noopener">Trie</a>是一个很自然的选择。</p>
-<p>前两天闲的蛋疼，于是自己做了一个quick-and-dirty的<a href="https://github.com/kingsamchen/Eureka/tree/master/TrieFoDict" target="_blank" rel="noopener">实现</a>，也算是小小地回顾了下当年造数据结构轮子的光景。</p>
-<p>不考虑优化手段，trie的核心性质在于：给定一个字母表<em>T</em>， 每个trie node除了表示当前一个字符之外，还有<code>len(T)</code>个child nodes，每个child node对应下一个可能的字符，于是一个字符串就这样被保存在了路径上。</p>
-<p>直觉上看，trie是通过增加宽度来减小高度（高度和最长的单词长度一直），以减小查询的时间复杂度。</p>
-<p>不过在细节上，node保存的信息可以有不同处理：</p>
-<p>第一种做法是node保存从root到此node的完整路径信息，如图：</p>
-<p><img src="/img/trie_sample_style_1.png" alt=""></p>
-<p>这么做的好处是之后需要路径信息时不需要额外的处理；当然不好的一点是node耗费的内存也变大了。</p>
-<p>第二种做法是node仅保存当前字符的信息，如图：</p>
-<p><img src="/img/trie_sample_style_2.png" alt=""></p>
-<p>我最后选择了第二种做法。</p>
-<p>另外，每个node还要有一个<code>end-of-word</code>的mark，因为路径中间的node有可能已经是一个完整的单词，例如<em>he</em>是<em>here</em>的前缀，但是两个都是完整的单词。</p>
-<p>实现提供了三个接口：</p>
-<ul>
-<li><code>Insert</code>负责插入一个word到trie中</li>
-<li><code>Contains</code>检查trie当前是否存在某个word</li>
-<li><code>Search</code>接受一个前缀，返回一个包含所有满足改前缀的word的集合</li>
-</ul>
-<p>接口的实现如果采用递归的话，会变成弱智一般的简单。</p>
-<p>不过好在就算是采用迭代，也不会麻烦到哪里去，除了<code>Search</code>。</p>
-<p>为了返回所有包含前缀的单词，实际上我们需要对trie做一个pre-order traversal，于是我们就有了一个stack。</p>
-<p>一开始我是打算用stack保存一个node里还没有处理过的child nodes。这样就需要在迭代时不断往stack里加node，以及不断地从stack里取出node做处理。</p>
-<p>我觉得这个思路很直接，并且觉着写起来会非常的流畅。但是有个不好的地方是，stack最多时需要保存所有的leaf nodes。而trie恰恰是通过增加宽度换取较低的高度，因此内存开销会比较大。</p>
-<p>回龙观周杰伦<a href="http://www.daozhihun.com/" target="_blank" rel="noopener">大木</a>老师提供了另外一个思路：利用stack保存正在处理的nodes。这样stack保存的恰好是构成目标字符串的路径，内存开销也成功压缩到了$O(h)$。</p>
-<p>不愧是德艺双馨的亚洲人气小天王，服！</p>
-<p>不过如果采用这个方法，还需要保存一个额外的信息，指明某个node已经处理过了多少child node，这样才能确定下一个要处理的child node。</p>
-<p>别忘了一个node有字母表大小个children，而我们需要在node和他的child node之前来回切换。当然，如果语言自身提供了类似<code>yield</code>的设施，那实现就轻松多了。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; Trie::Search(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix) <span class="keyword">const</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; words;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Locate the node matching the last character of `prefix`.</span></span><br><span class="line">    <span class="keyword">const</span> TrieNode* node = header_;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> ch : prefix) &#123;</span><br><span class="line">        <span class="keyword">auto</span> pos = Alphabet::GetCharacterIndex(ch);</span><br><span class="line">        <span class="keyword">if</span> (pos == Alphabet::npos) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> TrieNode* child = node-&gt;children[pos];</span><br><span class="line">        <span class="keyword">if</span> (!child) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        node = child;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We use `processing_nodes` as a stack to maintain nodes that are being processed.</span></span><br><span class="line">    <span class="keyword">using</span> CludeNode = <span class="built_in">std</span>::pair&lt;<span class="keyword">const</span> TrieNode*, <span class="keyword">size_t</span>&gt;;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CludeNode&gt; processing_nodes;</span><br><span class="line">    processing_nodes.emplace_back(CludeNode(node, <span class="number">0U</span>));</span><br><span class="line">    <span class="keyword">while</span> (!processing_nodes.empty()) &#123;</span><br><span class="line">        <span class="comment">// Don't access `current` after having pushed another node into `processing_nodes`.</span></span><br><span class="line">        <span class="comment">// Because the push might result in memory reallocation, rendering `current` an invalid</span></span><br><span class="line">        <span class="comment">// reference.</span></span><br><span class="line">        <span class="keyword">auto</span>&amp; current = processing_nodes.back();</span><br><span class="line">        <span class="keyword">bool</span> child_node_found = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">while</span> (current.second &lt; current.first-&gt;children.size()) &#123;</span><br><span class="line">            <span class="keyword">const</span> TrieNode* child = current.first-&gt;children[current.second];</span><br><span class="line">            ++current.second;</span><br><span class="line">            <span class="keyword">if</span> (child) &#123;</span><br><span class="line">                processing_nodes.emplace_back(CludeNode(child, <span class="number">0U</span>));</span><br><span class="line">                child_node_found = <span class="literal">true</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!child_node_found) &#123;</span><br><span class="line">            <span class="keyword">if</span> (processing_nodes.back().first-&gt;last_char_of_word) &#123;</span><br><span class="line">                <span class="built_in">std</span>::<span class="built_in">string</span> word = prefix;</span><br><span class="line">                <span class="built_in">std</span>::for_each(processing_nodes.cbegin() + <span class="number">1</span>, processing_nodes.cend(),</span><br><span class="line">                              [&amp;word](<span class="keyword">const</span> <span class="keyword">auto</span>&amp; clude_node) &#123;</span><br><span class="line">                    word += clude_node.first-&gt;character;</span><br><span class="line">                &#125;);</span><br><span class="line">                words.push_back(<span class="built_in">std</span>::move(word));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            processing_nodes.pop_back();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> words;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对于写迭代形式的算法，我一直比较推荐采用<a href="https://en.wikipedia.org/wiki/Loop_invariant" target="_blank" rel="noopener">循环不变式</a>（loop invariant）去理解的做法。这几乎是我认为一个人能从算法导论里学到的<strong>最精华的基础</strong>。</p>
-<h2 id="Ternary-Search-Tree"><a href="#Ternary-Search-Tree" class="headerlink" title="Ternary Search Tree"></a>Ternary Search Tree</h2><p>默认的trie内存开销比较大，所以又有很多针对内存做了优化的改进数据结构，<a href="https://en.wikipedia.org/wiki/Ternary_search_tree" target="_blank" rel="noopener">ternary search tree</a>便是其中之一。</p>
-<p>如名所述，ternary search tree的一个node只有三个child nodes：left, middle, right。</p>
-<p><img src="/img/ternary-search-tree.png" alt=""></p>
-<p>三子节点的做法来源于，一次比较会产生三种结果：大、小、相等。</p>
-<p>假设字符间的大小关系为字符在字母表的先后顺序，TST的核心规则如下：</p>
-<ul>
-<li>如果字符<code>c</code>和当前node的字符相等，表示当前字符匹配，则进入当前node的middle-child</li>
-<li>如果字符<code>c</code>比当前node的字符小，则进入当前node的left-child尝试匹配</li>
-<li>如果字符<code>c</code>比当前node的字符大，则进入当前node的right-child尝试匹配</li>
-</ul>
-<p>如果把TST放在一个三维空间上考虑的话，我认为left-child和right-child更像是当前node的sibling nodes。</p>
-<p>匹配过程就像从顶部的root node一直向下搜索，匹配时middle-node连接下一层的node，失败时在当前层由sibling nodes构成的平面上搜索。</p>
-<p>不过因为二维平面更加容易理解，所以还是在这个维度上考虑。</p>
-<p><code>Insert</code>和<code>Contains</code>的非递归实现并不难，只要选择好loop invariant。</p>
-<p>我在实现时选择的loop invariant是：</p>
-<ol>
-<li>每次对一个字符的迭代结束后，一定停留在这个字符对应的node上</li>
-<li>每次开始迭代时，始终尝试进入当前node（上一轮迭代结束停留的位置）的middle-node</li>
-<li>第2步失败时，根据比较信息在左子树/右子树中找到目标node</li>
-</ol>
-<p>并且为了实现方便，root node被我实现为一个sentinel node。</p>
-<p>不过非递归的<code>Search</code>实现起来非常繁琐，因为一个node的三个child nodes不在一个语义层，所以需要为了遍历需要用两个stack维护不同的信息。</p>
-<p>我在纸上尝试了一下就回头选择了递归地实现=’’=。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SearchWord</span><span class="params">(Node* node, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt;* words, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt;* seq,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    seq-&gt;push_back(Alphabet::GetCharacter(node-&gt;char_index));</span><br><span class="line">    <span class="keyword">if</span> (node-&gt;end_word) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="function"><span class="built_in">string</span> <span class="title">word</span><span class="params">(prefix)</span></span>;</span><br><span class="line">        word.append(seq-&gt;begin(), seq-&gt;end());</span><br><span class="line">        words-&gt;push_back(<span class="built_in">std</span>::move(word));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kMiddle]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kMiddle], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    seq-&gt;pop_back();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kLeft]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kLeft], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kRight]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kRight], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; TernaryTree::Search(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix) <span class="keyword">const</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; words;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Locate the node matching the last character of `prefix`.</span></span><br><span class="line">    <span class="keyword">const</span> Node* node = root_;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> ch : prefix) &#123;</span><br><span class="line">        <span class="keyword">auto</span> index = Alphabet::GetCharacterIndex(ch);</span><br><span class="line">        <span class="keyword">if</span> (index == Alphabet::npos) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> Node* next_node = node-&gt;children[Node::kMiddle];</span><br><span class="line">        <span class="keyword">if</span> (!next_node) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (index != next_node-&gt;char_index) &#123;</span><br><span class="line">            <span class="keyword">if</span> (index &lt; next_node-&gt;char_index) &#123;</span><br><span class="line">                next_node = next_node-&gt;children[Node::kLeft];</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                next_node = next_node-&gt;children[Node::kRight];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!next_node) &#123;</span><br><span class="line">                <span class="keyword">return</span> words;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        node = next_node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;end_word) &#123;</span><br><span class="line">        words.push_back(prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt; sequence;</span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kMiddle]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kMiddle], &amp;words, &amp;sequence, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> words;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>完整的实现在<a href="https://github.com/kingsamchen/Eureka/tree/master/TernarySearchTree" target="_blank" rel="noopener">这里</a></p>
-<h2 id="Epilogue"><a href="#Epilogue" class="headerlink" title="Epilogue"></a>Epilogue</h2><p>我会写Trie是因为看到了<a href="https://www.toptal.com/java/the-trie-a-neglected-data-structure" target="_blank" rel="noopener">the-trie-a-neglected-data-structure</a>这篇文章，有张图片也是从文章里截取的。</p>
-<p>而Ternary Search Tree则是不小心看到了<a href="http://igoro.com/archive/efficient-auto-complete-with-a-ternary-search-tree/" target="_blank" rel="noopener">efficient-auto-complete-with-a-ternary-search-tree</a>，同样从文章里“借”了一张图片</p>
-<p>再次对两位作者表示感谢！</p>
-<p>其实一开始写实现时，我犹豫了一会儿是应该用raw pointer还是smart pointer。虽然raw pointer不是什么evil的东西，但是owned raw pointers对我来说始终有点不太舒服。</p>
-<p>后来我看见了这个<a href="http://stackoverflow.com/a/5473807/1746503" target="_blank" rel="noopener">post</a>，再联想C++提供的muli-paradigms的目的就是为了<em>offer you the best-practice whenever you need, and you don’t pay what you don’t use</em>。</p>
-<p>于是我就不断地给自己洗脑：<em>nodes themselves are resources managed by a Tree</em>.</p>
-<p>再然后，我就释然了XD。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/03/21/reincarnated-hello-world/">Reincarnated: Hello World</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-03-21
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>和某花闹掰之后神奇地发现托管在0GiNr上的blog被和谐了，何厚铧。</p>
-<p>伤脑筋，这总得找个地儿写写口水文章吧，不然时间一长肯定被自己憋死，即影响了中华民族的伟大复兴，又对不起社会主义接班人的称号，罪该万死。</p>
-<p>最后思来想去，索性直接在Github上架blog好了，一来有现成的工具，二来还省得麻烦。我这个人特别怕麻烦。</p>
-<p>在几个社区上转了一圈，最后选择Hexo作为搭建工具，主要原因还是这东西用起来简单，不那么折腾，并且自带的默认主题还特别对我口味，interesting。</p>
-<p>最后效果大概就是现在看到的样子，虽然比较简陋，但是起码可以用不是。反正写的都是口水文，掀不起风浪，传不了后世，make不了difference，欣然接受便是。</p>
-<p>不过Hexo也有一个很麻烦的缺点，github上保存的只是最后生成的内容，并不是源内容，所以如果要在多台设备上使用，还要考虑程序自己的同步。</p>
-<p>因为我没有Github的private repo，所以不能直接简单的把整个目录丢上去；不过我已经想到了一个还不错的workaround，回头试试。</p>
-<p>如果要说可惜，大概是之前写了那么久的文章什么都没剩下了；不过，again， 反正口水文主要还是为了感动一下自己罢了，何厚铧。至于域名，懒得弄了，原域名就这样挂着好了，也懒得转移了，到期了就让他reclaimed好了，也省了之后每年一百多块钱的支出。</p>
-<p>最后，某些人看上去表面强大，内心脆弱的很，这是心理残疾，估计难治。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
   </section>
 
   
@@ -643,6 +677,11 @@ $$M(i)=\begin{cases}\max\left\{M(LC(i)),M(RC(i))\right\} & \text{otherwise}\\M(L
         <span class="prev-text">上一页</span>
       </a>
     
+    
+      <a class="next" href="/page/13/">
+        <span class="next-text">下一页</span>
+        <i class="iconfont icon-right"></i>
+      </a>
     
   </nav>
 

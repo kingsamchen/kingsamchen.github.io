@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Monthly Read Posts in July 2018"/>
+
+
+
+
+  <meta name="keywords" content="date time, pattern matching, epoll, atomic, multithreading, type traits, constexpr, TCP, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2018/08/02/monthly-read-posts-in-aug-2018/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> Monthly Read Posts in July 2018 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Monthly Read Posts in July 2018
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-08-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-Language"><span class="toc-text">Programming Language</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Operating-System"><span class="toc-text">Operating System</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#Concurrent-Programming"><span class="toc-text">Concurrent Programming</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Server-End-Programming"><span class="toc-text">Server-End Programming</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="Programming-Language"><a href="#Programming-Language" class="headerlink" title="Programming Language"></a>Programming Language</h2><p><a href="https://www.fluentcpp.com/2016/11/24/clearer-interfaces-with-optionalt/" target="_blank" rel="noopener">Clearer interfaces with optional<t></t></a></p>
+<p><a href="https://www.fluentcpp.com/2016/12/01/partial-queries-with-optionalt/" target="_blank" rel="noopener">Partial queries with optional<t></t></a></p>
+<p><code>optional&lt;T&gt;</code> 介绍 &amp; 简单使用例子</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=9IVCVSwn-fI" target="_blank" rel="noopener">CppCon 2015: John R. Bandela “Simple, Extensible Pattern Matching in C++14”</a></p>
+<p>一个轻量级的 pattern matching 库简要介绍。</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=2rnIHsqABfM" target="_blank" rel="noopener">CppCon 2015: Greg Miller “Time Programming Fundamentals”</a></p>
+<p>Google 内部实现的一个处理 date-time 的轮子。</p>
+<p>不过讲道理，这块内容还不如关注一下之前 monthly read posts 里出现的<a href="http://kingsamchen.github.io/2017/08/01/monthly-read-posts-in-july-2017/">这篇</a> 里提到的 date library。</p>
+<p>看起来差不多会在 <a href="https://en.cppreference.com/w/cpp/chrono" target="_blank" rel="noopener">C++ 20 引入</a></p>
+<hr>
+<p><a href="https://blogs.msdn.microsoft.com/oldnewthing/20180307-00/?p=98175" target="_blank" rel="noopener">When MSDN says NULL, is it okay to use nullptr?</a></p>
+<p>Short anwser: YES.</p>
+<a id="more"></a>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=VvbTP_k_Df4" target="_blank" rel="noopener">CppCon 2015:Marshall Clow “Type Traits - what are they and why should I use them?”</a></p>
+<p>A breif introduction to type traits.</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/05/11/parsing-strings-at-compile-time-part-i/" target="_blank" rel="noopener">Parsing strings at compile-time — Part I</a></p>
+<p><a href="https://akrzemi1.wordpress.com/2011/05/20/parsing-strings-at-compile-time-part-ii/" target="_blank" rel="noopener">Parsing strings at compile-time — Part II</a></p>
+<p>核心是如何利用 <code>constexpr</code> functions 实现一些编译期的字符串处理。</p>
+<p>PART I 实现了一个括号平衡的检查器；PART II实现了一个四则运算的eval</p>
+<p>由于文章写的时间比较早，那会儿 <code>constexpr</code> 限制比较大，因此很多代码表达起来比较麻烦。自从 c++ 14 开始放送规则之后，这部分的实现基本成了算法层面。</p>
+<h2 id="Operating-System"><a href="#Operating-System" class="headerlink" title="Operating System"></a>Operating System</h2><p><a href="http://nullprogram.com/blog/2018/05/27/" target="_blank" rel="noopener">When FFI Function Calls Beat Native C</a></p>
+<p>ELF 文件格式的 PIC 特性会导致 FFI 的性能损失。</p>
+<p>动态加载可以一定程度上绕过 PIC 带来的开销</p>
+<hr>
+<p><a href="https://blogs.msdn.microsoft.com/oldnewthing/20180302-00/?p=98145" target="_blank" rel="noopener">If I call GetExitCodeThread for a thread that I know for sure has exited, why does it still say STILL_ACTIVE?</a></p>
+<p>核心观点：</p>
+<ol>
+<li>函数 <code>_beginthread()</code> 返回的 HANDLE 除了用来判断函数是否成功执行外没有任何可靠的作用。</li>
+<li>使用 <code>_beginthreadex()</code> 可以解决返回的 HANDLE 不可靠的问题。</li>
+<li>用 API 前要完整的看完 MSDN 的描述（来自 Raymond Chen 的嘲讽）</li>
+</ol>
+<hr>
+<p><a href="http://preshing.com/20110717/the-windows-heap-is-slow-when-launched-from-the-debugger/" target="_blank" rel="noopener">The Windows Heap Is Slow When Launched from the Debugger</a></p>
+<p>在 VS 调试器中运行程序会让程序跑的比直接运行慢，即使跑的是 Release 构建。</p>
+<p>原因：被调试器启动的程序会使用 system debug heap，系统在程序使用 <code>Heap*</code> API 时做一些错误检测。并且这个 system debug heap 是一个 runtime setting，由操作系统控制（ntdll.dll）控制。</p>
+<p>解决方案：</p>
+<ol>
+<li>不要在调试器中运行程序</li>
+<li>如果（1）无法做到，则定义程序自己的环境变量 <code>_NO_DEBUG_HEAP=1</code></li>
+</ol>
+<h1 id="Concurrent-Programming"><a href="#Concurrent-Programming" class="headerlink" title="Concurrent Programming"></a>Concurrent Programming</h1><p><a href="https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/" target="_blank" rel="noopener">Epoll is fundamentally broken 1/2</a></p>
+<p><a href="https://idea.popcount.org/2017-03-20-epoll-is-fundamentally-broken-22/" target="_blank" rel="noopener">Epoll is fundamentally broken 2/2</a></p>
+<p>两篇很有意思的posts，探讨了 epoll 两个重大缺陷：</p>
+<ol>
+<li>难以跨线程使用注册到 epoll 的 fd</li>
+<li>注册的 IO 事件并非和 fd 绑定，而是内部的 file description 内核对象</li>
+</ol>
+<p>第一个问题会影响程序的 scalability，细分一下就是<strong>没法简单地</strong>对 <code>accept()</code> 和 <code>read()</code> 做 load balancing。</p>
+<p>第二个问题是纯粹的设计缺陷。</p>
+<p>这两个缺陷导致很难正确用对 epoll。</p>
+<p>个人备注：epoll 相比 IOCP（没用过kqueue不讨论）确实更加容易使用出错，因此其实需要的是一套合理的方法论。</p>
+<p>第一篇 post 里提到的几个问题其实可以通过设计规避，对于一些非通用的服务器程序来说，需要承受性能损失并不大。</p>
+<hr>
+<p><a href="http://www.parallellabs.com/2010/04/15/atomic-operation-in-multithreaded-application/" target="_blank" rel="noopener">多线程程序中操作的原子性</a></p>
+<p>入门推荐。</p>
+<p>里面有一个容易疏忽的点：对 bitfield 来说，同一个 memory location 的多个 fields必须要用一把锁来保护。</p>
+<hr>
+<p><a href="http://www.parallellabs.com/2010/10/25/practical-concurrent-queue-algorithm/" target="_blank" rel="noopener">多线程队列的算法优化</a></p>
+<p>一个 node-based blocking queue 的优化实现。</p>
+<p>通过两个单独的锁分别保护 enqueue 和 dequeue 操作。</p>
+<h2 id="Server-End-Programming"><a href="#Server-End-Programming" class="headerlink" title="Server-End Programming"></a>Server-End Programming</h2><p><a href="https://engineering.opsgenie.com/comparing-api-gateway-performances-nginx-vs-zuul-vs-spring-cloud-gateway-vs-linkerd-b2cc59c65369" target="_blank" rel="noopener">Comparing API Gateway Performances: NGINX vs. ZUUL vs. Spring Cloud Gateway vs. Linkerd</a></p>
+<p>几个开源 API Gateway 的性能评测</p>
+<hr>
+<p><a href="https://morsmachine.dk/tcp-consensus" target="_blank" rel="noopener">TCP is an underspecified two-node consensus algorithm and what that means for your proxies</a></p>
+<p>这篇文章提出的观点有点意思。</p>
+<p>作者首先认为，TCP协议其实本质上是两个结点之间的一个 consensus algorithm，这也意味着每个节点有自己 state 需要维护。</p>
+<p>后面又指出：因为一开始设计的问题，state 是每个节点独立调整的。如果在两个点之间插一个中间件，那么两个节点的 state negotiation 会受到影响。</p>
+<p>比如 L3 的 load balancer proxies 可能会导致 TCP 自身的 keep-alive 失效。</p>
+<p>针对协议实现侧：</p>
+<ul>
+<li>协议应该是 proxy-aware</li>
+<li>应用层心跳</li>
+</ul>
+<p>如果要实现一个负载均衡的 proxy：</p>
+<ul>
+<li>最好能够实现应用层协议</li>
+<li>备选方案：实现成一个 NAT，只做 IP packets 的转发</li>
+</ul>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="http://preshing.com/20110723/finding-bottlenecks-by-random-breaking/" target="_blank" rel="noopener">Finding Bottlenecks by Random Breaking</a></p>
+<p>介绍了一种找性能瓶颈的方式。</p>
+<p>所谓 random breaking，就是程序执行过程中随机的 pause debugger，然后观察 callstack。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/08/02/monthly-read-posts-in-aug-2018/">http://kingsamchen.github.io/2018/08/02/monthly-read-posts-in-aug-2018/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/date-time/">date time</a>
+            
+              <a href="/tags/pattern-matching/">pattern matching</a>
+            
+              <a href="/tags/epoll/">epoll</a>
+            
+              <a href="/tags/atomic/">atomic</a>
+            
+              <a href="/tags/multithreading/">multithreading</a>
+            
+              <a href="/tags/type-traits/">type traits</a>
+            
+              <a href="/tags/constexpr/">constexpr</a>
+            
+              <a href="/tags/TCP/">TCP</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/08/15/dealing-with-multiple-types-as-a-category/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Dealing With Multiple Types As a Category</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/07/06/running-linux-gui-applications-on-windows/">
+        <span class="next-text nav-default">在 Windows 上运行 Linux GUI 程序</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/08/02/monthly-read-posts-in-aug-2018/';
+        this.page.identifier = '2018/08/02/monthly-read-posts-in-aug-2018/';
+        this.page.title = 'Monthly Read Posts in July 2018';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

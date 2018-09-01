@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-07-07T09:57:23.047Z</updated>
+  <updated>2018-09-01T05:04:50.903Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,122 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>开了个新坑 ezio</title>
+    <link href="http://kingsamchen.github.io/2018/08/31/new-toy-ezio/"/>
+    <id>http://kingsamchen.github.io/2018/08/31/new-toy-ezio/</id>
+    <published>2018-08-30T17:04:26.000Z</published>
+    <updated>2018-09-01T05:04:50.903Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;前段时间分别在 Linux 和 Windows 下实现了一个简单的 TCP 网络框架之后，感觉一些必要的坑都踩的差不多了，可以开始动手写一个真正的跨平台的 TCP 网络框架了。&lt;/p&gt;
+&lt;p&gt;于是就有了这个新坑：ezio。&lt;/p&gt;
+&lt;p&gt;ezio 这个名字是某天跑步的时候突然想到的，有几重含义：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;致敬刺客信条里的 Ezio Auditore，寓意希望这个库能够和刺客一样，虽轻量，但需要时恰到好处，不含糊&lt;/li&gt;
+&lt;li&gt;致敬（碰瓷）Boost.ASIO，因为两个名字发音非常接近&lt;/li&gt;
+&lt;li&gt;第三个是朋友发现的，他把 ezio 念成了 e-z-io（easy io），于是赋予了一个新的含义&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;ezio 的目标是：&lt;strong&gt;提供同时支持 Linux 和 Windows 的轻量型非阻塞且具备扩展性（non-blocking and scalable）的 TCP 网络框架；针对 Linux 做性能侧优化，针对 Windows 做一致性开发体验的优化。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;这个目标初看起来有点怪异，但是确实非常实际的做法。&lt;/p&gt;
+&lt;p&gt;因为 Linux 和 Windows 在网络编程上存在根本的范式差异性，所以为了提供一致的对外接口，必须要有所侧重和牺牲。Linux 目前占据了绝大多数互联网产品服务器系统的份额，而 Windows 则提供了可以说是当前最好的开发环境。&lt;/p&gt;
+&lt;p&gt;ezio 这个设计目标可以使得绝大多数业务逻辑在 Windows 上开发，然后在 Linux 上进行最后的部署。&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
+    
+      <category term="IOCP" scheme="http://kingsamchen.github.io/tags/IOCP/"/>
+    
+      <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Dealing With Multiple Types As a Category</title>
+    <link href="http://kingsamchen.github.io/2018/08/15/dealing-with-multiple-types-as-a-category/"/>
+    <id>http://kingsamchen.github.io/2018/08/15/dealing-with-multiple-types-as-a-category/</id>
+    <published>2018-08-15T13:57:49.000Z</published>
+    <updated>2018-09-01T02:54:00.731Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Macro &lt;code&gt;ENSURE()&lt;/code&gt; from KBase can ‘capture’ variables by outputing their content to the internal stringtream, provided the type
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="enum" scheme="http://kingsamchen.github.io/tags/enum/"/>
+    
+      <category term="SFINAE" scheme="http://kingsamchen.github.io/tags/SFINAE/"/>
+    
+      <category term="tag dispatching" scheme="http://kingsamchen.github.io/tags/tag-dispatching/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in July 2018</title>
+    <link href="http://kingsamchen.github.io/2018/08/02/monthly-read-posts-in-aug-2018/"/>
+    <id>http://kingsamchen.github.io/2018/08/02/monthly-read-posts-in-aug-2018/</id>
+    <published>2018-08-02T14:03:51.000Z</published>
+    <updated>2018-09-01T02:54:00.732Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Programming-Language&quot;&gt;&lt;a href=&quot;#Programming-Language&quot; class=&quot;headerlink&quot; title=&quot;Programming Language&quot;&gt;&lt;/a&gt;Programming Language&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2016/11/24/clearer-interfaces-with-optionalt/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Clearer interfaces with optional&lt;t&gt;&lt;/t&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2016/12/01/partial-queries-with-optionalt/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Partial queries with optional&lt;t&gt;&lt;/t&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;optional&amp;lt;T&amp;gt;&lt;/code&gt; 介绍 &amp;amp; 简单使用例子&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=9IVCVSwn-fI&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CppCon 2015: John R. Bandela “Simple, Extensible Pattern Matching in C++14”&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;一个轻量级的 pattern matching 库简要介绍。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=2rnIHsqABfM&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CppCon 2015: Greg Miller “Time Programming Fundamentals”&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Google 内部实现的一个处理 date-time 的轮子。&lt;/p&gt;
+&lt;p&gt;不过讲道理，这块内容还不如关注一下之前 monthly read posts 里出现的&lt;a href=&quot;http://kingsamchen.github.io/2017/08/01/monthly-read-posts-in-july-2017/&quot;&gt;这篇&lt;/a&gt; 里提到的 date library。&lt;/p&gt;
+&lt;p&gt;看起来差不多会在 &lt;a href=&quot;https://en.cppreference.com/w/cpp/chrono&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;C++ 20 引入&lt;/a&gt;&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://blogs.msdn.microsoft.com/oldnewthing/20180307-00/?p=98175&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;When MSDN says NULL, is it okay to use nullptr?&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Short anwser: YES.&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
+    
+      <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
+    
+      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
+    
+      <category term="type traits" scheme="http://kingsamchen.github.io/tags/type-traits/"/>
+    
+      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
+    
+      <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
+    
+  </entry>
   
   <entry>
     <title>在 Windows 上运行 Linux GUI 程序</title>
@@ -79,6 +195,8 @@
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
       <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
     
       <category term="assert" scheme="http://kingsamchen.github.io/tags/assert/"/>
@@ -90,8 +208,6 @@
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
     
@@ -628,102 +744,6 @@
       <category term="iocp" scheme="http://kingsamchen.github.io/tags/iocp/"/>
     
       <category term="concurrent" scheme="http://kingsamchen.github.io/tags/concurrent/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>被 FFmpeg 的日志模块撞了一下腰</title>
-    <link href="http://kingsamchen.github.io/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/"/>
-    <id>http://kingsamchen.github.io/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/</id>
-    <published>2018-03-06T16:00:55.000Z</published>
-    <updated>2018-03-06T16:09:20.081Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;周末的时候客服同学反馈有个用户出现了崩溃，并且要来了崩溃 dmp 文件。&lt;/p&gt;
-&lt;p&gt;挂上 windbg 后发现崩溃原因是 CRT 的 &lt;code&gt;invalid-parameter&lt;/code&gt; 异常，第一现场是输出 ffmpeg 的 avcodec
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="crash" scheme="http://kingsamchen.github.io/tags/crash/"/>
-    
-      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
-    
-      <category term="ffmpeg" scheme="http://kingsamchen.github.io/tags/ffmpeg/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</title>
-    <link href="http://kingsamchen.github.io/2018/03/04/display-utf-8-string-in-vs-debugger/"/>
-    <id>http://kingsamchen.github.io/2018/03/04/display-utf-8-string-in-vs-debugger/</id>
-    <published>2018-03-04T14:13:31.000Z</published>
-    <updated>2018-03-04T14:42:06.731Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;众所周知，UTF-8 在 Windows 上一直都不是一等公民，在 MSVC 的调试器里，&lt;code&gt;std::string&lt;/code&gt; 默认按照本地编码解释，在中文系统上是 GBK 或 GB2312。&lt;/p&gt;
-&lt;p&gt;于是，如果一个
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="Visual Studio" scheme="http://kingsamchen.github.io/tags/Visual-Studio/"/>
-    
-      <category term="debugger" scheme="http://kingsamchen.github.io/tags/debugger/"/>
-    
-      <category term="UTF-8" scheme="http://kingsamchen.github.io/tags/UTF-8/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Feb 2018</title>
-    <link href="http://kingsamchen.github.io/2018/03/02/monthly-read-posts-in-feb-2018/"/>
-    <id>http://kingsamchen.github.io/2018/03/02/monthly-read-posts-in-feb-2018/</id>
-    <published>2018-03-02T15:52:26.000Z</published>
-    <updated>2018-03-02T16:09:53.243Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;a href=&quot;https://baptiste-wicht.com/posts/2012/07/c11-concurrency-tutorial-part-4-atomic-type.html&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;C++11
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
-    
-      <category term="memory fence" scheme="http://kingsamchen.github.io/tags/memory-fence/"/>
-    
-      <category term="memory order" scheme="http://kingsamchen.github.io/tags/memory-order/"/>
     
   </entry>
   

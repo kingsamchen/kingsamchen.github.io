@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="开了个新坑 ezio"/>
+
+
+
+
+  <meta name="keywords" content="epoll, TCP, IOCP, network, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2018/08/31/new-toy-ezio/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> 开了个新坑 ezio - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          开了个新坑 ezio
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-08-31
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#一些有点技术范的讨论"><span class="toc-text">一些有点技术范的讨论</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#结语"><span class="toc-text">结语</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>前段时间分别在 Linux 和 Windows 下实现了一个简单的 TCP 网络框架之后，感觉一些必要的坑都踩的差不多了，可以开始动手写一个真正的跨平台的 TCP 网络框架了。</p>
+<p>于是就有了这个新坑：ezio。</p>
+<p>ezio 这个名字是某天跑步的时候突然想到的，有几重含义：</p>
+<ul>
+<li>致敬刺客信条里的 Ezio Auditore，寓意希望这个库能够和刺客一样，虽轻量，但需要时恰到好处，不含糊</li>
+<li>致敬（碰瓷）Boost.ASIO，因为两个名字发音非常接近</li>
+<li>第三个是朋友发现的，他把 ezio 念成了 e-z-io（easy io），于是赋予了一个新的含义</li>
+</ul>
+<p>ezio 的目标是：<strong>提供同时支持 Linux 和 Windows 的轻量型非阻塞且具备扩展性（non-blocking and scalable）的 TCP 网络框架；针对 Linux 做性能侧优化，针对 Windows 做一致性开发体验的优化。</strong></p>
+<p>这个目标初看起来有点怪异，但是确实非常实际的做法。</p>
+<p>因为 Linux 和 Windows 在网络编程上存在根本的范式差异性，所以为了提供一致的对外接口，必须要有所侧重和牺牲。Linux 目前占据了绝大多数互联网产品服务器系统的份额，而 Windows 则提供了可以说是当前最好的开发环境。</p>
+<p>ezio 这个设计目标可以使得绝大多数业务逻辑在 Windows 上开发，然后在 Linux 上进行最后的部署。</p>
+<a id="more"></a>
+<h2 id="一些有点技术范的讨论"><a href="#一些有点技术范的讨论" class="headerlink" title="一些有点技术范的讨论"></a>一些有点技术范的讨论</h2><p><strong>0x00</strong></p>
+<p>宏观上选用的 IO 模型是 one-loop-per-thread，并且一个 master thread 负责 accept 新连接，然后从一堆 worker thread 中选出一个将 socket 分给他。</p>
+<p>这个模型的核心是每个线程独有的 event-loop。</p>
+<p>在 Linux 上选择的显然是 non-blocking + epoll；在 Windows 上则是 IO completion port + overlapped IO。</p>
+<p><strong>0x01</strong></p>
+<p>因为 non-blocking 本质上仍是同步 IO，而后者则是实打实的异步 IO，所以这里有一个融合的问题；用俗话说就是，reactor pattern 和 proactor pattern 要如何 unify。</p>
+<p>我的策略是：将前者转换为后者，比如对于 read 操作，内部 read 完成后才通知用户，并且给到读到的数据。</p>
+<p>有人怀疑这样做会有不必要的开销，我觉得这是不对的，因为封装完善的网络框架不应该将对 socket 的 <code>read()</code> 或者 <code>write()</code> 直接暴露给用户让用户完成，相反，用户接触到的只是框架提供的一层抽象。</p>
+<p>如果直接暴露给用户，那么用户应该用 <code>read(2)</code> 去读 socket 还是用 <code>readv()</code> 呢？如果我们封装 epoll 时选择的是 edge-trigger，那么用户就一定要反复 <code>read()</code> 直到返回 <code>EAGAIN</code> .etc 这意味着用户不仅需要关心底层 IO multiplexor 的具体实现，还要自己管理应用层的 buffer。</p>
+<p>另外，我不觉得 libevent, libuv 甚至 Boost.ASIO 是封装完善的网络框架；相反，在实际工程使用它们避不开需要再往上面加一层不会太薄的封装。</p>
+<p>所以不管是 reactor 还是 proactor，这是对直接操作 multiplexor 的上下文来说的，框架用户看到的应该只是完成的通知；而性能的保证，应该落在 application-layer buffer 的实现上。</p>
+<p><strong>0x02</strong></p>
+<p>epoll 虽然是 poll 的后继者，但是在很多地方反而和 IOCP 存在相似之处，而这些地方刚好和 poll 存在差异。</p>
+<p>首先，epoll 和 IOCP 都是有状态的（stateful）。</p>
+<p>要让 epoll / IOCP 管理一个 fd / handle，首先要将这个 fd / handle 与之关联；之后对这个 socket 的所有 IO 操作就可以直接从 epoll / IOCP 中获取。</p>
+<p>这带来两个改变：</p>
+<ul>
+<li>event-loop 自身不需要维护关心的 socket 列表了，因为对应的 multiplexor 内部已经维护了一份</li>
+<li>socket 的生命周期的维护变得更加重要，尤其是 epoll 在设计上犯了一个很愚蠢创新（内部区分 file descriptor 和 file description）</li>
+</ul>
+<p>另外，无论是 <code>epoll_wait()</code> 还是 <code>GetQueuedCompletionStatusEx()</code> 都可以尝试获取指定大小的事件数组；这样的话就可以设计一个统一的优化策略：如果某次大小为 n 的数组用满了，下一轮之前可以将数组大小翻倍（或者 1.5x 放大）。</p>
+<p><strong>0x03</strong></p>
+<p>虽然理论上异步 IO 的性能要高于非阻塞同步 IO，但是异步 IO 割裂了上下文，尤其是资源上下文，因此在资源管理上充满了艰险。</p>
+<p>首先为了让 os kernel 能够直接将网卡收到的数据写入内存页，这部分内存必须事先提供；而操作系统避免内存页被内存管理 swap-out，必须将这块内存页 pin 住。</p>
+<p>对于每个发出去的 read 异步请求，都伴随着一块被 PIN 住的 mem-page，更揪心的是在请求 complete 之前，内存页始终被 pin 的死死的。</p>
+<p>如果有很多恶意连接，建立了连接之后就什么都不做，那么按照每个内存页 4K 计算，用不了多少时间内存管理就撑不住了。在 Windows 上这个时候异步的 IO 操作就会返回一个错误 <code>WSAENOBUFS</code>，表示 too many pinned memory pages。</p>
+<p>对于这个问题，我的想法是使用 read-probe-request，即对于新建立的连接，先发一个大小为 0 的异步 read，如果之后这个请求完成了，那就说明 socket 存在可读数据，后面就可以大胆读了。</p>
+<p>当然，不排除有恶意客户端针对性的搞破坏，那样就要做一些资源使用的处理了。</p>
+<p>对于 accept 调用来说，这个问题稍微没有那么严重，因为可以控制 concurrent outstanding accept requests 的数量在一个比较小的值，比如 10；甚至完全不考虑做优化，顺序依次的发都行，毕竟这个优化对应到 epoll 也要求调用 <code>accept()</code> 直到出现 <code>EAGAIN</code>，并不是一个每个人都会做的优化。</p>
+<p>相比较下，同步 IO 一个明显的优势是可以利用 stack，内存资源的使用上更加紧凑。</p>
+<p>这个很容易理解，因为 <code>read()</code> 操作的发起和结束是在一个函数调用上下文，完全可以在 <code>read()</code> 调用时使用一部分 stack 空间，比如 64-KB，利用 <code>readv()</code> 读取一个 buffer vetor 即可。等到这个栈帧结束，这部分资源完璧归赵。</p>
+<p>对于异步 IO 来说，因为 request 和 completion 是分开的上下文，栈内存就别想了，只能动一些其他的手段。</p>
+<p><strong>0x04</strong></p>
+<p>level-trigger 还是 edge-trigger，这是使用 epoll 时首先需要考虑的，毕竟这影响到内部的 IO 策略。</p>
+<p>结合之前的经历，我觉得选择 level-trigger 是一个比较稳妥地做法。</p>
+<p>对于读侧来说，如果使用 LT，那么每次能读多少就读多少，反正只要还能读，下一轮 polling 还有机会。而对于 ET 来说，则需要反复调用 <code>read()</code> 直到出现 <code>EAGAIN</code>，哪怕你某一次读到的数据小于 buffer size。</p>
+<p><code>read()</code> 毕竟是 syscall 啊，多几次调用的开销是不能忽视的，而且一般来说，如果 size-read 已经小于 buffer，那么有很大的概率下一次 read 几乎一定会返回 <code>EAGAIN</code>，这是一个令人失望的故事。</p>
+<p>对于写操作来说，如果使用 LT，那么需要注意，一旦 application-layer output-buffer 空了，那么就要立马屏蔽这个 socket 的写标志，避免上层没有书需要写，但是 socket 始终可写导致出现 busy-loop。</p>
+<p>如果使用 ET，这点稍微好一些，但是 epoll 不支持对 read 和 write 分开设置 LT / ET 不是…</p>
+<p>综上，如果使用 LT，那么要注意避免 busy-loop；使用 ET，需要注意避免漏了活动事件，而反复直到确认 <code>EAGAIN</code> 出现也有开销。</p>
+<p>所以 ET 不一定就性能高，反而使用 ET 需要加倍小心，更具心智负担。</p>
+<p>可能除了一些极端的需要 micro-optimization 的场合，LT 都是首选。</p>
+<p><strong>0x05</strong></p>
+<p>多线程环境。</p>
+<p>在多线程环境中实现并发 TCP 网络编程可以说是荆棘密布，一不小心就能摔倒坑里。</p>
+<p>区别于常规的 disk IO，TCP socket IO 存在本质的特点，那就是存在 short-read 和 short-write。</p>
+<p>因此在多线程环境中，首要做的就是<strong>避免存在多个线程能操作同一个 socket 的情况</strong>。</p>
+<p>实话说，在17年底我还没正式系统学习过 TCP 网络编程时，写的两个（分别针对 Windows IOCP 和 Linux epoll） tiny http server 就犯过这样的错误。</p>
+<p>epoll 本身是没有明确说一个 epoll-fd 是 thread-safe 的， ET + EPOLLONESHOT 是一个解决方案，但是看起来更像是掩耳盗铃，而且一次性作对的难度不小。</p>
+<p>具体细节可以参考我之前在 montly read posts 里分享过的这篇文章：<a href="https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/" target="_blank" rel="noopener">epoll is fundamentally broken</a></p>
+<p>对于 IOCP，虽然微软明确说 IOCP 是 thread-safe 的，并且内部设计时也考虑了多个线程访问同一个 device-handle 的负载均衡（这样就允许在操作中使用 blocking functions），但是必须要认识到一点：IOCP 也是支持 disk I/O 的！</p>
+<p>对于 disk I/O 来说，这么做时无可厚非的，但是 TCP socket IO 却是存在 short-read 和 short-write。</p>
+<p>假设两个线程同时对一个 socket 做了 read 请求，那么首先回来触发应用层回调的一定先发请求的那个线程吗？考虑过期间系统调度的影响吗？</p>
+<p>在 CodeProject 上能看到不少这样的文章：为了解决乱序的问题，对每个请求进行 seq 的编号，同时考虑到多个线程访问同一个 buffer 存在 race 又要上锁…</p>
+<p>这不就是重新发明了一遍 TCP sliding window protocol 吗…</p>
+<p>如果保证一个 socket 只有一个线程操作，那么什么事儿都没了；而这个，才是 one-loop-per-thread 所要表达的真正的意思。</p>
+<p>当然，eventloop-thread 中要避免出现 blocking 操作，这样刚好有可以和 Linux epoll 保持一致了。</p>
+<p><strong>0x06</strong></p>
+<p>想了一下，觉得关闭逻辑也有必要提一下。</p>
+<p>对于服务端程序来说，应该尽量避免主动 shutdown；主要是为了避免进入 TIME-WAIT，毕竟这个时间段长达 2MSL（据说在 Linux 上固定是 60s)。</p>
+<p>那么正确的关闭逻辑应该这样操作：</p>
+<ul>
+<li>服务端通过 <code>EPOLLRDHUP</code> 或者 <code>read()</code> 知道对端关闭，然后进入被动关闭流程。</li>
+<li>如果服务端自己要结束，则服务端通过 <code>shutdown()</code> 先关闭 socket 的写端，保留读端（因为可能有数据还在路上）；这样的客户端通过 <code>EPOLLRDHUP</code> 或者 <code>read()</code> 返回 0 就主动断开连接，发出 FIN 包；然后服务端接着进入被动关闭流程。</li>
+</ul>
+<p>对于一些异常的 socket，服务端别无法他，只能主动断开，一般来说这种关闭的连接数量较少。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>哔哔了这么多，希望能在十月份结束前完成整个库的实现。嗯，最起码别烂尾…</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/08/31/new-toy-ezio/">http://kingsamchen.github.io/2018/08/31/new-toy-ezio/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/epoll/">epoll</a>
+            
+              <a href="/tags/TCP/">TCP</a>
+            
+              <a href="/tags/IOCP/">IOCP</a>
+            
+              <a href="/tags/network/">network</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2018/08/15/dealing-with-multiple-types-as-a-category/">
+        <span class="next-text nav-default">Dealing With Multiple Types As a Category</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/08/31/new-toy-ezio/';
+        this.page.identifier = '2018/08/31/new-toy-ezio/';
+        this.page.title = '开了个新坑 ezio';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>
