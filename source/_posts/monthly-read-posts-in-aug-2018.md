@@ -1,154 +1,241 @@
 ---
-title: Monthly Read Posts in July 2018
+title: Monthly Read Posts in Aug 2018
 categories: PROGRAMMING
-date: 2018-08-02 22:03:51
-tags: [date time, pattern matching, epoll, atomic, multithreading, type traits, constexpr, TCP]
+date: 2018-09-03 13:14:04
+tags: [raft, membership protocol, tcp flow control, GIL, variadic template, parallelism, lock-free]
 ---
-## Programming Language
+## Programming Languages
 
-[Clearer interfaces with optional<T>](https://www.fluentcpp.com/2016/11/24/clearer-interfaces-with-optionalt/)
+[CppCon 2015: Fedor Pikus “The Unexceptional Exceptions"](https://www.youtube.com/watch?v=fOV7I-nmVXw)
 
-[Partial queries with optional<T>](https://www.fluentcpp.com/2016/12/01/partial-queries-with-optionalt/)
+Handling exceptions is just as to handle errors using error code, exception is just a tool.
 
-`optional<T>` 介绍 & 简单使用例子
+The key point is to maintain the program state in a well defiend state.
 
----
+Turn error handling into resource management and use RAII to automate it; use explicit try...catch only when absolute necessary.
 
-[CppCon 2015: John R. Bandela "Simple, Extensible Pattern Matching in C++14"](https://www.youtube.com/watch?v=9IVCVSwn-fI)
-
-一个轻量级的 pattern matching 库简要介绍。
+Bonus tip: avoid uses of `pthread_cancel`.
 
 ---
 
-[CppCon 2015: Greg Miller “Time Programming Fundamentals"](https://www.youtube.com/watch?v=2rnIHsqABfM)
+[Pros and cons of functional programming](https://itnext.io/pros-and-cons-of-functional-programming-32cdf527e1c2)
 
-Google 内部实现的一个处理 date-time 的轮子。
+Pure function: avoid shared state; immutable structures; function composition.
 
-不过讲道理，这块内容还不如关注一下之前 monthly read posts 里出现的[这篇](http://kingsamchen.github.io/2017/08/01/monthly-read-posts-in-july-2017/) 里提到的 date library。
+Declarative: instead of answers the question 'how to do' in imperative style, it answers the question 'what to do'; imperative relies on instructions while declarative relies more on expressions.
 
-看起来差不多会在 [C++ 20 引入](https://en.cppreference.com/w/cpp/chrono)
+Cons of FP: not suitable for graph algorithms; major shift on mind patterns.
 
 ---
 
-[When MSDN says NULL, is it okay to use nullptr?](https://blogs.msdn.microsoft.com/oldnewthing/20180307-00/?p=98175)
+[Understanding Shell Script's idiom: 2>&1](https://www.brianstorti.com/understanding-shell-script-idiom-redirect/)
 
-Short anwser: YES.
+General usage:
+
+```shell
+cat foo.txt > result.log 2>&1
+```
+
+1. fd for stdout and stderr are 1 and 2 respectively
+2. `a > b` is a shortcut for `a 1> b` and 1 here is fd value for stdout
+3. you can use `&fd` to reference a fd value
+4. therefore, using `2>&1` would redirect stderr to stdout, and `1>&2` would do the opposite.
 
 <!-- more -->
 
----
-[CppCon 2015:Marshall Clow “Type Traits - what are they and why should I use them?"](https://www.youtube.com/watch?v=VvbTP_k_Df4)
-
-A breif introduction to type traits.
+However, I still have doubt about why place `2>&1` at the end ? that doesn't make consistency.
 
 ---
 
-[Parsing strings at compile-time — Part I](https://akrzemi1.wordpress.com/2011/05/11/parsing-strings-at-compile-time-part-i/)
+[Pointers to arrays in C](https://eli.thegreenplace.net/2010/01/11/pointers-to-arrays-in-c)
 
-[Parsing strings at compile-time — Part II](https://akrzemi1.wordpress.com/2011/05/20/parsing-strings-at-compile-time-part-ii/)
-
-核心是如何利用 `constexpr` functions 实现一些编译期的字符串处理。
-
-PART I 实现了一个括号平衡的检查器；PART II实现了一个四则运算的eval
-
-由于文章写的时间比较早，那会儿 `constexpr` 限制比较大，因此很多代码表达起来比较麻烦。自从 c++ 14 开始放送规则之后，这部分的实现基本成了算法层面。
-
-## Operating System
-
-[When FFI Function Calls Beat Native C](http://nullprogram.com/blog/2018/05/27/)
-
-ELF 文件格式的 PIC 特性会导致 FFI 的性能损失。
-
-动态加载可以一定程度上绕过 PIC 带来的开销
+**Core observation**: While an array name may decay into a pointer, the address of the array does not decay into a pointer to a pointer.
 
 ---
 
-[If I call GetExitCodeThread for a thread that I know for sure has exited, why does it still say STILL_ACTIVE?](https://blogs.msdn.microsoft.com/oldnewthing/20180302-00/?p=98145)
+[CppCon 2015: Fedor Pikus PART 1 “Live Lock-Free or Deadlock (Practical Lock-free Programming)"](https://www.youtube.com/watch?v=lVBvHbJsg5Y)
 
-核心观点：
-1. 函数 `_beginthread()` 返回的 HANDLE 除了用来判断函数是否成功执行外没有任何可靠的作用。
-2. 使用 `_beginthreadex()` 可以解决返回的 HANDLE 不可靠的问题。
-3. 用 API 前要完整的看完 MSDN 的描述（来自 Raymond Chen 的嘲讽）
+[CppCon 2015: Fedor Pikus PART 2 “Live Lock-Free or Deadlock (Practical Lock-free Programming) ”](https://www.youtube.com/watch?v=1obZeHnAwz4)
 
----
+A lengthy and complex talk which covers multiple complicated topics.
 
-[The Windows Heap Is Slow When Launched from the Debugger](http://preshing.com/20110717/the-windows-heap-is-slow-when-launched-from-the-debugger/)
+What memory barriers (acquire-release, mainly, do and how it helps to fix tradition DCLP.
 
-在 VS 调试器中运行程序会让程序跑的比直接运行慢，即使跑的是 Release 构建。
+Generic lock-free queue is very hard to write and not always faster than a well-written non-thread-safe queue with a spin-lock; and a specialized lock-free queue is often faster.
 
-原因：被调试器启动的程序会使用 system debug heap，系统在程序使用 `Heap*` API 时做一些错误检测。并且这个 system debug heap 是一个 runtime setting，由操作系统控制（ntdll.dll）控制。
-
-解决方案：
-1. 不要在调试器中运行程序
-2. 如果（1）无法做到，则定义程序自己的环境变量 `_NO_DEBUG_HEAP=1`
-
-# Concurrent Programming
-
-[Epoll is fundamentally broken 1/2](https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/)
-
-[Epoll is fundamentally broken 2/2](https://idea.popcount.org/2017-03-20-epoll-is-fundamentally-broken-22/)
-
-两篇很有意思的posts，探讨了 epoll 两个重大缺陷：
-
-1. 难以跨线程使用注册到 epoll 的 fd
-2. 注册的 IO 事件并非和 fd 绑定，而是内部的 file description 内核对象
-
-第一个问题会影响程序的 scalability，细分一下就是**没法简单地**对 `accept()` 和 `read()` 做 load balancing。
-
-第二个问题是纯粹的设计缺陷。
-
-这两个缺陷导致很难正确用对 epoll。
-
-个人备注：epoll 相比 IOCP（没用过kqueue不讨论）确实更加容易使用出错，因此其实需要的是一套合理的方法论。
-
-第一篇 post 里提到的几个问题其实可以通过设计规避，对于一些非通用的服务器程序来说，需要承受性能损失并不大。
+Thread-safe data structures require special interfaces.
 
 ---
 
-[多线程程序中操作的原子性](http://www.parallellabs.com/2010/04/15/atomic-operation-in-multithreaded-application/)
+[Parallel STL for Newbies: Reduce and Independent Modifications](http://ithare.com/parallel-programming-for-parallel-noobs-reduce-and-independent-modifications/)
 
-入门推荐。
-
-里面有一个容易疏忽的点：对 bitfield 来说，同一个 memory location 的多个 fields必须要用一把锁来保护。
-
----
-
-[多线程队列的算法优化](http://www.parallellabs.com/2010/10/25/practical-concurrent-queue-algorithm/)
-
-一个 node-based blocking queue 的优化实现。
-
-通过两个单独的锁分别保护 enqueue 和 dequeue 操作。
-
-## Server-End Programming
-
-[Comparing API Gateway Performances: NGINX vs. ZUUL vs. Spring Cloud Gateway vs. Linkerd]( https://engineering.opsgenie.com/comparing-api-gateway-performances-nginx-vs-zuul-vs-spring-cloud-gateway-vs-linkerd-b2cc59c65369)
-
-几个开源 API Gateway 的性能评测
+Some caveats of using `std::reduce()` explained:
+1. be careful when using `std::reduce()` on floating pointers
+2. be careful using with non-commutative data types
+3. avoid multiple passes (performance penalty)
 
 ---
 
-[TCP is an underspecified two-node consensus algorithm and what that means for your proxies](https://morsmachine.dk/tcp-consensus)
+CppCon 2015: John Lakos “Value Semantics: It ain't about the syntax! [1](https://www.youtube.com/watch?v=W3xI1HJUy7Q) [2](https://www.youtube.com/watch?v=0EvSxHxFknM)
 
-这篇文章提出的观点有点意思。
+Explaining value semantics on a rather high level of perspective.
 
-作者首先认为，TCP协议其实本质上是两个结点之间的一个 consensus algorithm，这也意味着每个节点有自己 state 需要维护。
+The author uses the concept _salient attributes_ to model values of a type.
 
-后面又指出：因为一开始设计的问题，state 是每个节点独立调整的。如果在两个点之间插一个中间件，那么两个节点的 state negotiation 会受到影响。
+Definition of salient attributes: The documented set of (observable) named attributes of a type T that must respectively “have” (refer to) the same value in order for two instances of T to “have” (refer to) the same value.
 
-比如 L3 的 load balancer proxies 可能会导致 TCP 自身的 keep-alive 失效。
+The topic of this talk is great, but the talk itself is rather verbose; too  many concret examples are described while so many of which are not important that being worthy.
 
-针对协议实现侧：
-- 协议应该是 proxy-aware
-- 应用层心跳
+---
 
-如果要实现一个负载均衡的 proxy：
-- 最好能够实现应用层协议
-- 备选方案：实现成一个 NAT，只做 IP packets 的转发
+[Strongly typed constructors](https://www.fluentcpp.com/2016/12/05/named-constructors/)
+
+The key point of the post is: how to construct an object from several data if these data are in the same type?
+
+that is, if we have a class `Circle` defined as such:
+
+```cpp
+class Circle
+{
+public:
+    explicit Circle(double radius) : radius_(radius) {}
+    explicit Circle(double diameter) : radius_(diameter / 2) {} // This doesn't compile !!
+};
+```
+
+Actually I prefer using two dedicated static generation functions:
+
+```cpp
+class Circle {
+public:
+    static Circle FromRadius(double r);
+    static Circle FromDiameter(double d);
+
+};
+```
+
+Because define types for both `Radius` and `Diameter` can be tedious, unless we can implmement typed-typedef like which in Golang.
+
+---
+
+[CppCon 2015: Peter Sommerlad “Variadic Templates in C++11 / C++14 - An Introduction”](https://www.youtube.com/watch?v=R1G3P5SRXCw)
+
+Key point for writing variadic function template: using recursion in the definition
+
+That is:
+- base case with zero arguments (matches in the end)
+- recursive case with 1 explicit argument and a tail consisting of a variadic list of arguments.
+
+Caveats: Recursion needs a base code even if never called. exists for compilation.
+
+Thus, put base case ahead of recursive one, because of overload name lookup.
+
+Variadic class template is less useful than its function template cousin.
+
+SFINAE tricks can be sometimes helpful.
+
+---
+
+[Python's GIL implemented in pure Python](https://rushter.com/blog/python-gil-thread-scheduling/)
+
+The post presents GIL logic using python _pseduo-code_
+
+extractions:
+1. threads each runs a event-loop and before running acquire the GIL
+2. the running thread checks if other threads are waiting after execution of some instructions.
+3. if there are awaiting threads, the running thread drops the GIL and let other threads have chance to run
+4. after the drop, it immediately request for GIL, making itself waiting on GIL
+
+The synchronization among threads are just plain mutex + condition
+
+## Network
+
+[TCP Flow Control](https://www.brianstorti.com/tcp-flow-control/)
+
+A quite awesome post for explaining TCP flow control mechanim.
+
+Content is easy to follow
+
+## Algorithms
+
+[Weighted random generation in Python](https://eli.thegreenplace.net/2010/01/22/weighted-random-generation-in-python)
+
+Introduction to a few weighted random selection algorithms.
+
+This post is quite amazing and algorithms are quite elegant.
+
+## Distributed Systems
+
+[Raft: Consensus made simple(r)](https://www.brianstorti.com/raft/)
+
+An excellent introduction post to Raft.
+
+---
+
+[SWIM: The scalable membership protocol](https://www.brianstorti.com/swim/)
+
+A novel membership protocol.
 
 ## Misc
 
-[Finding Bottlenecks by Random Breaking](http://preshing.com/20110723/finding-bottlenecks-by-random-breaking/)
+[Zombie Processes are Eating your Memory](https://randomascii.wordpress.com/2018/02/11/zombie-processes-are-eating-your-memory/)
 
-介绍了一种找性能瓶颈的方式。
+When you create or open a process, its your responsiblity to close the handle once you complete your job, and its vital...
 
-所谓 random breaking，就是程序执行过程中随机的 pause debugger，然后观察 callstack。
+And by the way, if you write C++ code, RAII is always your best friend for automatic resource management.
+
+---
+
+[What We Talk About When We Talk About Performance](https://randomascii.wordpress.com/2018/02/04/what-we-talk-about-when-we-talk-about-performance/)
+
+How to describe your performance improvement correctly.
+
+An easy and clear way is to use speedup ratio, such as 1.5x faster or 2x faster.
+
+---
+
+[Python Application Layouts: A Reference]( https://realpython.com/python-application-layouts/)
+
+Efficient ways to structure your python project layouts.
+
+A classic layout for a project with multiple sub-packages
+
+```
+helloworld/
+│
+├── bin/
+│
+├── docs/
+│   ├── hello.md
+│   └── world.md
+│
+├── helloworld/
+│   ├── __init__.py
+│   ├── runner.py
+│   ├── hello/
+│   │   ├── __init__.py
+│   │   ├── hello.py
+│   │   └── helpers.py
+│   │
+│   └── world/
+│       ├── __init__.py
+│       ├── helpers.py
+│       └── world.py
+│
+├── data/
+│   ├── input.csv
+│   └── output.xlsx
+│
+├── tests/
+│   ├── hello
+│   │   ├── helpers_tests.py
+│   │   └── hello_tests.py
+│   │
+│   └── world/
+│       ├── helpers_tests.py
+│       └── world_tests.py
+│
+├── .gitignore
+├── LICENSE
+└── README.md
+```
