@@ -195,6 +195,253 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/">浅析 RefCounted 和 WeakPtr：Chromium Base 篇</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-05-14
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
+<p>MSVC STL 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">此处</a></p>
+<p>Libstdc++ 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/">此处</a></p>
+<p>Boost 的分析版本请移步<a href="https://kingsamchen.github.io/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/">此处</a></p>
+<p>注 1：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。</p>
+<p>注 2：这是系列最后一篇。</p>
+<h2 id="目标版本选择"><a href="#目标版本选择" class="headerlink" title="目标版本选择"></a>目标版本选择</h2><p>Chromium tag 68.0.3421.1</p>
+<p>代码位置：<code>base/memory/ref_counted.{h, cc}</code></p>
+<h2 id="RefCountedBase-和-RefCounted"><a href="#RefCountedBase-和-RefCounted" class="headerlink" title="RefCountedBase 和 RefCounted"></a>RefCountedBase 和 RefCounted</h2><p>两个类实现了非线程安全的引用计数，即：内部计数使用的是 built-in integer</p>
+<p>先看看 <code>RefCountedBase</code> 的大致结构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RefCountedBase</span> &#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">RefCountedBase</span><span class="params">(StartRefCountFromZeroTag)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">RefCountedBase</span><span class="params">(StartRefCountFromOneTag)</span></span>;</span><br><span class="line"></span><br><span class="line">    ~RefCountedBase();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">AddRef</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">Release</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">mutable</span> <span class="keyword">uint32_t</span> ref_count_ = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> DCHECK_IS_ON()</span></span><br><span class="line">    <span class="keyword">mutable</span> <span class="keyword">bool</span> needs_adopt_ref_ = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">mutable</span> <span class="keyword">bool</span> in_dtor_ = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">mutable</span> SequenceChecker sequence_checker_;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    DISALLOW_COPY_AND_ASSIGN(RefCountedBase);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>可以看出核心 <code>ref_count_</code> 类型是 <code>uint32_t</code></p>
+<p>ctor 和 dtor 都被定义为 protected，说明这类使用做基类；同时提供了 <code>AddRef()</code> 和 <code>Release()</code>，进行内部的计数增减。<br>
+          <div class="read-more">
+            <a href="/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/">浅析 shared_ptr：Boost 篇</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-05-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
+<p>MSVC STL 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">此处</a></p>
+<p>Libstdc++ 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/">此处</a></p>
+<p>注：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。</p>
+<h2 id="目标版本选择"><a href="#目标版本选择" class="headerlink" title="目标版本选择"></a>目标版本选择</h2><p>选用最新的 Boost 1.67 作为研究目标</p>
+<p>在开始正题前，先简单看一下 <code>shared_ptr</code> 的类成员，方便后续分析：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> detail &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt; <span class="class"><span class="keyword">class</span> <span class="title">T</span> &gt; <span class="title">struct</span> <span class="title">sp_element</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">typedef</span> T type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">shared_ptr</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">typedef</span> <span class="keyword">typename</span> boost::detail::sp_element&lt; T &gt;::type element_type;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// omitted other</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    element_type * px;                 <span class="comment">// contained pointer</span></span><br><span class="line">    boost::detail::shared_count pn;    <span class="comment">// reference counter</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+          <div class="read-more">
+            <a href="/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/05/01/monthly-read-posts-in-apr-2018/">Monthly Read Post in Apr 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-05-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://www.digitalocean.com/community/tutorials/what-is-load-balancing" target="_blank" rel="noopener">What is Load Balancing?</a></p>
+<p>Digital Ocean 出品的良心文章，覆盖了：</p>
+<ul>
+<li>what is load balancing</li>
+<li>Why load balancing</li>
+<li>Traffic forwarding</li>
+<li>How does load balancer choose backend servers</li>
+<li>Avoid SPOF of load balancer itself</li>
+</ul>
+<hr>
+<p><a href="https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236" target="_blank" rel="noopener">Introduction to modern network load balancing and proxying</a></p>
+<p>非常详尽的一篇介绍 load balancing 的文章，前一篇的所有内容这篇都有，同时还做了一些深入的分析。</p>
+<p>例如：L4/L7 的区别；基于 lb 的 service discovery .etc</p>
+<p>尤其后面一大块讲网络拓扑的部分，没有实际经验的人表示看起来很痛苦。</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=Hjz1eBx91g8" target="_blank" rel="noopener">CppCon 2015: Gabriel Dos Reis “Contracts for Dependable C++”</a></p>
+<p>核心围绕着 interfaces as contract 来展开，针对三点：</p>
+<ul>
+<li>precondition</li>
+<li>invariants</li>
+<li>postcondition</li>
+</ul>
+<p>展开。</p>
+<p>同时提到了一些（想法）构建 programming by contract 的基础设施，例如通过 attribute 来增强语义 blahblah</p>
+<p>另，talk 有点无聊，看看 slider 就差不多了。</p>
+<hr>
+<p><a href="http://insanecoding.blogspot.co.uk/2014/05/dealing-with-randomness.html" target="_blank" rel="noopener">Dealing with randomness</a></p>
+<p>文章前半部份批判了很多不专业的现象，openssl 再次躺枪。</p>
+<p>后面提到了如果要做 cryptographic safe randomness，需要哪些东西。</p>
+<p>最后批判了一下随机数去取模这种做法。</p>
+<p>但是全文看半天也没有一个操作性很强的指导意见….</p>
+<hr>
+<p><a href="http://insanecoding.blogspot.co.uk/2014/05/a-good-idea-with-bad-usage-devurandom.html" target="_blank" rel="noopener">A good idea with bad usage: /dev/urandom</a></p>
+<p>包含 dev/random 和 /dev/urandom 的区别，以及：</p>
+<p>要从 /dev/urandom 中读取数据作为密码学安全的初始化种子应该如何正确的实现。</p>
+<hr>
+<p><a href="https://zhuanlan.zhihu.com/p/24146167" target="_blank" rel="noopener">浅论Lock 与X86 Cache 一致性</a></p>
+<p>Modern CAS implementation under the hood.</p>
+<p>稍稍覆盖了一下 MESI/MESIF 协议。</p>
+<p>但是总体来说感觉质量一般</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=WjTrfoiB0MQ" target="_blank" rel="noopener">CppCon 2015: Andrei Alexandrescu “Declarative Control Flow”</a></p>
+<p>这个 Talk 质量很高，核心就是：如何利用基础的 ScopeGuard 构建出 <code>ON_SCOPE_EXIT</code>，<code>ON_SCOPE_FAIL</code> 和 <code>ON_SCOPE_SUCCESS</code> 语义，并自动执行相应代码。</p>
+<p>RAII 这个特质在某个抽象角度上就是标题所说的 it is declarative</p>
+<p>这几个东西基本已经作为了 facebook 基础库 Folly 的一部分。</p>
+<p>最后提一下，使用 exception 作为 error reporting &amp; handling 机制还是很苦难的，需要依赖很多语言设施（RAII在这里得天独厚），根据语言提供的特性不同会有不同的坑，同时对使用者要求很高。</p>
+<p>目前看起来未来新语言使用异常作为核心错误处理机制的应该会越来越少。</p>
+<hr>
+<p><a href="http://insanecoding.blogspot.co.uk/2014/06/memory-management-in-c-and-auto.html" target="_blank" rel="noopener">Memory management in C and auto allocating sprintf() - asprintf()</a></p>
+<p>文章分两部分：</p>
+<p>第一部分叙述如何“正确”使用 <code>malloc</code> 和 <code>free</code>，核心包含</p>
+<ul>
+<li>需要处理 <code>malloc</code> 失败返回 NULL 的情况</li>
+<li>使用 <code>free</code> 释放内存之后应该把对应的 ptr 置 NULL，同时建议通过提供一个类似 <code>insane_free</code> 的宏来保证</li>
+</ul>
+<p>实话说这部分观点差不多仅适合使用 C 的情况，并且需要自己处理内存分配失败在大多数应用系统上显得过于 overkiil。</p>
+<p>C++ 在这点做的就比较好，直接抛出一个 <code>bad_alloc</code> 异常免得你有什么想法，不过我还是见过很多 catch bad_alloc 的代码。。。；chromium 的做法就比较激进了，在 Windows 上直接设置堆管理器，一旦内存分配失败就立马结束进程。</p>
+<p>第二部分是阐述，如何实现一个跨平台的 <code>asnprintf()</code>，格式化字符串时不需要外部手动设置 buffer 大小。</p>
+<p>这部分会涉及不少不同平台的 runtime 实现的差异性。</p>
+<hr>
+<p><a href="http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/" target="_blank" rel="noopener">Programmer’s Toolbox Part 3: Consistent Hashing</a></p>
+<p><a href="http://www.tom-e-white.com/2007/11/consistent-hashing.html" target="_blank" rel="noopener">Consistent Hashing</a></p>
+<p>两篇非常棒的讲解 consistent hashing 的文章，第一篇侧重概念和意义，第二篇侧重实践，并且还包含了一个简单的实现。</p>
+<hr>
+<p><a href="https://medium.com/vimeo-engineering-blog/improving-load-balancing-with-a-new-consistent-hashing-algorithm-9f1bd75709ed" target="_blank" rel="noopener">Improving load balancing with a new consistent-hashing algorithm</a></p>
+<p>一种结合 consistent hashing 和 least-connection 的负载均衡算法。</p>
+<hr>
+<p>How to read in a file in C++ <a href="http://insanecoding.blogspot.co.uk/2011/11/how-to-read-in-file-in-c.html" target="_blank" rel="noopener">1</a> &amp; <a href="http://insanecoding.blogspot.co.uk/2011/11/reading-in-entire-file-at-once-in-c.html" target="_blank" rel="noopener">2</a></p>
+<p>作者比较了几种从文件读取内容的方式（C file IO, C++ fstream, iterator .etc)以及对应的性能指标。</p>
+<p>针对同一个编译器的结果排名可以参考；跨跨编译器甚至随着编译器的优化可能结果会有不同，如果需要压榨性能最好还是做一个具体的 benchmark</p>
+<hr>
+<p><a href="https://bitmazing.com/bcblog/index.php?post/2018/04/13/Message-Only-Windows" target="_blank" rel="noopener">Message Only Windows</a></p>
+<p>message-only window 可以用来接受各种 windows 事件消息，作为 UI 消息泵使用。</p>
+<p>局限性：</p>
+<ul>
+<li>Not visible</li>
+<li>No z-order</li>
+<li>Cannot be enumerated</li>
+<li>Does not receive broadcast messages</li>
+</ul>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=sAJGoHN6Xx8" target="_blank" rel="noopener">CppCon 2015: Detlef Vollmann “Executors for C++ - A Long Story …”</a></p>
+<p>Executor proposal for C++.</p>
+<p>实话说这个 Talk 我感觉效果不好。主题不明确，听起来有点云里雾里莫名其妙；演讲者口音也是捉急…</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/04/23/std-funcion-must-be-copyable/">std::function Must be Copyable</a>
         
       </h1>
@@ -531,191 +778,6 @@
 <hr>
 <p><a href="https://medium.com/@AikoPath/visualising-and-prioritizing-technical-debt-afc82e542681" target="_blank" rel="noopener">Visualising and Prioritizing Technical Debt</a></p>
 <p>核心：将技术债具象化，无论是采用四象限法还是技术债树。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/">浅析 shared_ptr：Libstdc++ 篇</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-30
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
-<p>MSVC STL 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">此处</a></p>
-<p>注：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。</p>
-<h2 id="版本选择与源码位置"><a href="#版本选择与源码位置" class="headerlink" title="版本选择与源码位置"></a>版本选择与源码位置</h2><p>目前的工作机是 Linux Mint 18，对应的是 Ubuntu 16.04 LTS。</p>
-<p>这个版本的系统上源包默认提供的是 GCC 5.4 和 clang 3.8，跟随的 libstdc++ 的大版本是 6。</p>
-<p>考虑到 Linux 上 clang 也是默认使用 libstdc++，且 GCC 6/7/8 使用的 libstdc++ 的大版本都是 6，因此直接选用目录 <code>/usr/include/c++/5</code> 下的源码作为研究对象。<br>
-          <div class="read-more">
-            <a href="/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">浅析 shared_ptr：MSVC STL 篇</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-16
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
-<p>因为这是系列第一篇，所以会带一些功能的 demo，以方便叙述。</p>
-<h2 id="How-shared-ptr-new-T-differs-from-make-shared"><a href="#How-shared-ptr-new-T-differs-from-make-shared" class="headerlink" title="How shared_ptr(new T()) differs from make_shared()"></a>How shared_ptr<t>(new T()) differs from make_shared<t>()</t></t></h2><p>首先考虑 <code>shared_ptr</code> 对象的创建，对于给定类型 <code>T</code>，假设通过</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> ptr = <span class="built_in">std</span>::make_shared&lt;T&gt;(...);</span><br></pre></td></tr></table></figure>
-<p>创建一个实例。</p>
-<p>看一下函数代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty</span>,</span></span><br><span class="line"><span class="class">         <span class="title">class</span>... _<span class="title">Types</span>&gt;</span></span><br><span class="line"><span class="class">_<span class="title">NODISCARD</span> <span class="title">inline</span> <span class="title">shared_ptr</span>&lt;_Ty&gt; <span class="title">make_shared</span>(_<span class="title">Types</span>&amp;&amp;... _<span class="title">Args</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// make a shared_ptr</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">auto</span> _Rx = <span class="keyword">new</span> _Ref_count_obj&lt;_Ty&gt;(_STD forward&lt;_Types&gt;(_Args)...);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;_Ty&gt; _Ret;</span><br><span class="line">    _Ret._Set_ptr_rep_and_enable_shared(_Rx-&gt;_Getptr(), _Rx);</span><br><span class="line">    <span class="keyword">return</span> (_Ret);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>这里首先在 heap 上创建了一个 <code>_Ref_count_obj&lt;_Ty&gt;</code> 对象，通过 <code>std::forward()</code> 将 <code>make_shared()</code> 的参数转发作为构造函数；接着通过 default contructor 创建了一个 <code>shared_ptr&lt;_Ty&gt;</code>，并调用 <code>_Set_ptr_rep_and_enable_shared()</code> 设置相关数据。</p>
-<p>因为创建 <code>_Ty</code> 实例需要的参数 <code>_Args</code> 被转发到了 <code>_Ref_count_obj</code> 的构造函数中，且 <code>shared_ptr</code> 的 default constructor 实质上是一个 <em>constexpr function</em>，因此猜测 <code>shared_ptr</code> 自身并不负责创建其管理的 object instance，而是将这部分操作“委托”给 <code>_Ref_count_obj</code>。<br>
-          <div class="read-more">
-            <a href="/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/13/shared-ptr-internals-introduction/">浅析 shared_ptr：序论</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-13
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>单看标准库而言，<code>shared_ptr</code>/<code>weak_ptr</code>（后文除特指外，不再同时带上 <code>weak_ptr</code>） 一开始作为 TR1 的一员引入，低调行事多年后自 C++ 11 开始成为标准库正式成员。</p>
-<p>在历史意义上，引入 <code>shared_ptr</code> 不光规范化了 resource ownership 作为 abstraction conception，同时解决了困扰广大 C++ programmers 多年的难题：<em>如何知道一个对象已经被析构了</em>。</p>
-<p>此外，<code>shared_ptr</code> 的某些独特实现技巧，也提供了一些神奇的 idioms，例如</p>
-<ul>
-<li>deleter 不作为自身类型的一部分</li>
-<li>可以正确的析构 cast 到基类的子类对象，即使基类没有提供 virtual destructor</li>
-<li>.etc</li>
-</ul>
-<p>前几天偶然有个想法，既然自己用了这么久的 <code>shared_ptr</code>，那为什么不去看看它内部是如何实现的呢？能涨涨姿势也是好的嘛。</p>
-<p>为了让目标更明确，不至于迷失在浩瀚细节中，我整理了一下当前几个比较重要且有意思的点，作为代码阅读的 targets：</p>
-<ol>
-<li>How <code>shared_ptr&lt;T&gt;(new T())</code> differs from <code>make_shared&lt;T&gt;()</code></li>
-<li>Why virtual dtor is not necessary to correctly destruct a casted derived object instance</li>
-<li>How custom deleter works and why it is not part of the pointer type</li>
-<li>How <code>enable_shared_from_this</code> works</li>
-<li>How reference counting works</li>
-<li>How <code>weak_ptr</code> relates with <code>shared_ptr</code> (promotes <code>weak_ptr</code> to <code>shared_ptr</code>)</li>
-<li>Thread-safety of <code>shared_ptr</code> instances</li>
-</ol>
-<p>考虑到存在多方的实现和平台的常见程度，目前选择了 4 个实现版本：</p>
-<ul>
-<li>MSVC STL：Windows 上使用 Visual Studio 的版本</li>
-<li>Libstdc++：Linux 上的标配</li>
-<li>Boost：先驱者</li>
-<li>Chromium Base：严格来说 Chromium Base 的实现和标准库的完全不同，放在这里只是因为我对 chromium 这个项目有一种特殊的情感/好感。这个团队是真的知道工程化团队的重要性以及能够推进团队工程化，代码一致性极高，很少出现炫技的情况（望向 Facebook 和 Microsoft）。即使部分代码的架构和实现不能算是 C++ Best Practices，也不能掩盖他们整体的工程能力。</li>
-</ul>
-<p>后面会为每个实现版本写一篇单独的 post，至于最后有没有一篇 summing up，就看后面有没有时间，或者这个必要了 :-)</p>
 
         
       

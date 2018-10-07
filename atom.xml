@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-09-14T07:53:32.532Z</updated>
+  <updated>2018-10-07T06:22:20.703Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,109 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Using Boolean Switch with Python Argparser the Right Way</title>
+    <link href="http://kingsamchen.github.io/2018/10/07/python-argparser-bool-arg-the-right-way/"/>
+    <id>http://kingsamchen.github.io/2018/10/07/python-argparser-bool-arg-the-right-way/</id>
+    <published>2018-10-07T05:45:20.000Z</published>
+    <updated>2018-10-07T06:22:20.703Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;The-Context&quot;&gt;&lt;a href=&quot;#The-Context&quot; class=&quot;headerlink&quot; title=&quot;The Context&quot;&gt;&lt;/a&gt;The Context&lt;/h2&gt;&lt;p&gt;之前拿 Python 写了一个 CMake 的 build
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
+    
+      <category term="argparser" scheme="http://kingsamchen.github.io/tags/argparser/"/>
+    
+      <category term="bool argument" scheme="http://kingsamchen.github.io/tags/bool-argument/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in Sep 2018</title>
+    <link href="http://kingsamchen.github.io/2018/10/05/monthly-read-posts-in-sep-2018/"/>
+    <id>http://kingsamchen.github.io/2018/10/05/monthly-read-posts-in-sep-2018/</id>
+    <published>2018-10-04T16:33:28.000Z</published>
+    <updated>2018-10-07T02:20:08.931Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Programming-Language&quot;&gt;&lt;a href=&quot;#Programming-Language&quot; class=&quot;headerlink&quot; title=&quot;Programming Language&quot;&gt;&lt;/a&gt;Programming Language&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2016/12/08/strong-types-for-strong-interfaces/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Strong types for strong interfaces&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;How to add a type wrapper for built-in types.&lt;/p&gt;
+&lt;p&gt;Besides using phantom template parameter to avoid alias, one can also use private inheritance:&lt;/p&gt;
+&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;NamedType&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    explicit NamedType(T const&amp;amp; value) : value_(value) &amp;#123;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    explicit NamedType(T&amp;amp;&amp;amp; value) : value_(std::move(value)) &amp;#123;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;T&amp;amp; &lt;span class=&quot;title&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123; &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; value_; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;T &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt;&amp;amp; &lt;span class=&quot;title&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; value_; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    T value_;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Width&lt;/span&gt; :&lt;/span&gt; NamedType&amp;lt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt;&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;using&lt;/span&gt; NamedType::NamedType;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;using&lt;/span&gt; NamedType::get;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2016/12/12/passing-strong-types-by-reference/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Passing strong types by reference – First attempt&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;This post is the sequal of the above post.&lt;/p&gt;
+&lt;p&gt;The main problem the post tryies to solve is: how to make copy of &lt;code&gt;NamedType&lt;/code&gt; values cheap.&lt;/p&gt;
+&lt;p&gt;However, I am conservative on using reference-wrapper as the solution, because doing this has to expose the lifetime of the wrapped object to public; after all, reference-wrapper is only a point per se.&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="template" scheme="http://kingsamchen.github.io/tags/template/"/>
+    
+      <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
+    
+      <category term="strong type" scheme="http://kingsamchen.github.io/tags/strong-type/"/>
+    
+      <category term="interface" scheme="http://kingsamchen.github.io/tags/interface/"/>
+    
+      <category term="exception handling" scheme="http://kingsamchen.github.io/tags/exception-handling/"/>
+    
+      <category term="virtual memory" scheme="http://kingsamchen.github.io/tags/virtual-memory/"/>
+    
+      <category term="TIME_WAIT" scheme="http://kingsamchen.github.io/tags/TIME-WAIT/"/>
+    
+      <category term="abstraction" scheme="http://kingsamchen.github.io/tags/abstraction/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>给 ydiff 提了个 PR</title>
+    <link href="http://kingsamchen.github.io/2018/09/26/made-a-pr-for-ydiff/"/>
+    <id>http://kingsamchen.github.io/2018/09/26/made-a-pr-for-ydiff/</id>
+    <published>2018-09-26T15:50:36.000Z</published>
+    <updated>2018-10-07T02:20:08.931Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a href=&quot;https://github.com/ymattw/ydiff&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;ydiff&lt;/a&gt; 是基于 CLI 的一个 diff tool，支持 side-by-side 模式&lt;/p&gt;
+&lt;p&gt;前段时间在
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
+    
+      <category term="pull request" scheme="http://kingsamchen.github.io/tags/pull-request/"/>
+    
+      <category term="diff" scheme="http://kingsamchen.github.io/tags/diff/"/>
+    
+  </entry>
   
   <entry>
     <title>Git Invert-grep Bug</title>
@@ -197,17 +300,17 @@
     
       <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
     
-      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
       <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
     
       <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
     
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
       <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
     
       <category term="type traits" scheme="http://kingsamchen.github.io/tags/type-traits/"/>
+    
+      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
       <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
     
@@ -276,6 +379,8 @@
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
       <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
     
       <category term="assert" scheme="http://kingsamchen.github.io/tags/assert/"/>
@@ -287,8 +392,6 @@
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
     
@@ -345,9 +448,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
-    
       <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
+    
+      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
@@ -394,13 +497,13 @@
     
       <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
     
-      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
-    
       <category term="面试" scheme="http://kingsamchen.github.io/tags/%E9%9D%A2%E8%AF%95/"/>
     
       <category term="技术选型" scheme="http://kingsamchen.github.io/tags/%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B/"/>
     
       <category term="hash table" scheme="http://kingsamchen.github.io/tags/hash-table/"/>
+    
+      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
     
   </entry>
   
@@ -638,123 +741,6 @@
       <category term="libx264" scheme="http://kingsamchen.github.io/tags/libx264/"/>
     
       <category term="vcpkg" scheme="http://kingsamchen.github.io/tags/vcpkg/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Mar 2018</title>
-    <link href="http://kingsamchen.github.io/2018/04/01/monthly-read-posts-in-mar-2018/"/>
-    <id>http://kingsamchen.github.io/2018/04/01/monthly-read-posts-in-mar-2018/</id>
-    <published>2018-04-01T04:03:00.000Z</published>
-    <updated>2018-04-01T04:10:11.628Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;a href=&quot;http://akumuli.org/akumuli/2015/03/19/sequencer/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Sorting, caching and
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
-    
-      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
-    
-      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
-    
-      <category term="actor" scheme="http://kingsamchen.github.io/tags/actor/"/>
-    
-      <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
-    
-      <category term="c10k" scheme="http://kingsamchen.github.io/tags/c10k/"/>
-    
-      <category term="pthread" scheme="http://kingsamchen.github.io/tags/pthread/"/>
-    
-      <category term="technical debt" scheme="http://kingsamchen.github.io/tags/technical-debt/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>浅析 shared_ptr：Libstdc++ 篇</title>
-    <link href="http://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/"/>
-    <id>http://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/</id>
-    <published>2018-03-29T16:58:44.000Z</published>
-    <updated>2018-06-01T14:38:23.802Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;序言请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;MSVC STL 的分析版本请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;注：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。&lt;/p&gt;
-&lt;h2 id=&quot;版本选择与源码位置&quot;&gt;&lt;a href=&quot;#版本选择与源码位置&quot; class=&quot;headerlink&quot; title=&quot;版本选择与源码位置&quot;&gt;&lt;/a&gt;版本选择与源码位置&lt;/h2&gt;&lt;p&gt;目前的工作机是 Linux Mint 18，对应的是 Ubuntu 16.04 LTS。&lt;/p&gt;
-&lt;p&gt;这个版本的系统上源包默认提供的是 GCC 5.4 和 clang 3.8，跟随的 libstdc++ 的大版本是 6。&lt;/p&gt;
-&lt;p&gt;考虑到 Linux 上 clang 也是默认使用 libstdc++，且 GCC 6/7/8 使用的 libstdc++ 的大版本都是 6，因此直接选用目录 &lt;code&gt;/usr/include/c++/5&lt;/code&gt; 下的源码作为研究对象。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
-      <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
-    
-      <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
-    
-      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
-    
-      <category term="libstdc++" scheme="http://kingsamchen.github.io/tags/libstdc/"/>
-    
-      <category term="gcc" scheme="http://kingsamchen.github.io/tags/gcc/"/>
-    
-      <category term="clang" scheme="http://kingsamchen.github.io/tags/clang/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>浅析 shared_ptr：MSVC STL 篇</title>
-    <link href="http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/"/>
-    <id>http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/</id>
-    <published>2018-03-15T16:52:05.000Z</published>
-    <updated>2018-06-01T14:38:23.803Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;序言请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;因为这是系列第一篇，所以会带一些功能的 demo，以方便叙述。&lt;/p&gt;
-&lt;h2 id=&quot;How-shared-ptr-new-T-differs-from-make-shared&quot;&gt;&lt;a href=&quot;#How-shared-ptr-new-T-differs-from-make-shared&quot; class=&quot;headerlink&quot; title=&quot;How shared_ptr(new T()) differs from make_shared()&quot;&gt;&lt;/a&gt;How shared_ptr&lt;t&gt;(new T()) differs from make_shared&lt;t&gt;()&lt;/t&gt;&lt;/t&gt;&lt;/h2&gt;&lt;p&gt;首先考虑 &lt;code&gt;shared_ptr&lt;/code&gt; 对象的创建，对于给定类型 &lt;code&gt;T&lt;/code&gt;，假设通过&lt;/p&gt;
-&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;auto&lt;/span&gt; ptr = &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::make_shared&amp;lt;T&amp;gt;(...);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;创建一个实例。&lt;/p&gt;
-&lt;p&gt;看一下函数代码：&lt;/p&gt;
-&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;template&lt;/span&gt;&amp;lt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; _&lt;span class=&quot;title&quot;&gt;Ty&lt;/span&gt;,&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;         &lt;span class=&quot;title&quot;&gt;class&lt;/span&gt;... _&lt;span class=&quot;title&quot;&gt;Types&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;_&lt;span class=&quot;title&quot;&gt;NODISCARD&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;inline&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;shared_ptr&lt;/span&gt;&amp;lt;_Ty&amp;gt; &lt;span class=&quot;title&quot;&gt;make_shared&lt;/span&gt;(_&lt;span class=&quot;title&quot;&gt;Types&lt;/span&gt;&amp;amp;&amp;amp;... _&lt;span class=&quot;title&quot;&gt;Args&lt;/span&gt;)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// make a shared_ptr&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;auto&lt;/span&gt; _Rx = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; _Ref_count_obj&amp;lt;_Ty&amp;gt;(_STD forward&amp;lt;_Types&amp;gt;(_Args)...);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;shared_ptr&lt;/span&gt;&amp;lt;_Ty&amp;gt; _Ret;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    _Ret._Set_ptr_rep_and_enable_shared(_Rx-&amp;gt;_Getptr(), _Rx);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; (_Ret);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;这里首先在 heap 上创建了一个 &lt;code&gt;_Ref_count_obj&amp;lt;_Ty&amp;gt;&lt;/code&gt; 对象，通过 &lt;code&gt;std::forward()&lt;/code&gt; 将 &lt;code&gt;make_shared()&lt;/code&gt; 的参数转发作为构造函数；接着通过 default contructor 创建了一个 &lt;code&gt;shared_ptr&amp;lt;_Ty&amp;gt;&lt;/code&gt;，并调用 &lt;code&gt;_Set_ptr_rep_and_enable_shared()&lt;/code&gt; 设置相关数据。&lt;/p&gt;
-&lt;p&gt;因为创建 &lt;code&gt;_Ty&lt;/code&gt; 实例需要的参数 &lt;code&gt;_Args&lt;/code&gt; 被转发到了 &lt;code&gt;_Ref_count_obj&lt;/code&gt; 的构造函数中，且 &lt;code&gt;shared_ptr&lt;/code&gt; 的 default constructor 实质上是一个 &lt;em&gt;constexpr function&lt;/em&gt;，因此猜测 &lt;code&gt;shared_ptr&lt;/code&gt; 自身并不负责创建其管理的 object instance，而是将这部分操作“委托”给 &lt;code&gt;_Ref_count_obj&lt;/code&gt;。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
-      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
-    
-      <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
-    
-      <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
-    
-      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
   </entry>
   
