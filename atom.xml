@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-10-07T06:22:20.703Z</updated>
+  <updated>2018-10-13T14:27:57.589Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Naming a Native Thread</title>
+    <link href="http://kingsamchen.github.io/2018/10/13/naming-a-native-thread/"/>
+    <id>http://kingsamchen.github.io/2018/10/13/naming-a-native-thread/</id>
+    <published>2018-10-13T13:58:06.000Z</published>
+    <updated>2018-10-13T14:27:57.589Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;这里所说的 naming 主要是为了能够被 debugger 识别，所以单纯的通过 TLS 存储一个额外的字符串是不够的。&lt;/p&gt;
+&lt;h2 id=&quot;Windows&quot;&gt;&lt;a href=&quot;#Windows&quot; class=&quot;headerlink&quot; title=&quot;Windows&quot;&gt;&lt;/a&gt;Windows&lt;/h2&gt;&lt;p&gt;Windows 上的做法有两种。&lt;/p&gt;
+&lt;p&gt;第一种是利用现成的 API &lt;a href=&quot;https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-setthreaddescription&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;SetThreadDescription()&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;通过这个 API 设置的名字据说新版的 minidump 和 WinDBG 都能认了。&lt;/p&gt;
+&lt;p&gt;不过缺点是这个 API 很新，从 Windows 10 1607 (build 14393) 开始才有，所以稳妥的使用方式还是从 kernel32.dll 里动态获取。&lt;/p&gt;
+&lt;p&gt;第二种做法比较传统，而且很不直观，来源是 MSDN 的一篇 &lt;a href=&quot;https://docs.microsoft.com/en-us/visualstudio/debugger/how-to-set-a-thread-name-in-native-code?view=vs-2017&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;doc&lt;/a&gt;&lt;/p&gt;
+&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; DWORD kVCThreadNameException = &lt;span class=&quot;number&quot;&gt;0x406D1388&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;tagTHREADNAME_INFO&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DWORD dwType;  &lt;span class=&quot;comment&quot;&gt;// Must be 0x1000.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    LPCSTR szName;  &lt;span class=&quot;comment&quot;&gt;// Pointer to name (in user addr space).&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DWORD dwThreadID;  &lt;span class=&quot;comment&quot;&gt;// Thread ID (-1=caller thread).&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DWORD dwFlags;  &lt;span class=&quot;comment&quot;&gt;// Reserved for future use, must be zero.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125; THREADNAME_INFO;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;SetThreadName&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    THREADNAME_INFO info;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    info.dwType = &lt;span class=&quot;number&quot;&gt;0x1000&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    info.szName = &lt;span class=&quot;string&quot;&gt;&quot;Worker-Traditional&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    info.dwThreadID = &lt;span class=&quot;number&quot;&gt;-1&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    info.dwFlags = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    __try &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        RaiseException(kVCThreadNameException, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(info) / &lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(DWORD),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                       &lt;span class=&quot;keyword&quot;&gt;reinterpret_cast&lt;/span&gt;&amp;lt;ULONG_PTR*&amp;gt;(&amp;amp;info));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; __except(EXCEPTION_EXECUTE_HANDLER) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;基本上照搬 doc 上的代码就好了。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="Windows" scheme="http://kingsamchen.github.io/tags/Windows/"/>
+    
+      <category term="Linux" scheme="http://kingsamchen.github.io/tags/Linux/"/>
+    
+      <category term="thread" scheme="http://kingsamchen.github.io/tags/thread/"/>
+    
+  </entry>
   
   <entry>
     <title>Using Boolean Switch with Python Argparser the Right Way</title>
@@ -300,6 +331,8 @@
     
       <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
     
+      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
+    
       <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
     
       <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
@@ -309,8 +342,6 @@
       <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
     
       <category term="type traits" scheme="http://kingsamchen.github.io/tags/type-traits/"/>
-    
-      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
       <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
     
@@ -497,13 +528,13 @@
     
       <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
     
+      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
+    
       <category term="面试" scheme="http://kingsamchen.github.io/tags/%E9%9D%A2%E8%AF%95/"/>
     
       <category term="技术选型" scheme="http://kingsamchen.github.io/tags/%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B/"/>
     
       <category term="hash table" scheme="http://kingsamchen.github.io/tags/hash-table/"/>
-    
-      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
     
   </entry>
   
@@ -708,39 +739,6 @@
       <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
     
       <category term="base" scheme="http://kingsamchen.github.io/tags/base/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>利用 vcpkg 编译带汇编优化的 libx264</title>
-    <link href="http://kingsamchen.github.io/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/"/>
-    <id>http://kingsamchen.github.io/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/</id>
-    <published>2018-04-03T12:51:22.000Z</published>
-    <updated>2018-04-03T13:02:35.284Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;使用 vcpkg 编译 libx264 有一个很重要的原因：可以获得 PDB，而且构建流程被大大精简了。&lt;/p&gt;
-&lt;p&gt;但是这里有一个坑：vcpkg 上的 libx264 模块编译默认是开启了
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
-    
-      <category term="visual studio" scheme="http://kingsamchen.github.io/tags/visual-studio/"/>
-    
-      <category term="libx264" scheme="http://kingsamchen.github.io/tags/libx264/"/>
-    
-      <category term="vcpkg" scheme="http://kingsamchen.github.io/tags/vcpkg/"/>
     
   </entry>
   

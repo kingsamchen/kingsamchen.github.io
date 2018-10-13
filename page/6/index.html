@@ -195,6 +195,85 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/01/15/the-issue-binding-to-privately-inherited-member-function/">Binding to Privately Inherited Member Functions</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-01-15
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>考虑代码</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;functional&gt;</span></span>
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Base {
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
+    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Foo</span><span class="hljs-params">(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> n)</span>
+    </span>{
+        <span class="hljs-built_in" style="color: rgb(255, 255, 170);">printf</span>(<span class="hljs-string" style="color: rgb(162, 252, 162);">"the value is %d"</span>, n);
+    }
+};
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Derived : Base {
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> Base::Foo;
+};
+
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
+</span>{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> f = <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::bind(&amp;Derived::Foo, <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::placeholders::_1, <span class="hljs-number" style="color: rgb(211, 99, 99);">10</span>);
+    Derived o;
+    f(&amp;o);
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
+}</pre>
+
+<p>编译会提示出错，错误信息类似：_Failed to specialize function template ‘unknown-type std::_Binder&lt;std::_Unforced,void (__cdecl Base::* )(int),const std::_Ph<1> &amp;,int&gt;::operator ()(<em>Unbound &amp;&amp;…) const’</em></1></p>
+<p>根本原因是，即使前面使用了 <code>using Base::Foo;</code>, 也只是改变了这个函数在子类中的可见性，影响名字查找；并没有真的在子类中添加了这个函数，因此 <code>&amp;Derived::Foo</code> 实际上获取的类型是 <code>void (Base::*)(int)</code>，而正是这个类型影响了 <code>std::bind()</code> 的实例化。</p>
+<p>因此当后面用 <code>Derived</code> 的实例去调用 function object 时会失败。</p>
+<p>Stackoverflow 上有一个<a href="https://stackoverflow.com/questions/36263159/binding-to-privately-inherited-member-function" target="_blank" rel="noopener">类似的问题</a>，可以参考。</p>
+<h2 id="Workaround"><a href="#Workaround" class="headerlink" title="Workaround"></a>Workaround</h2><p><strong>(1) 子类增加一个 call-wrapper</strong></p>
+<p>然而大多数采用 private-inheritance 而不是 composition 的情况下，都是避免添加各种 call-wrapper</p>
+<p><strong>(2) 绑定 lambda 而不是函数指针</strong></p>
+<p>这是一个推荐的做法</p>
+<p><strong>(3) 强行用 reinterpret_cast&lt;&gt;</strong></p>
+<p>呃… let’s don’t be evil</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/01/01/monthly-read-posts-in-dec-2017/">Monthly Read Posts in Dec 2017</a>
         
       </h1>
@@ -682,85 +761,6 @@ TEST(EnumOps, NonEnumType)
 <p>不过起码我们找到了问题不是么…..</p>
 <p>完整的 dump 和 PDB 包可以在这里下载：链接: <a href="https://pan.baidu.com/s/1i5xjGt3" target="_blank" rel="noopener">https://pan.baidu.com/s/1i5xjGt3</a> 密码: nnsh</p>
 <p>不要问我为什么是百度网盘。。。现在能够方便做外链的免费网盘没几家了啊</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/">发现一个（疑似）VS 2013 lambda 实现的 Bug</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-11-09
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>考虑如下代码段：</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Foo {
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
-    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Thunk</span><span class="hljs-params">()</span>
-    </span>{
-        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> lambda = [](Foo* f, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">char</span>* msg) {
-            <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> pfn = &amp;Foo::Print;  <span class="hljs-comment" style="color: rgb(136, 136, 136);">// complained this statement</span>
-            (*f.*pfn)(msg);
-        };
-
-        lambda(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">this</span>, <span class="hljs-string" style="color: rgb(162, 252, 162);">"abc"</span>);
-    }
-
-    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Print</span><span class="hljs-params">(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">char</span>* msg)</span>
-    </span>{
-        <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">cout</span> &lt;&lt; msg &lt;&lt; <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">endl</span>;
-    }
-};
-
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
-</span>{
-    Foo foo;
-
-    foo.Thunk();
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
-}</pre>
-
-<p>在 Visual Studio 2013 with update 5 上会提示编译警告：</p>
-<p>“<em>Line 16: warning C4573: the usage of ‘Foo::Print’ requires the compiler to capture ‘this’ but the current default capture mode does not allow it</em>“</p>
-<p>然而相同的代码在 Visual Studio 2017 上，以及 <a href="https://wandbox.org/permlink/F9Y82SFLZku2FwBZ" target="_blank" rel="noopener">clang 3.8</a> 上均不会出现类似警告。</p>
-<p>我在 StackOverflow 上提了<a href="https://stackoverflow.com/questions/47177263/why-get-pointer-to-member-function-inside-lambda-triggers-warning-on-vs2013" target="_blank" rel="noopener">一个问题</a>，然而截止本文发布前，并没有看起来靠谱的答案出现。</p>
 
         
       
