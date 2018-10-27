@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-10-13T14:27:57.589Z</updated>
+  <updated>2018-10-27T15:32:01.762Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Non-blocking Connect(2) and Error Handling</title>
+    <link href="http://kingsamchen.github.io/2018/10/27/non-blocking-connect-2-and-error-handling/"/>
+    <id>http://kingsamchen.github.io/2018/10/27/non-blocking-connect-2-and-error-handling/</id>
+    <published>2018-10-27T14:56:18.000Z</published>
+    <updated>2018-10-27T15:32:01.762Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;这是我在实现 &lt;a href=&quot;https://github.com/kingsamchen/ezio/blob/master/ezio/connector_posix.cpp&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;ezio
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="non-blocking" scheme="http://kingsamchen.github.io/tags/non-blocking/"/>
+    
+      <category term="connect" scheme="http://kingsamchen.github.io/tags/connect/"/>
+    
+  </entry>
   
   <entry>
     <title>Naming a Native Thread</title>
@@ -329,9 +361,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
-    
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
+    
+      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
     
       <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
     
@@ -479,9 +511,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
-    
       <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
+    
+      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
@@ -707,38 +739,6 @@
       <category term="std::function" scheme="http://kingsamchen.github.io/tags/std-function/"/>
     
       <category term="packaged_task" scheme="http://kingsamchen.github.io/tags/packaged-task/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Use Lambda With PostTask</title>
-    <link href="http://kingsamchen.github.io/2018/04/11/use-lambda-with-post-task/"/>
-    <id>http://kingsamchen.github.io/2018/04/11/use-lambda-with-post-task/</id>
-    <published>2018-04-11T12:03:59.000Z</published>
-    <updated>2018-04-11T12:23:55.578Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;曾经为了能在 &lt;code&gt;PostTask()&lt;/code&gt; 里使用 lambda，实现了一个自动将 non-capturing lambda decay 到对应函数指针，在利用 &lt;code&gt;base::Bind()&lt;/code&gt; 的方案&lt;a
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
-    
-      <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
-    
-      <category term="base" scheme="http://kingsamchen.github.io/tags/base/"/>
     
   </entry>
   

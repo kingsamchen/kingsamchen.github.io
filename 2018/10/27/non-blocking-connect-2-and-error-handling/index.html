@@ -17,12 +17,12 @@
 
 
 
-  <meta name="description" content="Monthly Read Posts in Jan 2017"/>
+  <meta name="description" content="Non-blocking Connect(2) and Error Handling"/>
 
 
 
 
-  <meta name="keywords" content="android, c++, monthly read posts, linker, std::unique_ptr, HTTP, KC的废墟堆" />
+  <meta name="keywords" content="linux, epoll, non-blocking, connect, KC的废墟堆" />
 
 
 
@@ -42,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2018/10/27/non-blocking-connect-2-and-error-handling/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -79,7 +79,7 @@
 
 
 
-    <title> Monthly Read Posts in Jan 2017 - KC的废墟堆 </title>
+    <title> Non-blocking Connect(2) and Error Handling - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -195,13 +195,13 @@
     <header class="post-header">
       <h1 class="post-title">
         
-          Monthly Read Posts in Jan 2017
+          Non-blocking Connect(2) and Error Handling
         
       </h1>
 
       <div class="post-meta">
         <span class="post-time">
-          2017-02-01
+          2018-10-27
         </span>
         
           <div class="post-category">
@@ -219,61 +219,25 @@
 
     <div class="post-content">
       
-        <p><a href="http://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking/" target="_blank" rel="noopener">Library order in static linking</a></p>
-<p>An object file both provides (exports) external symbols to other objects and libraries, and expects (imports) symbols from other objects and libraries.</p>
-<p>During linking, the linker maintains a symbol table, which keeps two important lists:</p>
-<ul>
-<li>a list of symbols exported by all the objects and libraries encountered so far</li>
-<li>a list of undefined symbols that objects and libraries demanded to import and were not found yet.</li>
-</ul>
-<p><strong>Case 1: the linker encouters a new object file</strong></p>
-<p>linker first checks symbols the object file exports, and:</p>
+        <p>这是我在实现 <a href="https://github.com/kingsamchen/ezio/blob/master/ezio/connector_posix.cpp" target="_blank" rel="noopener">ezio connector</a> 时遇到的一个比较有意（keng）思（die）的问题。</p>
+<p>在使用 non-blocking 的 <code>connect(2)</code> 时，按照 manual 的<a href="https://linux.die.net/man/2/connect" target="_blank" rel="noopener">说法</a>，如果调用的返回被认为是合理的（例如 <code>EINPROGRESS</code>），那么就需要：</p>
 <ol>
-<li>add them to the list of exported symbols</li>
-<li>remove them from undefined symbols, if necessary.</li>
+<li>将 sock fd 扔到 IO multiplexor 里，然后等待 writable 事件返回</li>
+<li>writable 返回后检查 <code>SO_ERROR</code>，确认没错后才可以认为连接建立</li>
 </ol>
-<p>Note that, if any symbol has already been in the exported list, then we get a multiple definition error.</p>
-<p>Linker then checks symbols the file imports, and added them to the list of undefined symbols, unless they can be found in the exported symbol list.</p>
-<p>we can see that for linking pure object files, link order doesn’t matter.</p>
-<p><strong>Case 2: the linker encounters a new library</strong></p>
-<p>Linker goes over all the object files in the library, and for each one, it first looks at the exported symbols:</p>
+<p>然而因为 ezio 使用 <code>notifier</code> 来实现对某个 fd 的 IO 事件侦听和分发，在上面的操作中，除了 writable 事件外，默认还会加上对错误事件的侦听，即 <code>EPOLLERROR</code>，并且 event handling 的逻辑中，始终先检查 IO 事件是否包含了错误事件。</p>
+<p>在某个 test case 中发现如下情况，整理了一下顺序大概这样：</p>
 <ol>
-<li>If any of the exported symbols are on the undefined list, then this object file is chosen, being added to the link, and is treated as normal object file as above(its exported symbols and imported symbols are processed as normal object file).</li>
-<li>If any of the object files in the library has been included in the link, the library is rescanned again(because a lately added object file may require symbols exported from one early examined-but-skipped object file).</li>
+<li>对一个无 server listening 的地址发起 connect</li>
+<li>此时会因为 <code>EINPROGRESS</code> 的返回而建立 notifier，并且 notifier 绑定了 <code>HandleNewConnection()</code> 和 <code>HandleError()</code> 来分别处理 <code>EPOLLOUT</code> 和 <code>EPOLLERROR</code></li>
+<li>epoll 很迅速的返回，然而返回事件里同时包含了 <code>EPOLLERROR</code> 和 <code>EPOLLOUT</code>，导致先执行了 <code>HandleError()</code> 进行了错误处理，重置了 Connector 的某些状态；然后又执行了 <code>HandleNewConnection()</code>，触发了这个 handler 里的某些 precondition assertions，直接挂了程序。</li>
 </ol>
-<p>when linking is done, if any symbols remain in the undefined list, the linker will throw an undefined reference error.</p>
-<p>Note that after the linker has looked at a library, it won’t look at it again. Even if it exports symbols that may be needed by some later library.</p>
-<p>An very important corollary: If object or library AA needs a symbol from library BB, then AA should come before library BB in the command-line invocation of the linker.</p>
-<p><strong>Use Flags to Solve Circular Library Dependency</strong></p>
-<p>Use flags such as <code>--start-group</code> and <code>--end-group</code> to repeatedly scan libraries, until no new import symbol was found.</p>
-<p>But may take significant time to finish linking.</p>
-<hr>
-<p><a href="http://www.lurklurk.org/linkers/linkers.html" target="_blank" rel="noopener">Beginners’ guide to linkers</a></p>
-<p>和前一篇着重分析链接顺序不同，这篇（其实更像是一个短 paper）介绍了整个链接的基础知识，适合扫盲。</p>
-<p>但是如果有一定基础的话，这篇反而没有什么让人觉得惊奇的点。</p>
-<hr>
-<p><a href="http://shaharmike.com/cpp/unique-ptr/" target="_blank" rel="noopener">Exploring std::unique_ptr</a></p>
-<p>同样是一篇基础扫盲 posts，适用于检查自己是否对 <code>std::unique_ptr</code> 的必备知识存在缺漏的情况。</p>
-<p>如果认真阅读过 Scott Meyers 的 <a href="https://book.douban.com/subject/25923597/" target="_blank" rel="noopener">Effective Modern C++</a>，那么 post 里提到的，诸如“为什么使用 <code>std::make_unique()</code> 可以带来异常安全” 这种高级议题就变得显而易见了。</p>
-<p>另外 post 对 custom deleter 的叙述的反而不够详细。</p>
-<hr>
-<p><a href="http://www.jmarshall.com/easy/http/" target="_blank" rel="noopener">HTTP Made Easy</a></p>
-<p>非常赞的 HTTP 协议扫盲文章</p>
-<p>这篇 post 从 HTTP 1.0 开始讲起，然后过渡到 HTTP 1.1，所以对于 HTTP 1.1 为什么要求 request header 一定要带 <code>Host</code> header 提供了一个非常直观的解释。</p>
-<p>此外 post 还增加了 chunked transfer encoding 部分，印象中 Top-down approach 那本 computer networking 是没有提及这部分内容的。</p>
-<hr>
-<p><a href="http://www.csdn.net/article/2015-12-03/2826381" target="_blank" rel="noopener">C++ 11 之美</a></p>
-<p>这篇 post 主要有三个点</p>
-<ul>
-<li>编译期的类成员存在性检查 &amp; 利用 SFINAE 做静态的分支选择（我的<a href="https://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">这篇 post</a> 里的实现就是从这篇 post 改进而来）</li>
-<li>利用 <code>std::function&lt;&gt;</code> 实现 lazy-computation</li>
-<li>演示了如何将字符串 <code>&quot;hello/test/20&quot;</code> 转换为函数调用 <code>hello(&quot;test&quot;, 20)</code></li>
-</ul>
-<hr>
-<p><a href="http://www.trinea.cn/android/android-image-cache-compare/" target="_blank" rel="noopener">Android 三大图片缓存原理、特性对比</a></p>
-<p>讲道理这篇文章很水….</p>
-<p>一开始 mark 这篇文章是因为当时还在做安卓直播姬，转眼9个月过去了….</p>
-<p>现在为了借鉴文中几个库的架构设计从 pocket 的回收站里挖出来看了一遍，不过想想也就那么回事了….</p>
+<p>这个情况是我事先压根没考虑过的，毕竟到现在也就 <code>connect(2)</code> 里会出现 <code>HandleError()</code> 和 <code>HandleNewConnection()</code> 里包含部分一模一样的错误处理代码。</p>
+<p>而且更精彩的是，在我的 WSL (ubuntu 16.04) 里同一个 test case 的代码根本不会触发 <code>EPOLLERROR</code>，只有 <code>EPOLLOUT</code>；于是错误处理直接留到了 <code>HandleNewConnection()</code> 里检查 <code>SO_ERROR</code> 的部分，剩下的也是如丝般顺滑。</p>
+<p>最后的解决方案是修改了一下两个 handler 的语义，对 <code>HandleNewConnection()</code> 做了 error-already-handled-aware 的语义调整。</p>
+<p>另外需要提一下日志系统的重要性。</p>
+<p>在这个问题的 debugging 过程中，虽然触发了我的 <code>ENSURE(CHECK)</code>，有错误的上下文，也完整的调用栈，但是相关信息里根本看不到 <code>HandleError()</code> 被调用的痕迹；而且因为需要错误处理的点甚多，如果没有完善的 callstack + logging 机制，很难才能发现是因为 IO event 包含了 <code>EPOLLERROR</code>，导致 notifier 调用了 on-error-handler 导致的。</p>
+<p>最后吐槽一下，server 端来说 asynchronous 比 non-blocking 难写，但是对于 client 端，asynchronous 反而比 non-blocking 顺滑多了；一个 <code>ConnectEx()</code> 丢出去，定时检查一下结果就行了，简直比海飞丝还顺滑。</p>
 
       
     </div>
@@ -289,7 +253,7 @@
     </p>
     <p class="copyright-item">
       <span>原文链接: </span>
-      <a href="http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/">http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/</a>
+      <a href="http://kingsamchen.github.io/2018/10/27/non-blocking-connect-2-and-error-handling/">http://kingsamchen.github.io/2018/10/27/non-blocking-connect-2-and-error-handling/</a>
     </p>
     <p class="copyright-item">
       <span>许可协议: </span>
@@ -309,17 +273,13 @@
         
           <div class="post-tags">
             
-              <a href="/tags/android/">android</a>
+              <a href="/tags/linux/">linux</a>
             
-              <a href="/tags/c/">c++</a>
+              <a href="/tags/epoll/">epoll</a>
             
-              <a href="/tags/monthly-read-posts/">monthly read posts</a>
+              <a href="/tags/non-blocking/">non-blocking</a>
             
-              <a href="/tags/linker/">linker</a>
-            
-              <a href="/tags/std-unique-ptr/">std::unique_ptr</a>
-            
-              <a href="/tags/HTTP/">HTTP</a>
+              <a href="/tags/connect/">connect</a>
             
           </div>
         
@@ -327,15 +287,9 @@
         
   <nav class="post-nav">
     
-      <a class="prev" href="/2017/03/02/monthly-read-posts-in-feb-2017/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text nav-default">Monthly Read Posts in Feb 2017</span>
-        <span class="prev-text nav-mobile">上一篇</span>
-      </a>
     
-    
-      <a class="next" href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">
-        <span class="next-text nav-default">编译期判断是否存在某个成员函数</span>
+      <a class="next" href="/2018/10/13/naming-a-native-thread/">
+        <span class="next-text nav-default">Naming a Native Thread</span>
         <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
@@ -442,9 +396,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://kingsamchen.github.io/2017/02/01/monthly-read-posts-in-jan-2017/';
-        this.page.identifier = '2017/02/01/monthly-read-posts-in-jan-2017/';
-        this.page.title = 'Monthly Read Posts in Jan 2017';
+        this.page.url = 'http://kingsamchen.github.io/2018/10/27/non-blocking-connect-2-and-error-handling/';
+        this.page.identifier = '2018/10/27/non-blocking-connect-2-and-error-handling/';
+        this.page.title = 'Non-blocking Connect(2) and Error Handling';
     };
     (function() {
     var d = document, s = d.createElement('script');
