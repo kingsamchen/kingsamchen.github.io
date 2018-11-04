@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-11-04T01:39:08.316Z</updated>
+  <updated>2018-11-04T02:09:41.590Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Chromium Base MessageLoop Internals (0)</title>
+    <link href="http://kingsamchen.github.io/2018/11/04/chromium-base-message-loop-internals-0/"/>
+    <id>http://kingsamchen.github.io/2018/11/04/chromium-base-message-loop-internals-0/</id>
+    <published>2018-11-04T02:04:38.000Z</published>
+    <updated>2018-11-04T02:09:41.590Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;Our fancy star in this post is class &lt;code&gt;base::MessageLoopCurrent&lt;/code&gt;.&lt;/p&gt;
+&lt;h2 id=&quot;MessageLoopCurrent&quot;&gt;&lt;a href=&quot;#MessageLoopCurrent&quot; class=&quot;headerlink&quot; title=&quot;MessageLoopCurrent&quot;&gt;&lt;/a&gt;MessageLoopCurrent&lt;/h2&gt;&lt;p&gt;Version: r70_3538&lt;br&gt;File: &lt;code&gt;base/message_loop/message_loop_current.{h, cc}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;MessageLoopCurernt is a proxy class for interactions with the MessageLoop bound to the current thread.&lt;/p&gt;
+&lt;p&gt;It is introduced to avoid direct uses of &lt;code&gt;MessageLoop::current()&lt;/code&gt;, quoting from original comments:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Why: Historically MessageLoop::current() gave access to the full MessageLoop API, preventing both addition of powerful owner-only APIs as well as making it harder to remove callers of deprecated APIs (that need to stick around for a few owner-only use cases and re-accrue callers after cleanup per remaining publicly available).&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Because it is a light-weight proxy, it contains only a single pointer to the MessageLoop bound to the current thread.&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
+    
+      <category term="source internals" scheme="http://kingsamchen.github.io/tags/source-internals/"/>
+    
+      <category term="message-loop" scheme="http://kingsamchen.github.io/tags/message-loop/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in Oct 2018</title>
@@ -717,40 +748,6 @@
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
       <category term="boost" scheme="http://kingsamchen.github.io/tags/boost/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Post in Apr 2018</title>
-    <link href="http://kingsamchen.github.io/2018/05/01/monthly-read-posts-in-apr-2018/"/>
-    <id>http://kingsamchen.github.io/2018/05/01/monthly-read-posts-in-apr-2018/</id>
-    <published>2018-05-01T09:50:11.000Z</published>
-    <updated>2018-05-01T10:03:00.593Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;a href=&quot;https://www.digitalocean.com/community/tutorials/what-is-load-balancing&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;What is Load
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="load balancing" scheme="http://kingsamchen.github.io/tags/load-balancing/"/>
-    
-      <category term="random" scheme="http://kingsamchen.github.io/tags/random/"/>
-    
-      <category term="cache coherency" scheme="http://kingsamchen.github.io/tags/cache-coherency/"/>
-    
-      <category term="consistent hashing" scheme="http://kingsamchen.github.io/tags/consistent-hashing/"/>
     
   </entry>
   
