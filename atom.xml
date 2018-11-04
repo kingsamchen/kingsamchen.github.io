@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-11-04T00:38:44.342Z</updated>
+  <updated>2018-11-04T01:39:08.316Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -18,10 +18,10 @@
   
   <entry>
     <title>Monthly Read Posts in Oct 2018</title>
-    <link href="http://kingsamchen.github.io/2018/11/03/monthly-read-posts-in-oct-2018/"/>
-    <id>http://kingsamchen.github.io/2018/11/03/monthly-read-posts-in-oct-2018/</id>
-    <published>2018-11-02T17:06:52.000Z</published>
-    <updated>2018-11-04T00:38:44.342Z</updated>
+    <link href="http://kingsamchen.github.io/2018/11/04/monthly-read-posts-in-oct-2018/"/>
+    <id>http://kingsamchen.github.io/2018/11/04/monthly-read-posts-in-oct-2018/</id>
+    <published>2018-11-04T01:38:36.000Z</published>
+    <updated>2018-11-04T01:39:08.316Z</updated>
     
     <summary type="html">
     
@@ -46,19 +46,15 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
-    
-      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
       <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
     
-      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
-    
       <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
-      <category term="database" scheme="http://kingsamchen.github.io/tags/database/"/>
+      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
-      <category term="C++" scheme="http://kingsamchen.github.io/tags/C/"/>
+      <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
     
       <category term="RFC" scheme="http://kingsamchen.github.io/tags/RFC/"/>
     
@@ -295,6 +291,8 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
+      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
+    
       <category term="raft" scheme="http://kingsamchen.github.io/tags/raft/"/>
     
       <category term="membership protocol" scheme="http://kingsamchen.github.io/tags/membership-protocol/"/>
@@ -306,8 +304,6 @@
       <category term="variadic template" scheme="http://kingsamchen.github.io/tags/variadic-template/"/>
     
       <category term="parallelism" scheme="http://kingsamchen.github.io/tags/parallelism/"/>
-    
-      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
     
   </entry>
   
@@ -342,9 +338,9 @@
     
       <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
     
-      <category term="IOCP" scheme="http://kingsamchen.github.io/tags/IOCP/"/>
-    
       <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
+    
+      <category term="IOCP" scheme="http://kingsamchen.github.io/tags/IOCP/"/>
     
   </entry>
   
@@ -372,9 +368,9 @@
     
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
-      <category term="enum" scheme="http://kingsamchen.github.io/tags/enum/"/>
-    
       <category term="SFINAE" scheme="http://kingsamchen.github.io/tags/SFINAE/"/>
+    
+      <category term="enum" scheme="http://kingsamchen.github.io/tags/enum/"/>
     
       <category term="tag dispatching" scheme="http://kingsamchen.github.io/tags/tag-dispatching/"/>
     
@@ -413,11 +409,11 @@
     
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
       <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
     
       <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
     
@@ -490,6 +486,8 @@
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
       <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
     
       <category term="assert" scheme="http://kingsamchen.github.io/tags/assert/"/>
@@ -501,8 +499,6 @@
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
     
@@ -559,9 +555,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
-    
       <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
+    
+      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
@@ -606,15 +602,15 @@
     
       <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
     
-      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
-    
-      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
-    
       <category term="面试" scheme="http://kingsamchen.github.io/tags/%E9%9D%A2%E8%AF%95/"/>
     
       <category term="技术选型" scheme="http://kingsamchen.github.io/tags/%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B/"/>
     
       <category term="hash table" scheme="http://kingsamchen.github.io/tags/hash-table/"/>
+    
+      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
+    
+      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
     
   </entry>
   
