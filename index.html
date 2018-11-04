@@ -195,6 +195,70 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/11/03/monthly-read-posts-in-oct-2018/">Monthly Read Posts in Oct 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://nullprogram.com/blog/2014/09/02/" target="_blank" rel="noopener">C11 Lock-free Stack</a></p>
+<p>使用C 11 atomic operations 实现一个轻量的 lock-free stack</p>
+<ul>
+<li>pre-allocation，不需要考虑单个节点的销毁问题，所以不需要使用 hazard pointer</li>
+<li>free 和 head 两个列表，两个单独的 head 均可用做 sentinel</li>
+<li>使用 aba counter 来避免 ABA problem</li>
+</ul>
+<hr>
+<p><a href="https://www.souyunku.com/2018/07/30/mysql/" target="_blank" rel="noopener">MySQL/InnoDB中，乐观锁、悲观锁、共享锁、排它锁、行锁、表锁、死锁概念的理解</a></p>
+<p>感觉这篇讲的好混乱，几个概念是明显正交的都混在一起了。</p>
+<p>瞄了一眼，基本脑子里都在找平常 locking mechanism 里的概念做映射了。</p>
+<hr>
+<p><a href="https://medium.com/@copyconstruct/the-method-to-epolls-madness-d9d2d6378642" target="_blank" rel="noopener">The method to epoll’s madness</a></p>
+<p>总体写的一般，而且内容有点乱。</p>
+<p>madness 应该指的就是 epoll 对外表现的是引用 file descriptor 但是内部维护的确实 file descrption。<br>
+          <div class="read-more">
+            <a href="/2018/11/03/monthly-read-posts-in-oct-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/10/27/non-blocking-connect-2-and-error-handling/">Non-blocking Connect(2) and Error Handling</a>
         
       </h1>
@@ -521,75 +585,6 @@
 <p>最后我选择的解决方案是用 python 写一个完整的 tool，手动做了排除，代码也比较简单，看了一下都不超过 80 LOC</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># 0xCCCCCCCC</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> shlex</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">FIRST_REV = <span class="string">''</span></span><br><span class="line">LAST_REV = <span class="string">''</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(cmd)</span>:</span></span><br><span class="line">    <span class="comment">#print('-&gt; ' + cmd)</span></span><br><span class="line">    <span class="keyword">return</span> subprocess.check_output(shlex.split(cmd)).decode(<span class="string">'utf-8'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_authors</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> list(map(<span class="keyword">lambda</span> l: l.strip().split(<span class="string">'\t'</span>)[<span class="number">1</span>],</span><br><span class="line">                    run(<span class="string">'git shortlog -sn &#123;&#125;^..&#123;&#125;'</span>.format(FIRST_REV, LAST_REV)).splitlines()))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum_commits</span><span class="params">(records)</span>:</span></span><br><span class="line">    insertion_num = <span class="number">0</span></span><br><span class="line">    deletion_num = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> stat <span class="keyword">in</span> records:</span><br><span class="line">        mr = re.search(<span class="string">r'(\d+)(?= insertion)'</span>, stat)</span><br><span class="line">        <span class="keyword">if</span> mr:</span><br><span class="line">            insertion_num += int(mr.groups()[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        mr = re.search(<span class="string">r'(\d+)(?= deletion)'</span>, stat)</span><br><span class="line">        <span class="keyword">if</span> mr:</span><br><span class="line">            deletion_num += int(mr.groups()[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> insertion_num, deletion_num</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_analyzed</span><span class="params">(results)</span>:</span></span><br><span class="line">    print(<span class="string">'&#123;0:&gt;20&#125;Insertion&#123;0:&gt;10&#125;Deletion&#123;0:&gt;10&#125;Total'</span>.format(<span class="string">' '</span>))</span><br><span class="line">    <span class="keyword">for</span> author, records <span class="keyword">in</span> results.items():</span><br><span class="line">        print(<span class="string">'&#123;1:&lt;20&#125;&#123;2:&gt;6&#125;&#123;0:&lt;10&#125;&#123;3:&gt;6&#125;&#123;0:&lt;10&#125;&#123;4:&gt;6&#125;'</span>.format(<span class="string">' '</span>,</span><br><span class="line">            author, records[<span class="number">0</span>], records[<span class="number">1</span>], records[<span class="number">2</span>]))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) &lt; <span class="number">3</span>:</span><br><span class="line">        print(<span class="string">'No full range specified! Analyze entire history for current branch.'</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">global</span> FIRST_REV, LAST_REV</span><br><span class="line">    FIRST_REV = sys.argv[<span class="number">1</span>]</span><br><span class="line">    LAST_REV = sys.argv[<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">    authors = query_authors()</span><br><span class="line">    results = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> author <span class="keyword">in</span> authors:</span><br><span class="line">        commits_query = <span class="string">'git log &#123;&#125;^..&#123;&#125; --shortstat --author="&#123;&#125;"'</span>.\</span><br><span class="line">                            format(FIRST_REV, LAST_REV, author)</span><br><span class="line">        commits = list(filter(<span class="keyword">lambda</span> s: re.search(<span class="string">'files? changed'</span>, s),</span><br><span class="line">                              run(commits_query).splitlines()))</span><br><span class="line">        total_insertions, total_deletions = sum_commits(commits)</span><br><span class="line"></span><br><span class="line">        excluded_query = commits_query + <span class="string">' --grep="Merge commits"'</span></span><br><span class="line">        excluded_commits = list(filter(<span class="keyword">lambda</span> s: re.search(<span class="string">'files? changed'</span>, s),</span><br><span class="line">                                       run(excluded_query).splitlines()))</span><br><span class="line">        excluded_insertions, excluded_deletions = sum_commits(excluded_commits)</span><br><span class="line"></span><br><span class="line">        total_insertions -= excluded_insertions</span><br><span class="line">        total_deletions -= excluded_deletions</span><br><span class="line"></span><br><span class="line">        results[author] = (total_insertions, total_deletions, total_insertions + total_deletions)</span><br><span class="line"></span><br><span class="line">    print_analyzed(results)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
 
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/09/03/monthly-read-posts-in-aug-2018/">Monthly Read Posts in Aug 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-09-03
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://www.youtube.com/watch?v=fOV7I-nmVXw" target="_blank" rel="noopener">CppCon 2015: Fedor Pikus “The Unexceptional Exceptions”</a></p>
-<p>Handling exceptions is just as to handle errors using error code, exception is just a tool.</p>
-<p>The key point is to maintain the program state in a well defiend state.</p>
-<p>Turn error handling into resource management and use RAII to automate it; use explicit try…catch only when absolute necessary.</p>
-<p>Bonus tip: avoid uses of <code>pthread_cancel</code>.</p>
-<hr>
-<p><a href="https://itnext.io/pros-and-cons-of-functional-programming-32cdf527e1c2" target="_blank" rel="noopener">Pros and cons of functional programming</a></p>
-<p>Pure function: avoid shared state; immutable structures; function composition.</p>
-<p>Declarative: instead of answers the question ‘how to do’ in imperative style, it answers the question ‘what to do’; imperative relies on instructions while declarative relies more on expressions.</p>
-<p>Cons of FP: not suitable for graph algorithms; major shift on mind patterns.</p>
-<hr>
-<p><a href="https://www.brianstorti.com/understanding-shell-script-idiom-redirect/" target="_blank" rel="noopener">Understanding Shell Script’s idiom: 2&gt;&amp;1</a></p>
-<p>General usage:</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat foo.txt &gt; result.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-<ol>
-<li>fd for stdout and stderr are 1 and 2 respectively</li>
-<li><code>a &gt; b</code> is a shortcut for <code>a 1&gt; b</code> and 1 here is fd value for stdout</li>
-<li>you can use <code>&amp;fd</code> to reference a fd value</li>
-<li>therefore, using <code>2&gt;&amp;1</code> would redirect stderr to stdout, and <code>1&gt;&amp;2</code> would do the opposite.</li>
-</ol>
-          <div class="read-more">
-            <a href="/2018/09/03/monthly-read-posts-in-aug-2018/" class="read-more-link">阅读更多</a>
-          </div>
         
       
     </div>

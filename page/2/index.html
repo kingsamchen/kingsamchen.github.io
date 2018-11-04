@@ -195,6 +195,75 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/09/03/monthly-read-posts-in-aug-2018/">Monthly Read Posts in Aug 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-09-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://www.youtube.com/watch?v=fOV7I-nmVXw" target="_blank" rel="noopener">CppCon 2015: Fedor Pikus “The Unexceptional Exceptions”</a></p>
+<p>Handling exceptions is just as to handle errors using error code, exception is just a tool.</p>
+<p>The key point is to maintain the program state in a well defiend state.</p>
+<p>Turn error handling into resource management and use RAII to automate it; use explicit try…catch only when absolute necessary.</p>
+<p>Bonus tip: avoid uses of <code>pthread_cancel</code>.</p>
+<hr>
+<p><a href="https://itnext.io/pros-and-cons-of-functional-programming-32cdf527e1c2" target="_blank" rel="noopener">Pros and cons of functional programming</a></p>
+<p>Pure function: avoid shared state; immutable structures; function composition.</p>
+<p>Declarative: instead of answers the question ‘how to do’ in imperative style, it answers the question ‘what to do’; imperative relies on instructions while declarative relies more on expressions.</p>
+<p>Cons of FP: not suitable for graph algorithms; major shift on mind patterns.</p>
+<hr>
+<p><a href="https://www.brianstorti.com/understanding-shell-script-idiom-redirect/" target="_blank" rel="noopener">Understanding Shell Script’s idiom: 2&gt;&amp;1</a></p>
+<p>General usage:</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat foo.txt &gt; result.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+<ol>
+<li>fd for stdout and stderr are 1 and 2 respectively</li>
+<li><code>a &gt; b</code> is a shortcut for <code>a 1&gt; b</code> and 1 here is fd value for stdout</li>
+<li>you can use <code>&amp;fd</code> to reference a fd value</li>
+<li>therefore, using <code>2&gt;&amp;1</code> would redirect stderr to stdout, and <code>1&gt;&amp;2</code> would do the opposite.</li>
+</ol>
+          <div class="read-more">
+            <a href="/2018/09/03/monthly-read-posts-in-aug-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/08/31/new-toy-ezio/">开了个新坑 ezio</a>
         
       </h1>
@@ -535,60 +604,6 @@
 <p><a href="https://www.slideshare.net/DanielPfeifer1/effective-cmake" target="_blank" rel="noopener">Effective CMake</a></p>
 <p>最后，虽然 CMake 看起来已经要成为 C++ 的 de facto build system，但是靠谱的资料却没多少，也缺少像 C++ Core Guideline 这种有影响力的半官方指南。</p>
 
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/06/10/build-your-own-http-proxy-using-go/">Build Your Own HTTP Proxy Server Using Go</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-06-10
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>Go is a quite awesome programming language for building network applications. So I built my own HTTP proxy server using go last week.</p>
-<p>To grasp the essence of how HTTP proxy server works, I choosed to implement it on TCP transport layer, forwarding TCP traffic directly.</p>
-<p>Essentially, it runs a server, accepting incoming TCP connections and from which the server extracts target host of a request by parsing HTTP protocol messages. The server then establishes a connection to the target host, and finally operates as an intermedia, forwarding traffic from one host to another.</p>
-<p>Implementing a TCP server which is able to handle concurrent requests uing go is easier than you thought: just runs a loop to accept requests, launching a new goroutine for each new connection:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">	addr     <span class="keyword">string</span></span><br><span class="line">	listener net.Listener</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">Start</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line">	srv.listener, err = net.Listen(<span class="string">"tcp"</span>, srv.addr)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"Failed to listen at %s : %v"</span>, srv.addr, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	log.Printf(<span class="string">"Proxy is listening at %s"</span>, srv.addr)</span><br><span class="line"></span><br><span class="line">	srv.runLoop()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">runLoop</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		conn, err := srv.listener.Accept()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Printf(<span class="string">"Failed to accept an incoming connection : %v"</span>, err)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">go</span> srv.handleConnection(conn)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">handleConnection</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line">	c := newConnection(conn)</span><br><span class="line">	c.serve()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-          <div class="read-more">
-            <a href="/2018/06/10/build-your-own-http-proxy-using-go/" class="read-more-link">阅读更多</a>
-          </div>
         
       
     </div>

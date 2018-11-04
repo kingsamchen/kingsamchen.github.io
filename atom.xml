@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-10-27T15:32:01.762Z</updated>
+  <updated>2018-11-04T00:38:44.342Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,54 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in Oct 2018</title>
+    <link href="http://kingsamchen.github.io/2018/11/03/monthly-read-posts-in-oct-2018/"/>
+    <id>http://kingsamchen.github.io/2018/11/03/monthly-read-posts-in-oct-2018/</id>
+    <published>2018-11-02T17:06:52.000Z</published>
+    <updated>2018-11-04T00:38:44.342Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Concurrency&quot;&gt;&lt;a href=&quot;#Concurrency&quot; class=&quot;headerlink&quot; title=&quot;Concurrency&quot;&gt;&lt;/a&gt;Concurrency&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://nullprogram.com/blog/2014/09/02/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;C11 Lock-free Stack&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;使用C 11 atomic operations 实现一个轻量的 lock-free stack&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;pre-allocation，不需要考虑单个节点的销毁问题，所以不需要使用 hazard pointer&lt;/li&gt;
+&lt;li&gt;free 和 head 两个列表，两个单独的 head 均可用做 sentinel&lt;/li&gt;
+&lt;li&gt;使用 aba counter 来避免 ABA problem&lt;/li&gt;
+&lt;/ul&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.souyunku.com/2018/07/30/mysql/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;MySQL/InnoDB中，乐观锁、悲观锁、共享锁、排它锁、行锁、表锁、死锁概念的理解&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;感觉这篇讲的好混乱，几个概念是明显正交的都混在一起了。&lt;/p&gt;
+&lt;p&gt;瞄了一眼，基本脑子里都在找平常 locking mechanism 里的概念做映射了。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://medium.com/@copyconstruct/the-method-to-epolls-madness-d9d2d6378642&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;The method to epoll’s madness&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;总体写的一般，而且内容有点乱。&lt;/p&gt;
+&lt;p&gt;madness 应该指的就是 epoll 对外表现的是引用 file descriptor 但是内部维护的确实 file descrption。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
+    
+      <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
+    
+      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="database" scheme="http://kingsamchen.github.io/tags/database/"/>
+    
+      <category term="C++" scheme="http://kingsamchen.github.io/tags/C/"/>
+    
+      <category term="RFC" scheme="http://kingsamchen.github.io/tags/RFC/"/>
+    
+  </entry>
   
   <entry>
     <title>Non-blocking Connect(2) and Error Handling</title>
@@ -361,15 +409,15 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
+      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
+    
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
-      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
     
       <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
     
@@ -442,8 +490,6 @@
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
       <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
     
       <category term="assert" scheme="http://kingsamchen.github.io/tags/assert/"/>
@@ -455,6 +501,8 @@
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
     
@@ -511,9 +559,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
-    
       <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
+    
+      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
@@ -707,38 +755,6 @@
       <category term="cache coherency" scheme="http://kingsamchen.github.io/tags/cache-coherency/"/>
     
       <category term="consistent hashing" scheme="http://kingsamchen.github.io/tags/consistent-hashing/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>std::function Must be Copyable</title>
-    <link href="http://kingsamchen.github.io/2018/04/23/std-funcion-must-be-copyable/"/>
-    <id>http://kingsamchen.github.io/2018/04/23/std-funcion-must-be-copyable/</id>
-    <published>2018-04-23T15:55:09.000Z</published>
-    <updated>2018-05-01T09:49:24.132Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;前几天在写一个 &lt;a href=&quot;https://github.com/kingsamchen/Eureka/tree/master/TinyThreadPool&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;ThreadPool
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="thread-pool" scheme="http://kingsamchen.github.io/tags/thread-pool/"/>
-    
-      <category term="std::function" scheme="http://kingsamchen.github.io/tags/std-function/"/>
-    
-      <category term="packaged_task" scheme="http://kingsamchen.github.io/tags/packaged-task/"/>
     
   </entry>
   
