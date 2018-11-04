@@ -1,8 +1,8 @@
 ---
 title: Monthly Read Posts in Oct 2018
 categories: PROGRAMMING
-date: 2018-11-03 01:06:52
-tags: [lock-free, database, epoll, windows, tcp, C++, goroutine, RFC]
+date: 2018-11-04 09:38:36
+tags: [c++, epoll, tcp, network, goroutine, RFC]
 ---
 ## Concurrency
 
