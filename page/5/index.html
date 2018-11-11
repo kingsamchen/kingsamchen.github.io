@@ -195,6 +195,78 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/03/13/shared-ptr-internals-introduction/">浅析 shared_ptr：序论</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-13
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>单看标准库而言，<code>shared_ptr</code>/<code>weak_ptr</code>（后文除特指外，不再同时带上 <code>weak_ptr</code>） 一开始作为 TR1 的一员引入，低调行事多年后自 C++ 11 开始成为标准库正式成员。</p>
+<p>在历史意义上，引入 <code>shared_ptr</code> 不光规范化了 resource ownership 作为 abstraction conception，同时解决了困扰广大 C++ programmers 多年的难题：<em>如何知道一个对象已经被析构了</em>。</p>
+<p>此外，<code>shared_ptr</code> 的某些独特实现技巧，也提供了一些神奇的 idioms，例如</p>
+<ul>
+<li>deleter 不作为自身类型的一部分</li>
+<li>可以正确的析构 cast 到基类的子类对象，即使基类没有提供 virtual destructor</li>
+<li>.etc</li>
+</ul>
+<p>前几天偶然有个想法，既然自己用了这么久的 <code>shared_ptr</code>，那为什么不去看看它内部是如何实现的呢？能涨涨姿势也是好的嘛。</p>
+<p>为了让目标更明确，不至于迷失在浩瀚细节中，我整理了一下当前几个比较重要且有意思的点，作为代码阅读的 targets：</p>
+<ol>
+<li>How <code>shared_ptr&lt;T&gt;(new T())</code> differs from <code>make_shared&lt;T&gt;()</code></li>
+<li>Why virtual dtor is not necessary to correctly destruct a casted derived object instance</li>
+<li>How custom deleter works and why it is not part of the pointer type</li>
+<li>How <code>enable_shared_from_this</code> works</li>
+<li>How reference counting works</li>
+<li>How <code>weak_ptr</code> relates with <code>shared_ptr</code> (promotes <code>weak_ptr</code> to <code>shared_ptr</code>)</li>
+<li>Thread-safety of <code>shared_ptr</code> instances</li>
+</ol>
+<p>考虑到存在多方的实现和平台的常见程度，目前选择了 4 个实现版本：</p>
+<ul>
+<li>MSVC STL：Windows 上使用 Visual Studio 的版本</li>
+<li>Libstdc++：Linux 上的标配</li>
+<li>Boost：先驱者</li>
+<li>Chromium Base：严格来说 Chromium Base 的实现和标准库的完全不同，放在这里只是因为我对 chromium 这个项目有一种特殊的情感/好感。这个团队是真的知道工程化团队的重要性以及能够推进团队工程化，代码一致性极高，很少出现炫技的情况（望向 Facebook 和 Microsoft）。即使部分代码的架构和实现不能算是 C++ Best Practices，也不能掩盖他们整体的工程能力。</li>
+</ul>
+<p>后面会为每个实现版本写一篇单独的 post，至于最后有没有一篇 summing up，就看后面有没有时间，或者这个必要了 :-)</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/">Tiny Concurrent Http Server on Windows and Linux</a>
         
       </h1>
@@ -508,115 +580,6 @@
 <p>由于提早给石榴和花花做了绝育手术，因此她们直接躲过了第一次发情，她们至今都开心得和一个100公斤的姑娘一样~</p>
 <p>最后展望一下 18 年（再不结束我要睡着了…），希望今年能顺利转服务端，继续自己的技术追求之路；同时喵喵们也健康快乐的成长。</p>
 <p>最后的最后，希望能早日搬进杭州的房子，每天和媳妇儿在沙发上看看电影拌拌嘴，撸着石榴和花花。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/02/14/using-winsock-extension-api-the-right-way/">使用 Winsock Extension API 的正确姿势</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-02-14
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>所谓的 Winsock Extension API 指的是微软专门额外添加，由应用层 mswsock.dll 导出的函数集，包括 <code>AcceptEx()</code>, <code>DisconnectEx()</code> .etc</p>
-<p>使用这部分 API 的原因是它们通常支持更新更牛X的特性，且几乎大多数都是异步函数。</p>
-<p>但是因为这部分是应用层函数，直接链接 mswsock.dll 会导致每个函数调用内部都会进行一次由系统完成的动态的函数地址确定，相当于 <code>GetProcAddr()</code>，由此引发性能问题。</p>
-<p>由此衍生出，首先使用 <code>WSAIoctl()</code> 获取这部分 extension API 的函数地址，然后利用函数地址调用的做法。</p>
-<p>注：性能开销这部分可参考 <a href="https://stackoverflow.com/questions/4470645/acceptex-without-wsaioctl" target="_blank" rel="noopener">这里</a>。回答引用的 MSDN Magazine 上的文章已经不可访问了，算是一个遗憾。</p>
-<p>然而关于这块包括 MSDN 上都是一些不详尽的片段，或者根本没提到。</p>
-<p>例如我在学习这部分东西时，一个最大的问题就是 <code>WSAIoctl()</code> 函数无论如何需要一个 socket handle，然而这个需要和我们的目的其实没有关系。</p>
-<p>围绕这个 socket handle 就可以催生出各种问题，但是 MSDN 上甚至没有对这个做哪怕一些解释…</p>
-<p>通过翻查汇总各种相关的代码片段，以及结合 MSDN 上描述的内容，个人总结出了一个推荐的做法：</p>
-<ol>
-<li>使用一个全局的管理者来保存你需要的扩展函数指针。这里全局的管理者可以是一个 singleton，或者用 namespace 包裹的一些全局对象</li>
-<li>在初始化时机创建一个 TCP socket，利用这个 socket 去调用 <code>WSAIoctl()</code>，拿到扩展函数地址</li>
-<li>经过上一部之后，外界使用者就可以和使用普通的 API 一样使用这几个扩展函数</li>
-</ol>
-<p>至于是不是要回收刚才创建的 socket，这个看自己喜好…</p>
-<p>参考部分代码：</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> {
-
-ScopedSocketHandle sock;
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> P&gt;
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">GetExtensionFunctionPointer</span><span class="hljs-params">(P&amp; pfn, GUID guid)</span>
-</span>{
-    DWORD recv_bytes = <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> rv = WSAIoctl(sock.get(), SIO_GET_EXTENSION_FUNCTION_POINTER, &amp;guid, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">sizeof</span>(guid), &amp;pfn,
-                       <span class="hljs-keyword" style="color: rgb(252, 194, 140);">sizeof</span>(pfn), &amp;recv_bytes, <span class="hljs-literal" style="color: rgb(252, 194, 140);">nullptr</span>, <span class="hljs-literal" style="color: rgb(252, 194, 140);">nullptr</span>);
-    ENSURE(CHECK, rv == <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>)(rv)(WSAGetLastError()).Require();
-}
-
-}   <span class="hljs-comment" style="color: rgb(136, 136, 136);">// namespace</span>
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> winsock_ctx {
-
-LPFN_ACCEPTEX AcceptEx = <span class="hljs-literal" style="color: rgb(252, 194, 140);">nullptr</span>;
-LPFN_DISCONNECTEX DisconnectEx = <span class="hljs-literal" style="color: rgb(252, 194, 140);">nullptr</span>;
-
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Init</span><span class="hljs-params">()</span>
-</span>{
-    WSADATA data {<span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>};
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> result_code = WSAStartup(MAKEWORD(<span class="hljs-number" style="color: rgb(211, 99, 99);">2</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">2</span>), &amp;data);
-    ENSURE(THROW, result_code == <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>)(result_code).Require();
-
-    sock.reset(socket(AF_INET, SOCK_STREAM, <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>));
-    ENSURE(CHECK, !!sock)(WSAGetLastError()).Require();
-
-    GetExtensionFunctionPointer(AcceptEx, WSAID_ACCEPTEX);
-    GetExtensionFunctionPointer(DisconnectEx, WSAID_DISCONNECTEX);
-
-    sock.reset();
-
-    <span class="hljs-built_in" style="color: rgb(255, 255, 170);">printf</span>(<span class="hljs-string" style="color: rgb(162, 252, 162);">"-*- Windows Socket Library Initialized -*-\n"</span>);
-}
-
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Cleanup</span><span class="hljs-params">()</span>
-</span>{
-    WSACleanup();
-
-    <span class="hljs-built_in" style="color: rgb(255, 255, 170);">printf</span>(<span class="hljs-string" style="color: rgb(162, 252, 162);">"-*- Windows Socket Library Cleaned -*-\n"</span>);
-}
-
-}   <span class="hljs-comment" style="color: rgb(136, 136, 136);">// namespace winsock_ctx</span>
-</pre>
-
-<p>完整的 sample 可以看<a href="https://github.com/kingsamchen/Eureka/blob/master/ConcurrentHttpServer/ConcurrentHttpServerWin/src/winsock_ctx.h" target="_blank" rel="noopener">这里</a></p>
 
         
       

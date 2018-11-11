@@ -195,6 +195,61 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/">避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-11-20
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h3 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h3><p>某个小朋友（虽然和我同年同届…）写代码时不注意，出现未知错误，但是即使调试器启用所有断点选项，也并没有断在出现错误的地方，而是直接进入了我写的 crash handler。</p>
+<h3 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h3><p>在调用会出现错误的函数前加入</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*<span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>*&gt;(<span class="number">0x0</span>) = <span class="number">0xDEADBEEF</span>;</span><br></pre></td></tr></table></figure>
+<p>调试运行，debugger 成功断下；说明相关功能均正常，问题应该只和该函数产生的错误有关。</p>
+<p>打开 crash handler 生成的 dump 文件，设置符号表，发现错误发生原因是： <code>vector::operator[]</code> 访问下标越界，但是该错误直接触发 crash handler</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>去掉 client 安装 crash handler 前的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_CrtSetReportMode(_CRT_ASSERT, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>即可解决问题。</p>
+<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>因为标准规定 <code>vector::operator[]</code> 操作不做 bounds checking，有问题情况下直接导致 undefined behavior；MSVC 为了更快诊断问题，Debug 模式下会对这个操作进行 CRT ASSERT。</p>
+<p>而 <code>_CrtSetReportMode()</code> 屏蔽了 CRT ASSERT，所以直接进入了 crash handler。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/">推荐 CSAPP:3e 课程视频以及 Bomb Lab</a>
         
       </h1>
@@ -596,76 +651,6 @@
 <p>（而序列化让一个 filter 的初始化时间，在 debug 模式下，从 7s 降到了 500ms）</p>
 <p>在这几年的训练下，KAdBlockEngine 不仅在设计/代码上更加合理、优雅，性能也得到了提升（配合增加的 StringView 和 Tokenizer，我可以说是在这部分代码里真正做到了省掉了不需要的拷贝）；一定程度上可以算是这两三年来进步的见证吧。</p>
 <p>人是一种奇怪的动物，时常会回想过去；在重写 KAdBlockEngine 期间，我不止一次想起自己刚开始实习，以及还在大学的种种瞬间，不只一次觉得：嗯，当初要是能够在努力一点该有多好呢。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/07/10/do-not-intermingle-owner-with-view-semantics/">避免在类设计上混合 Owner 及 View 语义</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-07-10
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>这个论断来自于前段时间重构 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/pickle.h" target="_blank" rel="noopener">pickle</a> 时的想法。</p>
-<h2 id="The-Big-Picture"><a href="#The-Big-Picture" class="headerlink" title="The Big Picture"></a>The Big Picture</h2><p><code>Pickle</code> 是一个二进制序列化设施，内部维护一块 buffer 用以保存被序列化的二进制数据，语义上看，一个 <code>Pickle</code> 对象对内部 buffer 具有无争议的 resource owner 语义。</p>
-<p>反序列化设施 <code>PickleReader</code> 被设计为从一个给定的 <code>Pickle</code> 对象构造，并且在反序列化过程中只改变 <code>PickleReader</code> 内部的 reader cursor，不会对 <code>Pickle</code> 内部的 buffer 有任何 side-effect。显然，<code>PickleReader</code> 对 <code>Pickle</code> 的内部 buffer 具有 view 语义。</p>
-<p>为了支持能从一块给定的 raw buffer of serialized data 进行反序列化（这是很常见的需求，只要序列化后的数据涉及持久化操作，例如存储在磁盘上），<code>Pickle</code> 被设计为允许从给定的 read-only buffer 构造，以方便继续构造 <code>PickleReader</code> 对象进行反序列化操作；并且出于性能和逻辑考虑，<code>Pickle</code> 只维护指向这块 read-only buffer 的指针，并不拷贝一份 buffer 数据。</p>
-<p>为了区分这种情况，在 read-only buffer 上构造的 <code>Pickle</code> 对象的 buffer capacity 始终为 <code>size_t(-1)</code>。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Pickle</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Header</span> &#123;</span></span><br><span class="line">        <span class="keyword">uint32_t</span> payload_size;</span><br><span class="line">    &#125;;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Pickle();</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Creates a Pickle object that has weak-reference to a serialized buffer.</span></span><br><span class="line">    <span class="comment">// The Pickle object cannot call any modifiable methods, and caller must ensure</span></span><br><span class="line">    <span class="comment">// the referee is in a valid state, when PickleReader is applied.</span></span><br><span class="line">    Pickle(<span class="keyword">const</span> <span class="keyword">char</span>* data, <span class="keyword">int</span> data_len);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Makes a deep copy of the Pickle object.</span></span><br><span class="line">    Pickle(<span class="keyword">const</span> Pickle&amp; other);</span><br><span class="line"></span><br><span class="line">    Pickle(Pickle&amp;&amp; other);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Makes a deep copy of the Pickle object.</span></span><br><span class="line">    Pickle&amp; <span class="keyword">operator</span>=(<span class="keyword">const</span> Pickle&amp; rhs);</span><br><span class="line"></span><br><span class="line">    Pickle&amp; <span class="keyword">operator</span>=(Pickle&amp;&amp; rhs);</span><br><span class="line"></span><br><span class="line">    ~Pickle();</span><br><span class="line"></span><br><span class="line">    ...</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Returns true, if this object is weakly bound to a serialized buffer.</span></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">readonly</span><span class="params">()</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> capacity_ == kCapacityReadOnly;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">size_t</span> kCapacityReadOnly = <span class="keyword">static_cast</span>&lt;<span class="keyword">size_t</span>&gt;(<span class="number">-1</span>);</span><br><span class="line">    Header* header_;</span><br><span class="line">    <span class="keyword">size_t</span> capacity_;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>不经意间，<code>Pickle</code> 被我加上了 view 语义。</p>
-<h2 id="What’s-the-Problem"><a href="#What’s-the-Problem" class="headerlink" title="What’s the Problem ?"></a>What’s the Problem ?</h2><p>问题始于对 assignment operators，尤其是 move-assignment 的修改。</p>
-<p>一开始我发现我遗漏了对 evil self-assignments 的处理，加上一个非常简陋的 patch 之后我开始发觉事情没有这么简单。</p>
-<p>assignments 的麻烦之处在于它涉及到两个方面的资源处理：原始资源和新资源。如果是 move assignment，那么还要考虑到被移动对象的资源的 ownership。</p>
-<p>那么接下来考虑这样一个问题： <strong>创建一个 owned pickle 对象，以及在这个 pickle 对象的 buffer 上创建一个 view pickle 对象，然后将 view pickle 对象赋给（copy and move） owned pickle 对象</strong>。</p>
-<p>注意，这种行为是合乎逻辑合乎语义的。因为 <code>Pickle</code> 具有值语义，无论是 owner 还是 view，都允许 duplication 行为。</p>
-<p>接下来想一想，上面的操作会出现什么样的可能后果？以及，为了做到正确的行为，需要做什么样的 workaround？</p>
-<p>你会发现你掉进了一个大坑，为了避免出现错误，你需要不断的修改你的 assignment 语义以适应可能出现的神奇情况。</p>
-<p>如果赋值操作需要同时保证复制对象具有的 owner/view 语义，呃，这似乎是不可能的…</p>
-<p>如果赋值操作只需要保证创建的 <code>PickleReader</code> 等效，那么可以在进行赋值前检查两个 <code>Pickle</code> 是否 ref 同一块数据内存，如果是，则直接返回。</p>
-<p>但是注意，这个规定在语义上是一个很大的 degeneration。</p>
-<p>当然还有其他 workarouond，但是实质上都不能摆脱它们只是不恰当语义下的丑陋的遮羞布。</p>
-<p>而这一切的根本原因在于一个对象可能表现出 owner 语义，也可能表现出 view 语义；这实质上是 evil self-assignment 的一个延伸，即不同 resource 语义下 ref 同一个 resource。</p>
-<p>想一想实现一个 copy-on-write 的 string 类可能要付出的代价，哪怕只考虑单线程。</p>
-<p>一个 COW-string 能够从一个 view 语义对象悄悄的 transform 到一个 owner 语义对象；而这不起眼的 transformation 不意外的挖了一个大坑，没有经验的人可能直接跌得尸骨无存。</p>
-<p>有兴趣的可以看看 Herb Sutter 在 <em>More Exceptional C++</em> 中解决这个坑所引入的语义技巧。</p>
-<p>对了，<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code> 倒是很机智的用两个对象来表示 owner-view 语义。</p>
-<h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>这篇 post 的目的不是说完全不能这样设计，而是说在可能的前提下尽量拆分语义，毕竟挖了大坑把别人埋进去了不是一件值得炫耀的事情。</p>
-<p>最后吐槽一下 chromium 组的某些工程师，虽然我承认 chromium 确实是一个成功的 C++ Project，但是他们有些人真的是不理解 C++，也只是把 C++ 当作一个加强版的 Java 来用。</p>
 
         
       

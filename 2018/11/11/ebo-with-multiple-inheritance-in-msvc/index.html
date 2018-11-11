@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="MSVC 对多继承下的 EBO 支持的一个 workaround"/>
+
+
+
+
+  <meta name="keywords" content="c++, msvc, ebo, multiple inheritance, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2018/11/11/ebo-with-multiple-inheritance-in-msvc/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  <script id="baidu_push">
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+
+
+
+
+
+
+
+    <title> MSVC 对多继承下的 EBO 支持的一个 workaround - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          MSVC 对多继承下的 EBO 支持的一个 workaround
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-11
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        <p>首先简单介绍一下 EBO（Empty Base Class Optimization）。</p>
+<p>因为 C++ 规定，任何一个 instance 在内存中必须要有唯一的地址，因此一个空的 class/struct 会在编译时被偷偷插入一个外人看不到的 <code>char mem;</code>，于是这个空类的每一个 instance 都可以有一个唯一的地址了。</p>
+<p>但是如果将这个空类作为某个类的成员时，这个隐藏的成员会被计入内存布局之中，考虑到 memory padding，有时候会导致类对象体积膨涨一倍。</p>
+<p>例如考虑：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">E</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A1</span> &#123;</span></span><br><span class="line">    E e;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">assert(<span class="keyword">sizeof</span>(E) == <span class="number">1</span>);</span><br><span class="line">assert(<span class="keyword">sizeof</span>(A1) == <span class="number">8</span>);</span><br></pre></td></tr></table></figure>
+<p>我们会发现每一个 <code>A1</code> 的 instance 都占了 8-byte，比起 4-byte 足足翻了一倍。</p>
+<p>占用内存无端变大导致 cache 问题啥的就不讲了，这方面的内容任何讲 computer architecture 的书应该都会有。<br><a id="more"></a><br>C++ 对此的一个解决方法就是 EBO，即通过继承来压缩空类的内存布局：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A2</span> :</span> E &#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">assert(<span class="keyword">sizeof</span>(A2) == <span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+<p>但是 EBO 的实现在 MSVC 上长久以来一直都有一个问题：如果涉及到多继承的情况，那么 EBO 便不能正常实施；which means</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">E1</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">E2</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A3</span> :</span> E1, E2  &#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">assert(<span class="keyword">sizeof</span>(A3) == <span class="number">4</span>); <span class="comment">// Failure</span></span><br></pre></td></tr></table></figure>
+<p>这个问题也导致 MSVC 一直被同行嘲笑（可怜的孩子）。</p>
+<p>最后终于在 2016 年 3 月份，MSVC 团队阶段性地解决了这个问题：引入了 <code>__declspec(empty_bases)</code>。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> __<span class="title">declspec</span>(<span class="title">empty_bases</span>) <span class="title">A3</span> :</span> E1, E2  &#123;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">assert(<span class="keyword">sizeof</span>(A3) == <span class="number">4</span>); <span class="comment">// Now it succeeds</span></span><br></pre></td></tr></table></figure>
+<p>这个 workaround 从 Visual Studio 2015 Update 2 开始都可以使用。</p>
+<p>至于为什么还要手动加 spec 指定，团队的说法是：这个修改是 ABI-incompatible 的（毕竟改了内存布局…），在最近几个版本需要保持 ABI 兼容的前提下，只能通过采用 spec 来做到 per-class-enabled 的程度，否则团队估计要被客服干死。</p>
+<p>详细的内容可以看这里：<a href="https://blogs.msdn.microsoft.com/vcblog/2016/03/30/optimizing-the-layout-of-empty-base-classes-in-vs2015-update-2-3/" target="_blank" rel="noopener">Optimizing the Layout of Empty Base Classes in VS2015 Update 2</a></p>
+<p>另外，因为 Visual Studio 2017 在定位上要和 2015 保持 ABI 兼容，因此至少在 2017 上，还是要用过这个 spec 才能保证多继承下的 EBO 正确开展。</p>
+<p>最后有人可能要问了：C++ 什么时候会需要一个没有成员的类呢？</p>
+<p>答案其实不好回答，只能说需要的地方多了去了。</p>
+<p>比如各种 tag-dispatch，traits 啊啥的，最经典的一个当属 <code>unique_ptr</code>：</p>
+<p>如果不使用 customized deletor，那么就没有必要给 deletor 分配空间，这样一个 <code>unique_ptr</code> member 就可以和 trivial pointer 一样只占用 cpu word 大小的体积。</p>
+<p>这一切是通过一个形如 <code>compressed_pair</code> 完成的，这个实现就用到了 EBO。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/11/11/ebo-with-multiple-inheritance-in-msvc/">http://kingsamchen.github.io/2018/11/11/ebo-with-multiple-inheritance-in-msvc/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/msvc/">msvc</a>
+            
+              <a href="/tags/ebo/">ebo</a>
+            
+              <a href="/tags/multiple-inheritance/">multiple inheritance</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2018/11/04/chromium-base-message-loop-internals-0/">
+        <span class="next-text nav-default">Chromium Base MessageLoop Internals (0)</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/11/11/ebo-with-multiple-inheritance-in-msvc/';
+        this.page.identifier = '2018/11/11/ebo-with-multiple-inheritance-in-msvc/';
+        this.page.title = 'MSVC 对多继承下的 EBO 支持的一个 workaround';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

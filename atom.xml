@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-11-04T02:09:41.590Z</updated>
+  <updated>2018-11-11T03:24:28.971Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>MSVC 对多继承下的 EBO 支持的一个 workaround</title>
+    <link href="http://kingsamchen.github.io/2018/11/11/ebo-with-multiple-inheritance-in-msvc/"/>
+    <id>http://kingsamchen.github.io/2018/11/11/ebo-with-multiple-inheritance-in-msvc/</id>
+    <published>2018-11-11T02:44:37.000Z</published>
+    <updated>2018-11-11T03:24:28.971Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;首先简单介绍一下 EBO（Empty Base Class Optimization）。&lt;/p&gt;
+&lt;p&gt;因为 C++ 规定，任何一个 instance 在内存中必须要有唯一的地址，因此一个空的 class/struct 会在编译时被偷偷插入一个外人看不到的 &lt;code&gt;char mem;&lt;/code&gt;，于是这个空类的每一个 instance 都可以有一个唯一的地址了。&lt;/p&gt;
+&lt;p&gt;但是如果将这个空类作为某个类的成员时，这个隐藏的成员会被计入内存布局之中，考虑到 memory padding，有时候会导致类对象体积膨涨一倍。&lt;/p&gt;
+&lt;p&gt;例如考虑：&lt;/p&gt;
+&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;E&lt;/span&gt; &amp;#123;&lt;/span&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;A1&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    E e;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; i;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;assert(&lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(E) == &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;assert(&lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(A1) == &lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;我们会发现每一个 &lt;code&gt;A1&lt;/code&gt; 的 instance 都占了 8-byte，比起 4-byte 足足翻了一倍。&lt;/p&gt;
+&lt;p&gt;占用内存无端变大导致 cache 问题啥的就不讲了，这方面的内容任何讲 computer architecture 的书应该都会有。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="msvc" scheme="http://kingsamchen.github.io/tags/msvc/"/>
+    
+      <category term="ebo" scheme="http://kingsamchen.github.io/tags/ebo/"/>
+    
+      <category term="multiple inheritance" scheme="http://kingsamchen.github.io/tags/multiple-inheritance/"/>
+    
+  </entry>
   
   <entry>
     <title>Chromium Base MessageLoop Internals (0)</title>
@@ -81,9 +113,9 @@
     
       <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
     
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
     
@@ -440,13 +472,13 @@
     
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
-      <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
-    
-      <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
-    
       <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
+    
+      <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
+    
+      <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
     
       <category term="type traits" scheme="http://kingsamchen.github.io/tags/type-traits/"/>
     
@@ -513,11 +545,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
       <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
     
@@ -530,6 +560,8 @@
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
     
@@ -699,9 +731,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
       <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
       <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
     
@@ -712,42 +744,6 @@
       <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
     
       <category term="base lib" scheme="http://kingsamchen.github.io/tags/base-lib/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>浅析 shared_ptr：Boost 篇</title>
-    <link href="http://kingsamchen.github.io/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/"/>
-    <id>http://kingsamchen.github.io/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/</id>
-    <published>2018-05-02T03:58:19.000Z</published>
-    <updated>2018-06-01T14:38:23.801Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;序言请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;MSVC STL 的分析版本请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Libstdc++ 的分析版本请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;注：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。&lt;/p&gt;
-&lt;h2 id=&quot;目标版本选择&quot;&gt;&lt;a href=&quot;#目标版本选择&quot; class=&quot;headerlink&quot; title=&quot;目标版本选择&quot;&gt;&lt;/a&gt;目标版本选择&lt;/h2&gt;&lt;p&gt;选用最新的 Boost 1.67 作为研究目标&lt;/p&gt;
-&lt;p&gt;在开始正题前，先简单看一下 &lt;code&gt;shared_ptr&lt;/code&gt; 的类成员，方便后续分析：&lt;/p&gt;
-&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;namespace&lt;/span&gt; detail &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;template&lt;/span&gt;&amp;lt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;T&lt;/span&gt; &amp;gt; &lt;span class=&quot;title&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;sp_element&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;typedef&lt;/span&gt; T type;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;template&lt;/span&gt;&amp;lt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;T&lt;/span&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;title&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;shared_ptr&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; boost::detail::sp_element&amp;lt; T &amp;gt;::type element_type;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// omitted other&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    element_type * px;                 &lt;span class=&quot;comment&quot;&gt;// contained pointer&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    boost::detail::shared_count pn;    &lt;span class=&quot;comment&quot;&gt;// reference counter&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
-      <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
-    
-      <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
-    
-      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
-    
-      <category term="boost" scheme="http://kingsamchen.github.io/tags/boost/"/>
     
   </entry>
   
