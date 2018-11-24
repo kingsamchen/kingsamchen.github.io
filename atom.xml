@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-11-11T03:24:28.971Z</updated>
+  <updated>2018-11-24T15:36:58.841Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,40 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl</title>
+    <link href="http://kingsamchen.github.io/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/"/>
+    <id>http://kingsamchen.github.io/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/</id>
+    <published>2018-11-24T15:26:04.000Z</published>
+    <updated>2018-11-24T15:36:58.841Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;在 cmder 里如果不指定运行的 terminal 则会默认使用 windows cmd，而这在使用 git-bash 或者 wsl 时会经常遇到问题：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;性能底下导致交互出现显著延迟（这个发生在使用 tig 等重型 bash 命令或者使用
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="wsl" scheme="http://kingsamchen.github.io/tags/wsl/"/>
+    
+      <category term="cmder" scheme="http://kingsamchen.github.io/tags/cmder/"/>
+    
+      <category term="mintty" scheme="http://kingsamchen.github.io/tags/mintty/"/>
+    
+      <category term="bash" scheme="http://kingsamchen.github.io/tags/bash/"/>
+    
+  </entry>
   
   <entry>
     <title>MSVC 对多继承下的 EBO 支持的一个 workaround</title>
@@ -470,15 +504,15 @@
     
       <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
     
-      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
-    
       <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
-      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
+      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
       <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
     
       <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
+    
+      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
     
       <category term="type traits" scheme="http://kingsamchen.github.io/tags/type-traits/"/>
     
@@ -545,9 +579,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
       <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
     
@@ -618,9 +652,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
-    
       <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
+    
+      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
@@ -700,50 +734,6 @@
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
       <category term="thread-pool" scheme="http://kingsamchen.github.io/tags/thread-pool/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>浅析 RefCounted 和 WeakPtr：Chromium Base 篇</title>
-    <link href="http://kingsamchen.github.io/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/"/>
-    <id>http://kingsamchen.github.io/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/</id>
-    <published>2018-05-14T06:47:38.000Z</published>
-    <updated>2018-06-01T14:38:23.800Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;序言请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;MSVC STL 的分析版本请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Libstdc++ 的分析版本请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Boost 的分析版本请移步&lt;a href=&quot;https://kingsamchen.github.io/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/&quot;&gt;此处&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;注 1：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。&lt;/p&gt;
-&lt;p&gt;注 2：这是系列最后一篇。&lt;/p&gt;
-&lt;h2 id=&quot;目标版本选择&quot;&gt;&lt;a href=&quot;#目标版本选择&quot; class=&quot;headerlink&quot; title=&quot;目标版本选择&quot;&gt;&lt;/a&gt;目标版本选择&lt;/h2&gt;&lt;p&gt;Chromium tag 68.0.3421.1&lt;/p&gt;
-&lt;p&gt;代码位置：&lt;code&gt;base/memory/ref_counted.{h, cc}&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&quot;RefCountedBase-和-RefCounted&quot;&gt;&lt;a href=&quot;#RefCountedBase-和-RefCounted&quot; class=&quot;headerlink&quot; title=&quot;RefCountedBase 和 RefCounted&quot;&gt;&lt;/a&gt;RefCountedBase 和 RefCounted&lt;/h2&gt;&lt;p&gt;两个类实现了非线程安全的引用计数，即：内部计数使用的是 built-in integer&lt;/p&gt;
-&lt;p&gt;先看看 &lt;code&gt;RefCountedBase&lt;/code&gt; 的大致结构：&lt;/p&gt;
-&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;RefCountedBase&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;protected&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;explicit&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;RefCountedBase&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(StartRefCountFromZeroTag)&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;explicit&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;RefCountedBase&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(StartRefCountFromOneTag)&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ~RefCountedBase();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;AddRef&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Release&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;mutable&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;uint32_t&lt;/span&gt; ref_count_ = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;if&lt;/span&gt; DCHECK_IS_ON()&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;mutable&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;bool&lt;/span&gt; needs_adopt_ref_ = &lt;span class=&quot;literal&quot;&gt;false&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;mutable&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;bool&lt;/span&gt; in_dtor_ = &lt;span class=&quot;literal&quot;&gt;false&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;mutable&lt;/span&gt; SequenceChecker sequence_checker_;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;endif&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DISALLOW_COPY_AND_ASSIGN(RefCountedBase);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;可以看出核心 &lt;code&gt;ref_count_&lt;/code&gt; 类型是 &lt;code&gt;uint32_t&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;ctor 和 dtor 都被定义为 protected，说明这类使用做基类；同时提供了 &lt;code&gt;AddRef()&lt;/code&gt; 和 &lt;code&gt;Release()&lt;/code&gt;，进行内部的计数增减。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="shared_ptr" scheme="http://kingsamchen.github.io/tags/shared-ptr/"/>
-    
-      <category term="shared_ptr-internals" scheme="http://kingsamchen.github.io/tags/shared-ptr-internals/"/>
-    
-      <category term="source-code-study" scheme="http://kingsamchen.github.io/tags/source-code-study/"/>
-    
-      <category term="weak_ptr" scheme="http://kingsamchen.github.io/tags/weak-ptr/"/>
-    
-      <category term="base lib" scheme="http://kingsamchen.github.io/tags/base-lib/"/>
     
   </entry>
   

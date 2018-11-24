@@ -195,6 +195,63 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/03/02/monthly-read-posts-in-feb-2017/">Monthly Read Posts in Feb 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-03-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="http://insights.thoughtworkers.org/security-issues-in-restful/" target="_blank" rel="noopener">RESTful架构风格下的4大常见安全问题</a></p>
+<ul>
+<li>Don’t forget to check correlations between resources in request URL</li>
+<li>Some rare used HTTP headers might be helpful</li>
+<li>Restrict API request frequency</li>
+</ul>
+<p>这篇略水，某些常见的问题反而都没有提到，例如大木老师遇到的<a href="http://www.daozhihun.com/p/2119" target="_blank" rel="noopener">这个问题</a></p>
+<hr>
+<p><a href="http://preshing.com/20150324/safe-bitfields-in-cpp/" target="_blank" rel="noopener">Safe Bitfields in C++</a></p>
+<p>Main observation: Use union to implement/simulate bitfields.</p>
+<p>Each bitfield is implemented by using a single union member with mask and bit-length being set up initially.</p>
+<p>非常 stunning 的一个实现，但是很可惜，根据 comments 这个实现仍然是 undefined behavior，because <em>it call member functions on inactive union members</em>.</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/02/01/monthly-read-posts-in-jan-2017/">Monthly Read Posts in Jan 2017</a>
         
       </h1>
@@ -647,92 +704,6 @@
 <p>除此之外，还要注意 <code>URLRequest</code> 对象的<strong>构造和操作</strong>必须在同一个线程。</p>
 <p>至于续传，本质就是利用了 HTTP request header 的 range，具体请参考代码。</p>
 <p>最后说一句，如果你的目的是实现一套和服务端 RESTFul API 通信的设施，那么直接使用 <code>net::URLFetcher</code> 是个更好的选择；因为后者是在 <code>net::URLRequest</code> 基础之上针对字符处理加的一个wrapper，屏蔽了具体的 IO data read 细节。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-12-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64" target="_blank" rel="noopener">Stack Frame Layout on X86-64</a></p>
-<p><strong>Main observations</strong></p>
-<p>For AMD64 X64 ABI compiliant platforms (such as Linux), the major changes include:</p>
-<ul>
-<li>Introduces a red-zone storage area on the stack</li>
-<li>Officially makes frame pointer explicitly optional</li>
-</ul>
-<p>For Windows X64 ABI(though depictated in supplementary):</p>
-<ul>
-<li>No red-zone; instead, a pre-allocated home-space is enforced for every function call</li>
-<li>Cleanup of old calling convention legacy; no more worry about cdecl/fastcall/stdcall etc.</li>
-</ul>
-<p><a href="http://www.golgi.io/security-ssl-tls/" target="_blank" rel="noopener">Understanding Security in IoT: SSL/TLS</a><br><a href="http://insights.thoughtworkers.org/talk-about-https/" target="_blank" rel="noopener">我也想来谈谈HTTPS</a></p>
-<p><strong>Why HTTPS</strong></p>
-<p>Why HTTP is not secure?</p>
-<p>Because it transports information in plain text and with no anti-eavesdroping protection.</p>
-<p><strong>How does it work</strong></p>
-<p>After TCP connection is established, the client and server will futher start TLS/SSL handshake:</p>
-<ol>
-<li>Client-Hello</li>
-<li>Server-Hello</li>
-<li>Authentication and Key Exchange</li>
-<li>Server-Finish</li>
-<li>Client-Finish</li>
-</ol>
-<p><strong>Extra Bonus</strong></p>
-<p>How to use openssl for https.</p>
-<p>帧哥在他的<a href="http://blog.syscallx.com" target="_blank" rel="noopener">技术博客分站</a>上有三篇和 TLS/SSL 协议实现相关的 posts，可以放到下个月的 reading list 里</p>
-<p><a href="http://thereignn.ghost.io/on-dry-and-the-cost-of-wrongful-abstractions/" target="_blank" rel="noopener">ON DRY AND THE COST OF WRONGFUL ABSTRACTIONS</a></p>
-<p><strong>Insight</strong></p>
-<p>Duplicating code sometimes can be a good thing (when the cost imposed by abstractions is too high); namely, context matters.</p>
-<p><strong>Reasons</strong></p>
-<p>Programmers spend far more time reading code (to understand logic behind) than writing code.</p>
-<p>Abstractions cut both ways: every abstraction comes at a cost.</p>
-<p>Every abstraction imposes an extra layer of knowledge, which places cognitive load on brain, and in turn, increases the time spent on understanding that piece of code.</p>
-<p>In some extreme cases(everything is encapsulated in abstractions), the abstraction lost its value, and became a wrongful one.</p>
-<p><strong>Conclusion</strong></p>
-<p>Always abstract if the cost of abstraction does not surpass the cost of duplicating code.</p>
-<p>But, it’s just hard to get it right in real practice.</p>
-<p><strong>Extra Comments</strong></p>
-<p>之前看过一篇类似的 post，标题大概是 <em>dependency versus redundancy</em>，印象中里面叙述的观点比这边更加的具体。</p>
 
         
       

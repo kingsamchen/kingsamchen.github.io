@@ -17,10 +17,12 @@
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl"/>
 
 
 
+
+  <meta name="keywords" content="wsl, cmder, mintty, bash, KC的废墟堆" />
 
 
 
@@ -40,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/archives/2018/05/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -77,11 +79,7 @@
 
 
 
-    <title>
-  
-    归档 - KC的废墟堆
-  
-</title>
+    <title> 在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -193,115 +191,123 @@
           <div id="content" class="content">
             
   
-  <section id="archive" class="archive">
-    
-      
-        <div class="archive-title">
-          <span class="archive-post-counter">
-            目前共计 97 篇日志
-          </span>
-        </div>
-      
-    
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl
+        
+      </h1>
 
-    
-      
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-24
+        </span>
         
-        
-
-        
-          
-          <div class="collection-title">
-            <h2 class="archive-year">2018</h2>
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
           </div>
         
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            05-30
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/05/30/build-your-own-thread-pool-with-cpp/" class="archive-post-link">
-            Build Your Own Threadpool With C++
-          </a>
-        </span>
+        
       </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        <p>在 cmder 里如果不指定运行的 terminal 则会默认使用 windows cmd，而这在使用 git-bash 或者 wsl 时会经常遇到问题：</p>
+<ol>
+<li>性能底下导致交互出现显著延迟（这个发生在使用 tig 等重型 bash 命令或者使用 wsl中）</li>
+<li>容易因为环境属性问题导致乱码，比如 cmder 里直接运行 git-bash 的 tig 会发现提交历史的分割线都乱码了</li>
+</ol>
+<p>神奇的是 cmder 支持将某个终端内嵌到自己的宿主界面里，这样就可以在 cmder 一个程序（单指窗口，非进程）里跑多个终端环境了</p>
+<p>对于使用 mintty 跑 git-bash，假设已经安装了 git for windows，则只需要设置这个人物属性为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%ProgramFiles%\Git\usr\bin\mintty.exe /bin/bash -l -new_console:d:%userProfile%</span><br></pre></td></tr></table></figure>
+<p>即可。</p>
+<p>而对于 WSL，先安装一下 wsl-terminal，然后在 cmder 里新建一个 task，启动内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;C:\Programs\wsl-terminal\bin\mintty.exe&quot; /bin/wslbridge -t /usr/bin/ssh-agent /bin/zsh -l -new_console:d</span><br></pre></td></tr></table></figure>
+<p>即可。</p>
+
+      
+    </div>
+
     
       
-        
-        
-
-        
       
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            05-14
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/" class="archive-post-link">
-            浅析 RefCounted 和 WeakPtr：Chromium Base 篇
-          </a>
-        </span>
-      </div>
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/">http://kingsamchen.github.io/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
     
-      
-        
-        
 
-        
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            05-02
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/" class="archive-post-link">
-            浅析 shared_ptr：Boost 篇
-          </a>
-        </span>
-      </div>
     
-      
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/wsl/">wsl</a>
+            
+              <a href="/tags/cmder/">cmder</a>
+            
+              <a href="/tags/mintty/">mintty</a>
+            
+              <a href="/tags/bash/">bash</a>
+            
+          </div>
         
         
-
         
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            05-01
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/05/01/monthly-read-posts-in-apr-2018/" class="archive-post-link">
-            Monthly Read Post in Apr 2018
-          </a>
-        </span>
-      </div>
+  <nav class="post-nav">
     
-  </section>
-
-  
-  <nav class="pagination">
     
+      <a class="next" href="/2018/11/11/ebo-with-multiple-inheritance-in-msvc/">
+        <span class="next-text nav-default">MSVC 对多继承下的 EBO 支持的一个 workaround</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
     
   </nav>
 
+      </footer>
+    
+
+  </article>
 
 
           </div>
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
       </main>
@@ -380,6 +386,27 @@
     </div>
 
     
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/';
+        this.page.identifier = '2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/';
+        this.page.title = '在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
 
 
     
