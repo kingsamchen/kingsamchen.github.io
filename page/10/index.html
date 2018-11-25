@@ -195,6 +195,65 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/">禁止程序多实例并存并且自动激活第一个实例</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-06-05
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>多实例检测非常常规，在程序启动时直接检查用来标记的内核对象是否存在即可，一般都是使用 <code>Mutex</code>。</p>
+<p>麻烦的点在于如何激活第一个实例，显示它的主窗口。</p>
+<p>某直播姬一开始的想法是利用 Pipe 建立 IPC 通讯连接，然后后续实例通过发送消息，让主实例 activate 自己的窗口。</p>
+<p>嗯，看起来没毛病，但是做起来问题很多。</p>
+<p>首先，IPC 建立需要时间，通讯需要时间，并且断开 IPC 后主实例（Windows 下）一定得需要重新创建一个 Pipe；更加诡异的是，我在本地编译的 Rlease 版本明明可以工作，利用构建机编译出来的版本，子实例管道连接一直失败….</p>
+<p>于是看起来 IPC 是一个很自然地选择，实际上却是一个导致复杂度暴涨的下策。</p>
+<p>另一个思路是创建一个 Event 内核对象，后续实例直接通过 signal 这个 event 内核对象来通知主实例。</p>
+<p>但是这里实现起来有个麻烦的地方：如果要追求简单化，那么就需要一个单独的线程 wait 在这个内核对象上，负责接收通知，缺点是要浪费掉一个线程；如果不想资源浪费，那么考虑到很多框架都提供了 async i/o 的 wrapper，所以可以利用这个点，你开心的话可以挂到 IOCP 上。</p>
+<p>嗯，等等，我们是想做啥来着？！</p>
+<p>绕了一圈最后想想还是这样算了:</p>
+<p>利用 <code>RegisterWindowMessage()</code> 注册一个自定义消息，主实例在 UI message loop / window message procedure 里监听这个消息；子实例启动后就利用 <code>BroadcastMessage()</code> 或者 <code>PostMessage()</code> 广播一下这个消息。</p>
+<p>这样有个额外的好处，主实例收到消息直接是在 UI 线程，省掉一次 post task。</p>
+<p>某直播姬最后采用的就是这个方案，为此我加了一个 class 起了个名字叫 <em>SingleInstanceGuarantor</em>，嗯，有点中二的感觉。</p>
+<p>最后要注意一点，如果框架封装了 window procedure，将几个活动窗口的 window procedure 聚合到一个 message handler 里的话，可能会收到多条消息，可以利用消息的 timestamp 过滤一下。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/06/03/monthly-read-posts-in-may-2017/">Monthly Read Posts in May 2017</a>
         
       </h1>
@@ -545,72 +604,6 @@
 <p>对于 mutex/condition-variable 这类比较高级的 synchronization primitives 和低级的 atomic variables 均有涉及，并且也给了实践建议。</p>
 <p>话说右边那个胖胖的小哥的口音听起来真的是容易懂…</p>
 <p>另外有个挺有意思的细节，快到最后的时候胖小哥提到了 <code>async</code> 和 <code>future</code>，他说希望大家能优先考虑这俩玩意儿，但是说了几句话又欲言又止，最后无奈地说 <em>we will discuss these later</em>。。。估计他想了想，就目前标准给的设施和实现情况，要做到 task-based paralleilism，那坑大的都可以把自己埋进去了。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/03/04/implement-apply-in-cpp-11/">在 C++ 11 中实现 apply</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-03-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Why-apply-matters"><a href="#Why-apply-matters" class="headerlink" title="Why apply matters"></a>Why apply matters</h2><p>假设我们要实现一个和具体业务无关的 HTTP(S) 网络 (Restful)API 请求设施 <code>RequestConnection</code>，我们至少要提供两个实现：</p>
-<ul>
-<li>客户代码的请求结束时的回调 callback/handler</li>
-<li>针对具体业务的 response parser；因为 HTTP 是文本协议，无论 response data 基于何种格式（例如 JSON），我们都要针对具体的业务逻辑场景进行解析</li>
-</ul>
-<p>假设我们希望请求的 callback 足够友好，直接将 client 需要的数据通过函数原型暴露出来，例如</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnCheckUpdateComplete</span><span class="params">(<span class="keyword">bool</span> succeeded, <span class="keyword">int</span> last_build_no)</span></span>;</span><br></pre></td></tr></table></figure>
-<p>那么我们的 reponse parser 也要相应的能够返回符合 callback signature 的数据，在 C++ 中，我们可以用 <code>std::tuple</code> 来保存 parsed result：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::tuple&lt;<span class="keyword">bool</span>, <span class="keyword">int</span>&gt; ParseCheckUpdateResponse(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; data);</span><br></pre></td></tr></table></figure>
-<p>但是很不巧的，<code>RequestConnection</code> 是业务无关的，而业务相关的 callback/response-parser 则是通过依赖注入的方式（例如通过模板参数）进入 <code>RequestConnection</code>；这意味着我们需要一个通用的方法能够在编译期完成如下事情：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Presume magic function Apply</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> response_data;</span><br><span class="line">Apply(ResponseHandler, ResponseParser(response_data));</span><br></pre></td></tr></table></figure>
-<p>神奇函数 <code>Apply()</code> 能够调用一个函数，并且将一个 <code>std::tuple</code> 里的元素按照顺序转换为对应的实参。</p>
-<p>简言之，这就是 C++ 17 要引入的 <a href="http://en.cppreference.com/w/cpp/utility/apply" target="_blank" rel="noopener">std::apply</a> 所做的事情。</p>
-<p>但是如果我们的 codebase 是 C++ 11的，那又如何呢？</p>
-<h2 id="How-to-implement-apply-in-C-11"><a href="#How-to-implement-apply-in-C-11" class="headerlink" title="How to implement apply in C++ 11"></a>How to implement apply in C++ 11</h2><p>在 C++ 11 里实现 <code>apply()</code>，我们要做两步：</p>
-<ol>
-<li>实现 index-sequence （C++ 14 开始标准库附带了这个实现）</li>
-<li>实现 apply</li>
-</ol>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tuple&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;type_traits&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span>... Ints&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">index_sequence</span> &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = index_sequence;</span><br><span class="line">    <span class="keyword">using</span> value_type = <span class="keyword">size_t</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="keyword">size_t</span> size()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">sizeof</span>...(Ints);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Sequence1</span>, <span class="title">class</span> <span class="title">Sequence2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">merge_and_renumber</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span>... I1, <span class="keyword">size_t</span>... I2&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">merge_and_renumber</span>&lt;index_sequence&lt;I1...&gt;, index_sequence&lt;I2...&gt;&gt;</span></span><br><span class="line"><span class="class">    :</span> index_sequence&lt;I1..., (<span class="keyword">sizeof</span>...(I1) + I2)...&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span> N&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span></span></span><br><span class="line"><span class="class">    :</span> merge_and_renumber&lt;<span class="keyword">typename</span> make_index_sequence&lt;N / <span class="number">2</span>&gt;::type,</span><br><span class="line">                         <span class="keyword">typename</span> make_index_sequence&lt;N - N / <span class="number">2</span>&gt;::type&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span>&lt;0&gt; :</span> index_sequence&lt;&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span>&lt;1&gt; :</span> index_sequence&lt;<span class="number">0</span>&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Tuple, <span class="built_in">std</span>::<span class="keyword">size_t</span>... index&gt;</span><br><span class="line">auto apply_helper(Func&amp;&amp; func, Tuple&amp;&amp; tuple, index_sequence&lt;index...&gt;) -&gt;</span><br><span class="line">    <span class="keyword">decltype</span>(func(<span class="built_in">std</span>::get&lt;index&gt;(<span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple))...))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> func(<span class="built_in">std</span>::get&lt;index&gt;(<span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple))...);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Tuple&gt;</span><br><span class="line">auto apply(Func&amp;&amp; func, Tuple&amp;&amp; tuple) -&gt;</span><br><span class="line">    <span class="keyword">decltype</span>(apply_helper(<span class="built_in">std</span>::forward&lt;Func&gt;(func),</span><br><span class="line">                          <span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple),</span><br><span class="line">                          make_index_sequence&lt;<span class="built_in">std</span>::tuple_size&lt;<span class="keyword">typename</span> <span class="built_in">std</span>::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> apply_helper(<span class="built_in">std</span>::forward&lt;Func&gt;(func),</span><br><span class="line">                        <span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple),</span><br><span class="line">                        make_index_sequence&lt;<span class="built_in">std</span>::tuple_size&lt;<span class="keyword">typename</span> <span class="built_in">std</span>::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>以上代码就是我在某直播姬的网络框架里所用的实现；根据实际是用来看，quite awesome</p>
 
         
       

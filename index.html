@@ -195,6 +195,61 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/11/25/chromium-base-message-loop-internals-1/">Chromium Base MessageLoop Internals (1)</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-25
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="class-MessageLoop"><a href="#class-MessageLoop" class="headerlink" title="class MessageLoop"></a>class MessageLoop</h2><p>Version: r70_3538<br>File: <code>base/message_loop/message_loop.{h, cc}</code></p>
+<p>A <code>MessageLoop</code> is used to process events for a particular thread, i.e. the core infrastructure for implementing Communicating Sequential Process (CSP) model.</p>
+<p>There is at most one MessageLoop instance on a thread.</p>
+<p><code>MessageLoop</code> is a farily complex class, it driveds from multiple base classes:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BASE_EXPORT</span> <span class="title">MessageLoop</span> :</span> <span class="keyword">public</span> MessagePump::Delegate,</span><br><span class="line">                                <span class="keyword">public</span> RunLoop::Delegate,</span><br><span class="line">                                <span class="keyword">public</span> MessageLoopCurrent &#123;</span><br><span class="line">    <span class="comment">// omitted...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="MessageLoop-Type"><a href="#MessageLoop-Type" class="headerlink" title="MessageLoop Type"></a>MessageLoop Type</h3><p>A MessageLoop has a particular type, differred by the set of asynchronous events it is capable of handling.<br>
+          <div class="read-more">
+            <a href="/2018/11/25/chromium-base-message-loop-internals-1/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/">在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl</a>
         
       </h1>
@@ -534,62 +589,6 @@
           <div class="read-more">
             <a href="/2018/10/13/naming-a-native-thread/" class="read-more-link">阅读更多</a>
           </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/10/07/python-argparser-bool-arg-the-right-way/">Using Boolean Switch with Python Argparser the Right Way</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-10-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="The-Context"><a href="#The-Context" class="headerlink" title="The Context"></a>The Context</h2><p>之前拿 Python 写了一个 CMake 的 build driver，因为要控制一些编译参数，所以使用了如下代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">'--build-test'</span>, dest=<span class="string">'build_test'</span>, type=bool, default=<span class="keyword">True</span>)</span><br><span class="line">args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">no_build_unittest = <span class="keyword">not</span> args.build_test</span><br></pre></td></tr></table></figure>
-<p>后来有一次偶然发现，无论指定 <code>--build-test=False</code> 还是 <code>--build-test=false</code> 还是 <code>--build-test=0</code>，<code>args.build_test</code> 的值永远是 <code>True</code>。</p>
-<p>然后一脸懵逼。</p>
-<p>万幸有万能的 Stackoverflow，搜了一下发现有人遇到了类似的问题。</p>
-<p>问题的根源在于，即使你指定了 <code>type=bool</code>，你的输入仍然是 <code>string</code>，而 argparse 没有做 string 到 boolean 的语义化转换，仅简单地判断了一下字符串是否为空，所以前面的参数指定全都被认为是 <code>True</code>。</p>
-<h2 id="The-Solution"><a href="#The-Solution" class="headerlink" title="The Solution"></a>The Solution</h2><p>解决的方案是将参数类型指定为 <code>lambda</code> 然后自己做转换：</p>
-<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">-parser.add_argument('--build-test', dest='build_test', type=bool, default=True)</span></span><br><span class="line"><span class="addition">+parser.add_argument('--build-test', dest='build_test',</span></span><br><span class="line"><span class="addition">+                    type=lambda opt: bool(strtobool(opt)), default=True)</span></span><br></pre></td></tr></table></figure>
-<p>Argparse 这个点的实现个人感觉不好，因为违反了直觉。</p>
-<p>另，我在饭否上吐槽这个问题的时候，F叔提到了 <a href="https://github.com/docopt/docopt" target="_blank" rel="noopener">docopt</a> 作为替代品。但是我看了一下简介之后对这种使用描述生成的方式并不感冒（虽然看起来很酷），第一眼看着觉着 verbose，而且总感觉这种比较 fancy 的做法在一些 edge cases 上可能会更痛苦（想起之前折腾各种 build system 的痛苦 -‘’-）。</p>
-<p>不懂之后会不会出现真香的反转，XD</p>
-
         
       
     </div>

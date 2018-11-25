@@ -195,6 +195,62 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/10/07/python-argparser-bool-arg-the-right-way/">Using Boolean Switch with Python Argparser the Right Way</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-10-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="The-Context"><a href="#The-Context" class="headerlink" title="The Context"></a>The Context</h2><p>之前拿 Python 写了一个 CMake 的 build driver，因为要控制一些编译参数，所以使用了如下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">'--build-test'</span>, dest=<span class="string">'build_test'</span>, type=bool, default=<span class="keyword">True</span>)</span><br><span class="line">args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">no_build_unittest = <span class="keyword">not</span> args.build_test</span><br></pre></td></tr></table></figure>
+<p>后来有一次偶然发现，无论指定 <code>--build-test=False</code> 还是 <code>--build-test=false</code> 还是 <code>--build-test=0</code>，<code>args.build_test</code> 的值永远是 <code>True</code>。</p>
+<p>然后一脸懵逼。</p>
+<p>万幸有万能的 Stackoverflow，搜了一下发现有人遇到了类似的问题。</p>
+<p>问题的根源在于，即使你指定了 <code>type=bool</code>，你的输入仍然是 <code>string</code>，而 argparse 没有做 string 到 boolean 的语义化转换，仅简单地判断了一下字符串是否为空，所以前面的参数指定全都被认为是 <code>True</code>。</p>
+<h2 id="The-Solution"><a href="#The-Solution" class="headerlink" title="The Solution"></a>The Solution</h2><p>解决的方案是将参数类型指定为 <code>lambda</code> 然后自己做转换：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">-parser.add_argument('--build-test', dest='build_test', type=bool, default=True)</span></span><br><span class="line"><span class="addition">+parser.add_argument('--build-test', dest='build_test',</span></span><br><span class="line"><span class="addition">+                    type=lambda opt: bool(strtobool(opt)), default=True)</span></span><br></pre></td></tr></table></figure>
+<p>Argparse 这个点的实现个人感觉不好，因为违反了直觉。</p>
+<p>另，我在饭否上吐槽这个问题的时候，F叔提到了 <a href="https://github.com/docopt/docopt" target="_blank" rel="noopener">docopt</a> 作为替代品。但是我看了一下简介之后对这种使用描述生成的方式并不感冒（虽然看起来很酷），第一眼看着觉着 verbose，而且总感觉这种比较 fancy 的做法在一些 edge cases 上可能会更痛苦（想起之前折腾各种 build system 的痛苦 -‘’-）。</p>
+<p>不懂之后会不会出现真香的反转，XD</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/10/05/monthly-read-posts-in-sep-2018/">Monthly Read Posts in Sep 2018</a>
         
       </h1>
@@ -527,69 +583,6 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function">Guarantor&amp; <span class="title">CaptureVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> T&amp; value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HandleCapturedVar(name, value, internal::map_type_to_category&lt;T&gt;&#123;&#125;);</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">HandleCapturedVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> T&amp; value, internal::general_category_tag)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    RecordCapturedVar(name, value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">HandleCapturedVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> T&amp; value, internal::wide_string_category_tag)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    RecordCapturedVar(name, WideToUTF8(value));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">HandleCapturedVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, T value, internal::enum_category_tag)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    RecordCapturedVar(name, enum_cast(value));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">RecordCapturedVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> T&amp; value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    exception_desc_ &lt;&lt; <span class="string">"    "</span> &lt;&lt; name &lt;&lt; <span class="string">" = "</span> &lt;&lt; value &lt;&lt; <span class="string">"\n"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>This design also has great extensibility.</p>
 
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/08/02/monthly-read-posts-in-july-2018/">Monthly Read Posts in July 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-08-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Programming-Language"><a href="#Programming-Language" class="headerlink" title="Programming Language"></a>Programming Language</h2><p><a href="https://www.fluentcpp.com/2016/11/24/clearer-interfaces-with-optionalt/" target="_blank" rel="noopener">Clearer interfaces with optional<t></t></a></p>
-<p><a href="https://www.fluentcpp.com/2016/12/01/partial-queries-with-optionalt/" target="_blank" rel="noopener">Partial queries with optional<t></t></a></p>
-<p><code>optional&lt;T&gt;</code> 介绍 &amp; 简单使用例子</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=9IVCVSwn-fI" target="_blank" rel="noopener">CppCon 2015: John R. Bandela “Simple, Extensible Pattern Matching in C++14”</a></p>
-<p>一个轻量级的 pattern matching 库简要介绍。</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=2rnIHsqABfM" target="_blank" rel="noopener">CppCon 2015: Greg Miller “Time Programming Fundamentals”</a></p>
-<p>Google 内部实现的一个处理 date-time 的轮子。</p>
-<p>不过讲道理，这块内容还不如关注一下之前 monthly read posts 里出现的<a href="http://kingsamchen.github.io/2017/08/01/monthly-read-posts-in-july-2017/">这篇</a> 里提到的 date library。</p>
-<p>看起来差不多会在 <a href="https://en.cppreference.com/w/cpp/chrono" target="_blank" rel="noopener">C++ 20 引入</a></p>
-<hr>
-<p><a href="https://blogs.msdn.microsoft.com/oldnewthing/20180307-00/?p=98175" target="_blank" rel="noopener">When MSDN says NULL, is it okay to use nullptr?</a></p>
-<p>Short anwser: YES.</p>
-          <div class="read-more">
-            <a href="/2018/08/02/monthly-read-posts-in-july-2018/" class="read-more-link">阅读更多</a>
-          </div>
         
       
     </div>

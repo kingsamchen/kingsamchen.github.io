@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-11-24T15:36:58.841Z</updated>
+  <updated>2018-11-25T14:50:56.087Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Chromium Base MessageLoop Internals (1)</title>
+    <link href="http://kingsamchen.github.io/2018/11/25/chromium-base-message-loop-internals-1/"/>
+    <id>http://kingsamchen.github.io/2018/11/25/chromium-base-message-loop-internals-1/</id>
+    <published>2018-11-25T14:47:07.000Z</published>
+    <updated>2018-11-25T14:50:56.087Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;class-MessageLoop&quot;&gt;&lt;a href=&quot;#class-MessageLoop&quot; class=&quot;headerlink&quot; title=&quot;class MessageLoop&quot;&gt;&lt;/a&gt;class MessageLoop&lt;/h2&gt;&lt;p&gt;Version: r70_3538&lt;br&gt;File: &lt;code&gt;base/message_loop/message_loop.{h, cc}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;A &lt;code&gt;MessageLoop&lt;/code&gt; is used to process events for a particular thread, i.e. the core infrastructure for implementing Communicating Sequential Process (CSP) model.&lt;/p&gt;
+&lt;p&gt;There is at most one MessageLoop instance on a thread.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;MessageLoop&lt;/code&gt; is a farily complex class, it driveds from multiple base classes:&lt;/p&gt;
+&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;BASE_EXPORT&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;MessageLoop&lt;/span&gt; :&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; MessagePump::Delegate,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; RunLoop::Delegate,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; MessageLoopCurrent &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// omitted...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;h3 id=&quot;MessageLoop-Type&quot;&gt;&lt;a href=&quot;#MessageLoop-Type&quot; class=&quot;headerlink&quot; title=&quot;MessageLoop Type&quot;&gt;&lt;/a&gt;MessageLoop Type&lt;/h3&gt;&lt;p&gt;A MessageLoop has a particular type, differred by the set of asynchronous events it is capable of handling.&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
+    
+      <category term="source internals" scheme="http://kingsamchen.github.io/tags/source-internals/"/>
+    
+      <category term="message-loop" scheme="http://kingsamchen.github.io/tags/message-loop/"/>
+    
+  </entry>
   
   <entry>
     <title>在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl</title>
@@ -147,9 +176,9 @@
     
       <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
     
-      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
-    
       <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
     
@@ -504,15 +533,15 @@
     
       <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
     
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
+    
+      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
     
       <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
     
       <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
     
-      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="type traits" scheme="http://kingsamchen.github.io/tags/type-traits/"/>
     
@@ -583,6 +612,8 @@
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
       <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
     
       <category term="assert" scheme="http://kingsamchen.github.io/tags/assert/"/>
@@ -594,8 +625,6 @@
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
     
@@ -652,9 +681,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
-    
       <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
+    
+      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
@@ -708,32 +737,6 @@
       <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
     
       <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Build Your Own Threadpool With C++</title>
-    <link href="http://kingsamchen.github.io/2018/05/30/build-your-own-thread-pool-with-cpp/"/>
-    <id>http://kingsamchen.github.io/2018/05/30/build-your-own-thread-pool-with-cpp/</id>
-    <published>2018-05-30T12:27:37.000Z</published>
-    <updated>2018-06-01T14:38:23.799Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Why-Threadpool-Matters&quot;&gt;&lt;a href=&quot;#Why-Threadpool-Matters&quot; class=&quot;headerlink&quot; title=&quot;Why Threadpool Matters&quot;&gt;&lt;/a&gt;Why Threadpool Matters&lt;/h2&gt;&lt;p&gt;Why on the earth do we need thread-pool? The answer is obvious: for doing jobs behind the scenes.&lt;/p&gt;
-&lt;p&gt;That is, saying, you have a constant stream of incoming tasks to complete, and most of which either incur heavy computation or invovle device I/O, you definitely don’t want to execute them on your main thread, because it will block your main thread until the job is done, making your application less responsive.&lt;/p&gt;
-&lt;p&gt;However, with thread-pool, you can simply submit a task to the pool, then continue what was doing; the task will eventually be completed on a thread of the thread-pool.&lt;/p&gt;
-&lt;p&gt;If your processor has multiple cores, the task is possibly performed concurrently with your jobs on the main thread.&lt;/p&gt;
-&lt;h2 id=&quot;What-Should-a-Threadpool-Provide&quot;&gt;&lt;a href=&quot;#What-Should-a-Threadpool-Provide&quot; class=&quot;headerlink&quot; title=&quot;What Should a Threadpool Provide&quot;&gt;&lt;/a&gt;What Should a Threadpool Provide&lt;/h2&gt;&lt;p&gt;Before we switch our focus to editor, we are better to think twice about what we can do with the thread-pool we will build.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="thread-pool" scheme="http://kingsamchen.github.io/tags/thread-pool/"/>
     
   </entry>
   
