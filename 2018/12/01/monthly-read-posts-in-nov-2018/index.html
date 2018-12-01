@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Monthly Read Posts in Nov 2018"/>
+
+
+
+
+  <meta name="keywords" content="golang, shuffling, concurrent programming, noexcept, cache server, api design, pthread, philosophy, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2018/12/01/monthly-read-posts-in-nov-2018/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> Monthly Read Posts in Nov 2018 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Monthly Read Posts in Nov 2018
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-12-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Algorithms"><span class="toc-text">Algorithms</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrency"><span class="toc-text">Concurrency</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-Languages"><span class="toc-text">Programming Languages</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Web-amp-Network"><span class="toc-text">Web &amp; Network</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="Algorithms"><a href="#Algorithms" class="headerlink" title="Algorithms"></a>Algorithms</h2><p><a href="https://blog.codinghorror.com/shuffling/" target="_blank" rel="noopener">Shuffling</a></p>
+<p>Writing a robust shuffling algorithm implementation is hard, even if you know how Knuth Fisher-Yates shuffling works.</p>
+<p>Must be careful about random number generator.</p>
+<hr>
+<p><a href="https://eli.thegreenplace.net/2010/05/28/the-intuition-behind-fisher-yates-shuffling" target="_blank" rel="noopener">The intuition behind Fisher-Yates shuffling</a></p>
+<p>在直观上解释了 fisher-yates algorithm。</p>
+<p>里面举的魔术帽取球的例子非常赞，结合后面的 reasoning 一下就能直观上理解。</p>
+<p>实话说，算法类的东西，如果不能直观上理解的话，真的基本转头就忘了。</p>
+<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="http://www.parallellabs.com/2011/10/02/lock-in-parallel-programming/" target="_blank" rel="noopener">并行编程中的“锁”难题</a></p>
+<p>此篇略水，可作为娱乐消遣看看。</p>
+<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://dave.cheney.net/practical-go/presentations/qcon-china.html" target="_blank" rel="noopener">Practical Go: Real world advice for writing maintainable Go programs</a></p>
+<p>QCon 上的一个 golang 分享，涉及面比较广。</p>
+<p>不过感觉讲的东西都挺一般….</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/06/10/using-noexcept/" target="_blank" rel="noopener">Using noexcept</a></p>
+<p>很赞的文章，从为什么引入 <code>noexcept</code> 到这个特性到这个特性经历的几次变化。</p>
+<p>最后还介绍了 <code>noexcept</code> 的一些使用建议。</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/06/27/unique-ownership-shared-ownership/" target="_blank" rel="noopener">Unique and shared ownership</a></p>
+<p>文章有点老了（2011年）但是几个关于 resource / RAII 的展开还是可以的。</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/06/29/brace-brace/" target="_blank" rel="noopener">Brace, brace!</a></p>
+<p>核心两点：</p>
+<ol>
+<li><code>{}</code> 带来的新的 initialization syntax</li>
+<li>default initialization &amp; value initialization（包含 zero-initialization）</li>
+</ol>
+<p>几个 initialization 间的差异在 03/11/14 几个标准间有差异，可以参考 <a href="https://stackoverflow.com/questions/29765961/default-value-and-zero-initialization-mess" target="_blank" rel="noopener">https://stackoverflow.com/questions/29765961/default-value-and-zero-initialization-mess</a></p>
+<h2 id="Web-amp-Network"><a href="#Web-amp-Network" class="headerlink" title="Web &amp; Network"></a>Web &amp; Network</h2><p><a href="https://alexanderellis.github.io/blog/posts/simple-cache-server-in-python/" target="_blank" rel="noopener">Building a Simple Cache Server in Python</a></p>
+<p>前半部分简单介绍了一下要做的 cache-server 所起的作用，其实就是 users 和 original server 之间的一个 cache-proxy。</p>
+<p>然后用 python 写了一个很简单的例子。不过这个例子看起来非常非常的不专业….</p>
+<ul>
+<li>max listening queue 居然是1</li>
+<li>不支持并发请求</li>
+<li>获取缓存的方法是直接读文件，而且这里的 disk io 是直接 blocking 的…</li>
+</ul>
+<p>另外从这个 cache-server 起的作用看，更像是类似于 CDN 一类的大缓存站？因为缓存数据还是直接存在磁盘上。所以这一层缓存看起来只是减少了请求源服务器的压力而已。</p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://eli.thegreenplace.net/2010/04/05/pthreads-as-a-case-study-of-good-api-design" target="_blank" rel="noopener">pthreads as a case study of good API design</a></p>
+<p>作者在文章里头提到，因为 C 缺乏很多抽象的工具，因此用 C 实现优秀的 API 相比较其他语言存在本质困难。</p>
+<p>而优秀的 C API 中 pthreads 是一个优秀的代表。</p>
+<p>实话说，pthreads 的接口设计的的确简洁且优雅。</p>
+<hr>
+<p><a href="https://mp.weixin.qq.com/s/l_xnOd2gmTSbj3WqZAL7aQ" target="_blank" rel="noopener">Tcl 和 Raft 发明人的软件设计哲学</a></p>
+<p>problem decomposition – control complexity</p>
+<p>deep class 和 shallow class 那段是不是和上面这篇 pthread 接口设计的文章相得益彰?</p>
+<p>另外通过语义变更来消除异常我自己之前也总结过这个，原因还是因为在 C++ 里使用异常的心智负担比较高，所以自己总结了一些方法论在正确的控制异常。</p>
+<p>战术 &amp; 战略之争是一个永恒的话题，尤其对快速发展小公司来说。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/12/01/monthly-read-posts-in-nov-2018/">http://kingsamchen.github.io/2018/12/01/monthly-read-posts-in-nov-2018/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/shuffling/">shuffling</a>
+            
+              <a href="/tags/concurrent-programming/">concurrent programming</a>
+            
+              <a href="/tags/noexcept/">noexcept</a>
+            
+              <a href="/tags/cache-server/">cache server</a>
+            
+              <a href="/tags/api-design/">api design</a>
+            
+              <a href="/tags/pthread/">pthread</a>
+            
+              <a href="/tags/philosophy/">philosophy</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2018/11/25/chromium-base-message-loop-internals-1/">
+        <span class="next-text nav-default">Chromium Base MessageLoop Internals (1)</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/12/01/monthly-read-posts-in-nov-2018/';
+        this.page.identifier = '2018/12/01/monthly-read-posts-in-nov-2018/';
+        this.page.title = 'Monthly Read Posts in Nov 2018';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

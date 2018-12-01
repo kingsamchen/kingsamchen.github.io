@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-11-25T14:50:56.087Z</updated>
+  <updated>2018-12-01T07:57:20.976Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,46 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in Nov 2018</title>
+    <link href="http://kingsamchen.github.io/2018/12/01/monthly-read-posts-in-nov-2018/"/>
+    <id>http://kingsamchen.github.io/2018/12/01/monthly-read-posts-in-nov-2018/</id>
+    <published>2018-12-01T07:55:31.000Z</published>
+    <updated>2018-12-01T07:57:20.976Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Algorithms&quot;&gt;&lt;a href=&quot;#Algorithms&quot; class=&quot;headerlink&quot; title=&quot;Algorithms&quot;&gt;&lt;/a&gt;Algorithms&lt;/h2&gt;&lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="shuffling" scheme="http://kingsamchen.github.io/tags/shuffling/"/>
+    
+      <category term="concurrent programming" scheme="http://kingsamchen.github.io/tags/concurrent-programming/"/>
+    
+      <category term="noexcept" scheme="http://kingsamchen.github.io/tags/noexcept/"/>
+    
+      <category term="cache server" scheme="http://kingsamchen.github.io/tags/cache-server/"/>
+    
+      <category term="api design" scheme="http://kingsamchen.github.io/tags/api-design/"/>
+    
+      <category term="pthread" scheme="http://kingsamchen.github.io/tags/pthread/"/>
+    
+      <category term="philosophy" scheme="http://kingsamchen.github.io/tags/philosophy/"/>
+    
+  </entry>
   
   <entry>
     <title>Chromium Base MessageLoop Internals (1)</title>
@@ -531,17 +571,17 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
-    
       <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
     
-      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
+      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
     
       <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
     
       <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
     
       <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
     
       <category term="type traits" scheme="http://kingsamchen.github.io/tags/type-traits/"/>
     
@@ -681,62 +721,11 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
-    
       <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
     
+      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
+    
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in May 2018</title>
-    <link href="http://kingsamchen.github.io/2018/06/01/monthly-read-posts-in-may-2018/"/>
-    <id>http://kingsamchen.github.io/2018/06/01/monthly-read-posts-in-may-2018/</id>
-    <published>2018-06-01T14:39:00.000Z</published>
-    <updated>2018-06-01T14:43:08.903Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;Misc&quot;&gt;&lt;a href=&quot;#Misc&quot; class=&quot;headerlink&quot; title=&quot;Misc&quot;&gt;&lt;/a&gt;Misc&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;http://mindhacks.cn/2011/11/04/how-to-interview-a-person-for-two-years/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;怎样花两年时间去面试一个人&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;当前行业招聘的不靠谱，招揽优秀人员的难度大。&lt;/p&gt;
-&lt;p&gt;脱颖而出的核心：良好的阅读习惯 + Github 项目&lt;/p&gt;
-&lt;p&gt;这里说的两年是针对应届生来说的，对于已经工作的人来说，可以当作是虚指。&lt;/p&gt;
-&lt;p&gt;不过文中提到的，拥抱变化的三个核心点：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;触动内心的大象&lt;/li&gt;
-&lt;li&gt;建立清晰明确的目标&lt;/li&gt;
-&lt;li&gt;扫清前进道路的障碍&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;颇有道理。&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;http://gulu-dev.com/post/2014-07-28-tech-evaluation&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;何判断一个技术(中间件/库/工具)的靠谱程度？&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;如何做技术选型&lt;/p&gt;
-&lt;h3 id=&quot;System-amp-Architecture&quot;&gt;&lt;a href=&quot;#System-amp-Architecture&quot; class=&quot;headerlink&quot; title=&quot;System &amp;amp; Architecture&quot;&gt;&lt;/a&gt;System &amp;amp; Architecture&lt;/h3&gt;&lt;p&gt;&lt;a href=&quot;https://0xffffff.org/2017/05/01/41-linux-io/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;聊聊Linux IO&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;A brief introduction to Linux I/O stack.&lt;/p&gt;
-&lt;p&gt;这篇 post 的质量在国内技术博客里算是少有的干货。&lt;/p&gt;
-&lt;p&gt;另，关于 page cache 和 buffer cache 的最新的内容，可以参考 Robert Love 在 quora 上的一个&lt;a href=&quot;http://qr.ae/TUTNCz&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;回答&lt;/a&gt;&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=k12BJGSc2Nc&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CppCon 2015: John Farrier “Demystifying Floating Point”&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;工程实践上使用浮点数（IEEE-754）需要注意的一些坑。&lt;/p&gt;
-&lt;p&gt;看之前最好翻一下 CSAPP 中关于浮点数 IEEE-754 模型的基础知识&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
-    
-      <category term="面试" scheme="http://kingsamchen.github.io/tags/%E9%9D%A2%E8%AF%95/"/>
-    
-      <category term="技术选型" scheme="http://kingsamchen.github.io/tags/%E6%8A%80%E6%9C%AF%E9%80%89%E5%9E%8B/"/>
-    
-      <category term="hash table" scheme="http://kingsamchen.github.io/tags/hash-table/"/>
-    
-      <category term="concurrency" scheme="http://kingsamchen.github.io/tags/concurrency/"/>
-    
-      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
     
   </entry>
   
