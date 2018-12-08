@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Build Your Own HandlerThread Part 2"/>
+
+
+
+
+  <meta name="keywords" content="Android, HandlerThread, Looper, Handler, MessageLoop, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2018/12/05/build-your-own-handlerthread-part-2/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> Build Your Own HandlerThread Part 2 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Build Your Own HandlerThread Part 2
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-12-05
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#PendingTask"><span class="toc-text">PendingTask</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#MessageLoop"><span class="toc-text">MessageLoop</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Delayed-Works"><span class="toc-text">Delayed Works</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Do-Work-As-We-Must"><span class="toc-text">Do Work As We Must</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Scaffold"><span class="toc-text">Scaffold</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>有了 <code>MessagePumpDefault</code>  之后，我们就可以开始着手实现最核心的 <code>MessageLoop</code> 了。</p>
+<p>不过在此之前，我们还首先需要实现一个辅助设施：<code>PendingTask</code>。</p>
+<h3 id="PendingTask"><a href="#PendingTask" class="headerlink" title="PendingTask"></a>PendingTask</h3><p>一个 <code>PendingTask</code> instance 表示一个等待被执行的 task，并且这个 task 可能是一个 delayed task。</p>
+<p>因此 <code>PendingTask</code> 需要能够表示时序上的顺序，这个可以利用 <code>Instant</code> 类型的一个时间戳，结合一个 <code>long</code> 类型的 sequence-number。因为有可能两个 delayed tasks 的时间戳相同，此时就必须要用 seq-num  来区分先后顺序。</p>
+<p>另外，<code>PendingTask</code> 为了能够表示 task 语义，他必须可以被执行。这可以通过内部存储一个 <code>Runnable</code> 或者 <code>Callable</code> 成员做到。</p>
+<p>我们的实现选择 <code>Runnable</code>，因为</p>
+<ul>
+<li>我们当前的实现不考虑返回值，因为实现返回值和我们的主题没有直接关系。<br>CSP 的并发模型上如果要考虑使用某个任务的返回值，一般会使用类似于 <code>PostTaskAndReplyWithResult()</code> 来组合两个函数；或者更一般的，使用 continuation 来 lifting restrictions</li>
+<li>懒得处理异常</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PendingTask</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AtomicLong s_seqNumGenerator = <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> _seqNum;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Instant _endTime;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Runnable _task;</span><br><span class="line"></span><br><span class="line">    PendingTask(Runnable task, Instant endTime) &#123;</span><br><span class="line">        _seqNum = s_seqNumGenerator.getAndIncrement();</span><br><span class="line">        _endTime = endTime;</span><br><span class="line"></span><br><span class="line">        _task = task;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        _task.run();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Instant <span class="title">endTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _endTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">long</span> <span class="title">seqNum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _seqNum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们使用了 <code>AtomicLong</code> 来存储当前的 sequence-number，因为我们不知道某个 <code>PendingTask</code> 会在哪个线程上被创建。<br><a id="more"></a><br>此外，为了凸显 <code>PendingTask</code> 的时序顺序性，我们需要实现他的 comparator，方便后面在一些有序容器中使用：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PendingTaskComparator</span> <span class="keyword">implements</span> <span class="title">Comparator</span>&lt;<span class="title">PendingTask</span>&gt; </span>&#123;</span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">compare</span><span class="params">(PendingTask lhs, PendingTask rhs)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (lhs.endTime().isBefore(rhs.endTime())) &#123;</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (lhs.endTime().isAfter(rhs.endTime())) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">long</span> diff = lhs.seqNum() - rhs.seqNum();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (diff &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (diff &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>（Java 不支持 operator overloads 真是因噎废食的设计….）</p>
+<p>有了这俩，我们就可以正式开始构筑 <code>MessageLoop</code> 了。</p>
+<h3 id="MessageLoop"><a href="#MessageLoop" class="headerlink" title="MessageLoop"></a>MessageLoop</h3><p>定位上，这里的 <code>MessageLoop</code> 就是 Android 里的 <code>Looper</code>。</p>
+<p>我们的 <code>MessageLoop</code> 需要实现 <code>MessagePump.Delegate</code>，不过柿子先挑软的捏，我们先实现比较简单的 <code>MessageLoop</code> 三杰：run, quit, 和 wakeup。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    _pump.run(<span class="keyword">this</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Thread-safe.</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">quit</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (belongsToCurrentThread()) &#123;</span><br><span class="line">        _pump.quit();</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        enqueueTask(<span class="keyword">new</span> PendingTask(_pump::quit, Instant.EPOCH));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Thread-safe.</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">wakeup</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    _pump.wakeup();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>三个函数都是将具体操作转发给内部的 pump 完成。</p>
+<p>注意，这里 <code>wakeup()</code> 是线程安全的，因为我们需要在其他线程唤醒阻塞中的 message-loop；同时为了能够方便的退出消息循环，<code>quit()</code> 也设计成了线程安全的。</p>
+<p>实现中需要一个辅助函数 <code>belongsToCurrentThread()</code> 来检测当前线程是否是 message-loop 运行的线程：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Init during construction.</span></span><br><span class="line"><span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> _ownerThreadID = Thread.currentThread().getId();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">belongsToCurrentThread</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> _ownerThreadID == Thread.currentThread().getId();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>做了上面的基础工作，接下里就可以实现 <code>MessagePump.Delegate</code> 接口里的三个函数了。</p>
+<h4 id="Delayed-Works"><a href="#Delayed-Works" class="headerlink" title="Delayed Works"></a>Delayed Works</h4><p>我们先实现只涉及 delayed-task 的后两个：<code>doDelayedWork()</code> 和 <code>nextDelayedWorkExpiration()</code>。</p>
+<p>因为我们的 message-pump 采用了<strong>“一次（循环）只运行一个同一类任务”</strong>的模型，因此我们用于保存 delayed tasks 的队列只需要能够每次获取过期时间最早的任务即可。</p>
+<p>不难想到，符合这种特性的队列就是优先级队列，在 Java 里的名字是 <code>PriorityQueue&lt;&gt;</code>。这个类同时要求存储的元素类型要实现 <code>Comparable</code>，刚好也是我们前面实现了的。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> PriorityQueue&lt;PendingTask&gt; _delayedTasks = <span class="keyword">new</span> PriorityQueue&lt;&gt;(<span class="keyword">new</span> PendingTaskComparator());</span><br></pre></td></tr></table></figure>
+<p>有了存任务的地方，<code>nextDelayedWorkExpiration()</code> 的实现就变得非常简单：</p>
+<ul>
+<li>返回队首任务的过期时间</li>
+<li>返回 <code>Instant.EPOCH</code> 如果队列为空</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> Instant <span class="title">nextDelayedWorkExpiration</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    PendingTask top = _delayedTasks.peek();</span><br><span class="line">    <span class="keyword">return</span> top == <span class="keyword">null</span> ? Instant.EPOCH : top.endTime();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>有了这个函数，前面实现的 <code>MessagePumpDefault</code> 就可以根据 delayed tasks 的时序要求进行调度了。</p>
+<p>函数 <code>doDelayedWork()</code> 的实现也很简单：如果队列不为空，并且队首的任务已经超时，那么就执行这个任务。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">doDelayedWork</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    PendingTask nextTask = _delayedTasks.peek();</span><br><span class="line">    <span class="keyword">if</span> (nextTask == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    Instant nextRunTime = nextTask.endTime();</span><br><span class="line">    <span class="keyword">if</span> (nextRunTime.isAfter(_recentTime)) &#123;</span><br><span class="line">        <span class="comment">// Calibrate only when the last view of 'now' has fallen behind.</span></span><br><span class="line">        _recentTime = Instant.now();</span><br><span class="line">        <span class="keyword">if</span> (nextRunTime.isAfter(_recentTime)) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    _delayedTasks.poll();</span><br><span class="line"></span><br><span class="line">    nextTask.run();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们在上面用了一个小优化点：我们缓存了上一次调用 <code>Instant.now()</code> 的结果，并且只有当当前时间<strong>早于</strong>队首任务的超时时间时，我们才再次调用 <code>Instant.now()</code> 进行校准。</p>
+<p>这么做的原因是 <code>Instant.now()</code> 的调用有一定的开销，并且如果当前累积了相当一部份的过期任务，没有必要每次都调用比较。</p>
+<p>另外再思考一个问题：<code>_delayedTasks</code> 中的任务从何而来？</p>
+<p>这个和实现有关，可以是外部直接存入，或者我们这里的实现，由普通的 task 在处理时“迁移“而来。</p>
+<p>细节请接着往下看。</p>
+<h4 id="Do-Work-As-We-Must"><a href="#Do-Work-As-We-Must" class="headerlink" title="Do Work As We Must"></a>Do Work As We Must</h4><p>普通任务的处理略微麻烦点，因为定时任务一开始也是当作普通任务处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> AutoReentrantLock _incomingTaskLock = <span class="keyword">new</span> AutoReentrantLock();</span><br><span class="line"><span class="keyword">private</span> Queue&lt;PendingTask&gt; _incomingTasks = <span class="keyword">new</span> ArrayDeque&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span> Queue&lt;PendingTask&gt; _outgoingTasks = <span class="keyword">new</span> ArrayDeque&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Retrieve a pending task.</span></span><br><span class="line"><span class="comment">// Returns null when no pending task.</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> PendingTask <span class="title">takeTask</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (_outgoingTasks.isEmpty()) &#123;</span><br><span class="line">        <span class="keyword">try</span> (AutoCloseableLock lock = _incomingTaskLock.lockAsAuto()) &#123;</span><br><span class="line">            _outgoingTasks.addAll(_incomingTasks);</span><br><span class="line">            _incomingTasks.clear();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> _outgoingTasks.poll();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">doWork</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (PendingTask nextTask = takeTask(); nextTask != <span class="keyword">null</span>; nextTask = takeTask()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (Instant.EPOCH.equals(nextTask.endTime())) &#123;</span><br><span class="line">            nextTask.run();</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">true</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        _delayedTasks.add(nextTask);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一旦任务是通过外部存入，我们就要考虑线程安全，这也是我们前面决定将定时任务的来源不对外暴露的原因，但是到了普通任务这里，我们必须要考虑外部提供以及线程安全性。</p>
+<p>对于这种场景，常见的做法是提供一个线程安全的 queue，保证两端的读写线程安全，即构造一个 producer-consumer model。</p>
+<p>这里我们再做一个优化：我们使用两个队列，分别存储外部传入的任务（<code>_incomingTasks</code>)以及内部 message-loop 要消化的任务(<code>_outgoingTasks</code>)。因为我们可以保证 <code>_outgoingTasks</code> 这个队列只在 message-loop 所在的线程上被访问，因此它是天然线程安全的。</p>
+<p>这样我们就将 contention 减少到了只涉及 <code>_incomingTasks</code> 的访问上：</p>
+<ul>
+<li>将 pending tasks 从 <code>_incomingTasks</code> 转移到 <code>_outgoingTasks</code></li>
+<li>任务将 pending task 投递到 <code>_incomingTasks</code> 中</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">enqueueTask</span><span class="params">(PendingTask task)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> (AutoCloseableLock lock = _incomingTaskLock.lockAsAuto()) &#123;</span><br><span class="line">        _incomingTasks.add(task);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!belongsToCurrentThread()) &#123;</span><br><span class="line">        wakeup();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>投递完任务后，如果当前线程不是 message-loop 运行的线程，那么有可能那个线程正在被挂起，我们需要手动唤醒一下。</p>
+<p>注：从这里可以看出前面 <code>SyncEvent</code> 要是 level-trigger 的原因。如果此时 message-pump 在忙，并且 <code>SyncEvent</code> 是 edge-trigger，那么就有可能 message-pump 忙完之后直接阻塞在这个 event 上，导致前面投递的任务无法得到处理。</p>
+<p>至此，<code>MessageLoop</code> 的大部分功能都已经实现了。</p>
+<h4 id="Scaffold"><a href="#Scaffold" class="headerlink" title="Scaffold"></a>Scaffold</h4><p>为了让我们的实现看起来更像 Android 的版本，我们接下来添加一些简单的脚手架函数：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">static</span> ThreadLocal&lt;MessageLoop&gt; tls_loopInThread = <span class="keyword">new</span> ThreadLocal&lt;&gt;();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Can be called only once on a thread.</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">prepare</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (tls_loopInThread.get() != <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Current thread is already bound with a MessageLoop"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    tls_loopInThread.set(<span class="keyword">new</span> MessageLoop());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Unbind the MessageLoop to current thread.</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">reset</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    tls_loopInThread.remove();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> MessageLoop <span class="title">current</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (tls_loopInThread.get() == <span class="keyword">null</span>) &#123;</span><br><span class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Current thread is not bound with a MessageLoop"</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> tls_loopInThread.get();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Run the message-loop bound with the thread.</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">loop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    MessageLoop.current().run();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样一来我们就可以写出如下代码了：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MessageLoop.prepare();</span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line">MessageLoop.loop();</span><br></pre></td></tr></table></figure>
+<p>嗯，看起来有点像了。</p>
+<h3 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h3><p>前面我们用一个 priority-queue 保存 delayed tasks，这是从我们使用的 pump 模型得出的；如果是实现 event-loop 那种一次处理尽可能多的任务，使用 priority-queue 就会因为频繁的调整 min-heap 导致性能不好。</p>
+<p>这个时候一个比较合理的做法是使用平衡树，通过类似 lower-bound / upper-bound 的上下界算法直接摘取出所有已经超时的任务。</p>
+<p>注意，这里不能使用 hash table 作为容器，可以想一下为什么。</p>
+<p>虽然我们有了 <code>MessageLoop</code>，但是直接使用它不是一个好的选择（在业务侧暴露了太多抽象），而且也不像 Android 的做法。</p>
+<p>所以我们后面会实现一个类似 <code>Handler</code> 的东西，我们这里称之为 <code>TaskRunner</code>。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2018/12/05/build-your-own-handlerthread-part-2/">http://kingsamchen.github.io/2018/12/05/build-your-own-handlerthread-part-2/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/Android/">Android</a>
+            
+              <a href="/tags/HandlerThread/">HandlerThread</a>
+            
+              <a href="/tags/Looper/">Looper</a>
+            
+              <a href="/tags/Handler/">Handler</a>
+            
+              <a href="/tags/MessageLoop/">MessageLoop</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2018/12/06/build-your-own-handlerthread-part-3/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Build Your Own HandlerThread Part 3</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    
+    
+      <a class="next" href="/2018/12/04/build-your-own-handlerthread-part-1/">
+        <span class="next-text nav-default">Build Your Own HandlerThread Part 1</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2018
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2018/12/05/build-your-own-handlerthread-part-2/';
+        this.page.identifier = '2018/12/05/build-your-own-handlerthread-part-2/';
+        this.page.title = 'Build Your Own HandlerThread Part 2';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

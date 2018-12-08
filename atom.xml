@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-12-01T07:57:20.976Z</updated>
+  <updated>2018-12-08T16:34:40.264Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,263 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>放弃给 ezio 加 SIGINT Handler</title>
+    <link href="http://kingsamchen.github.io/2018/12/09/give-up-adding-sigint-handler-for-ezio/"/>
+    <id>http://kingsamchen.github.io/2018/12/09/give-up-adding-sigint-handler-for-ezio/</id>
+    <published>2018-12-08T16:18:14.000Z</published>
+    <updated>2018-12-08T16:34:40.264Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;原本的计划是今天给 &lt;a href=&quot;https://github.com/kingsamchen/ezio&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;ezio&lt;/a&gt; 加上 SIGINT 的处理：自动退出运行的
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="Windows" scheme="http://kingsamchen.github.io/tags/Windows/"/>
+    
+      <category term="ezio" scheme="http://kingsamchen.github.io/tags/ezio/"/>
+    
+      <category term="sigint" scheme="http://kingsamchen.github.io/tags/sigint/"/>
+    
+      <category term="signal" scheme="http://kingsamchen.github.io/tags/signal/"/>
+    
+      <category term="Linux" scheme="http://kingsamchen.github.io/tags/Linux/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Build Your Own HandlerThread Part Finale</title>
+    <link href="http://kingsamchen.github.io/2018/12/07/build-your-own-handlerthread-part-finale/"/>
+    <id>http://kingsamchen.github.io/2018/12/07/build-your-own-handlerthread-part-finale/</id>
+    <published>2018-12-06T17:00:48.000Z</published>
+    <updated>2018-12-08T14:02:42.471Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;至此，我们整个系列宣告完结。&lt;/p&gt;
+&lt;p&gt;现在回过头往前看，是不是觉得其实这些底层的东西也没这么难？有时候只是需要一些基础和解决问题的方法罢了。&lt;/p&gt;
+&lt;p&gt;Rant：做业务才真的难呢，框架和流程都给你定死了，一坨又一坨用了几年的不明觉厉的封装，如果内部文档哪个不详，又
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
+    
+      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
+    
+      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
+    
+      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
+    
+      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Build Your Own HandlerThread Part 4</title>
+    <link href="http://kingsamchen.github.io/2018/12/07/build-your-own-handlerthread-part-4/"/>
+    <id>http://kingsamchen.github.io/2018/12/07/build-your-own-handlerthread-part-4/</id>
+    <published>2018-12-06T16:50:37.000Z</published>
+    <updated>2018-12-08T14:02:42.470Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;有了前面的铺垫我们终于可以开始实现我们的主角 ActiveThread 了，虽然它登场的有点晚。&lt;/p&gt;
+&lt;p&gt;这个系列的开头我们提到 &lt;code&gt;ActiveThread&lt;/code&gt; 有两个鲜明的特点：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;它是线程，可以运行，代表一个单独的执行上下文（execution unit/context）&lt;/li&gt;
+&lt;li&gt;每个 &lt;code&gt;ActiveThread&lt;/code&gt; 内部运行一个 message-loop，方便持续的执行我们提交的任务&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这两点和 Android 原生提供的 &lt;code&gt;HandlerThread&lt;/code&gt; 是一模一样的。&lt;/p&gt;
+&lt;p&gt;不过和 &lt;code&gt;HandlerThread&lt;/code&gt; 不同，我们这里不打算采用继承 &lt;code&gt;Thread&lt;/code&gt; 的方式，而是采用 composition。原因之一是我个人非常反感传统的 OO 继承手法；并且 Java 8 开始正式支持 lambda 之后，不用继承我们的工作也可以做得很好。&lt;/p&gt;
+&lt;p&gt;不适用继承同时有个好处，我们可以只暴露我们需要的接口，避免误用（比如经典的用 &lt;code&gt;run()&lt;/code&gt; 而不是 &lt;code&gt;start()&lt;/code&gt;）&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
+    
+      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
+    
+      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
+    
+      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
+    
+      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Build Your Own HandlerThread Part 3</title>
+    <link href="http://kingsamchen.github.io/2018/12/06/build-your-own-handlerthread-part-3/"/>
+    <id>http://kingsamchen.github.io/2018/12/06/build-your-own-handlerthread-part-3/</id>
+    <published>2018-12-06T14:34:48.000Z</published>
+    <updated>2018-12-08T14:02:42.470Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;前面我们实现了 &lt;code&gt;MessageLoop&lt;/code&gt;，现在该轮到 &lt;code&gt;TaskRunner&lt;/code&gt; 了。&lt;/p&gt;
+&lt;p&gt;在我们的设计中，&lt;code&gt;TaskRunner&lt;/code&gt; 的定位是类似
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
+    
+      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
+    
+      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
+    
+      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
+    
+      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Build Your Own HandlerThread Part 2</title>
+    <link href="http://kingsamchen.github.io/2018/12/05/build-your-own-handlerthread-part-2/"/>
+    <id>http://kingsamchen.github.io/2018/12/05/build-your-own-handlerthread-part-2/</id>
+    <published>2018-12-05T15:49:29.000Z</published>
+    <updated>2018-12-08T14:02:42.470Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;有了 &lt;code&gt;MessagePumpDefault&lt;/code&gt;  之后，我们就可以开始着手实现最核心的 &lt;code&gt;MessageLoop&lt;/code&gt; 了。&lt;/p&gt;
+&lt;p&gt;不过在此之前，我们还首先需要实现一个辅助设施：&lt;code&gt;PendingTask&lt;/code&gt;。&lt;/p&gt;
+&lt;h3 id=&quot;PendingTask&quot;&gt;&lt;a href=&quot;#PendingTask&quot; class=&quot;headerlink&quot; title=&quot;PendingTask&quot;&gt;&lt;/a&gt;PendingTask&lt;/h3&gt;&lt;p&gt;一个 &lt;code&gt;PendingTask&lt;/code&gt; instance 表示一个等待被执行的 task，并且这个 task 可能是一个 delayed task。&lt;/p&gt;
+&lt;p&gt;因此 &lt;code&gt;PendingTask&lt;/code&gt; 需要能够表示时序上的顺序，这个可以利用 &lt;code&gt;Instant&lt;/code&gt; 类型的一个时间戳，结合一个 &lt;code&gt;long&lt;/code&gt; 类型的 sequence-number。因为有可能两个 delayed tasks 的时间戳相同，此时就必须要用 seq-num  来区分先后顺序。&lt;/p&gt;
+&lt;p&gt;另外，&lt;code&gt;PendingTask&lt;/code&gt; 为了能够表示 task 语义，他必须可以被执行。这可以通过内部存储一个 &lt;code&gt;Runnable&lt;/code&gt; 或者 &lt;code&gt;Callable&lt;/code&gt; 成员做到。&lt;/p&gt;
+&lt;p&gt;我们的实现选择 &lt;code&gt;Runnable&lt;/code&gt;，因为&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;我们当前的实现不考虑返回值，因为实现返回值和我们的主题没有直接关系。&lt;br&gt;CSP 的并发模型上如果要考虑使用某个任务的返回值，一般会使用类似于 &lt;code&gt;PostTaskAndReplyWithResult()&lt;/code&gt; 来组合两个函数；或者更一般的，使用 continuation 来 lifting restrictions&lt;/li&gt;
+&lt;li&gt;懒得处理异常&lt;/li&gt;
+&lt;/ul&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;PendingTask&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; AtomicLong s_seqNumGenerator = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; AtomicLong(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; _seqNum;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; Instant _endTime;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; Runnable _task;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    PendingTask(Runnable task, Instant endTime) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _seqNum = s_seqNumGenerator.getAndIncrement();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _endTime = endTime;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _task = task;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _task.run();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;Instant &lt;span class=&quot;title&quot;&gt;endTime&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; _endTime;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;seqNum&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; _seqNum;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;我们使用了 &lt;code&gt;AtomicLong&lt;/code&gt; 来存储当前的 sequence-number，因为我们不知道某个 &lt;code&gt;PendingTask&lt;/code&gt; 会在哪个线程上被创建。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
+    
+      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
+    
+      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
+    
+      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
+    
+      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Build Your Own HandlerThread Part 1</title>
+    <link href="http://kingsamchen.github.io/2018/12/04/build-your-own-handlerthread-part-1/"/>
+    <id>http://kingsamchen.github.io/2018/12/04/build-your-own-handlerthread-part-1/</id>
+    <published>2018-12-04T01:51:41.000Z</published>
+    <updated>2018-12-08T14:02:42.469Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;MessagePump&quot;&gt;&lt;a href=&quot;#MessagePump&quot; class=&quot;headerlink&quot; title=&quot;MessagePump&quot;&gt;&lt;/a&gt;MessagePump&lt;/h3&gt;&lt;p&gt;对于我们的 ActiveThread 来说，核心仍然是持续不断运行的 message-loop；但是在实现 message-loop 前，我们需要首先来实现它的“引擎”：&lt;code&gt;MessagePump&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;大体上，message-loop 要维持运转，就要能够源源不断地从某个地方获取消息/事件，而获取消息/事件的这个行为，就是由 message-pump 来完成，正如他的名字一样。&lt;/p&gt;
+&lt;p&gt;这里可能会产生一个疑问，为什么要单独抽出一个 message-pump，而不是直接把这部分实现做到 message-loop 里呢？&lt;/p&gt;
+&lt;p&gt;原因是：一个复杂的系统可能会有多个消息/事件来源，每个来源会有专门的获取、分发的方式。&lt;/p&gt;
+&lt;p&gt;例如：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;界面消息可能是从系统的 GUI 消息系统中获得。一个典型的例子是 Win32 GUI 程序所使用的 &lt;code&gt;GetMessage()&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;网络活动事件通常从 native 系统提供的 I/O multiplexor 中获得。例子包括 POSIX 标准的 &lt;code&gt;select(2)&lt;/code&gt;, &lt;code&gt;poll(2)&lt;/code&gt;；Linux 独有的 &lt;code&gt;epoll&lt;/code&gt;；以及 Windows 提供的真-异步I/O机制 IO Completion Port。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;注：GUI 系统中多使用 messages（消息）作为术语；而网络 I/O 等倾向于使用 events（事件）作为使用术语。因为此系列文章不涉及网络 I/O，因此以后均采用&lt;em&gt;消息&lt;/em&gt;作为我们的使用术语。&lt;/p&gt;
+&lt;p&gt;注1：对于 Android 系统，他的 GUI 事件实质上是通过 &lt;code&gt;epoll&lt;/code&gt; 监听关联到 device 抽象的 pipe fd 来完成的；Linux 的各类 X-Window 实现大多也是类似做法。&lt;/p&gt;
+&lt;p&gt;所以为了解耦具体的消息来源，同时让我们的实现看上去更加有逼格，我们采取分离实现 message-pump 和 message-loop。&lt;/p&gt;
+&lt;p&gt;前面说到可能有多种 pump，所以这里我们的 &lt;code&gt;MessagePump&lt;/code&gt; 应该是一个 interface，规定了一个 message-pump 应该具有哪些基本的行为：&lt;/p&gt;
+&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; java.time.Instant;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;MessagePump&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Delegate&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;doWork&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;doDelayedWork&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;Instant &lt;span class=&quot;title&quot;&gt;nextDelayedWorkExpiration&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Delegate delegate)&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Quit the pump.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// This method can only be called on the thread that called run().&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;quit&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Thread-safe&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;wakeup&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;同时我们定义了一个 &lt;code&gt;Delegate&lt;/code&gt; interface，message-loop 需要实现这个 interface，以便让 message-pump 可以通过这个 interface 来按照自己的实现来操作 message-loop。&lt;/p&gt;
+&lt;h3 id=&quot;什么都不做的-MessagePumpDefault&quot;&gt;&lt;a href=&quot;#什么都不做的-MessagePumpDefault&quot; class=&quot;headerlink&quot; title=&quot;什么都不做的 MessagePumpDefault&quot;&gt;&lt;/a&gt;什么都不做的 MessagePumpDefault&lt;/h3&gt;&lt;p&gt;我们的 ActiveThread 运行的纯 Java 环境，不需要像 Android 那样能够获取设备输入消息（Frankly，你想做还做不了呢，我哪来的设备信息获取啊），有点类似 worker HandlerThread.&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
+    
+      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
+    
+      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
+    
+      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
+    
+      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Build Your Own HandlerThread Part 0</title>
+    <link href="http://kingsamchen.github.io/2018/12/03/build-your-own-handlerthread-part-0/"/>
+    <id>http://kingsamchen.github.io/2018/12/03/build-your-own-handlerthread-part-0/</id>
+    <published>2018-12-03T15:50:08.000Z</published>
+    <updated>2018-12-08T14:02:42.468Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h3 id=&quot;立一个-Flag&quot;&gt;&lt;a href=&quot;#立一个-Flag&quot; class=&quot;headerlink&quot; title=&quot;立一个 Flag&quot;&gt;&lt;/a&gt;立一个 Flag&lt;/h3&gt;&lt;p&gt;&lt;code&gt;HandlerThread&lt;/code&gt; 是 Android runtime
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
+    
+      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
+    
+      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
+    
+      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
+    
+      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in Nov 2018</title>
@@ -470,262 +727,6 @@
       <category term="variadic template" scheme="http://kingsamchen.github.io/tags/variadic-template/"/>
     
       <category term="parallelism" scheme="http://kingsamchen.github.io/tags/parallelism/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>开了个新坑 ezio</title>
-    <link href="http://kingsamchen.github.io/2018/08/31/new-toy-ezio/"/>
-    <id>http://kingsamchen.github.io/2018/08/31/new-toy-ezio/</id>
-    <published>2018-08-30T17:04:26.000Z</published>
-    <updated>2018-09-01T05:04:50.903Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;前段时间分别在 Linux 和 Windows 下实现了一个简单的 TCP 网络框架之后，感觉一些必要的坑都踩的差不多了，可以开始动手写一个真正的跨平台的 TCP 网络框架了。&lt;/p&gt;
-&lt;p&gt;于是就有了这个新坑：ezio。&lt;/p&gt;
-&lt;p&gt;ezio 这个名字是某天跑步的时候突然想到的，有几重含义：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;致敬刺客信条里的 Ezio Auditore，寓意希望这个库能够和刺客一样，虽轻量，但需要时恰到好处，不含糊&lt;/li&gt;
-&lt;li&gt;致敬（碰瓷）Boost.ASIO，因为两个名字发音非常接近&lt;/li&gt;
-&lt;li&gt;第三个是朋友发现的，他把 ezio 念成了 e-z-io（easy io），于是赋予了一个新的含义&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;ezio 的目标是：&lt;strong&gt;提供同时支持 Linux 和 Windows 的轻量型非阻塞且具备扩展性（non-blocking and scalable）的 TCP 网络框架；针对 Linux 做性能侧优化，针对 Windows 做一致性开发体验的优化。&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;这个目标初看起来有点怪异，但是确实非常实际的做法。&lt;/p&gt;
-&lt;p&gt;因为 Linux 和 Windows 在网络编程上存在根本的范式差异性，所以为了提供一致的对外接口，必须要有所侧重和牺牲。Linux 目前占据了绝大多数互联网产品服务器系统的份额，而 Windows 则提供了可以说是当前最好的开发环境。&lt;/p&gt;
-&lt;p&gt;ezio 这个设计目标可以使得绝大多数业务逻辑在 Windows 上开发，然后在 Linux 上进行最后的部署。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
-      <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
-    
-      <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
-    
-      <category term="IOCP" scheme="http://kingsamchen.github.io/tags/IOCP/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Dealing With Multiple Types As a Category</title>
-    <link href="http://kingsamchen.github.io/2018/08/15/dealing-with-multiple-types-as-a-category/"/>
-    <id>http://kingsamchen.github.io/2018/08/15/dealing-with-multiple-types-as-a-category/</id>
-    <published>2018-08-15T13:57:49.000Z</published>
-    <updated>2018-09-01T02:54:00.731Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;Macro &lt;code&gt;ENSURE()&lt;/code&gt; from KBase can ‘capture’ variables by outputing their content to the internal stringtream, provided the type
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="SFINAE" scheme="http://kingsamchen.github.io/tags/SFINAE/"/>
-    
-      <category term="enum" scheme="http://kingsamchen.github.io/tags/enum/"/>
-    
-      <category term="tag dispatching" scheme="http://kingsamchen.github.io/tags/tag-dispatching/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in July 2018</title>
-    <link href="http://kingsamchen.github.io/2018/08/02/monthly-read-posts-in-july-2018/"/>
-    <id>http://kingsamchen.github.io/2018/08/02/monthly-read-posts-in-july-2018/</id>
-    <published>2018-08-02T14:03:51.000Z</published>
-    <updated>2018-09-14T07:17:16.843Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Programming-Language&quot;&gt;&lt;a href=&quot;#Programming-Language&quot; class=&quot;headerlink&quot; title=&quot;Programming Language&quot;&gt;&lt;/a&gt;Programming Language&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2016/11/24/clearer-interfaces-with-optionalt/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Clearer interfaces with optional&lt;t&gt;&lt;/t&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2016/12/01/partial-queries-with-optionalt/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Partial queries with optional&lt;t&gt;&lt;/t&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;optional&amp;lt;T&amp;gt;&lt;/code&gt; 介绍 &amp;amp; 简单使用例子&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=9IVCVSwn-fI&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CppCon 2015: John R. Bandela “Simple, Extensible Pattern Matching in C++14”&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;一个轻量级的 pattern matching 库简要介绍。&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=2rnIHsqABfM&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CppCon 2015: Greg Miller “Time Programming Fundamentals”&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Google 内部实现的一个处理 date-time 的轮子。&lt;/p&gt;
-&lt;p&gt;不过讲道理，这块内容还不如关注一下之前 monthly read posts 里出现的&lt;a href=&quot;http://kingsamchen.github.io/2017/08/01/monthly-read-posts-in-july-2017/&quot;&gt;这篇&lt;/a&gt; 里提到的 date library。&lt;/p&gt;
-&lt;p&gt;看起来差不多会在 &lt;a href=&quot;https://en.cppreference.com/w/cpp/chrono&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;C++ 20 引入&lt;/a&gt;&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://blogs.msdn.microsoft.com/oldnewthing/20180307-00/?p=98175&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;When MSDN says NULL, is it okay to use nullptr?&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Short anwser: YES.&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="constexpr" scheme="http://kingsamchen.github.io/tags/constexpr/"/>
-    
-      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
-    
-      <category term="date time" scheme="http://kingsamchen.github.io/tags/date-time/"/>
-    
-      <category term="pattern matching" scheme="http://kingsamchen.github.io/tags/pattern-matching/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
-      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
-    
-      <category term="type traits" scheme="http://kingsamchen.github.io/tags/type-traits/"/>
-    
-      <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>在 Windows 上运行 Linux GUI 程序</title>
-    <link href="http://kingsamchen.github.io/2018/07/06/running-linux-gui-applications-on-windows/"/>
-    <id>http://kingsamchen.github.io/2018/07/06/running-linux-gui-applications-on-windows/</id>
-    <published>2018-07-06T14:43:29.000Z</published>
-    <updated>2018-07-07T09:57:23.047Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;自从 Windows 10 提供 WSL 之后，在 Windows 上运行 Linux CLI 程序并不是一个复杂的事情；然而俗话说饱暖思淫欲，既然可以做到在 Windows 上跑 Linux CLI 了，下一步自然想的是在 Windows 上跑 Linux GUI 程序。&lt;/p&gt;
-&lt;p&gt;之所以要跑 GUI 是因为，无论是 vscode 还是 CLion，写 C++ 的体验都比在 terminal 里开一个 vim 要好太多了，无论你是花了多少时间配置了 &lt;code&gt;.vimrc&lt;/code&gt;，在 CLion 面前都是战五渣。更何况我买了 Jetbrains 的 All product license，不用用难道留着过年吗。&lt;/p&gt;
-&lt;p&gt;这里先解答两个常见疑问：&lt;/p&gt;
-&lt;p&gt;Q：为什么不直接在虚拟机里使用？&lt;br&gt;A：因为 Linux 对 4K 屏原生支持太糟糕。哪怕 Mint 提供了 double scaling，解决了一些外观上的问题，我在 4K 的环境下一开 vscode 程序就崩溃，而且运行操作明显掉帧。&lt;br&gt;另外一个问题是，单纯的虚拟机操作和外界宿主太隔离，等于我得配置两套完全一样的环境（比如浏览器，常见的应用，甚至 SS 等），而且和宿主的交互非常不够便利。&lt;/p&gt;
-&lt;p&gt;Q：为什么不买 macbook？&lt;br&gt;A：？？你是认真的么？OS X 那么垃圾的系统。再说我要写 C++ server-end 的代码，要是可以用 OS X 我为什么不直接在 Windows 上跑?&lt;/p&gt;
-&lt;p&gt;另外有一个剧透：我尝试过运行 WSL 里的 Linux GUI 程序，例如 CLion，但是目前 WSL 的文件系统性能过于糟糕，CLion 一个劲的冒错误提示，所以，下面的环境假定是虚拟机里的 Linux 或者一台单独的 Linux 设备。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="ssh" scheme="http://kingsamchen.github.io/tags/ssh/"/>
-    
-      <category term="x11 forwarding" scheme="http://kingsamchen.github.io/tags/x11-forwarding/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Jun 2018</title>
-    <link href="http://kingsamchen.github.io/2018/07/01/monthly-read-posts-in-jun-2018/"/>
-    <id>http://kingsamchen.github.io/2018/07/01/monthly-read-posts-in-jun-2018/</id>
-    <published>2018-07-01T14:45:10.000Z</published>
-    <updated>2018-07-01T14:58:30.894Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Programming-Language&quot;&gt;&lt;a href=&quot;#Programming-Language&quot; class=&quot;headerlink&quot; title=&quot;Programming Language&quot;&gt;&lt;/a&gt;Programming Language&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=iLiDezv_Frk&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CppCon 2015: Richard Powell “Intro to the C++ Object Model”
-&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;基本覆盖了 POD，无需函数类，单继承的情况，扫盲效果俱佳。&lt;/p&gt;
-&lt;p&gt;至于为什么没有包含 multiple inheritance / virtual inheritance，作者说自己不是很 condifent with that。&lt;/p&gt;
-&lt;p&gt;讲道理，MI / VI 在一般的设计里都会尽量避免，而且各种乱七八糟的 case 很多，这里不涉及反而是个正确的做法。&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://akrzemi1.wordpress.com/2011/04/06/assertions/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Assertions&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;首先，我很赞同文中作者对于 assertion 是 &lt;em&gt;guarantees given by the author of a piece of code to himself/herself&lt;/em&gt; 但是接下来的大部观点都不赞同。&lt;/p&gt;
-&lt;p&gt;比如作者认为不应该 assert on precodintions &amp;amp; postconditions，因为 assertion 是 for implementation details，这个思路其实不对。&lt;/p&gt;
-&lt;p&gt;关于 assertion，目前看过最好的阐述还是 &lt;a href=&quot;https://book.douban.com/subject/3406939/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Writing Solid Code&lt;/a&gt;，推荐去阅读这个。&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://akrzemi1.wordpress.com/2011/05/06/compile-time-computations/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Compile-time computations&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;这篇 post 展示了 constexpr functions 错误报告的常见手段：抛异常。&lt;/p&gt;
-&lt;p&gt;这个在之前的某个 cppcon talk 里有专门的介绍。&lt;/p&gt;
-&lt;p&gt;另外，文中更进一步，抽出专门的 constexpr validation functions，并通过 comma operator 串联。&lt;/p&gt;
-&lt;p&gt;C++ 14 支持多句之后，连 comma operatos 都可以免掉了。&lt;/p&gt;
-&lt;hr&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
-      <category term="compile-time" scheme="http://kingsamchen.github.io/tags/compile-time/"/>
-    
-      <category term="assert" scheme="http://kingsamchen.github.io/tags/assert/"/>
-    
-      <category term="RVO" scheme="http://kingsamchen.github.io/tags/RVO/"/>
-    
-      <category term="functional" scheme="http://kingsamchen.github.io/tags/functional/"/>
-    
-      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
-    
-      <category term="threading model" scheme="http://kingsamchen.github.io/tags/threading-model/"/>
-    
-      <category term="select" scheme="http://kingsamchen.github.io/tags/select/"/>
-    
-      <category term="poll" scheme="http://kingsamchen.github.io/tags/poll/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Modern CMake</title>
-    <link href="http://kingsamchen.github.io/2018/06/19/modern-cmake/"/>
-    <id>http://kingsamchen.github.io/2018/06/19/modern-cmake/</id>
-    <published>2018-06-19T07:22:07.000Z</published>
-    <updated>2018-07-01T14:38:13.754Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;但凡有点历史的东西，在演进到一个新的阶段时，总会总结一套新的 practices 然后冠之以 modern，例如 modern C++，还有今天的主题 —— modern CMake。&lt;/p&gt;
-&lt;p&gt;上周花了一点时间稍微研究了一下所谓的 modern cmake，然后将
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Build Your Own HTTP Proxy Server Using Go</title>
-    <link href="http://kingsamchen.github.io/2018/06/10/build-your-own-http-proxy-using-go/"/>
-    <id>http://kingsamchen.github.io/2018/06/10/build-your-own-http-proxy-using-go/</id>
-    <published>2018-06-10T11:54:44.000Z</published>
-    <updated>2018-06-10T13:56:53.568Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Go is a quite awesome programming language for building network applications. So I built my own HTTP proxy server using go last week.&lt;/p&gt;
-&lt;p&gt;To grasp the essence of how HTTP proxy server works, I choosed to implement it on TCP transport layer, forwarding TCP traffic directly.&lt;/p&gt;
-&lt;p&gt;Essentially, it runs a server, accepting incoming TCP connections and from which the server extracts target host of a request by parsing HTTP protocol messages. The server then establishes a connection to the target host, and finally operates as an intermedia, forwarding traffic from one host to another.&lt;/p&gt;
-&lt;p&gt;Implementing a TCP server which is able to handle concurrent requests uing go is easier than you thought: just runs a loop to accept requests, launching a new goroutine for each new connection:&lt;/p&gt;
-&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;type&lt;/span&gt; Server &lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	addr     &lt;span class=&quot;keyword&quot;&gt;string&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	listener net.Listener&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(srv *Server)&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Start&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; err error&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	srv.listener, err = net.Listen(&lt;span class=&quot;string&quot;&gt;&quot;tcp&quot;&lt;/span&gt;, srv.addr)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; err != &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		log.Fatalf(&lt;span class=&quot;string&quot;&gt;&quot;Failed to listen at %s : %v&quot;&lt;/span&gt;, srv.addr, err)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	log.Printf(&lt;span class=&quot;string&quot;&gt;&quot;Proxy is listening at %s&quot;&lt;/span&gt;, srv.addr)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	srv.runLoop()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(srv *Server)&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;runLoop&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		conn, err := srv.listener.Accept()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		&lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; err != &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;			log.Printf(&lt;span class=&quot;string&quot;&gt;&quot;Failed to accept an incoming connection : %v&quot;&lt;/span&gt;, err)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;			&lt;span class=&quot;keyword&quot;&gt;continue&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		&lt;span class=&quot;keyword&quot;&gt;go&lt;/span&gt; srv.handleConnection(conn)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(srv *Server)&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;handleConnection&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(conn net.Conn)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	c := newConnection(conn)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	c.serve()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
-    
-      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
   </entry>
   
