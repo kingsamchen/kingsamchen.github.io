@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-12-08T16:34:40.264Z</updated>
+  <updated>2018-12-16T10:04:31.894Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,40 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>虚拟机 Linux Mint 磁盘扩容</title>
+    <link href="http://kingsamchen.github.io/2018/12/16/expand-linux-vm-disk-size/"/>
+    <id>http://kingsamchen.github.io/2018/12/16/expand-linux-vm-disk-size/</id>
+    <published>2018-12-16T09:39:19.000Z</published>
+    <updated>2018-12-16T10:04:31.894Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;之前在虚拟机里创建 mint 时磁盘就给了 20G 的 SSD，最近发现可用容量捉襟见肘，必须要扩容一波。&lt;/p&gt;
+&lt;p&gt;摸索了一下发现给虚拟机里的 linux 磁盘扩容并不是那么简单直白，至少有几个坑，所以稍微做了一些记录，以备日后不时之需。&lt;/p&gt;
+&lt;h3
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
+    
+      <category term="mint" scheme="http://kingsamchen.github.io/tags/mint/"/>
+    
+      <category term="磁盘" scheme="http://kingsamchen.github.io/tags/%E7%A3%81%E7%9B%98/"/>
+    
+      <category term="扩容" scheme="http://kingsamchen.github.io/tags/%E6%89%A9%E5%AE%B9/"/>
+    
+  </entry>
   
   <entry>
     <title>放弃给 ezio 加 SIGINT Handler</title>
@@ -676,57 +710,6 @@
       <category term="bug" scheme="http://kingsamchen.github.io/tags/bug/"/>
     
       <category term="git" scheme="http://kingsamchen.github.io/tags/git/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Aug 2018</title>
-    <link href="http://kingsamchen.github.io/2018/09/03/monthly-read-posts-in-aug-2018/"/>
-    <id>http://kingsamchen.github.io/2018/09/03/monthly-read-posts-in-aug-2018/</id>
-    <published>2018-09-03T05:14:04.000Z</published>
-    <updated>2018-09-14T07:17:16.842Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming Languages&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.youtube.com/watch?v=fOV7I-nmVXw&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;CppCon 2015: Fedor Pikus “The Unexceptional Exceptions”&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Handling exceptions is just as to handle errors using error code, exception is just a tool.&lt;/p&gt;
-&lt;p&gt;The key point is to maintain the program state in a well defiend state.&lt;/p&gt;
-&lt;p&gt;Turn error handling into resource management and use RAII to automate it; use explicit try…catch only when absolute necessary.&lt;/p&gt;
-&lt;p&gt;Bonus tip: avoid uses of &lt;code&gt;pthread_cancel&lt;/code&gt;.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://itnext.io/pros-and-cons-of-functional-programming-32cdf527e1c2&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Pros and cons of functional programming&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Pure function: avoid shared state; immutable structures; function composition.&lt;/p&gt;
-&lt;p&gt;Declarative: instead of answers the question ‘how to do’ in imperative style, it answers the question ‘what to do’; imperative relies on instructions while declarative relies more on expressions.&lt;/p&gt;
-&lt;p&gt;Cons of FP: not suitable for graph algorithms; major shift on mind patterns.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.brianstorti.com/understanding-shell-script-idiom-redirect/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Understanding Shell Script’s idiom: 2&amp;gt;&amp;amp;1&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;General usage:&lt;/p&gt;
-&lt;figure class=&quot;highlight shell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;cat foo.txt &amp;gt; result.log 2&amp;gt;&amp;amp;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;ol&gt;
-&lt;li&gt;fd for stdout and stderr are 1 and 2 respectively&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;a &amp;gt; b&lt;/code&gt; is a shortcut for &lt;code&gt;a 1&amp;gt; b&lt;/code&gt; and 1 here is fd value for stdout&lt;/li&gt;
-&lt;li&gt;you can use &lt;code&gt;&amp;amp;fd&lt;/code&gt; to reference a fd value&lt;/li&gt;
-&lt;li&gt;therefore, using &lt;code&gt;2&amp;gt;&amp;amp;1&lt;/code&gt; would redirect stderr to stdout, and &lt;code&gt;1&amp;gt;&amp;amp;2&lt;/code&gt; would do the opposite.&lt;/li&gt;
-&lt;/ol&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
-    
-      <category term="raft" scheme="http://kingsamchen.github.io/tags/raft/"/>
-    
-      <category term="membership protocol" scheme="http://kingsamchen.github.io/tags/membership-protocol/"/>
-    
-      <category term="tcp flow control" scheme="http://kingsamchen.github.io/tags/tcp-flow-control/"/>
-    
-      <category term="GIL" scheme="http://kingsamchen.github.io/tags/GIL/"/>
-    
-      <category term="variadic template" scheme="http://kingsamchen.github.io/tags/variadic-template/"/>
-    
-      <category term="parallelism" scheme="http://kingsamchen.github.io/tags/parallelism/"/>
     
   </entry>
   
