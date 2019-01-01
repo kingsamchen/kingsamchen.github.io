@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2018-12-16T10:04:31.894Z</updated>
+  <updated>2019-01-01T08:05:24.007Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in Dec 2018</title>
+    <link href="http://kingsamchen.github.io/2019/01/01/monthly-read-posts-in-dec-2018/"/>
+    <id>http://kingsamchen.github.io/2019/01/01/monthly-read-posts-in-dec-2018/</id>
+    <published>2019-01-01T07:36:47.000Z</published>
+    <updated>2019-01-01T08:05:24.007Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming Languages&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://medium.com/golangspec/init-functions-in-go-eac191b3860a&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;init functions in Go&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;这篇 post 总结起来就是深入浅出。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2017/01/05/the-importance-of-knowing-stl-algorithms/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;The importance of knowing STL algorithms&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;能熟练运用 STL algorithms 是一个 experienced c++ programmer 的基本要求。&lt;/p&gt;
+&lt;p&gt;另外里面提到了使用 algorithms 的两个 pitfalls，其中一个是滥用 &lt;code&gt;for_each()&lt;/code&gt;，这个确实有点意思。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="algorithms" scheme="http://kingsamchen.github.io/tags/algorithms/"/>
+    
+      <category term="redis" scheme="http://kingsamchen.github.io/tags/redis/"/>
+    
+      <category term="code quality" scheme="http://kingsamchen.github.io/tags/code-quality/"/>
+    
+  </entry>
   
   <entry>
     <title>虚拟机 Linux Mint 磁盘扩容</title>
@@ -680,36 +711,6 @@
       <category term="pull request" scheme="http://kingsamchen.github.io/tags/pull-request/"/>
     
       <category term="diff" scheme="http://kingsamchen.github.io/tags/diff/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Git Invert-grep Bug</title>
-    <link href="http://kingsamchen.github.io/2018/09/14/git-invert-grep-bug/"/>
-    <id>http://kingsamchen.github.io/2018/09/14/git-invert-grep-bug/</id>
-    <published>2018-09-14T07:27:33.000Z</published>
-    <updated>2018-09-14T07:53:32.532Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;前段时间部门技术老板要求每个组统计每个研发同学在某个版本的千行 bug 率，所以第一步就要能够统计某个人在某个指定分支的提交信息。&lt;/p&gt;
-&lt;p&gt;这个很容易做，利用&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="bug" scheme="http://kingsamchen.github.io/tags/bug/"/>
-    
-      <category term="git" scheme="http://kingsamchen.github.io/tags/git/"/>
     
   </entry>
   

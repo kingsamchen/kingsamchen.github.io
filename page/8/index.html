@@ -182,6 +182,72 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/02/02/monthly-read-posts-in-jan-2018/">Monthly Read Posts in Jan 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-02-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://solarianprogrammer.com/2017/12/27/cpp-17-constexpr-everything-as-much-as-the-compiler-can/" target="_blank" rel="noopener">C++17 constexpr everything (or as much as the compiler can)</a></p>
+<p>名字不明觉厉结果是入门级读物，有点水…</p>
+<hr>
+<p><a href="https://blogs.msdn.microsoft.com/satyem/2012/08/13/threads-stack/" target="_blank" rel="noopener">Thread’s Stack</a></p>
+<p>Windows 线程栈内存的布局，包括 guard page 来提示栈溢出的一些细节</p>
+<hr>
+<p><strong>下面是一些 Talk</strong></p>
+<p><a href="https://www.youtube.com/watch?v=LIb3L4vKZ7U" target="_blank" rel="noopener">allocator Is to Allocation what vector Is to Vexation - Andrei Alexandrescu - CppCon 2015</a></p>
+<p>只能说不明觉厉，因为学不到什么有用的东西…</p>
+<p><a href="https://www.youtube.com/watch?v=TRgWJuQhkQo" target="_blank" rel="noopener">CLANG C2 for Windows - Jim Radigan - CppCon 2015</a></p>
+<p>演讲者似乎是这个项目的主导，并且实现了 MSVC 的 coroutine。</p>
+<p>期待什么时候 clang/c2 可以作为 MSVC 的默认配置…</p>
+<p>另：演讲者长得有点像 house of cards S4 里的 Mark Usher，很 charming</p>
+<p><a href="https://www.youtube.com/watch?v=-ROXIG4raiA" target="_blank" rel="noopener">Applying functional programming in code design - Michał Dominiak - CppCon 2015</a></p>
+<p>很糟糕的一个 talk，难以想象这么有意思的 topic，talk 全程居然没有一行代码的展示….</p>
+<p>不过里面提到的 node-based data structures 适合用来实现 functional programming 的一些基础设施，我一开始完全是懵逼的，直到看了 Seven Concurrency in Seven Weeks 里的第一章还是第二章，才意识到核心是什么。可见这个 talk 是多么的不友好。</p>
+<p><a href="https://www.youtube.com/watch?v=DS2m7T6NKZQ" target="_blank" rel="noopener">C++11, 14, 17 Atomics - the Deep Dive - Michael Wong - CppCon 2015</a></p>
+<p>作者是 IBM compiler team 的 director，说话有点意思。</p>
+<p>另外这个 talk 的 PPT 值得研究一下，尤其是涉及到 happens-before / synchronized-with .etc 这类同步语义的内容</p>
+<hr>
+<p>因为一月份快接近年底了，事情比较多，也很杂，所以自己的学习进度明显被拖慢了，希望从2月份开始能够迅速回到正常节奏。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/01/23/initialize-atom-flag-the-right-way/">正确地初始化 std::atomic_flag</a>
         
       </h1>
@@ -659,60 +725,6 @@ TEST(EnumOps, NonEnumType)
   </article>
 
     
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/">使用项目自带的 python 编译 bililive-win</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-11-26
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>众所周知，Google 喜欢拿 python 做各种工具链，比如构建系统；然而 G 家用的又是 python 2.x，并且目测在未来一段时间内都不会做升级，因此相关的工具链环境也被锁死在了 python 2.x。</p>
-<p>某直播姬因为用的 chromium 的框架，部分资源文件的构建就依赖 python 2.x。</p>
-<p>在系统安装 python 2.x 并且加入环境变量的情况下这不算个问题；然而如果想把 python 3.x 作为主 python 环境，那么构建一定会失败，哪怕项目的 third-party 下自己附带了一个 python 2.6….</p>
-<p>研究了一下发现可以强制使用项目自带的 python 2.6：</p>
-<p>找到目标项目的 vcxproj 文件，用编辑器（例如 VS Code）打开，搜索 python，确认是调用，将 python 改为指向 third-party 下的 exe。</p>
-<p>例如，将 <code>call python &quot;..\tools\grit\grit.py</code> 替换为 <code>call $(SolutionDir)..\third_party\python_26\python.exe</code></p>
-<p>对于涉及到 cygwin 的调用，就先将 third-party/python2_6 加入环境变量</p>
-<p>将 <code>call &quot;$(ProjectDir)..\third_party\cygwin\setup_env.bat&quot; &amp;amp;&amp;amp; set CYGWIN=nontsec&amp;amp;&amp;amp;</code> 替换为 <code>set PATH=..\..\third_party\python_26;%PATH% &amp;amp;&amp;amp; call &quot;$(ProjectDir)..\third_party\cygwin\setup_env.bat&quot; &amp;amp;&amp;amp; set CYGWIN=nontsec&amp;amp;&amp;amp;</code></p>
-<p>保存后生效</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
   </section>
 
   
@@ -795,7 +807,7 @@ TEST(EnumOps, NonEnumType)
      
       2015 - 
     
-    2018
+    2019
 
     <span class="heart">
       <i class="iconfont icon-heart"></i>

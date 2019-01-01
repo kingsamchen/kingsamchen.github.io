@@ -182,6 +182,62 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/">Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-09-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h3 id="现象描述"><a href="#现象描述" class="headerlink" title="现象描述"></a>现象描述</h3><p>系统是 Linux mint 18，其实就是 ubuntu 16.04 LTS，所用的 clang 版本是 apt 默认的 3.8；gdb 使用系统自带。</p>
+<p>使用 clang 编译出来的二进制，哪怕开启了 <code>-g</code> 生成调试信息，在 gdb 下 <code>std::string</code> 始终显示为 <em>incomplete type</em>；而 primitive 类型的值可以正确显示</p>
+<p>并且通过 apt 安装 lldb，使用 lldb 调试能够看到变量的值。</p>
+<p>因此基本可以确定问题发生在 gdb 和 clang 这一对上</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>来自路边社的资料：clang 的 linux 版本输出调试信息时，默认去掉了标准库相关的组件信息 （？？？ MMP）</p>
+<p>在编译时追加 <code>-fno-limit-debug-info</code> 标志，就可以保证输出完整的调试信息</p>
+<h3 id="安利时刻"><a href="#安利时刻" class="headerlink" title="安利时刻"></a>安利时刻</h3><p>为什么使用 clang 编译的原因很简单，ubuntu 16.04 上的 apt 默认的 gcc/g++ 5.4 有 bug，编译我的项目代码一定会出错…对比直接从 ppa test 安装 gcc 6.x/7.x 而言，安装 clang 无疑最省事儿…</p>
+<p>另外我发现这个问题的解决方案得益于 <a href="https://github.com/vadimcn/vscode-lldb" target="_blank" rel="noopener">vscode-lldb-debugger</a> 这个扩展。</p>
+<p>正是这个扩展在输出里通过 warning 告诉我需要用相关的编译开关输出完整调试信息，这个问题才的可以解决。（从侧面说明程序员还是应该关注一下 warning XD）</p>
+<p>最后安利一个 gdb gui 前端：<a href="https://wiki.gnome.org/Apps/Nemiver" target="_blank" rel="noopener">Nemiver</a></p>
+<p>不过现在看起来 linux 上最好的 gdb/lldb 前端应该是 vscode -.-</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/09/02/monthly-read-posts-in-aug-2017/">Monthly Read Posts in Aug 2017</a>
         
       </h1>
@@ -596,61 +652,6 @@
   </article>
 
     
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/07/07/bypass-proxy-in-urlfetcher/">Bypass Proxy in URLFetcher</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-07-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><code>net::URLFetcher</code> 默认情况下会使用系统代理，对于针对应用于浏览器而设计的网络组件来说，这是合情合理的；并且这也方便了测试对于网络接口的调试，因为只需要打开 Fiddler 或者 Charles，就可以看到应用发出去的 HTTP 请求。</p>
-<p>但是有时候我们又希望默认情况下不开启代理支持，比如：在我用 <code>net::URLFetcher</code> 重写某直播姬的网络通信组件后，出现了不少傻逼用户因为不知道自己系统上为什么会各种乱七八糟的本地代理而导致无法登陆。</p>
-<p>这个时候产品的策略就应该改为：默认不使用代理，如果有特殊需要，通过命令行参数启动。</p>
-<p>因为产品项目用的 chromium 的代码比较老（估计是 2x 的），这个版本的 <code>net::URLFetcher</code> 只要是使用 <code>URLRequestContextBuilder</code> 创建的 <code>URLRequestContext</code>，那么就一定会使用系统代理，这是写死在代码里的…</p>
-<p>而且 <code>URLRequestContextBuilder</code> 也没有提供额外的途径让我们修改；而一旦创建完 <code>URLRequestContext</code>，此时再设置新的 <code>ProxyService</code> 是没有用的…</p>
-<p>我觉得这是一个设计上的失误，不知道新版本的代码有没有针对这块做了什么改动。</p>
-<p>万幸，<code>URLFetcher</code> 对象可以通过 <code>SetLoadFlags()</code>，使用标志 <code>LOAD_BYPASS_PROXY</code> 来强迫当前 fetcher 对象绕过代理。</p>
-<p>于是设计就变成：如果没有外部设置，fetcher 在发出请求前设置 <code>LOAD_BYPASS_PROXY</code>。</p>
-<h3 id="Afterthoughts"><a href="#Afterthoughts" class="headerlink" title="Afterthoughts"></a>Afterthoughts</h3><p>在研究代码过程中我发现 <code>URLRequestContext</code> 理论上是可以使用自己定义的子类的；builder 创建的是内部实现的一个 <code>BasicURLRequestContext</code>。chromium 在这里的设计颇有点<strong>机制策略分离</strong>的意味。</p>
-<p>不过因为这个问题发现在新版本即将提测前，因此就将这个想法列为后续的 TODO 了。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
   </section>
 
   
@@ -733,7 +734,7 @@
      
       2015 - 
     
-    2018
+    2019
 
     <span class="heart">
       <i class="iconfont icon-heart"></i>
