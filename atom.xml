@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-01-01T08:05:24.007Z</updated>
+  <updated>2019-01-27T06:28:10.584Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,69 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>调整 ezio 的 TCPConnection 状态事件</title>
+    <link href="http://kingsamchen.github.io/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/"/>
+    <id>http://kingsamchen.github.io/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/</id>
+    <published>2019-01-27T03:05:48.000Z</published>
+    <updated>2019-01-27T06:28:10.584Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;上上周的时候给 ezio 做了一个&lt;a href=&quot;https://github.com/kingsamchen/ezio/commit/d9e7bde28155b5bb2f144dd4c42083d95ef7b674&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;调整&lt;/a&gt;，稍微修改了一下 &lt;code&gt;TCPConnection&lt;/code&gt; 对外暴露的几个状态变化的事件。&lt;/p&gt;
+&lt;p&gt;起因是在写 &lt;a href=&quot;https://github.com/kingsamchen/ezio/blob/9a2ea3ffa43578555e8dfcfe769db10bb45e0087/examples/chat/chat_client.cpp#L62&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;example/chat-client&lt;/a&gt; 的时候，因为主线程单独跑了一个事件循环从 &lt;code&gt;stdin&lt;/code&gt; 中读取用户输入，所以 &lt;code&gt;ChatClient&lt;/code&gt; 以及内部的 &lt;code&gt;TCPClient&lt;/code&gt; 是跑在另外的工作线程上。&lt;/p&gt;
+&lt;p&gt;因为那个时候 &lt;code&gt;TCPClient&lt;/code&gt; 之对外暴露了 connection 和 disconnection 的事件回调（这两个事件还统一成了一个 &lt;code&gt;on_connection()&lt;/code&gt;），所以自然选择在 disconnection 的时候进行退出主循环的操作。&lt;/p&gt;
+&lt;p&gt;但是这个时候会出现：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;主循环结束后立马析构 &lt;code&gt;ChatClient&lt;/code&gt;，连同内部的 &lt;code&gt;TCPClient&lt;/code&gt; 一起销毁。因为这部分代码跑在主线程上，所以不会和工作线程有任何 coordination。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;TCPClient&lt;/code&gt; 会在触发 &lt;code&gt;on_connection()&lt;/code&gt; 来表明连接断开后会继续做一些内部清理工作；然而因为前面已经将 &lt;code&gt;TCPClient&lt;/code&gt; 析构了，导致 UAF&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;而当时为了解决这个问题，采用的 workaround 时，&lt;code&gt;ChatClient::OnConnection()&lt;/code&gt; 在发现连接断开后，通过 &lt;code&gt;RunTaskAfter()&lt;/code&gt; 的方式延后执行 &lt;code&gt;EventLoop::Quit()&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;这个做法非常丑陋而且不可靠。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="ezio" scheme="http://kingsamchen.github.io/tags/ezio/"/>
+    
+      <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>来一口 golang 做的玻璃渣</title>
+    <link href="http://kingsamchen.github.io/2019/01/08/bad-smells-in-golang/"/>
+    <id>http://kingsamchen.github.io/2019/01/08/bad-smells-in-golang/</id>
+    <published>2019-01-08T14:35:57.000Z</published>
+    <updated>2019-01-27T03:03:43.579Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;转到后端差不多也快三个月了，拿 golang 糊代码的时间算上自己平时写的一些练手 demo 加起来差不多也有一个月。&lt;/p&gt;
+&lt;p&gt;这将近一个月的时间过来差不多能体会到 golang 的设计精髓，那就是：&lt;em&gt;simple &amp;amp; stupid, being convenient as the first class support&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;换句话说就是：短平快糙猛，满口玻璃渣，怎么方便怎么来。&lt;/p&gt;
+&lt;p&gt;所以接下来不免俗地是吐槽 golang 设计的内容。&lt;/p&gt;
+&lt;p&gt;吐槽不考虑 PLT 上的设计，纯粹从日常堆业务逻辑出发。毕竟理论的东西我一个鶸也不懂，且 golang 的设计目的就是方便应届毕业生快速堆业务代码。&lt;/p&gt;
+&lt;p&gt;以下吐槽点的顺序为自己在实际中遇到的顺序逆序。&lt;/p&gt;
+&lt;h3 id=&quot;Flaky-Goroutines&quot;&gt;&lt;a href=&quot;#Flaky-Goroutines&quot; class=&quot;headerlink&quot; title=&quot;Flaky Goroutines&quot;&gt;&lt;/a&gt;Flaky Goroutines&lt;/h3&gt;&lt;p&gt;golang 里起一个 goroutine 很方便，但是目前感觉 goroutine 太过于 flaky，有点飘。一旦没用 &lt;code&gt;chan struct{}&lt;/code&gt; 或者 &lt;code&gt;sync.WaitGroup&lt;/code&gt; ”固定好“，就总有一种这玩意儿是不是已经脱离自己手心的感觉。&lt;/p&gt;
+&lt;p&gt;另外不知道是不是很多用 golang 的人之前都是 php / python 的背景，相当一部分人其实对 goroutine-safe 没有什么概念。不过严格来说这个不是 golang 自身的问题。&lt;/p&gt;
+&lt;h3 id=&quot;Cannot-assign-to-fields-within-short-declaration-notation&quot;&gt;&lt;a href=&quot;#Cannot-assign-to-fields-within-short-declaration-notation&quot; class=&quot;headerlink&quot; title=&quot;Cannot assign to fields within short declaration notation&quot;&gt;&lt;/a&gt;Cannot assign to fields within short declaration notation&lt;/h3&gt;&lt;p&gt;代码段&lt;/p&gt;
+&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;foobar&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;keyword&quot;&gt;bool&lt;/span&gt;, error)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;true&lt;/span&gt;, &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; err error&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	ok, err := foobar()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; err != &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		fmt.Println(&lt;span class=&quot;string&quot;&gt;&quot;error&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&amp;#125; &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		fmt.Println(ok)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;是合法的，因为 &lt;code&gt;ok&lt;/code&gt; 之前并没有被定义，所以这里 &lt;code&gt;err&lt;/code&gt; 可以蹭着使用 &lt;code&gt;:=&lt;/code&gt;。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="rant" scheme="http://kingsamchen.github.io/tags/rant/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in Dec 2018</title>
@@ -638,79 +701,6 @@
       <category term="argparser" scheme="http://kingsamchen.github.io/tags/argparser/"/>
     
       <category term="bool argument" scheme="http://kingsamchen.github.io/tags/bool-argument/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Sep 2018</title>
-    <link href="http://kingsamchen.github.io/2018/10/05/monthly-read-posts-in-sep-2018/"/>
-    <id>http://kingsamchen.github.io/2018/10/05/monthly-read-posts-in-sep-2018/</id>
-    <published>2018-10-04T16:33:28.000Z</published>
-    <updated>2018-10-07T02:20:08.931Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Programming-Language&quot;&gt;&lt;a href=&quot;#Programming-Language&quot; class=&quot;headerlink&quot; title=&quot;Programming Language&quot;&gt;&lt;/a&gt;Programming Language&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2016/12/08/strong-types-for-strong-interfaces/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Strong types for strong interfaces&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;How to add a type wrapper for built-in types.&lt;/p&gt;
-&lt;p&gt;Besides using phantom template parameter to avoid alias, one can also use private inheritance:&lt;/p&gt;
-&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;NamedType&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    explicit NamedType(T const&amp;amp; value) : value_(value) &amp;#123;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    explicit NamedType(T&amp;amp;&amp;amp; value) : value_(std::move(value)) &amp;#123;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;T&amp;amp; &lt;span class=&quot;title&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123; &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; value_; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;T &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt;&amp;amp; &lt;span class=&quot;title&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; value_; &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    T value_;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Width&lt;/span&gt; :&lt;/span&gt; NamedType&amp;lt;&lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt;&amp;gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;using&lt;/span&gt; NamedType::NamedType;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;using&lt;/span&gt; NamedType::get;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2016/12/12/passing-strong-types-by-reference/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Passing strong types by reference – First attempt&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;This post is the sequal of the above post.&lt;/p&gt;
-&lt;p&gt;The main problem the post tryies to solve is: how to make copy of &lt;code&gt;NamedType&lt;/code&gt; values cheap.&lt;/p&gt;
-&lt;p&gt;However, I am conservative on using reference-wrapper as the solution, because doing this has to expose the lifetime of the wrapped object to public; after all, reference-wrapper is only a point per se.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="template" scheme="http://kingsamchen.github.io/tags/template/"/>
-    
-      <category term="TCP" scheme="http://kingsamchen.github.io/tags/TCP/"/>
-    
-      <category term="strong type" scheme="http://kingsamchen.github.io/tags/strong-type/"/>
-    
-      <category term="interface" scheme="http://kingsamchen.github.io/tags/interface/"/>
-    
-      <category term="exception handling" scheme="http://kingsamchen.github.io/tags/exception-handling/"/>
-    
-      <category term="virtual memory" scheme="http://kingsamchen.github.io/tags/virtual-memory/"/>
-    
-      <category term="TIME_WAIT" scheme="http://kingsamchen.github.io/tags/TIME-WAIT/"/>
-    
-      <category term="abstraction" scheme="http://kingsamchen.github.io/tags/abstraction/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>给 ydiff 提了个 PR</title>
-    <link href="http://kingsamchen.github.io/2018/09/26/made-a-pr-for-ydiff/"/>
-    <id>http://kingsamchen.github.io/2018/09/26/made-a-pr-for-ydiff/</id>
-    <published>2018-09-26T15:50:36.000Z</published>
-    <updated>2018-10-07T02:20:08.931Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;a href=&quot;https://github.com/ymattw/ydiff&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;ydiff&lt;/a&gt; 是基于 CLI 的一个 diff tool，支持 side-by-side 模式&lt;/p&gt;
-&lt;p&gt;前段时间在
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
-    
-      <category term="pull request" scheme="http://kingsamchen.github.io/tags/pull-request/"/>
-    
-      <category term="diff" scheme="http://kingsamchen.github.io/tags/diff/"/>
     
   </entry>
   

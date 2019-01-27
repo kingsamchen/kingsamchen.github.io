@@ -182,6 +182,181 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2016/04/19/make-our-path-class-more-natural/">让 Path 更自然</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-04-19
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>虽然 C++ 17 终于加入了对文件系统的支持，并且主流编译器的标准库也大都提供了一个 experimental implementation，但是就实际的反馈而言，当前的标准和实现都有点莫名其妙。</p>
+<p>对，说的就是 <code>filesystem::path</code>。</p>
+<p>对于一个 path class 而言，最常用的操作不外乎：<code>parent_path</code> <code>filename</code> <code>append/join</code>。</p>
+<p>首先，对于函数 <code>parent_path()</code>，文档是这么描述的：</p>
+<p><em>Returns the path to the parent directory.<br>Returns empty path if empty() or there’s only a single element in the path (begin() == –end().</em></p>
+<p>但是对于路径形如 <code>C:\</code> 的 <code>path</code> 对象，Visual Stuido 2015 update 2 提供的实现的调用 <code>parent_path()</code> 的结果居然是 <code>C:</code>。</p>
+<p>好吧，看来这个实现版本认为 <code>C:</code> 是 <code>C:\</code> 的 parent path。</p>
+<p>然而这个认为却是极大错误的。</p>
+<p>实际上，<code>C:\</code> 才是和 Unix/Linux 下的 <code>/</code> 一样，是一个完整的根目录表示。而按照标准的要求描述，路径形如 <code>C:\</code> 的 parent path 应该是一个空字符串。</p>
+<p>不过这估计也得怪 Windows 奇葩的路径设计。谁能想到 <code>C:tmp.txt</code> 和 <code>C:\tmp.txt</code> 是两个完全不同的路径表示呢？更别提还存在 <code>\\server\path</code> 这种 UNC 路径格式，以及必杀招：用以支持超过 <code>MAX_PATH</code> 的长路径的 <code>\\?\C:\very-long-path</code> 格式。</p>
+<p>而对于 <code>filename</code>，实现上倒是没什么原则性的问题，但是 example 里反映的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">fs::path(<span class="string">"/foo/bar"</span>).filename(); <span class="comment">// output bar</span></span><br><span class="line">fs::path(<span class="string">"/foo/bar/"</span>).filename(); <span class="comment">// output .</span></span><br></pre></td></tr></table></figure>
+<p>给人一种刻板过头的感觉。你确定路径后面拖着的那个 trailing separator 是我可以要用来表示<code>.</code>的么？</p>
+<p>不过也可能这是 unix/linux 下的一种神奇的用法，不过实在理解不能。</p>
+<p><code>filesystem::path</code> 不光提供了标准的 append，还顺带提供了纯字符串操作的 concat。抛开两个操作对应的符号重载是否美观不谈，操作 concat 的引入总给人一种 <em>I wanna to make it complete</em> 的无力感。</p>
+<p>不过这个操作符对前面分辨 <code>C:/C:\</code> 不能倒是提供了一个帮助，Orz。</p>
+<h2 id="补救"><a href="#补救" class="headerlink" title="补救"></a>补救</h2><p>很早之前在 <code>kbase</code> 里也提供了一个路径类的实现 <code>FilePath</code>。</p>
+<p>在暂时无法接受 <code>filesystem::path</code> 的情况下，我对 <code>FilePath</code> 做了一次不大不小的重构。</p>
+<p>首先把名字给换成了 <code>Path</code>，并且相关的几个操作也都保持和标准库一致。</p>
+<p>但是这回 <code>Path</code> 的 <code>parent_path</code> 可是可以正确处理上面说的 dark cases 的；并且 <code>filename</code> 会在返回数据前机智的去掉 redundant trailing separator。</p>
+<p>重复一遍，<code>C:\</code> 的 <code>\</code> 可不是 redundant trailing separator。</p>
+<p>另外，<code>filesystem::path</code> 提供了一个 iterator 用来遍历路径的每个 component；而且实际上，<code>parent_path</code> 和 <code>filename</code> 都是直接用这个 iterator 构建的。</p>
+<p>不过因为时间所限，我没有在 <code>Path</code> 里加上这个 iterator。（我怕强迫症犯了一天内肯定写不完）不过也仍然提供了一个类似的操作 <code>GetComponents</code>。</p>
+<p>不同之处是这个函数会一下返回所有的 components，于是显得不那么 C++ philosophi compliant。不过还是将就着用吧，毕竟没有标准库实现那样有神奇的结果。</p>
+<p>最新的代码可见 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/path.h" target="_blank" rel="noopener">这里</a> 和 <a href="https://github.com/kingsamchen/KBase/blob/master/kbase/path.cpp" target="_blank" rel="noopener">这里</a>；实例参见附带的 <a href="https://github.com/kingsamchen/KBase/blob/master/KBase_Test/samples/path_unittest.cpp" target="_blank" rel="noopener">unittest case</a>。</p>
+<p>BTW：我删除了 kbase 的 dev 分支，打算换一种 git workflow。原来的 branch model 感觉有点不够拥抱变化。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2016/04/05/an-implementation-of-non-intrusive-buddy-allocator/">挖坟：一个非侵入式的 buddy allocator 实现</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-04-05
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>离职前夕清理公司硬盘数据的时候，偶然发现原来自己去年三月份的时候还写过一个 non-intrusive buddy allocator 呢。因为时间太过久远加上之前写的时候没有加上该有的注释，导致花了一番功夫才看懂核心算法再写什么，更别说几个看起来完全不明觉厉的 offset-to-address 的计算。</p>
+<p>于是我想，应该有必要整理一下，万一哪天真的需要呢？</p>
+<h2 id="Theory"><a href="#Theory" class="headerlink" title="Theory"></a>Theory</h2><p>Non-intrusive 的做法是，不在实际分配的内存中加入 meta-data，而是将 buddy-allocator 自身做成一个 allocation bookkeeper。</p>
+<p>考虑到 allocator 要求管理的内存块必须是$2^k, k \in Z$大小，我们可以把一块内存对应的 bookkeeping 做成一棵 perfect binary tree。以大小为 8K 的内存块为例，对应的 perfect binary tree 结构如下：</p>
+<p><img src="/img/memory_chunk_in_perfect_binary_tree.png" alt=""></p>
+<p>每一个节点对应内存块中的一个可用区域（考虑从上往下的映射）；最下层叶子节点对应完整的内存块，每个叶子节点对应一个最小的内存单元；父节点对应的内存区域包含子节点对应的内存区域。</p>
+<p>而 perfect binary tree 又可以用数组来表示（实际上是特殊的 complete binary tree），一方面可以提升内存利用率（没有额外的前后继指针），又可以提高访问性能（减少动态分配以及连续内存带来的 cache-locality）。</p>
+<p><img src="/img/memory_chunk_in_array.png" alt=""></p>
+<h2 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h2><p>为了实现方便以及让分配、释放算法看起来更加简洁，作如下两个设定</p>
+<ul>
+<li>定义 <em>maximum consecutive block (MCB)</em> 为一个能被直接管理的最大的连续内存区域，大小仍然要满足$2^k$的要求</li>
+<li>用 bookkeeper tree 中的每个节点去保存对应内存区域的 MCB 的大小</li>
+</ul>
+<p>于是得到对于每一个节点的递归定义</p>
+
+$$M(i)=\begin{cases}\max\left\{M(LC(i)),M(RC(i))\right\} & \text{otherwise}\\M(LC(i))+M(RC(i)) & M(LC(i))=M(RC(i))\end{cases}$$
+
+<p>上面 $M(i)$ 表示节点 $i$ 的 MCB 值，也即实际保存在节点里的值；$LC(i)$ 和 $RC(i)$ 分别表示节点 $i$ 的左子节点和右子节点。</p>
+<p>仍然以前面 8K 大小的内存块举例，假设我们要从内存块里分配出大小 1K 的内存，那么这棵树的状态则变成如下样子：</p>
+<p><img src="/img/allocate_1K_out_of_8K.png" alt=""></p>
+<p>后面实现过程中会发现这个定义解决掉了很多麻烦。</p>
+<h3 id="implementing-allocation"><a href="#implementing-allocation" class="headerlink" title="implementing allocation"></a>implementing allocation</h3><p>分配算法大体顺序如下：</p>
+<ol>
+<li>比较请求分配的内存大小和根节点的值，确认是否还有足够的空间可以分配。如果根节点的大小小于请求大小，很明显没有空间了。</li>
+<li>如果空间足够，则沿着根节点向下搜索，采用 last-fit strategy，即最后一个满足要求的节点，找到目标节点。因为父节点覆盖的内存区域是包括子节点的，所以要使用 last-fit。<br>实际上我们可以利用一个性质来简化第2步的逻辑：如果存在满足要求的节点，那么具有这个大小的节点所在的 depth/height 是固定的，和树当前状态无关（得益于前面 MCB 的定义）。于是我们可以在一棵假想的、全新的树上遍历，结合实际的树的信息去判断左右的走向。</li>
+<li>将目标节点标记为0，然后回溯向上到根节点，修正路径上节点的信息。</li>
+<li>假设目标节点在数组中的序号为 $i$，那么利用公式 $\text{offset} = (i+1) \cdot \text{block_size_needed} - \text{total_block_size}$ 算出分配的内存的起始序号相对于完整内存块的偏移量（其实就是内存块对应的第一个叶子节点在整个叶子节点中的序号）。<br>至于这个公式怎么来的，后面再说。</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">size_t</span> BinManager::Allocate(<span class="keyword">size_t</span> slots_required)</span><br><span class="line">&#123;</span><br><span class="line">    assert(slots_required != <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">if</span> (slots_required == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="keyword">return</span> noffset;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">size_t</span> slots_needed = buddy_util::NearestUpperPowerOf2(slots_required);</span><br><span class="line">    <span class="keyword">if</span> (max_consecutive_slot_[<span class="number">0</span>] &lt; slots_needed) &#123;</span><br><span class="line">        <span class="keyword">return</span> noffset;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">size_t</span> index = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> node_slots = total_slot_count_;</span><br><span class="line">        node_slots != slots_needed;</span><br><span class="line">        node_slots &gt;&gt;= <span class="number">1</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (max_consecutive_slot_[buddy_util::LeftChild(index)] &gt;= slots_needed) &#123;</span><br><span class="line">            index = buddy_util::LeftChild(index);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            index = buddy_util::RightChild(index);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The relative distance from first slot in the bin just now allocated to the</span></span><br><span class="line">    <span class="comment">// first slot in the underlying raw memory chunk.</span></span><br><span class="line">    <span class="keyword">size_t</span> offset = (index + <span class="number">1</span>) * slots_needed - total_slot_count_;</span><br><span class="line"></span><br><span class="line">    max_consecutive_slot_[index] = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">while</span> (index) &#123;</span><br><span class="line">        index = buddy_util::Parent(index);</span><br><span class="line">        max_consecutive_slot_[index] = <span class="built_in">std</span>::max(</span><br><span class="line">            max_consecutive_slot_[buddy_util::LeftChild(index)],</span><br><span class="line">            max_consecutive_slot_[buddy_util::RightChild(index)]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> offset;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Deallocation"><a href="#Deallocation" class="headerlink" title="Deallocation"></a>Deallocation</h3><p>释放的过程就相对简单。</p>
+<p>输入是前面 allocation 过程得到的 offset，首先转换利用上面的公式的变形（上面公式中的 <code>block_size_needed</code> 等于叶子节点的大小，为1），转换得到原来的 $i$，然后从 $i$ 指向的叶子节点开始，向上搜索，碰到的第一个标记为0的节点就是要找的目标节点，恢复其大小（前面提到的性质）。</p>
+<p>接着仍然向上回溯到根节点，修正路径上的节点信息。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> BinManager::Free(<span class="keyword">size_t</span> offset)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="comment">// The value of noffset can be regarded as positive infinity.</span></span><br><span class="line">    assert(offset &lt; total_slot_count_);</span><br><span class="line">    <span class="keyword">if</span> (offset &gt;= total_slot_count_) &#123;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Since multiple indices can be mapped into a single offset, we backtrace to</span></span><br><span class="line">    <span class="comment">// locate the bin from bottom.</span></span><br><span class="line">    <span class="comment">// The first bin we meet in the path whose slot count is 0 is the target.</span></span><br><span class="line">    <span class="comment">// Incorrect |offset| may cause undesired deallocation for yet another bin.</span></span><br><span class="line">    <span class="keyword">size_t</span> node_slot_count = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">size_t</span> index = offset + total_slot_count_ - <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">while</span> (max_consecutive_slot_[index]) &#123;</span><br><span class="line">        <span class="comment">// Reached the root. The |offset| is incorret.</span></span><br><span class="line">        <span class="keyword">if</span> (index == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span>;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        node_slot_count &lt;&lt;= <span class="number">1</span>;</span><br><span class="line">        index = buddy_util::Parent(index);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    max_consecutive_slot_[index] = node_slot_count;</span><br><span class="line">    <span class="keyword">while</span> (index != <span class="number">0</span>) &#123;</span><br><span class="line">        index = buddy_util::Parent(index);</span><br><span class="line">        node_slot_count &lt;&lt;= <span class="number">1</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">size_t</span> lc_slots = max_consecutive_slot_[buddy_util::LeftChild(index)];</span><br><span class="line">        <span class="keyword">size_t</span> rc_slots = max_consecutive_slot_[buddy_util::RightChild(index)];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Merge adjacent bins if possible.</span></span><br><span class="line">        <span class="keyword">if</span> (lc_slots + rc_slots == node_slot_count) &#123;</span><br><span class="line">            max_consecutive_slot_[index] = node_slot_count;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            max_consecutive_slot_[index] = <span class="built_in">std</span>::max(lc_slots, rc_slots);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Derivation-of-the-Formula"><a href="#Derivation-of-the-Formula" class="headerlink" title="Derivation of the Formula"></a>Derivation of the Formula</h3><p>最后解释一下怎么得到公式 $\text{offset} = (i+1) \cdot \text{block_size_needed} - \text{total_block_size}$。</p>
+<p>首先做如下假设</p>
+<ul>
+<li>拥有的总内存块 <code>total_block_size</code> 为 $2^n$</li>
+<li>请求的内存大小 <code>block_size_needed</code> 是 $2^k$</li>
+<li>目标节点在数组中的序号是 $j$</li>
+<li>perfect binary tree 对应的数组下标从1开始，i.e. 根节点在数组中的序号是1。这个假设是必要的，因为可以让左右子节点的公式更加简单</li>
+</ul>
+<p>基于上述假设，我们就有</p>
+<ol>
+<li>目标节点所在的高度一定是 $k$ （叶子节点位于高度0）。于是目标节点覆盖的<strong>第一个子节点</strong>的序号是 $j \cdot 2^k$。只需要不断的访问左子节点，直到叶子</li>
+<li>第一个叶子节点的序号是 $ 2^n $ </li>
+<li>算得两个叶子节点的偏移量 $ \text{offset} = j \cdot 2^k - 2^n $</li>
+<li>因为实现时数组下标 $i$ 从0开始，所以我们有 $ j = i + 1$</li>
+<li>带入(3)中的式子，得到 $\text{offset} = (i+1) \cdot 2^k - 2^n $</li>
+</ol>
+<p>公式就这样出来了，基本没有什么太复杂的东西。</p>
+<p>假设数组从1开始也是一个常用的技巧，可以极大地简化运算和推导。所以你会看到算法导论里的数组一直都是从1开始的，因为是在可以极大的简化分析。而最后也只需要一个线性变换就拿到了实际环境下的公式。</p>
+<h2 id="安利时刻"><a href="#安利时刻" class="headerlink" title="安利时刻"></a>安利时刻</h2><p>对于非侵入式的 allocator 来说，前面实现的分配/释放只起到了 bookkeeping 的作用。你还需要自己提供一个能够分配/释放真实内存的模块，并利用前面实现的 buddy allocator 去管理。</p>
+<p>一个完整的实现可以参考<a href="https://github.com/kingsamchen/BuddyAllocator" target="_blank" rel="noopener">这里</a>。</p>
+<p>这个实现里核心的部分是</p>
+<ul>
+<li>MemoryBin：提供真实、连续的内存块，由一个个 slot 组成，每个 slot 大小可以设置，默认是 4KB</li>
+<li>BinManager：基于 buddy allocator 的 bookkeeper，管理的基本单位是 MemoryBin 中的 slot</li>
+<li>BuddyAllocator：前两个类的一个 facade，透露给外部用户的接口层</li>
+</ul>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2016/04/03/gone-with-the-memories/">Gone With the Memories</a>
         
       </h1>

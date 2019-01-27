@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="来一口 golang 做的玻璃渣"/>
+
+
+
+
+  <meta name="keywords" content="golang, rant, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/01/08/bad-smells-in-golang/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> 来一口 golang 做的玻璃渣 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          来一口 golang 做的玻璃渣
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-01-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Flaky-Goroutines"><span class="toc-text">Flaky Goroutines</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Cannot-assign-to-fields-within-short-declaration-notation"><span class="toc-text">Cannot assign to fields within short declaration notation</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Stunning-atomic-AddUint32"><span class="toc-text">Stunning atomic.AddUint32</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Unhandled-error-conn-Close"><span class="toc-text">Unhandled error conn.Close()</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#So-primitive-Errors"><span class="toc-text">So primitive Errors</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#So-convenient-context-Value"><span class="toc-text">So convenient context.Value</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Value-Type-Method-Receiver"><span class="toc-text">Value Type Method Receiver</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Outstanding-Nil-buffer-String"><span class="toc-text">Outstanding Nil buffer.String</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Magnificent-sync-Mutex-without-ownership"><span class="toc-text">Magnificent sync.Mutex without ownership</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Function-scope-defer"><span class="toc-text">Function-scope defer</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#‘Versatile’-interface"><span class="toc-text">‘Versatile’ interface{}</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Copy-without-expanding"><span class="toc-text">Copy without expanding</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>转到后端差不多也快三个月了，拿 golang 糊代码的时间算上自己平时写的一些练手 demo 加起来差不多也有一个月。</p>
+<p>这将近一个月的时间过来差不多能体会到 golang 的设计精髓，那就是：<em>simple &amp; stupid, being convenient as the first class support</em>.</p>
+<p>换句话说就是：短平快糙猛，满口玻璃渣，怎么方便怎么来。</p>
+<p>所以接下来不免俗地是吐槽 golang 设计的内容。</p>
+<p>吐槽不考虑 PLT 上的设计，纯粹从日常堆业务逻辑出发。毕竟理论的东西我一个鶸也不懂，且 golang 的设计目的就是方便应届毕业生快速堆业务代码。</p>
+<p>以下吐槽点的顺序为自己在实际中遇到的顺序逆序。</p>
+<h3 id="Flaky-Goroutines"><a href="#Flaky-Goroutines" class="headerlink" title="Flaky Goroutines"></a>Flaky Goroutines</h3><p>golang 里起一个 goroutine 很方便，但是目前感觉 goroutine 太过于 flaky，有点飘。一旦没用 <code>chan struct{}</code> 或者 <code>sync.WaitGroup</code> ”固定好“，就总有一种这玩意儿是不是已经脱离自己手心的感觉。</p>
+<p>另外不知道是不是很多用 golang 的人之前都是 php / python 的背景，相当一部分人其实对 goroutine-safe 没有什么概念。不过严格来说这个不是 golang 自身的问题。</p>
+<h3 id="Cannot-assign-to-fields-within-short-declaration-notation"><a href="#Cannot-assign-to-fields-within-short-declaration-notation" class="headerlink" title="Cannot assign to fields within short declaration notation"></a>Cannot assign to fields within short declaration notation</h3><p>代码段</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foobar</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line">	ok, err := foobar()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"error"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(ok)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是合法的，因为 <code>ok</code> 之前并没有被定义，所以这里 <code>err</code> 可以蹭着使用 <code>:=</code>。<br><a id="more"></a><br>然而，如果稍加修改：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> E <span class="keyword">struct</span> &#123;</span><br><span class="line">	err error</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(e *E)</span><span class="title">baz</span><span class="params">()</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">	ok, e.err := foobar()</span><br><span class="line">	<span class="keyword">return</span> ok</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foobar</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">false</span>, errors.New(<span class="string">"foobar error"</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	e := <span class="built_in">new</span>(E)</span><br><span class="line">	fmt.Println(e.baz())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这次将已经定义过的符号换成一个 field，编译器就会提示你：<em>non-name e.err on left side of :=</em></p>
+<p>原因是 golang 将左边的部分卡死成一个 identifier。</p>
+<p>有人为此提了一个 <a href="https://github.com/golang/go/issues/6842" target="_blank" rel="noopener">issue</a>，然而官方说用 workaround 啊….看起来这辈子应该都是这样了。</p>
+<p>注：评论区高能。</p>
+<h3 id="Stunning-atomic-AddUint32"><a href="#Stunning-atomic-AddUint32" class="headerlink" title="Stunning atomic.AddUint32"></a>Stunning atomic.AddUint32</h3><p>官方文档：<a href="https://golang.org/pkg/sync/atomic/#AddUint32" target="_blank" rel="noopener">https://golang.org/pkg/sync/atomic/#AddUint32</a></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">AddUint32</span><span class="params">(addr *<span class="keyword">uint32</span>, delta <span class="keyword">uint32</span>)</span> <span class="params">(<span class="built_in">new</span> <span class="keyword">uint32</span>)</span></span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>AddUint32 atomically adds delta to *addr and returns the new value. To subtract a signed positive constant value c from x, do AddUint32(&amp;x, ^uint32(c-1)). In particular, to decrement x, do AddUint32(&amp;x, ^uint32(0)).</p>
+</blockquote>
+<p>官方教你做减法 &amp;&amp; 理解反码</p>
+<h3 id="Unhandled-error-conn-Close"><a href="#Unhandled-error-conn-Close" class="headerlink" title="Unhandled error conn.Close()"></a>Unhandled error <code>conn.Close()</code></h3><p>这里的 <code>conn</code> 可以是一个 <code>net.Conn</code></p>
+<p>因为 golang 的 error handling 的哲学就是错误码自己处理，然后 <code>Close()</code> 也是可能会返回 <code>error</code> 的，所以如果你不处理的话，IDE 的静态分析就会提示你 <em>Unhandled error conn.Close()</em></p>
+<p>然而最尴尬的是，一般这个调用都是写成：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">defer</span> conn.Close()</span><br></pre></td></tr></table></figure>
+<p>然后你猜我们会不会去处理这个 error？XD</p>
+<h3 id="So-primitive-Errors"><a href="#So-primitive-Errors" class="headerlink" title="So primitive Errors"></a>So primitive Errors</h3><p>golang 的 error 真的就是一个<strong>类型</strong>，和 <code>string</code>, <code>int</code> 这种没差。</p>
+<p>导致如果你要区分不同的 error，要么依靠 error-code，要么依靠 error-str。</p>
+<p>如果你的业务架构是大仓，即mono-repo，混合了整个公司的基础、业务代码，那么你就会头疼了。</p>
+<p>为了解决这个问题，我们公司甚至还搞了一个专门申请分配错误码的平台……</p>
+<p>另外 <code>errors.New()</code> 是被禁止的，因为第一和现有的错误码对不上；第二你怎么（用字符串比较之外的方式）比较错误？</p>
+<p>FYI：golang 的错误设计机制设计的真的非常非常不好，大业务下缺乏灵活性的弊端暴露无遗，而且每次的错误检查基本在考验人性。golang 粉只能通过不断地给自己洗脑来接纳这个搓比设计了。</p>
+<h3 id="So-convenient-context-Value"><a href="#So-convenient-context-Value" class="headerlink" title="So convenient context.Value"></a>So convenient context.Value</h3><p><code>context</code> 的出现一开始是为了解决 goroutine 的 timeout 和 cancellation 的，不知道怎么又莫名其妙加入了 value 这种二百五的设计。</p>
+<p>这个设计除了一开始看着似乎方便，其他的有点就真的没了，满地坑，宁愿换一个更稳妥的方式。</p>
+<p>具体的吐槽和 alternatives 可以看看<a href="https://medium.com/@cep21/how-to-correctly-use-context-context-in-go-1-7-8f2c0fafdf39" target="_blank" rel="noopener">这篇</a></p>
+<h3 id="Value-Type-Method-Receiver"><a href="#Value-Type-Method-Receiver" class="headerlink" title="Value Type Method Receiver"></a>Value Type Method Receiver</h3><p>对于一个 <code>type T</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t T)</span><span class="title">Foobar</span><span class="params">()</span></span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(t *T)</span><span class="title">Foobaz</span><span class="params">()</span></span> &#123;&#125;</span><br></pre></td></tr></table></figure>
+<p>都是可以的，receiver 如果不是指针就拷贝一份。</p>
+<p>这个设计上其实还好，不爽的是官方对这个设计的说辞，大意是更好的表达小对象 immutable 特性…</p>
+<p>就不能诚实一点么……</p>
+<h3 id="Outstanding-Nil-buffer-String"><a href="#Outstanding-Nil-buffer-String" class="headerlink" title="Outstanding Nil buffer.String"></a>Outstanding Nil buffer.String</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// String returns the contents of the unread portion of the buffer</span></span><br><span class="line"><span class="comment">// as a string. If the Buffer is a nil pointer, it returns "&lt;nil&gt;".</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// To build strings more efficiently, see the strings.Builder type.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(b *Buffer)</span> <span class="title">String</span><span class="params">()</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> b == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// Special case, useful in debugging.</span></span><br><span class="line">		<span class="keyword">return</span> <span class="string">"&lt;nil&gt;"</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">string</span>(b.buf[b.off:])</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>出处：<a href="https://golang.org/src/bytes/buffer.go" target="_blank" rel="noopener">https://golang.org/src/bytes/buffer.go</a></p>
+<p>除了屌炸天我想不到其他形容词</p>
+<h3 id="Magnificent-sync-Mutex-without-ownership"><a href="#Magnificent-sync-Mutex-without-ownership" class="headerlink" title="Magnificent sync.Mutex without ownership"></a>Magnificent sync.Mutex without ownership</h3><p>这意味着，goroutine A 上的锁，goroutine B 可以解锁</p>
+<p>其实就是直接把底层的 semaphore 的语义搬出来了。</p>
+<p>这么做的现代语言除了 golang 我真的想不到了。</p>
+<p>官方有一个（貌似是自己提的<a href="https://github.com/golang/go/issues/9201" target="_blank" rel="noopener">issue</a>）但是看内容似乎要不要再 go 2 里做这个修改还没确定。</p>
+<p>另外官方对于：复杂的情况使用 channel .etc 的说法真是让人没法接受……</p>
+<h3 id="Function-scope-defer"><a href="#Function-scope-defer" class="headerlink" title="Function-scope defer"></a>Function-scope defer</h3><p>golang 里 <code>{}</code> 是可以构建出一个 scope 的，然而不知道为什么 <code>defer</code> 还是设计成 function-scope</p>
+<p>这个点其实还好，毕竟函数逻辑还可以慢慢再拆。</p>
+<h3 id="‘Versatile’-interface"><a href="#‘Versatile’-interface" class="headerlink" title="‘Versatile’ interface{}"></a>‘Versatile’ interface{}</h3><p>没有 generic 的时候大家都说可以拿 <code>interface{}</code> 凑合一下，只是没想到这么一凑合，经常能看到满屏幕的 <code>interface{}</code> 接口，尤其是 <code>... interface{}</code> 做参数的时候。</p>
+<p>实话说，自己手动做 type assertion 也是挺烦的。</p>
+<p>这个导致的一个大问题就是 golang 里面真心没几个用的趁手的容器，和 Java / C# 都差远了；而造轮子的话，距离 C++ 的感觉又差远了。</p>
+<h3 id="Copy-without-expanding"><a href="#Copy-without-expanding" class="headerlink" title="Copy without expanding"></a>Copy without expanding</h3><p>内建的 <code>copy(dest, src)</code> 在操作时实际上有一个月约束：<code>min(len(dest), len(src))</code>。</p>
+<p>所以基本意味着 <code>copy()</code> 不会自动 expand <code>dest</code>。</p>
+<p>这个虽然有点反直觉，但是只要文档写得清楚也就没问题了，可惜一开始 go doc 偏偏没有写上这个，直到后来才加。</p>
+<p>出处见：<a href="https://stackoverflow.com/questions/30182538/why-can-not-i-duplicate-a-slice-with-copy-in-golang/30182622" target="_blank" rel="noopener">https://stackoverflow.com/questions/30182538/why-can-not-i-duplicate-a-slice-with-copy-in-golang/30182622</a></p>
+<p>另外，<code>append</code> 遇到 slice 也是一个大坑。</p>
+<p>以上倒不是说是 golang 设计有什么重大缺陷，实在只是作为一个用户在日常使用过程中感受到的个各种蒙蔽和别扭。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/01/08/bad-smells-in-golang/">http://kingsamchen.github.io/2019/01/08/bad-smells-in-golang/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/rant/">rant</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">调整 ezio 的 TCPConnection 状态事件</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    
+    
+      <a class="next" href="/2019/01/01/monthly-read-posts-in-dec-2018/">
+        <span class="next-text nav-default">Monthly Read Posts in Dec 2018</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/01/08/bad-smells-in-golang/';
+        this.page.identifier = '2019/01/08/bad-smells-in-golang/';
+        this.page.title = '来一口 golang 做的玻璃渣';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

@@ -182,6 +182,113 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/05/08/fix-full-minidump-issue-of-breakpad/">修复 Breakpad 不能启用 Full Minidump</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-05-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>发布分支为 chrome-58 的 google-breakpad 存在无法启用 full minidump 的问题，表现症状是，一旦启用 <code>MiniDumpWithFullMemory</code> 标志，则输出的 dump 文件为 0 字节，但是整个 dump 生成流程没有任何其他异常，相关返回值甚至是 <code>true</code>。</p>
+<p>经过一个上午的跟踪调试，发现问题出现在，breakpad 针对 <code>MiniDumpWithFullMemory</code> 做了特殊处理（会生成一个普通的 minidump 和一个 full dump，后者的文件名多了一个full 后缀），但是这个版本（chrome-58）里却忘了调用生成 full dump 的生成函数…..</p>
+<p>解决方法：对 <a href="(https://github.com/google/breakpad/blob/67649c61853108eb0c29703f6ff0db42e9d69f10/src/client/windows/crash_generation/crash_generation_server.cc">master</a> 和 ) 分支的 <code>CrashGenerationServer::GenerateDump</code> 和 <a href="https://github.com/google/breakpad/blob/chrome_58/src/client/windows/crash_generation/crash_generation_server.cc" target="_blank" rel="noopener">chrome-58</a> 分支做一个 diff，将缺的代码加回来…</p>
+<p>缺失的代码就是下面这段…</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// If the client requests a full memory dump, we will write a normal mini</span></span><br><span class="line"><span class="comment">// dump and a full memory dump. Both dump files use the same uuid as file</span></span><br><span class="line"><span class="comment">// name prefix.</span></span><br><span class="line"><span class="keyword">if</span> (client.dump_type() &amp; MiniDumpWithFullMemory) &#123;</span><br><span class="line">  <span class="built_in">std</span>::wstring full_dump_path;</span><br><span class="line">  <span class="keyword">if</span> (!dump_generator.GenerateFullDumpFile(&amp;full_dump_path)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>另外，开启了 full minidump 模式之后，完整的 dump 体积会暴增到 200MB 上下，要做好心理准备。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/05/06/generate-video-thumbnails-by-using-ffmpeg/">用 FFMpeg 生成视频缩略图</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-05-06
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>除了可以使用 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">ffmpeg 压制视频外</a>，还能利用 ffmpeg 生成某个视频的缩略图。</p>
+<p>利用命令行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg.exe -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 9 -c:v mjpeg &quot;output_dir\thumb_%d.jpg&quot;</span><br></pre></td></tr></table></figure>
+<p>就可以在 <code>output_dir</code> 这个目录下为视频文件 <em>some_video.mp4</em> 从头开始生成最多不超过9张关键帧缩略图，文件名分别是 <code>thumb_1.jpg</code> ~ <code>thumb_9.jpg</code>。</p>
+<p>这个默认策略适合长度较短的视频（比如半分钟或一分钟内），对于长视频，很可能跑完9张关键帧缩略图，正片都还没开始…</p>
+<p>所以，这个时候的生成策略应该考虑能够尽可能的均匀分布于视频内容。</p>
+<p>首先利用这个 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">post</a> 里提到的做法，用 <code>ffprobe.exe</code> 获得视频的长度，记为 <strong><em>T</em></strong>（单位，秒）。</p>
+<p>将 <strong><em>T</em></strong> 均分为 10（9+1）个片段，取 $ t_i = \frac{T}{10} * i, i = 1, 2, \cdots 9 $，这么做的原因是避免取到开头和结尾。</p>
+<p>最后针对每个 $ t_i $，运行 ffmpeg</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg.exe -ss t_i -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 1 -c:v mjpeg &quot;output_dir\thumb_i.jpg&quot;</span><br></pre></td></tr></table></figure>
+<p>唯一麻烦的地方在于输出文件名序列需要我们自己指定。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/05/02/monthly-read-posts-in-apr-2017/">Monthly Read Posts in Apr 2017</a>
         
       </h1>
@@ -477,170 +584,6 @@
 <p>Main observation: Use union to implement/simulate bitfields.</p>
 <p>Each bitfield is implemented by using a single union member with mask and bit-length being set up initially.</p>
 <p>非常 stunning 的一个实现，但是很可惜，根据 comments 这个实现仍然是 undefined behavior，because <em>it call member functions on inactive union members</em>.</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/02/01/monthly-read-posts-in-jan-2017/">Monthly Read Posts in Jan 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-02-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking/" target="_blank" rel="noopener">Library order in static linking</a></p>
-<p>An object file both provides (exports) external symbols to other objects and libraries, and expects (imports) symbols from other objects and libraries.</p>
-<p>During linking, the linker maintains a symbol table, which keeps two important lists:</p>
-<ul>
-<li>a list of symbols exported by all the objects and libraries encountered so far</li>
-<li>a list of undefined symbols that objects and libraries demanded to import and were not found yet.</li>
-</ul>
-<p><strong>Case 1: the linker encouters a new object file</strong></p>
-<p>linker first checks symbols the object file exports, and:</p>
-<ol>
-<li>add them to the list of exported symbols</li>
-<li>remove them from undefined symbols, if necessary.</li>
-</ol>
-<p>Note that, if any symbol has already been in the exported list, then we get a multiple definition error.</p>
-<p>Linker then checks symbols the file imports, and added them to the list of undefined symbols, unless they can be found in the exported symbol list.</p>
-<p>we can see that for linking pure object files, link order doesn’t matter.</p>
-<p><strong>Case 2: the linker encounters a new library</strong></p>
-<p>Linker goes over all the object files in the library, and for each one, it first looks at the exported symbols:</p>
-<ol>
-<li>If any of the exported symbols are on the undefined list, then this object file is chosen, being added to the link, and is treated as normal object file as above(its exported symbols and imported symbols are processed as normal object file).</li>
-<li>If any of the object files in the library has been included in the link, the library is rescanned again(because a lately added object file may require symbols exported from one early examined-but-skipped object file).</li>
-</ol>
-<p>when linking is done, if any symbols remain in the undefined list, the linker will throw an undefined reference error.</p>
-<p>Note that after the linker has looked at a library, it won’t look at it again. Even if it exports symbols that may be needed by some later library.</p>
-<p>An very important corollary: If object or library AA needs a symbol from library BB, then AA should come before library BB in the command-line invocation of the linker.</p>
-<p><strong>Use Flags to Solve Circular Library Dependency</strong></p>
-<p>Use flags such as <code>--start-group</code> and <code>--end-group</code> to repeatedly scan libraries, until no new import symbol was found.</p>
-<p>But may take significant time to finish linking.</p>
-<hr>
-<p><a href="http://www.lurklurk.org/linkers/linkers.html" target="_blank" rel="noopener">Beginners’ guide to linkers</a></p>
-<p>和前一篇着重分析链接顺序不同，这篇（其实更像是一个短 paper）介绍了整个链接的基础知识，适合扫盲。</p>
-<p>但是如果有一定基础的话，这篇反而没有什么让人觉得惊奇的点。</p>
-<hr>
-<p><a href="http://shaharmike.com/cpp/unique-ptr/" target="_blank" rel="noopener">Exploring std::unique_ptr</a></p>
-<p>同样是一篇基础扫盲 posts，适用于检查自己是否对 <code>std::unique_ptr</code> 的必备知识存在缺漏的情况。</p>
-<p>如果认真阅读过 Scott Meyers 的 <a href="https://book.douban.com/subject/25923597/" target="_blank" rel="noopener">Effective Modern C++</a>，那么 post 里提到的，诸如“为什么使用 <code>std::make_unique()</code> 可以带来异常安全” 这种高级议题就变得显而易见了。</p>
-<p>另外 post 对 custom deleter 的叙述的反而不够详细。</p>
-<hr>
-<p><a href="http://www.jmarshall.com/easy/http/" target="_blank" rel="noopener">HTTP Made Easy</a></p>
-<p>非常赞的 HTTP 协议扫盲文章</p>
-<p>这篇 post 从 HTTP 1.0 开始讲起，然后过渡到 HTTP 1.1，所以对于 HTTP 1.1 为什么要求 request header 一定要带 <code>Host</code> header 提供了一个非常直观的解释。</p>
-<p>此外 post 还增加了 chunked transfer encoding 部分，印象中 Top-down approach 那本 computer networking 是没有提及这部分内容的。</p>
-<hr>
-<p><a href="http://www.csdn.net/article/2015-12-03/2826381" target="_blank" rel="noopener">C++ 11 之美</a></p>
-<p>这篇 post 主要有三个点</p>
-<ul>
-<li>编译期的类成员存在性检查 &amp; 利用 SFINAE 做静态的分支选择（我的<a href="https://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">这篇 post</a> 里的实现就是从这篇 post 改进而来）</li>
-<li>利用 <code>std::function&lt;&gt;</code> 实现 lazy-computation</li>
-<li>演示了如何将字符串 <code>&quot;hello/test/20&quot;</code> 转换为函数调用 <code>hello(&quot;test&quot;, 20)</code></li>
-</ul>
-<hr>
-<p><a href="http://www.trinea.cn/android/android-image-cache-compare/" target="_blank" rel="noopener">Android 三大图片缓存原理、特性对比</a></p>
-<p>讲道理这篇文章很水….</p>
-<p>一开始 mark 这篇文章是因为当时还在做安卓直播姬，转眼9个月过去了….</p>
-<p>现在为了借鉴文中几个库的架构设计从 pocket 的回收站里挖出来看了一遍，不过想想也就那么回事了….</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">编译期判断是否存在某个成员函数</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-01-30
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>之前在<a href="https://kingsamchen.github.io/2016/06/14/template-type-constraints-and-type-traits/">某篇</a>文章描述了一个实际上不是那么好用的检查某个模板类型参数是否存在某个函数的方法。</p>
-<p>这次会介绍一个相对有用的，在编译期检查某个类是否存在给定成员函数的做法，并且可以根据检查的结果执行不同的代码。</p>
-<p>（简而言之就是如何拙劣的模拟一下 duck typing）</p>
-<p>假设我们要检查某个类 <code>class Foo</code> 是否存在成员数 <code>bar(int)</code></p>
-<p>实现辅助设施</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">has_member_bar</span> &#123;</span></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">    constexpr static auto check(const void*)-&gt;</span><br><span class="line">        <span class="keyword">decltype</span>(<span class="built_in">std</span>::declval&lt;U&gt;().bar(<span class="built_in">std</span>::declval&lt;Args&gt;()...), <span class="built_in">std</span>::true_type());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">false_type <span class="title">check</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(check&lt;T&gt;(<span class="literal">nullptr</span>))::value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>检查的方法是尝试生成函数 <code>T::bar</code> 的返回类型，如果不存在相应函数，则 <code>check()</code> 的重载决议会匹配到第二个函数上。</p>
-<p>这里引入 variadic template 的原因是我们希望能够检查时同时确定函数的 signature（注意 signature 是不包含返回类型的）。</p>
-<p>使用方法：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="keyword">bool</span> has_bar = has_member_bar&lt;Foo, <span class="keyword">int</span>&gt;::value;</span><br></pre></td></tr></table></figure>
-<p>如果想把这部分做成通用的设施，那只能引入宏，根据需要生成辅助结构的代码；因为一个辅助结构只能检查一个函数成员。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_HAS_CLASS_MEMBER(NAME)                                                  \</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;                                                  \</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">has_member_</span>##<span class="title">NAME</span> &#123;</span>                                                              \</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;                                                                \</span><br><span class="line">    constexpr static auto check(const void*)-&gt;                                          \</span><br><span class="line">        <span class="keyword">decltype</span>(<span class="built_in">std</span>::declval&lt;U&gt;().NAME(<span class="built_in">std</span>::declval&lt;Args&gt;()...), <span class="built_in">std</span>::true_type());    \</span><br><span class="line">                                                                                        \</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;                                                                \</span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">false_type <span class="title">check</span><span class="params">(...)</span></span>;                                        \</span><br><span class="line">                                                                                        \</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(check&lt;T&gt;(<span class="literal">nullptr</span>))::value;                   \</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HAS_CLASS_MEMBER(CLASS, MEMBER, ...) \</span></span><br><span class="line">    has_member_##MEMBER&lt;CLASS, __VA_ARGS__&gt;::value</span><br></pre></td></tr></table></figure>
-<p>使用前需要先用 <code>DECLARE_HAS_CLASS_MEMBER(class_name)</code> 来创建一个辅助结构，再利用 <code>HAS_CLASS_MEMBER(Foo, bar, int)</code> 来判断是否存在 <code>Foo::bar(int)</code>。</p>
-<p>如果希望能利用上面的设施在编译期做到根据函数是否存在执行不同的操作，那么则可以借助 SFINAE 来实现：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">DECLARE_HAS_CLASS_MEMBER(foo);</span><br><span class="line">DECLARE_HAS_CLASS_MEMBER(bar);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Foo</span> &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Bar</span> &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Bar::bar()\n"</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Bar::foo(const std::string&amp;, int)\n"</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">typename</span> <span class="built_in">std</span>::enable_if&lt;HAS_CLASS_MEMBER(T, foo, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)&gt;::<span class="function">type <span class="title">RunFoo</span><span class="params">(T&amp; obj)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    obj.foo(<span class="string">"hello world"</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">typename</span> <span class="built_in">std</span>::enable_if&lt;!HAS_CLASS_MEMBER(T, foo, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)&gt;::<span class="function">type <span class="title">RunFoo</span><span class="params">(T&amp; obj)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    obj.bar();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Bar bar;</span><br><span class="line">    RunFoo(bar);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>但是如果想将 SFINAE 这部分做成通用的 static-if，还是比较 tricky 的；我一开始利用 lambda + SFINAE 倒是模拟了一个，但是因为 lambda 直接被无条件编译，导致即使在编译期已经确定不用某个分支的 lambda，仍然会编译这个 lambda 的代码，使得 static-if 功能大减。</p>
-<p>我猜想使用 generic lambda 应该可以绕过去，但是实现上可能会更加 tricky，并且使用上不会太直观，或者满地坑。</p>
-<p>其实 <code>HAS_CLASS_MEMBER</code> 最好的作用是等到 C++ 17 普及了 if-constexpr，这样整个流程都变得清晰了。</p>
-<p>另外有一点不得不说，其实很多你认为需要通过编译期判断是否存在某个成员函数才能解决的问题，压根就走不到需要自己实现 SFINAE 那一步，通过一些（可能不是那么优雅）简单的构造，就可以利用 type traits 解决，例如，我在实现 <a href="https://github.com/kingsamchen/KBase/blob/master/src/kbase/singleton.h" target="_blank" rel="noopener">KBase Singleton</a> 的方案。</p>
 
         
       

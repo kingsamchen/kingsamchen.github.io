@@ -17,12 +17,12 @@
 
 
 
-  <meta name="description" content="Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type"/>
+  <meta name="description" content="调整 ezio 的 TCPConnection 状态事件"/>
 
 
 
 
-  <meta name="keywords" content="clang, gdb, linux, incomplete type, KC的废墟堆" />
+  <meta name="keywords" content="ezio, tcp, KC的废墟堆" />
 
 
 
@@ -42,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -66,7 +66,7 @@
 
 
 
-    <title> Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type - KC的废墟堆 </title>
+    <title> 调整 ezio 的 TCPConnection 状态事件 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -182,13 +182,13 @@
     <header class="post-header">
       <h1 class="post-title">
         
-          Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type
+          调整 ezio 的 TCPConnection 状态事件
         
       </h1>
 
       <div class="post-meta">
         <span class="post-time">
-          2017-09-03
+          2019-01-27
         </span>
         
           <div class="post-category">
@@ -206,24 +206,61 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#现象描述"><span class="toc-text">现象描述</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#解决方案"><span class="toc-text">解决方案</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安利时刻"><span class="toc-text">安利时刻</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Solution"><span class="toc-text">Solution</span></a></li></ol>
     </div>
   </div>
 
 
     <div class="post-content">
       
-        <h3 id="现象描述"><a href="#现象描述" class="headerlink" title="现象描述"></a>现象描述</h3><p>系统是 Linux mint 18，其实就是 ubuntu 16.04 LTS，所用的 clang 版本是 apt 默认的 3.8；gdb 使用系统自带。</p>
-<p>使用 clang 编译出来的二进制，哪怕开启了 <code>-g</code> 生成调试信息，在 gdb 下 <code>std::string</code> 始终显示为 <em>incomplete type</em>；而 primitive 类型的值可以正确显示</p>
-<p>并且通过 apt 安装 lldb，使用 lldb 调试能够看到变量的值。</p>
-<p>因此基本可以确定问题发生在 gdb 和 clang 这一对上</p>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>来自路边社的资料：clang 的 linux 版本输出调试信息时，默认去掉了标准库相关的组件信息 （？？？ MMP）</p>
-<p>在编译时追加 <code>-fno-limit-debug-info</code> 标志，就可以保证输出完整的调试信息</p>
-<h3 id="安利时刻"><a href="#安利时刻" class="headerlink" title="安利时刻"></a>安利时刻</h3><p>为什么使用 clang 编译的原因很简单，ubuntu 16.04 上的 apt 默认的 gcc/g++ 5.4 有 bug，编译我的项目代码一定会出错…对比直接从 ppa test 安装 gcc 6.x/7.x 而言，安装 clang 无疑最省事儿…</p>
-<p>另外我发现这个问题的解决方案得益于 <a href="https://github.com/vadimcn/vscode-lldb" target="_blank" rel="noopener">vscode-lldb-debugger</a> 这个扩展。</p>
-<p>正是这个扩展在输出里通过 warning 告诉我需要用相关的编译开关输出完整调试信息，这个问题才的可以解决。（从侧面说明程序员还是应该关注一下 warning XD）</p>
-<p>最后安利一个 gdb gui 前端：<a href="https://wiki.gnome.org/Apps/Nemiver" target="_blank" rel="noopener">Nemiver</a></p>
-<p>不过现在看起来 linux 上最好的 gdb/lldb 前端应该是 vscode -.-</p>
+        <p>上上周的时候给 ezio 做了一个<a href="https://github.com/kingsamchen/ezio/commit/d9e7bde28155b5bb2f144dd4c42083d95ef7b674" target="_blank" rel="noopener">调整</a>，稍微修改了一下 <code>TCPConnection</code> 对外暴露的几个状态变化的事件。</p>
+<p>起因是在写 <a href="https://github.com/kingsamchen/ezio/blob/9a2ea3ffa43578555e8dfcfe769db10bb45e0087/examples/chat/chat_client.cpp#L62" target="_blank" rel="noopener">example/chat-client</a> 的时候，因为主线程单独跑了一个事件循环从 <code>stdin</code> 中读取用户输入，所以 <code>ChatClient</code> 以及内部的 <code>TCPClient</code> 是跑在另外的工作线程上。</p>
+<p>因为那个时候 <code>TCPClient</code> 之对外暴露了 connection 和 disconnection 的事件回调（这两个事件还统一成了一个 <code>on_connection()</code>），所以自然选择在 disconnection 的时候进行退出主循环的操作。</p>
+<p>但是这个时候会出现：</p>
+<ul>
+<li>主循环结束后立马析构 <code>ChatClient</code>，连同内部的 <code>TCPClient</code> 一起销毁。因为这部分代码跑在主线程上，所以不会和工作线程有任何 coordination。</li>
+<li><code>TCPClient</code> 会在触发 <code>on_connection()</code> 来表明连接断开后会继续做一些内部清理工作；然而因为前面已经将 <code>TCPClient</code> 析构了，导致 UAF</li>
+</ul>
+<p>而当时为了解决这个问题，采用的 workaround 时，<code>ChatClient::OnConnection()</code> 在发现连接断开后，通过 <code>RunTaskAfter()</code> 的方式延后执行 <code>EventLoop::Quit()</code>。</p>
+<p>这个做法非常丑陋而且不可靠。<br><a id="more"></a><br><strong>注意：任何在生产环境中需要依靠 delay-execution，比如很多人喜欢的 <code>sleep()</code>，<code>postDelayedTask()</code> .etc 来实现恰好的同步都是错误的，因为上下文调度的不确定性，这种做法基本就是给自己挖坑。</strong></p>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p>在花了一点时间做了一个 UML 时序图将 <code>TCPConnection</code> 以及对应的 <code>TCPServer</code> 和 <code>TCPClient</code> 关联之后</p>
+<p><img src="/img/life_sequence_of_tcp_connecion.svg" alt=""></p>
+<p>我发现其实我需要的，大概就是增加一个 <code>TCPConnection</code> 实例销毁的事件回调。</p>
+<p>于是我们就有：</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Call Context</th>
+<th>Semantcis</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>on_connect</td>
+<td>MakeEstablished()</td>
+<td>The connection has been established and each end of hosts <strong>can now send or receive</strong> data via the connection.</td>
+</tr>
+<tr>
+<td>on_disconnect</td>
+<td>HandleClose()</td>
+<td>The connection is closed and no more further data transmission should be done over this connection.</td>
+</tr>
+<tr>
+<td>on_close</td>
+<td>HandleClose()</td>
+<td>Notify the owner, i.e. TCPServer or TCPClient, to do clean-up for this connection.</td>
+</tr>
+<tr>
+<td>on_destroy</td>
+<td>MakeTeardown()</td>
+<td>Notify the owner, i.e. TCPServer or TCPClient, this TCPConnection instance is about to be destroyed.</td>
+</tr>
+</tbody>
+</table>
+<p>同时为了更加明确连接和断开的事件语义，我把 <code>on_connection()</code> 给拆成了 <code>on_connect()</code> 和 <code>on_disconnect()</code>。</p>
+<p>有了这么一个调整，chat-client 里只需要在 <code>TCPClient::on_connection_destroy()</code> 里退出主线程的事件循环就可以了。因为这个时候 <code>TCPConnection</code> 已经是一个可以安全被销毁的状态。</p>
+<p>这个修改其实也就是上面提交里做的。</p>
 
       
     </div>
@@ -239,7 +276,7 @@
     </p>
     <p class="copyright-item">
       <span>原文链接: </span>
-      <a href="http://kingsamchen.github.io/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/">http://kingsamchen.github.io/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/</a>
+      <a href="http://kingsamchen.github.io/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/">http://kingsamchen.github.io/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/</a>
     </p>
     <p class="copyright-item">
       <span>许可协议: </span>
@@ -259,13 +296,9 @@
         
           <div class="post-tags">
             
-              <a href="/tags/clang/">clang</a>
+              <a href="/tags/ezio/">ezio</a>
             
-              <a href="/tags/gdb/">gdb</a>
-            
-              <a href="/tags/linux/">linux</a>
-            
-              <a href="/tags/incomplete-type/">incomplete type</a>
+              <a href="/tags/tcp/">tcp</a>
             
           </div>
         
@@ -273,15 +306,9 @@
         
   <nav class="post-nav">
     
-      <a class="prev" href="/2017/10/01/monthly-read-posts-in-sep-2017/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text nav-default">Monthly Read Posts in Sep 2017</span>
-        <span class="prev-text nav-mobile">上一篇</span>
-      </a>
     
-    
-      <a class="next" href="/2017/09/02/monthly-read-posts-in-aug-2017/">
-        <span class="next-text nav-default">Monthly Read Posts in Aug 2017</span>
+      <a class="next" href="/2019/01/08/bad-smells-in-golang/">
+        <span class="next-text nav-default">来一口 golang 做的玻璃渣</span>
         <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
@@ -388,9 +415,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://kingsamchen.github.io/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/';
-        this.page.identifier = '2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/';
-        this.page.title = 'Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type';
+        this.page.url = 'http://kingsamchen.github.io/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/';
+        this.page.identifier = '2019/01/27/made-changes-on-tcp-connection-events-for-ezio/';
+        this.page.title = '调整 ezio 的 TCPConnection 状态事件';
     };
     (function() {
     var d = document, s = d.createElement('script');
