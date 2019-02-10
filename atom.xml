@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-01-27T06:28:10.584Z</updated>
+  <updated>2019-02-10T12:49:50.720Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,79 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>C++ 工程依赖管理新方向：CMake &amp; Git</title>
+    <link href="http://kingsamchen.github.io/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/"/>
+    <id>http://kingsamchen.github.io/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/</id>
+    <published>2019-02-10T06:52:21.000Z</published>
+    <updated>2019-02-10T12:49:50.720Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文内容中提及的 CMake 均指提倡 target-based properties 的 &lt;a href=&quot;https://kingsamchen.github.io/2018/06/19/modern-cmake/&quot;&gt;modern cmake&lt;/a&gt;，而非史前版本的 legacy cmake。&lt;/p&gt;
+&lt;h3 id=&quot;The-Right-Way-源码依赖&quot;&gt;&lt;a href=&quot;#The-Right-Way-源码依赖&quot; class=&quot;headerlink&quot; title=&quot;The Right Way: 源码依赖&quot;&gt;&lt;/a&gt;The Right Way: 源码依赖&lt;/h3&gt;&lt;p&gt;对于 C++ 工程而言，只要 ABI 的问题还存在，源码依赖就是最稳妥最普适最可靠的依赖引入方式；即使这些引入的源码在构建中会单独编译成（动/静态）库。&lt;/p&gt;
+&lt;p&gt;同时，GitHub 成为开源文化社区的标杆后，获取实现了某一功能的第三方库的源代码的难度大大降低。&lt;/p&gt;
+&lt;p&gt;因此个人倾向上：只要允许，都应该以特定版本的源码引入的方式去依赖一个第三方库。&lt;/p&gt;
+&lt;p&gt;事实上，Google Facebook 这些大厂内部实行的 monorepo 也是源码依赖的一种实现方式，因为某个工程需要的依赖源码都可以一并获取到。&lt;/p&gt;
+&lt;p&gt;在使用 CMake 作为构建系统的工程体系下，要以源码依赖的方式添加一个子工程只需要使用 &lt;code&gt;add_subdirectory()&lt;/code&gt; 添加目标工程的顶层目录（根 &lt;code&gt;CMakeLists.txt&lt;/code&gt; 所在的目录）。&lt;/p&gt;
+&lt;h3 id=&quot;Git-Submodule-一次不完美的尝试&quot;&gt;&lt;a href=&quot;#Git-Submodule-一次不完美的尝试&quot; class=&quot;headerlink&quot; title=&quot;Git Submodule: 一次不完美的尝试&quot;&gt;&lt;/a&gt;Git Submodule: 一次不完美的尝试&lt;/h3&gt;&lt;p&gt;我的个人项目 KBase 和 ezio，在此之前都是通过 git submodule 的方式引入自己需要的依赖源代码，然后通过&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Visual Studio 子工程添加到解决方案（Windows 平台）&lt;/li&gt;
+&lt;li&gt;CMake &lt;code&gt;add_subdirectory()&lt;/code&gt; 建联（*nix 平台）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;依赖的版本管理直接复用 submodule 提供的特性。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="git" scheme="http://kingsamchen.github.io/tags/git/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="dependency management" scheme="http://kingsamchen.github.io/tags/dependency-management/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in Jan 2019</title>
+    <link href="http://kingsamchen.github.io/2019/02/06/monthly-read-posts-in-jan-2019/"/>
+    <id>http://kingsamchen.github.io/2019/02/06/monthly-read-posts-in-jan-2019/</id>
+    <published>2019-02-06T11:32:23.000Z</published>
+    <updated>2019-02-10T06:50:22.886Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
+    
+      <category term="performance" scheme="http://kingsamchen.github.io/tags/performance/"/>
+    
+      <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
+    
+      <category term="spinlock" scheme="http://kingsamchen.github.io/tags/spinlock/"/>
+    
+      <category term="ptrace" scheme="http://kingsamchen.github.io/tags/ptrace/"/>
+    
+  </entry>
   
   <entry>
     <title>调整 ezio 的 TCPConnection 状态事件</title>
@@ -601,9 +674,9 @@
     
       <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
     
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
+    
+      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
     
       <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
     
@@ -640,67 +713,6 @@
       <category term="non-blocking" scheme="http://kingsamchen.github.io/tags/non-blocking/"/>
     
       <category term="connect" scheme="http://kingsamchen.github.io/tags/connect/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Naming a Native Thread</title>
-    <link href="http://kingsamchen.github.io/2018/10/13/naming-a-native-thread/"/>
-    <id>http://kingsamchen.github.io/2018/10/13/naming-a-native-thread/</id>
-    <published>2018-10-13T13:58:06.000Z</published>
-    <updated>2018-10-13T14:27:57.589Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;这里所说的 naming 主要是为了能够被 debugger 识别，所以单纯的通过 TLS 存储一个额外的字符串是不够的。&lt;/p&gt;
-&lt;h2 id=&quot;Windows&quot;&gt;&lt;a href=&quot;#Windows&quot; class=&quot;headerlink&quot; title=&quot;Windows&quot;&gt;&lt;/a&gt;Windows&lt;/h2&gt;&lt;p&gt;Windows 上的做法有两种。&lt;/p&gt;
-&lt;p&gt;第一种是利用现成的 API &lt;a href=&quot;https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-setthreaddescription&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;SetThreadDescription()&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;通过这个 API 设置的名字据说新版的 minidump 和 WinDBG 都能认了。&lt;/p&gt;
-&lt;p&gt;不过缺点是这个 API 很新，从 Windows 10 1607 (build 14393) 开始才有，所以稳妥的使用方式还是从 kernel32.dll 里动态获取。&lt;/p&gt;
-&lt;p&gt;第二种做法比较传统，而且很不直观，来源是 MSDN 的一篇 &lt;a href=&quot;https://docs.microsoft.com/en-us/visualstudio/debugger/how-to-set-a-thread-name-in-native-code?view=vs-2017&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;doc&lt;/a&gt;&lt;/p&gt;
-&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; DWORD kVCThreadNameException = &lt;span class=&quot;number&quot;&gt;0x406D1388&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;tagTHREADNAME_INFO&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DWORD dwType;  &lt;span class=&quot;comment&quot;&gt;// Must be 0x1000.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    LPCSTR szName;  &lt;span class=&quot;comment&quot;&gt;// Pointer to name (in user addr space).&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DWORD dwThreadID;  &lt;span class=&quot;comment&quot;&gt;// Thread ID (-1=caller thread).&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    DWORD dwFlags;  &lt;span class=&quot;comment&quot;&gt;// Reserved for future use, must be zero.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125; THREADNAME_INFO;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;SetThreadName&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    THREADNAME_INFO info;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    info.dwType = &lt;span class=&quot;number&quot;&gt;0x1000&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    info.szName = &lt;span class=&quot;string&quot;&gt;&quot;Worker-Traditional&quot;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    info.dwThreadID = &lt;span class=&quot;number&quot;&gt;-1&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    info.dwFlags = &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    __try &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        RaiseException(kVCThreadNameException, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;, &lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(info) / &lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(DWORD),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                       &lt;span class=&quot;keyword&quot;&gt;reinterpret_cast&lt;/span&gt;&amp;lt;ULONG_PTR*&amp;gt;(&amp;amp;info));&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125; __except(EXCEPTION_EXECUTE_HANDLER) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;基本上照搬 doc 上的代码就好了。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="Windows" scheme="http://kingsamchen.github.io/tags/Windows/"/>
-    
-      <category term="Linux" scheme="http://kingsamchen.github.io/tags/Linux/"/>
-    
-      <category term="thread" scheme="http://kingsamchen.github.io/tags/thread/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Using Boolean Switch with Python Argparser the Right Way</title>
-    <link href="http://kingsamchen.github.io/2018/10/07/python-argparser-bool-arg-the-right-way/"/>
-    <id>http://kingsamchen.github.io/2018/10/07/python-argparser-bool-arg-the-right-way/</id>
-    <published>2018-10-07T05:45:20.000Z</published>
-    <updated>2018-10-07T06:22:20.703Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;The-Context&quot;&gt;&lt;a href=&quot;#The-Context&quot; class=&quot;headerlink&quot; title=&quot;The Context&quot;&gt;&lt;/a&gt;The Context&lt;/h2&gt;&lt;p&gt;之前拿 Python 写了一个 CMake 的 build
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
-    
-      <category term="argparser" scheme="http://kingsamchen.github.io/tags/argparser/"/>
-    
-      <category term="bool argument" scheme="http://kingsamchen.github.io/tags/bool-argument/"/>
     
   </entry>
   

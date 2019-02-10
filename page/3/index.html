@@ -182,6 +182,118 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/11/25/chromium-base-message-loop-internals-1/">Chromium Base MessageLoop Internals (1)</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-25
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="class-MessageLoop"><a href="#class-MessageLoop" class="headerlink" title="class MessageLoop"></a>class MessageLoop</h2><p>Version: r70_3538<br>File: <code>base/message_loop/message_loop.{h, cc}</code></p>
+<p>A <code>MessageLoop</code> is used to process events for a particular thread, i.e. the core infrastructure for implementing Communicating Sequential Process (CSP) model.</p>
+<p>There is at most one MessageLoop instance on a thread.</p>
+<p><code>MessageLoop</code> is a farily complex class, it driveds from multiple base classes:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BASE_EXPORT</span> <span class="title">MessageLoop</span> :</span> <span class="keyword">public</span> MessagePump::Delegate,</span><br><span class="line">                                <span class="keyword">public</span> RunLoop::Delegate,</span><br><span class="line">                                <span class="keyword">public</span> MessageLoopCurrent &#123;</span><br><span class="line">    <span class="comment">// omitted...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="MessageLoop-Type"><a href="#MessageLoop-Type" class="headerlink" title="MessageLoop Type"></a>MessageLoop Type</h3><p>A MessageLoop has a particular type, differred by the set of asynchronous events it is capable of handling.<br>
+          <div class="read-more">
+            <a href="/2018/11/25/chromium-base-message-loop-internals-1/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/">在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-24
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>在 cmder 里如果不指定运行的 terminal 则会默认使用 windows cmd，而这在使用 git-bash 或者 wsl 时会经常遇到问题：</p>
+<ol>
+<li>性能底下导致交互出现显著延迟（这个发生在使用 tig 等重型 bash 命令或者使用 wsl中）</li>
+<li>容易因为环境属性问题导致乱码，比如 cmder 里直接运行 git-bash 的 tig 会发现提交历史的分割线都乱码了</li>
+</ol>
+<p>神奇的是 cmder 支持将某个终端内嵌到自己的宿主界面里，这样就可以在 cmder 一个程序（单指窗口，非进程）里跑多个终端环境了</p>
+<p>对于使用 mintty 跑 git-bash，假设已经安装了 git for windows，则只需要设置这个人物属性为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%ProgramFiles%\Git\usr\bin\mintty.exe /bin/bash -l -new_console:d:%userProfile%</span><br></pre></td></tr></table></figure>
+<p>即可。</p>
+<p>而对于 WSL，先安装一下 wsl-terminal，然后在 cmder 里新建一个 task，启动内容为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;C:\Programs\wsl-terminal\bin\mintty.exe&quot; /bin/wslbridge -t /usr/bin/ssh-agent /bin/zsh -l -new_console:d</span><br></pre></td></tr></table></figure>
+<p>即可。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/11/11/ebo-with-multiple-inheritance-in-msvc/">MSVC 对多继承下的 EBO 支持的一个 workaround</a>
         
       </h1>
@@ -463,120 +575,6 @@
 <p>基本上照搬 doc 上的代码就好了。<br>
           <div class="read-more">
             <a href="/2018/10/13/naming-a-native-thread/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/10/07/python-argparser-bool-arg-the-right-way/">Using Boolean Switch with Python Argparser the Right Way</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-10-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="The-Context"><a href="#The-Context" class="headerlink" title="The Context"></a>The Context</h2><p>之前拿 Python 写了一个 CMake 的 build driver，因为要控制一些编译参数，所以使用了如下代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">'--build-test'</span>, dest=<span class="string">'build_test'</span>, type=bool, default=<span class="keyword">True</span>)</span><br><span class="line">args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">no_build_unittest = <span class="keyword">not</span> args.build_test</span><br></pre></td></tr></table></figure>
-<p>后来有一次偶然发现，无论指定 <code>--build-test=False</code> 还是 <code>--build-test=false</code> 还是 <code>--build-test=0</code>，<code>args.build_test</code> 的值永远是 <code>True</code>。</p>
-<p>然后一脸懵逼。</p>
-<p>万幸有万能的 Stackoverflow，搜了一下发现有人遇到了类似的问题。</p>
-<p>问题的根源在于，即使你指定了 <code>type=bool</code>，你的输入仍然是 <code>string</code>，而 argparse 没有做 string 到 boolean 的语义化转换，仅简单地判断了一下字符串是否为空，所以前面的参数指定全都被认为是 <code>True</code>。</p>
-<h2 id="The-Solution"><a href="#The-Solution" class="headerlink" title="The Solution"></a>The Solution</h2><p>解决的方案是将参数类型指定为 <code>lambda</code> 然后自己做转换：</p>
-<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">-parser.add_argument('--build-test', dest='build_test', type=bool, default=True)</span></span><br><span class="line"><span class="addition">+parser.add_argument('--build-test', dest='build_test',</span></span><br><span class="line"><span class="addition">+                    type=lambda opt: bool(strtobool(opt)), default=True)</span></span><br></pre></td></tr></table></figure>
-<p>Argparse 这个点的实现个人感觉不好，因为违反了直觉。</p>
-<p>另，我在饭否上吐槽这个问题的时候，F叔提到了 <a href="https://github.com/docopt/docopt" target="_blank" rel="noopener">docopt</a> 作为替代品。但是我看了一下简介之后对这种使用描述生成的方式并不感冒（虽然看起来很酷），第一眼看着觉着 verbose，而且总感觉这种比较 fancy 的做法在一些 edge cases 上可能会更痛苦（想起之前折腾各种 build system 的痛苦 -‘’-）。</p>
-<p>不懂之后会不会出现真香的反转，XD</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/10/05/monthly-read-posts-in-sep-2018/">Monthly Read Posts in Sep 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-10-05
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Programming-Language"><a href="#Programming-Language" class="headerlink" title="Programming Language"></a>Programming Language</h2><p><a href="https://www.fluentcpp.com/2016/12/08/strong-types-for-strong-interfaces/" target="_blank" rel="noopener">Strong types for strong interfaces</a></p>
-<p>How to add a type wrapper for built-in types.</p>
-<p>Besides using phantom template parameter to avoid alias, one can also use private inheritance:</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NamedType</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    explicit NamedType(T const&amp; value) : value_(value) &#123;&#125;</span><br><span class="line">    explicit NamedType(T&amp;&amp; value) : value_(std::move(value)) &#123;&#125;</span><br><span class="line">    <span class="function">T&amp; <span class="title">get</span><span class="params">()</span> </span>&#123; <span class="keyword">return</span> value_; &#125;</span><br><span class="line">    <span class="function">T <span class="keyword">const</span>&amp; <span class="title">get</span><span class="params">()</span> <span class="keyword">const</span> </span>&#123;<span class="keyword">return</span> value_; &#125;</span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    T value_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Width</span> :</span> NamedType&lt;<span class="keyword">int</span>&gt; &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">using</span> NamedType::NamedType;</span><br><span class="line">    <span class="keyword">using</span> NamedType::get;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<hr>
-<p><a href="https://www.fluentcpp.com/2016/12/12/passing-strong-types-by-reference/" target="_blank" rel="noopener">Passing strong types by reference – First attempt</a></p>
-<p>This post is the sequal of the above post.</p>
-<p>The main problem the post tryies to solve is: how to make copy of <code>NamedType</code> values cheap.</p>
-<p>However, I am conservative on using reference-wrapper as the solution, because doing this has to expose the lifetime of the wrapped object to public; after all, reference-wrapper is only a point per se.<br>
-          <div class="read-more">
-            <a href="/2018/10/05/monthly-read-posts-in-sep-2018/" class="read-more-link">阅读更多</a>
           </div>
         
       

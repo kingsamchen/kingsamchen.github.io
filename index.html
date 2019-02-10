@@ -182,6 +182,149 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/">C++ 工程依赖管理新方向：CMake & Git</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-10
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>本文内容中提及的 CMake 均指提倡 target-based properties 的 <a href="https://kingsamchen.github.io/2018/06/19/modern-cmake/">modern cmake</a>，而非史前版本的 legacy cmake。</p>
+<h3 id="The-Right-Way-源码依赖"><a href="#The-Right-Way-源码依赖" class="headerlink" title="The Right Way: 源码依赖"></a>The Right Way: 源码依赖</h3><p>对于 C++ 工程而言，只要 ABI 的问题还存在，源码依赖就是最稳妥最普适最可靠的依赖引入方式；即使这些引入的源码在构建中会单独编译成（动/静态）库。</p>
+<p>同时，GitHub 成为开源文化社区的标杆后，获取实现了某一功能的第三方库的源代码的难度大大降低。</p>
+<p>因此个人倾向上：只要允许，都应该以特定版本的源码引入的方式去依赖一个第三方库。</p>
+<p>事实上，Google Facebook 这些大厂内部实行的 monorepo 也是源码依赖的一种实现方式，因为某个工程需要的依赖源码都可以一并获取到。</p>
+<p>在使用 CMake 作为构建系统的工程体系下，要以源码依赖的方式添加一个子工程只需要使用 <code>add_subdirectory()</code> 添加目标工程的顶层目录（根 <code>CMakeLists.txt</code> 所在的目录）。</p>
+<h3 id="Git-Submodule-一次不完美的尝试"><a href="#Git-Submodule-一次不完美的尝试" class="headerlink" title="Git Submodule: 一次不完美的尝试"></a>Git Submodule: 一次不完美的尝试</h3><p>我的个人项目 KBase 和 ezio，在此之前都是通过 git submodule 的方式引入自己需要的依赖源代码，然后通过</p>
+<ul>
+<li>Visual Studio 子工程添加到解决方案（Windows 平台）</li>
+<li>CMake <code>add_subdirectory()</code> 建联（*nix 平台）</li>
+</ul>
+<p>依赖的版本管理直接复用 submodule 提供的特性。<br>
+          <div class="read-more">
+            <a href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/02/06/monthly-read-posts-in-jan-2019/">Monthly Read Posts in Jan 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-06
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://arne-mertz.de/2015/03/fun-without-keyword-explicit/" target="_blank" rel="noopener">Fun with(out) keyword explicit</a></p>
+<p>The old saying goes: <em>When writing a conversion operator or a constructor that can be called with one argument, make it explicit by default.</em></p>
+<p>By the way, according to comments from the author, the buggy compiler he used was C++ Builder, from Embarcadero, sigh.</p>
+<h2 id="Engineering"><a href="#Engineering" class="headerlink" title="Engineering"></a>Engineering</h2><p><a href="https://arne-mertz.de/2015/03/simple-and-clean-code-vs-performance/" target="_blank" rel="noopener">Simple and Clean Code vs. Performance</a></p>
+<ul>
+<li>Performance is not efficiency. // ?? I still can’t get this clear in a programming context.</li>
+<li>Improve performance after having profiled your system.</li>
+<li>Make sure use of correct data structures and algorithms</li>
+<li>By default write code for maintainability.</li>
+<li>Know and use your libraries, unless your profiler showed them to have bad performance.</li>
+</ul>
+<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://idea.popcount.org/2012-09-12-reinventing-spinlocks/" target="_blank" rel="noopener">Reinventing spinlocks</a></p>
+<p>when implementing spinlock unlock: a simple atomic store is enough. no need for using  a heavy CAS operation.</p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="http://ithare.com/testing-memory-allocators-ptmalloc2-tcmalloc-hoard-jemalloc-while-trying-to-simulate-real-world-loads/" target="_blank" rel="noopener">Testing Memory Allocators: ptmalloc2 vs tcmalloc vs hoard vs jemalloc While Trying to Simulate Real-World Loads</a></p>
+<p>Three pre-requisites:</p>
+<ul>
+<li>test only new/delete (or malloc/free)</li>
+<li>use realistic statistic distributions; both for allocated sizes and for lifetime of allocated items</li>
+<li>access all memory at least once</li>
+</ul>
+<p>all for emulating real-world uses.</p>
+<p>conclusion:</p>
+<ul>
+<li>for cpu cycle test, every allocator is not too far from each other. each of them can outperform another one under certain conditions. benchmark is highly recommended when you decide to change your allocator.</li>
+<li>some allocators behave not so good in memory overhead, like Hoard.</li>
+</ul>
+<hr>
+<p><a href="https://idea.popcount.org/2012-12-09-lsof-cant-identify-protocol/" target="_blank" rel="noopener">lsof: can’t identify protocol</a></p>
+<ul>
+<li><code>lsof</code> for listing open files; while</li>
+<li><code>netstat</code> for displaying network related information, like connections .etc</li>
+</ul>
+<p><code>lsof</code> has issues on locating half-closed sockets.</p>
+<hr>
+<p><a href="https://idea.popcount.org/2012-12-11-linux-process-states/" target="_blank" rel="noopener">Linux process states ptrace tutorial part #1</a></p>
+<p>How <code>ptrace</code> relates with linux process states.</p>
+<p>using <code>SIGSTOP</code> and <code>SIGCONT</code> to control a process’s state and parent process receives <code>SIGCHLD</code> when child process state changes.</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/">调整 ezio 的 TCPConnection 状态事件</a>
         
       </h1>
@@ -469,123 +612,6 @@
 <p>同时为可考虑到两个平台的基本行为的一致性，最终我放弃了这个特性。</p>
 <p>毕竟，在服务器上跑着的服务，一般都是由类似 <code>supervisor</code> 驱动并且长期运行在后台的 XD。</p>
 
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/12/07/build-your-own-handlerthread-part-finale/">Build Your Own HandlerThread Part Finale</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-12-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>至此，我们整个系列宣告完结。</p>
-<p>现在回过头往前看，是不是觉得其实这些底层的东西也没这么难？有时候只是需要一些基础和解决问题的方法罢了。</p>
-<p>Rant：做业务才真的难呢，框架和流程都给你定死了，一坨又一坨用了几年的不明觉厉的封装，如果内部文档哪个不详，又没有熟悉的人带着你，基本就净在里面绕圈子了。</p>
-<p>好了我们转回正题。</p>
-<p>整个系列的代码可见这里：<a href="https://github.com/kingsamchen/Eureka/tree/master/ActiveThread-Java" target="_blank" rel="noopener">Eureka/ActiveThread-Java</a></p>
-<p>部分还带了单元测试。</p>
-<h3 id="系列索引"><a href="#系列索引" class="headerlink" title="系列索引"></a>系列索引</h3><ul>
-<li><a href="/2018/12/03/build-your-own-handlerthread-part-0/" title="Build Your Own HandlerThread Part 0">Build Your Own HandlerThread Part 0</a></li>
-<li><a href="/2018/12/04/build-your-own-handlerthread-part-1/" title="Build Your Own HandlerThread Part 1">Build Your Own HandlerThread Part 1</a></li>
-<li><a href="/2018/12/05/build-your-own-handlerthread-part-2/" title="Build Your Own HandlerThread Part 2">Build Your Own HandlerThread Part 2</a></li>
-<li><a href="/2018/12/06/build-your-own-handlerthread-part-3/" title="Build Your Own HandlerThread Part 3">Build Your Own HandlerThread Part 3</a></li>
-<li><a href="/2018/12/07/build-your-own-handlerthread-part-4/" title="Build Your Own HandlerThread Part 4">Build Your Own HandlerThread Part 4</a>
-</li>
-</ul>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/12/07/build-your-own-handlerthread-part-4/">Build Your Own HandlerThread Part 4</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-12-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>有了前面的铺垫我们终于可以开始实现我们的主角 ActiveThread 了，虽然它登场的有点晚。</p>
-<p>这个系列的开头我们提到 <code>ActiveThread</code> 有两个鲜明的特点：</p>
-<ul>
-<li>它是线程，可以运行，代表一个单独的执行上下文（execution unit/context）</li>
-<li>每个 <code>ActiveThread</code> 内部运行一个 message-loop，方便持续的执行我们提交的任务</li>
-</ul>
-<p>这两点和 Android 原生提供的 <code>HandlerThread</code> 是一模一样的。</p>
-<p>不过和 <code>HandlerThread</code> 不同，我们这里不打算采用继承 <code>Thread</code> 的方式，而是采用 composition。原因之一是我个人非常反感传统的 OO 继承手法；并且 Java 8 开始正式支持 lambda 之后，不用继承我们的工作也可以做得很好。</p>
-<p>不适用继承同时有个好处，我们可以只暴露我们需要的接口，避免误用（比如经典的用 <code>run()</code> 而不是 <code>start()</code>）<br>
-          <div class="read-more">
-            <a href="/2018/12/07/build-your-own-handlerthread-part-4/" class="read-more-link">阅读更多</a>
-          </div>
         
       
     </div>

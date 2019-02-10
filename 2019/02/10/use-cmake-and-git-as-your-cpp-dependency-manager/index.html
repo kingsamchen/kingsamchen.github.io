@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="C++ 工程依赖管理新方向：CMake & Git"/>
+
+
+
+
+  <meta name="keywords" content="c++, git, cmake, dependency management, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> C++ 工程依赖管理新方向：CMake & Git - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          C++ 工程依赖管理新方向：CMake & Git
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-10
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#The-Right-Way-源码依赖"><span class="toc-text">The Right Way: 源码依赖</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Git-Submodule-一次不完美的尝试"><span class="toc-text">Git Submodule: 一次不完美的尝试</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#CMake-革命性的转折点-FetchContent"><span class="toc-text">CMake 革命性的转折点: FetchContent</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Real-World-Use-Case"><span class="toc-text">Real World Use Case</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Recap"><span class="toc-text">Recap</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Wraps-Up"><span class="toc-text">Wraps Up</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>本文内容中提及的 CMake 均指提倡 target-based properties 的 <a href="https://kingsamchen.github.io/2018/06/19/modern-cmake/">modern cmake</a>，而非史前版本的 legacy cmake。</p>
+<h3 id="The-Right-Way-源码依赖"><a href="#The-Right-Way-源码依赖" class="headerlink" title="The Right Way: 源码依赖"></a>The Right Way: 源码依赖</h3><p>对于 C++ 工程而言，只要 ABI 的问题还存在，源码依赖就是最稳妥最普适最可靠的依赖引入方式；即使这些引入的源码在构建中会单独编译成（动/静态）库。</p>
+<p>同时，GitHub 成为开源文化社区的标杆后，获取实现了某一功能的第三方库的源代码的难度大大降低。</p>
+<p>因此个人倾向上：只要允许，都应该以特定版本的源码引入的方式去依赖一个第三方库。</p>
+<p>事实上，Google Facebook 这些大厂内部实行的 monorepo 也是源码依赖的一种实现方式，因为某个工程需要的依赖源码都可以一并获取到。</p>
+<p>在使用 CMake 作为构建系统的工程体系下，要以源码依赖的方式添加一个子工程只需要使用 <code>add_subdirectory()</code> 添加目标工程的顶层目录（根 <code>CMakeLists.txt</code> 所在的目录）。</p>
+<h3 id="Git-Submodule-一次不完美的尝试"><a href="#Git-Submodule-一次不完美的尝试" class="headerlink" title="Git Submodule: 一次不完美的尝试"></a>Git Submodule: 一次不完美的尝试</h3><p>我的个人项目 KBase 和 ezio，在此之前都是通过 git submodule 的方式引入自己需要的依赖源代码，然后通过</p>
+<ul>
+<li>Visual Studio 子工程添加到解决方案（Windows 平台）</li>
+<li>CMake <code>add_subdirectory()</code> 建联（*nix 平台）</li>
+</ul>
+<p>依赖的版本管理直接复用 submodule 提供的特性。<br><a id="more"></a><br>使用 git submodule 这个方案有两个比较明显的问题：</p>
+<ol>
+<li><p>submodule 在 VCS 这个级别上增加了你的项目和依赖之间的耦合，个人感觉侵入程度过重且产生的关系很奇怪；且 git submodule 实在不能说是一个很好用的功能，日常使用它也有一些额外的艰险。</p>
+</li>
+<li><p>需要仔细考虑工程文件的 organization &amp; layout。</p>
+<p>举例来说：</p>
+<ol>
+<li>KBase 依赖了 Catch2 作为其单元测试框架</li>
+<li>ezio 依赖了 KBase 作为其基础库；同时也依赖 Catch2 作为其单元测试框架</li>
+<li>某一天我要写一个目标为可执行文件的项目 Eureka，Eureka 需要 KBase 作为基础库，ezio 作为其网络库，同时还要 Catch2 作为其单元测试框架</li>
+</ol>
+<p>如果要使用 git submodule 我很难想象要如何操作才能保证整个项目下各自工程源码只有一份。</p>
+</li>
+</ol>
+<p>个人理解：git submodule 更像是 monorepo 模式的一种偏特化（partial specialization）。monorepo 通过一个全能视角一下碾平所有工程之间的依赖关系。submodule 和 monorepo 则类似，可以直接做代码提交并推送到源 repo。</p>
+<h3 id="CMake-革命性的转折点-FetchContent"><a href="#CMake-革命性的转折点-FetchContent" class="headerlink" title="CMake 革命性的转折点: FetchContent"></a>CMake 革命性的转折点: FetchContent</h3><p><a href="https://cmake.org/cmake/help/latest/module/FetchContent.html" target="_blank" rel="noopener">FetchContent</a> 是 CMake 自 3.11（大约发行于2018年4月份左右）开始引入的一个模块。这个模块可以看成是原来 <code>ExternalProject</code> 模块的一个升级。</p>
+<blockquote>
+<p>This module enables populating content at configure time via any method supported by the <a href="https://cmake.org/cmake/help/latest/module/ExternalProject.html#module:ExternalProject" target="_blank" rel="noopener"><code>ExternalProject</code></a> module. Whereas <a href="https://cmake.org/cmake/help/latest/module/ExternalProject.html#command:externalproject_add" target="_blank" rel="noopener"><code>ExternalProject_Add()</code></a> downloads at build time, the <code>FetchContent</code>module makes content available immediately, <strong>allowing the configure step to use the content in commands</strong> like <a href="https://cmake.org/cmake/help/latest/command/add_subdirectory.html#command:add_subdirectory" target="_blank" rel="noopener"><code>add_subdirectory()</code></a>, <a href="https://cmake.org/cmake/help/latest/command/include.html#command:include" target="_blank" rel="noopener"><code>include()</code></a> or <a href="https://cmake.org/cmake/help/latest/command/file.html#command:file" target="_blank" rel="noopener"><code>file()</code></a> operations.</p>
+</blockquote>
+<p>上面重点部分加粗了。</p>
+<p>简言之，使用 FetchContent 模块可以在 configuration stage 将某个依赖（content）下载并设置好，然后通过 <code>add_subdirectory()</code> 等命令引用。</p>
+<p>对于多个 project 依赖同一个 content 的情况，FetchContent 会自动进行处理：</p>
+<blockquote>
+<p>The ability to detect whether content has already been populated ensures that even if multiple child projects want certain content to be available, the first one to populate it wins. The other child project can simply make use of the already available content instead of repeating the population for itself.</p>
+</blockquote>
+<p>对于依赖（content）的来源，FetchContent 和他的前辈一样，支持 Git, SVN 等一众 VCS ；对于使用 Git 的依赖来说，只要指定 repo 地址、tag（可以是 git tag、分支名，也可以是 commit hash），FetchContent 就能为你拉取目标依赖的源代码以及帮你进行基本的 configuration。</p>
+<p>在这个机制下，export / install / find-package 基本上可以不用考虑了。</p>
+<p>注：FetchContent 模块的更新在这几个版本比较频繁，个人猜测这个模块可能是 CMake 未来迭代的核心点之一。</p>
+<p>综合以上上面所述，可以发现，FetchContent + Git <strong>基本实现了一个包管理器的基础功能</strong>，并且因为 Git 的分布式特点，这个包管理器也是<strong>分布式</strong>的。</p>
+<h3 id="Real-World-Use-Case"><a href="#Real-World-Use-Case" class="headerlink" title="Real World Use Case"></a>Real World Use Case</h3><p>经过春节几天在家的研究，我找到了一种基于 CMake + Git 的 C++ 依赖管理模式。</p>
+<p>下面以 ezio 为例，简单阐述一下如何使用这种模式。</p>
+<p>ezio project 包含 ezio lib 和 unittests 两部分；前者需要<strong>引入</strong>对 KBase 基础库的依赖，后者需要引入对 Catch2 的依赖；同时，KBase 也需要引入对 Catch2 的依赖，并且这部分的依赖引入对 ezio 来说应该是透明的。</p>
+<p>注：上面虽然 unittests 也要依赖 KBase，但是因为 unittests 首先要显式引入依赖 ezio，而 ezio 已经引入了依赖 KBase，所以 unittests 不需要自己去引入对 KBase 的依赖。</p>
+<p>整体工程文件结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">├── build</span><br><span class="line">├── cmake</span><br><span class="line">├── CMakeLists.txt</span><br><span class="line">├── deps</span><br><span class="line">     ├── FetchCatch2.cmake</span><br><span class="line">     └── FetchKBase.cmake</span><br><span class="line">├── examples</span><br><span class="line">├── ezio</span><br><span class="line">├── gen.py</span><br><span class="line">├── LICENSE</span><br><span class="line">├── README.md</span><br><span class="line">└── tests</span><br></pre></td></tr></table></figure>
+<p>相比使用 git submodule 的做法，直接移除了依赖源码，取而代之的是 <code>deps</code> 文件夹里的 cmake 脚本。每个脚本里都用 FetchContent 获取依赖内容。</p>
+<p>因为 ezio lib 需要引入 KBase lib，所以在它的 <code>CMakeLists.txt</code> 里，有一行</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="variable">$&#123;EZIO_DEPS_DIR&#125;</span>/FetchKBase.cmake)</span><br></pre></td></tr></table></figure>
+<p>抽象语义上，运行完上面的脚本 KBase 就已经成为整体工程一员，所以外部不需要单独设置，直接使用依赖内容即可：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">target_link_libraries</span>(ezio</span><br><span class="line">  PRIVATE kbase</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>类似的，unittests 引入 Catch2, 它的 cmake 文件里也只需要</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="variable">$&#123;EZIO_DEPS_DIR&#125;</span>/FetchCatch2.cmake)</span><br><span class="line"></span><br><span class="line"><span class="comment">#...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span>(ezio_test</span><br><span class="line">  PRIVATE</span><br><span class="line">    ezio</span><br><span class="line">    kbase</span><br><span class="line">    Catch2</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>运行 configuration 后，会有如下操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">-- The CXX compiler identification is Clang 6.0.1</span><br><span class="line">-- Check for working CXX compiler: /usr/bin/c++</span><br><span class="line">-- Check for working CXX compiler: /usr/bin/c++ -- works</span><br><span class="line">-- Detecting CXX compiler ABI info</span><br><span class="line">-- Detecting CXX compiler ABI info - done</span><br><span class="line">-- Detecting CXX compile features</span><br><span class="line">-- Detecting CXX compile features - done</span><br><span class="line">-- cotire 1.8.0 loaded.</span><br><span class="line">-- BUILD_TYPE = DEBUG</span><br><span class="line">-- Fetching dep: kbase-v0.1.3</span><br><span class="line">-- kbase-v0.1.3 source dir: /home/kingsamchen/Projects/ezio/build/deps/kbase-v0.1.3-src</span><br><span class="line">-- kbase-v0.1.3 binary dir: /home/kingsamchen/Projects/ezio/build/Debug/kbase-v0.1.3-build</span><br><span class="line">-- BUILD_TYPE = DEBUG</span><br><span class="line">-- CXX target kbase cotired.</span><br><span class="line">-- KBASE_BUILD_UNITTESTS = ON</span><br><span class="line">-- CXX target ezio cotired.</span><br><span class="line">-- EZIO_BUILD_UNITTESTS = ON</span><br><span class="line">-- Fetching dep: catch2-v2.5.0</span><br><span class="line">-- catch2-v2.5.0 source dir: /home/kingsamchen/Projects/ezio/build/deps/catch2-v2.5.0-src</span><br><span class="line">-- catch2-v2.5.0 binary dir: /home/kingsamchen/Projects/ezio/build/Debug/catch2-v2.5.0-build</span><br><span class="line">-- CXX target ezio_test cotired.</span><br><span class="line">-- EZIO_BUILD_EXAMPLES = ON</span><br><span class="line">-- Configuring done</span><br><span class="line">-- Generating done</span><br></pre></td></tr></table></figure>
+<p>依赖的源码被统一存放在了 <code>ezio/build/deps</code> 目录中；而对应的依赖构建则存放到 <code>ezio/build/Debug</code> 目录中。</p>
+<p>两个目录结构直观看如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">build/deps</span><br><span class="line">├── catch2-v2.5.0-src</span><br><span class="line">│   ├── appveyor.yml</span><br><span class="line">│   ├── artwork</span><br><span class="line">│   ├── CMake</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── codecov.yml</span><br><span class="line">│   ├── CODE_OF_CONDUCT.md</span><br><span class="line">│   ├── conanfile.py</span><br><span class="line">│   ├── contrib</span><br><span class="line">│   ├── docs</span><br><span class="line">│   ├── examples</span><br><span class="line">│   ├── include</span><br><span class="line">│   ├── LICENSE.txt</span><br><span class="line">│   ├── misc</span><br><span class="line">│   ├── projects</span><br><span class="line">│   ├── README.md</span><br><span class="line">│   ├── scripts</span><br><span class="line">│   ├── single_include</span><br><span class="line">│   └── third_party</span><br><span class="line">└── kbase-v0.1.3-src</span><br><span class="line">    ├── build</span><br><span class="line">    ├── cmake</span><br><span class="line">    ├── CMakeLists.txt</span><br><span class="line">    ├── deps</span><br><span class="line">    ├── docs</span><br><span class="line">    ├── gen.py</span><br><span class="line">    ├── kbase</span><br><span class="line">    ├── LICENSE</span><br><span class="line">    ├── README.md</span><br><span class="line">    └── tests</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line">build/Debug</span><br><span class="line">├── bin</span><br><span class="line">│   ├── chat-client</span><br><span class="line">│   ├── chat-server</span><br><span class="line">│   ├── echo-client</span><br><span class="line">│   ├── echo-server</span><br><span class="line">│   ├── ezio_test</span><br><span class="line">│   └── unity</span><br><span class="line">├── build.ninja</span><br><span class="line">├── catch2-v2.5.0-build</span><br><span class="line">│   ├── CMakeFiles</span><br><span class="line">│   ├── cmake_install.cmake</span><br><span class="line">│   ├── CTestTestfile.cmake</span><br><span class="line">│   ├── DartConfiguration.tcl</span><br><span class="line">│   └── Testing</span><br><span class="line">├── catch2-v2.5.0-subbuild</span><br><span class="line">│   ├── build.ninja</span><br><span class="line">│   ├── catch2-v2.5.0-populate-prefix</span><br><span class="line">│   ├── CMakeCache.txt</span><br><span class="line">│   ├── CMakeFiles</span><br><span class="line">│   ├── cmake_install.cmake</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   └── rules.ninja</span><br><span class="line">├── CMakeCache.txt</span><br><span class="line">├── CMakeFiles</span><br><span class="line">│   ├── 3.12.1</span><br><span class="line">│   ├── cmake.check_cache</span><br><span class="line">│   ├── CMakeOutput.log</span><br><span class="line">│   ├── CMakeTmp</span><br><span class="line">│   ├── feature_tests.bin</span><br><span class="line">│   ├── feature_tests.cxx</span><br><span class="line">│   └── TargetDirectories.txt</span><br><span class="line">├── cmake_install.cmake</span><br><span class="line">├── examples</span><br><span class="line">│   ├── chat</span><br><span class="line">│   ├── CMakeFiles</span><br><span class="line">│   ├── cmake_install.cmake</span><br><span class="line">│   └── echo</span><br><span class="line">├── ezio</span><br><span class="line">│   ├── CMakeFiles</span><br><span class="line">│   ├── cmake_install.cmake</span><br><span class="line">│   ├── cotire</span><br><span class="line">│   ├── ezio_CXX_cotire.cmake</span><br><span class="line">│   └── ezio_CXX_Debug_cotire.cmake</span><br><span class="line">├── kbase-v0.1.3-build</span><br><span class="line">│   ├── CMakeFiles</span><br><span class="line">│   ├── cmake_install.cmake</span><br><span class="line">│   └── kbase</span><br><span class="line">├── kbase-v0.1.3-subbuild</span><br><span class="line">│   ├── build.ninja</span><br><span class="line">│   ├── CMakeCache.txt</span><br><span class="line">│   ├── CMakeFiles</span><br><span class="line">│   ├── cmake_install.cmake</span><br><span class="line">│   ├── CMakeLists.txt</span><br><span class="line">│   ├── kbase-v0.1.3-populate-prefix</span><br><span class="line">│   └── rules.ninja</span><br><span class="line">├── lib</span><br><span class="line">│   ├── libezio.a</span><br><span class="line">│   ├── libkbase.a</span><br><span class="line">│   └── unity</span><br><span class="line">├── rules.ninja</span><br><span class="line">└── tests</span><br><span class="line">    ├── CMakeFiles</span><br><span class="line">    ├── cmake_install.cmake</span><br><span class="line">    ├── cotire</span><br><span class="line">    ├── ezio_test_CXX_cotire.cmake</span><br><span class="line">    └── ezio_test_CXX_Debug_cotire.cmake</span><br></pre></td></tr></table></figure>
+<p>两个依赖脚本被我大幅自定义过：</p>
+<ol>
+<li>默认模式下 src 和 build 两个目录是在同一个父目录中；而我调整后所有依赖的 src 在一个目录下，build 目录归属当前构建目录</li>
+<li>一个依赖 ID 由：名字 + tag 唯一构成</li>
+<li>FetchContent 在进行 populate 前会首先通过代码检测目标文件是否已经存在，如果存在则提示 <em>kbase-v0.1.3 source dir is already ready; skip downloading</em> 然后设置已存在的目录为目标依赖</li>
+</ol>
+<p>上面三个点相辅相成。</p>
+<p>原因：</p>
+<ul>
+<li>我个人在 Linux 上使用 CLion 作为开发环境，CLion 目前只能使用 makefile 而我个人偏好 ninja。如果设置不同的 generator（例如 ninja 和 makefile）运行 configuration，依赖的源码会被 FetchContent 清空并重新下载。因为对某个 generator 来说，这份源码并不是它 configure 的。</li>
+<li>Windows 上也会使用 CMake 作为工具链，考虑到 WSL，两个环境使用同一份源码是最好的。于是加剧了第一点。</li>
+</ul>
+<p>于是依赖脚本如果发现目标源码已经存在，那么就直接跳过 fetch 过程直接进行 populate；同时分离存放依赖源码和构建的目录，这样就可以解决上面两个问题。</p>
+<p>依赖 ID 引入版本号的为了解决某个依赖升级后，因为目标源码已经存在 fetch 过程被跳过导致无法更新；同时如果依赖源码更新了而某一个 generator 不知道（因为名字上看不出），则后续的 configuration 会提示错误。</p>
+<p>完整的配置可见：<a href="https://github.com/kingsamchen/ezio" target="_blank" rel="noopener">https://github.com/kingsamchen/ezio</a></p>
+<h3 id="Recap"><a href="#Recap" class="headerlink" title="Recap"></a>Recap</h3><p>总结一下在这个模式下要引入一个依赖的步骤：</p>
+<ol>
+<li><p>实现依赖设置脚本 <code>FetchXXX.cmake</code>，存放到目录 <code>deps</code> 中</p>
+</li>
+<li><p>在需要引入这个依赖的模块的 <code>CMakeLists.txt</code> 中使用</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span>(<span class="variable">$&#123;EZIO_DEPS_DIR&#125;</span>/FetchXXX.cmake)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>使用 <code>target_link_libraries()</code> 等方式使用依赖即可</p>
+</li>
+</ol>
+<h3 id="Wraps-Up"><a href="#Wraps-Up" class="headerlink" title="Wraps Up"></a>Wraps Up</h3><p>这个模式弄熟之后使用起来就很方便，且足够灵活，能够应付大多数场景。</p>
+<p>但是细节上，这个模式目前来看有一个很大的缺点：因为 CMake 早前版本的各种设计问题，需要通过很多规范来避免出现问题；同时这些规范映射到具体的工程配置，都是大段类似的代码。</p>
+<p><code>deps</code> 目录下的 <code>FetchXXX.cmake</code> 内容其实大同小异；而不同工程的顶层 <code>CMakeLists.txt</code> 其实也是大同小异；都可以抽象出一个 base template。</p>
+<p>目前这些文件的编写还是要靠人肉手写来完成，不过我觉得可以通过一个简单的 python 脚本 + 文件模板来就简化。</p>
+<p>细想，如果未来这套方案成熟，并且随着 FetchContent 模块的迭代功能愈发完善，实现一套以个模式为基础的  C++ 依赖管理器应该不是很难的事情。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/">http://kingsamchen.github.io/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/git/">git</a>
+            
+              <a href="/tags/cmake/">cmake</a>
+            
+              <a href="/tags/dependency-management/">dependency management</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/02/06/monthly-read-posts-in-jan-2019/">
+        <span class="next-text nav-default">Monthly Read Posts in Jan 2019</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/';
+        this.page.identifier = '2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/';
+        this.page.title = 'C++ 工程依赖管理新方向：CMake & Git';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

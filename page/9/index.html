@@ -182,6 +182,234 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/01/01/monthly-read-posts-in-dec-2017/">Monthly Read Posts in Dec 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-01-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>C++ 11 Concurrency: <a href="https://baptiste-wicht.com/posts/2012/03/cpp11-concurrency-part1-start-threads.html" target="_blank" rel="noopener">Part 1</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/03/cp11-concurrency-tutorial-part-2-protect-shared-data.html" target="_blank" rel="noopener">Part 2</a> &amp; <a href="https://baptiste-wicht.com/posts/2012/04/c11-concurrency-tutorial-advanced-locking-and-condition-variables.html" target="_blank" rel="noopener">Part 3</a></p>
+<p>本来想作为 C++ Concurrency in Action 的一个补充，但是发现这个 series （迄今）写得实在是太一般了…看看后续有没有改进</p>
+<hr>
+<p><a href="http://blog.poetries.top/2017/11/04/fiddler/" target="_blank" rel="noopener">使用Fiddler做抓包分析</a></p>
+<p>除了 auto-responder ，其他部分内容感觉都好一般</p>
+<hr>
+<p><a href="https://zhuanlan.zhihu.com/p/21348220" target="_blank" rel="noopener">高并发性能调试经验分享</a></p>
+<p>文章不短，但是核心还是调试那几板斧：</p>
+<ul>
+<li>尝试重现/增加重现概率</li>
+<li>脑补可能的 root cause</li>
+<li>通过实验排除</li>
+</ul>
+<p>文章开头说这类问题适合筛应届生，纯属胡说八道。</p>
+<p>首先前面说的那几点虽然是很容易回答，毕竟提纲挈领，但是实际解决过这类多线程/高并发的问题的人都知道，很多时候问题都是高度上下文相关的，换一个上下文很多之前的假设推断手段什么的都没效果，毕竟这是一个强经验相关的 domain。指望碰到一个应届生能熟练解决这类问题（停留在打嘴炮阶段不算），还不如指望哪天出现强 AI。</p>
+<hr>
+<p><a href="https://www.keakon.net/2015/09/07/%E5%88%9D%E6%8E%A2Python3%E7%9A%84%E5%BC%82%E6%AD%A5IO%E7%BC%96%E7%A8%8B" target="_blank" rel="noopener">初探 Python 3 的异步 IO 编程</a><br><a href="https://www.ziwenxie.site/2016/12/19/python-asyncio/" target="_blank" rel="noopener">Python并发编程之协程/异步IO</a></p>
+<p>口水文，还好是在地铁上看完的。</p>
+<hr>
+<p><a href="https://tech.meituan.com/about-desk-io.html" target="_blank" rel="noopener">磁盘I/O那些事</a></p>
+<p>实战那部分写的不错</p>
+<p>另外，文章 url 的 desk 目测是 disk 的 typo</p>
+<hr>
+<p><a href="https://garbagecollected.org/2014/09/14/how-google-authenticator-works/" target="_blank" rel="noopener">How Google Authenticator Works</a></p>
+<p>看完想自己写一个</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=C4Z3c4Sv52U" target="_blank" rel="noopener">A Few Good Types - Neil MacIntosh - CppCon 2015</a></p>
+<p>介绍了一波 <code>array_view</code> 和 <code>string_vew</code></p>
+<p>可惜 <code>array_view</code> 没有进标准</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=u5senBJUkPc" target="_blank" rel="noopener">All Your Tests Are Terrible - Titus Winters and Hyrum Wright - CppCon 2015</a></p>
+<p>又名：单元测试的几条军规</p>
+<p>基本覆盖了实现单元测试 case 的一些基本准则。两个演说者很逗，将相声一样</p>
+<p>不过我其实更关心部分这个 talk 并没有涉及到，比如涉及 GUI 的交互逻辑怎么做 ut；负责模块上粒度上怎么抽诸如此类..</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD04V009" target="_blank" rel="noopener">Futures from Scratch - Arthur O’Dwyer - CppCon 2015</a></p>
+<p>一些和 <code>future</code> 有关实现细节</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/12/08/add-bitwise-operations-for-enum-types-automatically/">自动为 enum 类型添加位运算操作符</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-12-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>有时候需要在 C++ 里用 <code>enum (class)</code> 表示 flags，进行基础的 bitwise 运算，而哪怕是支持自动到 underlying integer 转换的 traditional enum，也需要额外的 cast 才能实现，所以在需要的时候为 <code>enum</code> 添加位运算支持还是有一定市场的。</p>
+<p>单独为每个需要的 <code>enum</code> 提供相关重载可以实现细粒度的控制，并且必要的时候可以加上 range-check 的校验。</p>
+<p>然而这里有两个问题：</p>
+<ol>
+<li>大部分情况下不需要 range-check 这种检查，因为通常不会在接口这一层暴露</li>
+<li>如果一个 module 里会用到两个以上的 enum-based-flags，那么单独实现会很蛋疼</li>
+</ol>
+<p>所以一个解决方案是，提供基于函数模板的重载，并且利用 ADL 将这部分重载锁在一个具体的 namespace 内，例如马上（C++ 20）就要被废弃的 <code>rel_ops</code>。</p>
+<p>同时，我们希望这部分重载只对 <code>enum / enum class</code> 有效，其他类型不进行应用。可以通过 SFINAE 实现这点。</p>
+<p>利用快下班的时间做了一个基本的实现：</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-comment" style="color: rgb(136, 136, 136);">// Casts an enum value into an equivalent integer.</span>
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">enum_cast</span><span class="hljs-params">(E e)</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+</span>{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">static_cast</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">underlying_type_t</span>&lt;E&gt;&gt;(e);
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops {
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) | enum_cast(rhs));
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    lhs = E(enum_cast(lhs) | enum_cast(rhs));
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>&amp;(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) &amp; enum_cast(rhs));
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>&amp;=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    lhs = E(enum_cast(lhs) &amp; enum_cast(rhs));
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>^(E lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(enum_cast(lhs) ^ enum_cast(rhs));
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&amp;&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>^=(E&amp; lhs, E rhs) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    lhs = E(enum_cast(lhs) ^ enum_cast(rhs));
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> lhs;
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> E&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">constexpr</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-keyword" style="color: rgb(252, 194, 140);">enable_if_t</span>&lt;<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::is_enum&lt;E&gt;::value, E&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>~(E op) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">noexcept</span>
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> E(~enum_cast(op));
+}
+
+}   <span class="hljs-comment" style="color: rgb(136, 136, 136);">// namespace enum_ops</span></pre>
+
+<p>测试代码：</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">enum</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> ChangeLevel : <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> {
+    None = <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>,
+    Local = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>,
+    Server = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>,
+    All = Local | Server
+};
+
+TEST(EnumOps, General)
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops;
+
+    ChangeLevel level = ChangeLevel::None;
+    level |= ChangeLevel::Local;
+    level |= ChangeLevel::Server;
+
+    EXPECT_TRUE(level == ChangeLevel::All);
+    EXPECT_TRUE(enum_cast(level &amp; ChangeLevel::Local) != <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>);
+    EXPECT_TRUE(enum_cast(level &amp; ChangeLevel::Server) != <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>);
+}
+
+TEST(EnumOps, NonEnumType)
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">namespace</span> enum_ops;
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> l = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>;
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">unsigned</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> r = <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span> &lt;&lt; <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>;
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> rv = l | r;
+    EXPECT_EQ(<span class="hljs-number" style="color: rgb(211, 99, 99);">3</span>, rv);
+
+    <span class="hljs-comment" style="color: rgb(136, 136, 136);">// can't compile</span>
+    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//std::string s1 = "hello";</span>
+    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//std::string s2 = "world";</span>
+    <span class="hljs-comment" style="color: rgb(136, 136, 136);">//s1 | s2;</span>
+}</pre>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/12/02/monthly-read-posts-in-nov-2017/">Monthly Read Posts in Nov 2017</a>
         
       </h1>
@@ -520,184 +748,6 @@
 <p>“<em>Line 16: warning C4573: the usage of ‘Foo::Print’ requires the compiler to capture ‘this’ but the current default capture mode does not allow it</em>“</p>
 <p>然而相同的代码在 Visual Studio 2017 上，以及 <a href="https://wandbox.org/permlink/F9Y82SFLZku2FwBZ" target="_blank" rel="noopener">clang 3.8</a> 上均不会出现类似警告。</p>
 <p>我在 StackOverflow 上提了<a href="https://stackoverflow.com/questions/47177263/why-get-pointer-to-member-function-inside-lambda-triggers-warning-on-vs2013" target="_blank" rel="noopener">一个问题</a>，然而截止本文发布前，并没有看起来靠谱的答案出现。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/11/02/monthly-read-posts-in-oct-2017/">Monthly Read Posts in Oct 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-11-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://medium.com/software-development-2/coroutines-and-fibers-why-and-when-5798f08464fd" target="_blank" rel="noopener">Coroutines and Fibers. Why and When</a></p>
-<p>所以什么时候各大语言的 coroutine 标准化工作可以结束</p>
-<hr>
-<p>Efficient Minidumps <a href="http://www.debuginfo.com/articles/effminidumps.html" target="_blank" rel="noopener">1</a> &amp; <a href="http://www.debuginfo.com/articles/effminidumps2.html" target="_blank" rel="noopener">2</a></p>
-<p>如何最经济的在 dump 中保存足够多的信息</p>
-<hr>
-<p><a href="http://floating.io/2017/07/lambda-shared_ptr-memory-leak/" target="_blank" rel="noopener">lambda + shared_ptr = memory leak</a></p>
-<p>Self-reference makes reference-count go weird.</p>
-<hr>
-<p><a href="http://blog.omega-prime.co.uk/2015/09/03/asynchronous-and-non-blocking-io/" target="_blank" rel="noopener">Asynchronous and non-blocking IO</a><br><a href="https://eklitzke.org/blocking-io-nonblocking-io-and-epoll" target="_blank" rel="noopener">Blocking I/O, Nonblocking I/O, And Epoll</a><br><a href="https://jvns.ca/blog/2017/06/03/async-io-on-linux--select--poll--and-epoll/" target="_blank" rel="noopener">Async IO on Linux: select, poll, and epoll</a><br><a href="https://leehao.me/I-O%E5%A4%9A%E8%B7%AF%E5%A4%8D%E7%94%A8%E4%B9%8B-epoll-%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" target="_blank" rel="noopener">I/O多路复用之 epoll 系统调用</a><br><a href="https://taozj.net/201604/linux-env-program-(1" target="_blank" rel="noopener">Linux环境开发（一）：同异步、阻塞的IO模型相关问题</a>-async-blocking-io-model.html)</p>
-<p>I/O multiplexing and Epoll 快速入门；最后两篇比较水，内容基本前三篇都有覆盖</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=cXaZXzeAhEg" target="_blank" rel="noopener">CppCon 2015: Edouard Alligand &amp; Joel Falcou “Introducing brigand”</a></p>
-<p>yet another TMP library</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=DAvZ3OG9cNo" target="_blank" rel="noopener">CppCon 2015: Joshua Gerrard “The dangers of C-style casts”</a></p>
-<p>老调重弹</p>
-<hr>
-<p>How to infix your code - Pascal Bormann - CppCon 2015</p>
-<p>Let’s get fun</p>
-<hr>
-<p>Practical Move Semantics - Titus Winters - CppCon 2015</p>
-<hr>
-<p>Traits Go Mainstream - Leor Zolman - CppCon 2015</p>
-<p>这个 talk 对于解释为什么会有 SFINAE 做的比较到位，推荐</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/10/29/emulate-haskell-infix-operator-in-cpp/">Emulate Haskell Infix Operator in CPP</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-10-29
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>Usage at a glance</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
-<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;</span></span>
-
-<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-string" style="color: rgb(162, 252, 162);">"infix_op.h"</span></span>
-
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
-</span>{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> find = Infix([](<span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>&amp; container, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>&amp; value) {
-        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::find(container.begin(), container.end(), value);
-    });
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> seq = <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">vector</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span>&gt; { <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">3</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">5</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">7</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">9</span> };
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">bool</span> found = (seq | find | <span class="hljs-number" style="color: rgb(211, 99, 99);">7</span>) != seq.cend();
-    <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">cout</span> &lt;&lt; found &lt;&lt; <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">endl</span>;
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
-}</pre>
-
-<p>Implementation:</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">pragma</span> once</span>
-
-<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;xutility&gt;</span></span>
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">struct</span> InfixOp {
-    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">explicit</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">InfixOp</span><span class="hljs-params">(BinaryFn&amp;&amp; fn)</span>
-        : <span class="hljs-title" style="color: rgb(255, 255, 170);">fn_</span><span class="hljs-params">(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(fn)</span>)
-    </span>{}
-
-    BinaryFn fn_;
-};
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
-InfixOp&lt;BinaryFn&gt; Infix(BinaryFn&amp;&amp; fn)
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> InfixOp&lt;BinaryFn&gt;(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(fn));
-}
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> T, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">struct</span> InfixExpr {
-    InfixExpr(T&amp;&amp; lhs, BinaryFn&amp;&amp; op)
-        : lhs_(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;T&gt;(lhs)), op_(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(op))
-    {}
-
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> U&gt;
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">decltype</span>(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(U&amp;&amp; rhs)
-    {
-        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> op_(lhs_, <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;U&gt;(rhs));
-    }
-
-    T lhs_;
-    BinaryFn op_;
-};
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> T, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
-InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(T&amp;&amp; lhs, InfixOp&lt;BinaryFn&gt; op)
-{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> InfixExpr&lt;T, BinaryFn&gt;(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;T&gt;(lhs), <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::move(op.fn_));
-}</pre>
-
-<p>Have fun.</p>
 
         
       
