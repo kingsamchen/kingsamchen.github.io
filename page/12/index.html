@@ -182,6 +182,61 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/06/15/use-base-bind-with-std-function/">Use base::Bind With std::function</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-06-15
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><code>base::Bind()</code> 和 <code>base::Callback</code> 可以看作是对标准库 <code>std::bind()</code> 和 <code>std::function</code> 的模拟；因为 chromium 项目早在 C++ 11 正式通过前就已经存在好多年了。</p>
+<p>我为直播姬设计新的网络通信基础组件时，接口的回调 handler 通常设计为 <code>std::function</code> 对象，因为它可以“吸收”任何函数对象，大多数情况下这个设计运转的非常良好；但是这里有一个略微棘手的问题： <code>base::Callback</code> 对象无法被 <code>std::function</code> 使用。</p>
+<p>问题本质很简单，因为 <code>base::Callback</code> 不是一个 function object，因为它不支持以函数形式调用（没有提供 <code>operator()</code> 的重载），instead，它提供了一个 <code>Run()</code> 函数来执行这个 callback…</p>
+<p>虽然我之前吐槽过好多次 chromium 的很多架构设计完全是 Java-Style 的，但是这里并不打算再拎出来批判一次，我们要聚焦的是如何解决这个问题。</p>
+<p>解决思路很简单：既然它不是一个 function object，那么我们就给他包一层 function object 的皮就好了：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/bind.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span>&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallableCallback</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> R, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">CallableCallback</span>&lt;R(Args...)&gt; &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">using</span> <span class="keyword">callback_t</span> = base::Callback&lt;R(Args...)&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">CallableCallback</span><span class="params">(<span class="keyword">callback_t</span> callback)</span></span></span><br><span class="line">        : callback_(callback)</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">R <span class="title">operator</span><span class="params">()</span><span class="params">(Args... args)</span> <span class="keyword">const</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> callback_.Run(args...);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">callback_t</span> callback_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Callback&gt;</span><br><span class="line">auto MakeCallable(Callback callback)-&gt;CallableCallback&lt;typename Callback::RunType&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> Sig = <span class="keyword">typename</span> Callback::RunType;</span><br><span class="line">    <span class="keyword">return</span> CallableCallback&lt;Sig&gt;(callback);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>辅助函数 <code>MakeCallable()</code> 可以将一个 <code>base::Callback</code> 对象转换成一个 function object。</p>
+<p>一个简单的示例如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Inc</span><span class="params">(<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ++i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Foo</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="built_in">std</span>::<span class="built_in">string</span>, <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Test()</span><br><span class="line">        : msg_(<span class="string">"test"</span>), weak_ptr_factory_(<span class="keyword">this</span>)</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Bark</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; data &lt;&lt; <span class="string">":\t"</span> &lt;&lt; msg_ &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> msg_;</span><br><span class="line">    base::WeakPtrFactory&lt;Test&gt; weak_ptr_factory_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"--- test case 1 ---\n"</span>;</span><br><span class="line">    <span class="built_in">std</span>::function&lt;<span class="keyword">int</span>(<span class="keyword">int</span>)&gt; fn(MakeCallable(base::Bind(&amp;Inc)));</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; fn(<span class="number">5</span>) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"--- test case 2 ---\n"</span>;</span><br><span class="line">    Test* ptr = <span class="keyword">new</span> Test();</span><br><span class="line">    <span class="built_in">std</span>::function&lt;<span class="keyword">void</span>()&gt; mfn(</span><br><span class="line">        MakeCallable(base::Bind(&amp;Test::Bark, ptr-&gt;weak_ptr_factory_.GetWeakPtr(), <span class="string">"inside"</span>)));</span><br><span class="line">    mfn();</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"release test instance\n"</span>;</span><br><span class="line">    <span class="keyword">delete</span> ptr;</span><br><span class="line">    mfn();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>小巧优雅纯天然</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/">禁止程序多实例并存并且自动激活第一个实例</a>
         
       </h1>
@@ -519,78 +574,6 @@
 <p>实话说，经过一年半（距离上次写 EasyKeeper），自己主导过两个不大不小的项目后，对于为什么需要有 MVC/MVP/MVVM 有了一些更实际的想法，并且也能理解有时候过分追求这些反而是一种坑。</p>
 <p>考虑到目前应该是没法公开为投稿工具写的那部分代码（压制模块算起来大概有 1K+ lines of code），所以这个 <em>SimpleVideoEncoder</em> 的意义也大大折扣，基本只能作为一个 ffmpeg 压制功能的简单展示…</p>
 <p>不过最后还是要赞一下 C# 对 Pipe IPC 的封装，几行代码做了需要几十行 C++ 代码的事情；并且基于 event 的通知机制比起传统的 observer，更能准确的体现 OOP 中<strong>对象级别消息通信</strong>的内涵。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/04/02/monthly-read-posts-in-mar-2017/">Monthly Read Posts in Mar 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-04-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://playfulprogramming.blogspot.hk/2017/01/generate-lambdas-for-clarity-and.html" target="_blank" rel="noopener">Generate lambdas for clarity and performance</a></p>
-<p>Generate a class of lambdas with auto-return-type deduction.</p>
-<p>唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 <code>std::function&lt;&gt;</code> 来做 workaround</p>
-<hr>
-<p><a href="http://nullprogram.com/blog/2016/08/03/" target="_blank" rel="noopener">Appending to a File from Multiple Processes</a></p>
-<p>经验问题，写客户端的 logger 轮子时应该会经常需要考虑到这个问题。</p>
-<p>文章针对的是 POSIX 系统，不过不同系统在一些具体策略/细节上也有区别。</p>
-<p>另，Windows 上这个场景有直接的 API 调用保证。</p>
-<p>不过有点比较奇怪，chromium 的 base::logging 只提供了 Windows 下的多进程无锁 appending，POSIX/Mach 下依然用的是线程同步锁和全局锁，可能考虑的原因是实现起来坑比较大？</p>
-<hr>
-<p>OAuth 2.0 Protocol</p>
-<ol>
-<li><a href="http://tutorials.jenkov.com/oauth2/authorization.html" target="_blank" rel="noopener">oauth2 authorization</a></li>
-<li><a href="https://taozj.org/201605/principle-of-oauth2.html" target="_blank" rel="noopener">principle-of-oauth2</a></li>
-<li><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="noopener">oauth_2_0</a></li>
-</ol>
-<p>第二篇文章基本可以看作第一篇的翻译，但是很多地方都没有翻译出来，所以推荐主要看第一篇文章，把第二、三篇作为补充材料</p>
-<hr>
-<p><a href="https://channel9.msdn.com/Events/GoingNative/2013/Inheritance-Is-The-Base-Class-of-Evil" target="_blank" rel="noopener">Inheritance Is The Base Class of Evil</a></p>
-<p>C9 上的一个 Tech Talk，speaker 是 Adobe 的技术大佬，但是我觉得有标题党之嫌。</p>
-<p>Talk 中展现出来的哲学观挺有意思的，比如那句 <em>There is no polymorphic type, just polymorphic use of types</em>。</p>
-<hr>
-<p><a href="https://channel9.msdn.com/Shows/C9-GoingNative/GoingNative-53-Learning-STL-Multithreading" target="_blank" rel="noopener">Learning STL Multithreading</a></p>
-<p>虽然标题是 STL Multithreading，但是里面的核心内容基本都是原理性的，通用的。</p>
-<p>对于 mutex/condition-variable 这类比较高级的 synchronization primitives 和低级的 atomic variables 均有涉及，并且也给了实践建议。</p>
-<p>话说右边那个胖胖的小哥的口音听起来真的是容易懂…</p>
-<p>另外有个挺有意思的细节，快到最后的时候胖小哥提到了 <code>async</code> 和 <code>future</code>，他说希望大家能优先考虑这俩玩意儿，但是说了几句话又欲言又止，最后无奈地说 <em>we will discuss these later</em>。。。估计他想了想，就目前标准给的设施和实现情况，要做到 task-based paralleilism，那坑大的都可以把自己埋进去了。</p>
 
         
       

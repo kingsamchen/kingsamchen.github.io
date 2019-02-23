@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-02-10T12:49:50.720Z</updated>
+  <updated>2019-02-23T13:57:51.394Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>在 Linux 上使用深信服 VPN</title>
+    <link href="http://kingsamchen.github.io/2019/02/23/using-sangfor-vpn-on-linux/"/>
+    <id>http://kingsamchen.github.io/2019/02/23/using-sangfor-vpn-on-linux/</id>
+    <published>2019-02-23T12:26:29.000Z</published>
+    <updated>2019-02-23T13:57:51.394Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;因为公司使用 Windows 和 MacOS 的人最多，因此导致两个后果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;连接公司内网需要使用的深信服 VPN 基本只支持 Windows 和 MacOS&lt;/li&gt;
+&lt;li&gt;后端 golang 大仓代码基本只能在 MacOS 或者 Linux 上提交和调试&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;求一下交集可以发现，在贵司使用 Linux 作为开发平台的同学应该很难过。很不幸的是，我刚好属于那种在 Linux (虚拟机里跑 Mint) 上写后端服务的人。&lt;/p&gt;
+&lt;p&gt;公司买的深信服的 VPN 服务，那个客户端虽然官方宣称支持 ubuntu，但是事实是压根不能用，连接成功后一旦有数据包就自动断开。&lt;/p&gt;
+&lt;p&gt;官方论坛有人反映过类似的问题，得到的回答千篇一律都是推荐使用 Windows 和 MacOS。&lt;/p&gt;
+&lt;p&gt;然而让我使用屎一样的 MacOS 是不可能的；让我在自己的主力台式机的 Windows 上装深信服的客户端也是不可能的。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
+    
+      <category term="vpn" scheme="http://kingsamchen.github.io/tags/vpn/"/>
+    
+      <category term="深信服" scheme="http://kingsamchen.github.io/tags/%E6%B7%B1%E4%BF%A1%E6%9C%8D/"/>
+    
+  </entry>
   
   <entry>
     <title>C++ 工程依赖管理新方向：CMake &amp; Git</title>
@@ -674,45 +706,13 @@
     
       <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
     
-      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
-    
       <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
+    
+      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
     
       <category term="RFC" scheme="http://kingsamchen.github.io/tags/RFC/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Non-blocking Connect(2) and Error Handling</title>
-    <link href="http://kingsamchen.github.io/2018/10/27/non-blocking-connect-2-and-error-handling/"/>
-    <id>http://kingsamchen.github.io/2018/10/27/non-blocking-connect-2-and-error-handling/</id>
-    <published>2018-10-27T14:56:18.000Z</published>
-    <updated>2018-10-27T15:32:01.762Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;这是我在实现 &lt;a href=&quot;https://github.com/kingsamchen/ezio/blob/master/ezio/connector_posix.cpp&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;ezio
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
-      <category term="non-blocking" scheme="http://kingsamchen.github.io/tags/non-blocking/"/>
-    
-      <category term="connect" scheme="http://kingsamchen.github.io/tags/connect/"/>
     
   </entry>
   
