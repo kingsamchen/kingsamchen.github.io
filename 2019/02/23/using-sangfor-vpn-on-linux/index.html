@@ -235,7 +235,7 @@
 <li><p>在 vm mint 里首先执行</p>
  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo ip a add 192.168.137.2/24 dev ens33</span><br></pre></td></tr></table></figure>
 <p> 将 vm mint 的 NAT 网卡也加入到 192.168.137.1 的子网里，保证能和 vm win8 的 NAT 网卡通信。<br> 这里 <code>ens33</code> 是我的 vm mint NAT 网卡对应的 interface name，你根据自己需要更改。<br> 然后修改路由表：</p>
- <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span> 打一个没必要的马赛克 -..-</span><br><span class="line">sudo ip r add 172.xx.20.0/24 via 192.168.137.1</span><br><span class="line">sudo ip r add 172.xx.21.0/24 via 192.168.137.1</span><br></pre></td></tr></table></figure>
+ <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#</span><span class="bash"> 打一个没必要的马赛克 -..-</span></span><br><span class="line">sudo ip r add 172.xx.20.0/24 via 192.168.137.1</span><br><span class="line">sudo ip r add 172.xx.21.0/24 via 192.168.137.1</span><br></pre></td></tr></table></figure>
 <p> 这样目的地是公司内网的数据包就转发到 192.168.137.1 里了</p>
 </li>
 <li>因为前面 vm win8 的 NAT 网卡共享了 sangfor vpn 网卡的网络，所以可以正确无误的找到下一跳目标。</li>
@@ -289,6 +289,12 @@
         
         
   <nav class="post-nav">
+    
+      <a class="prev" href="/2019/03/02/monthly-read-posts-in-feb-2019/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Monthly Read Posts in Feb 2018</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
     
     
       <a class="next" href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/">

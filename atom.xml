@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-02-23T13:57:51.394Z</updated>
+  <updated>2019-03-02T07:53:07.361Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,48 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in Feb 2018</title>
+    <link href="http://kingsamchen.github.io/2019/03/02/monthly-read-posts-in-feb-2019/"/>
+    <id>http://kingsamchen.github.io/2019/03/02/monthly-read-posts-in-feb-2019/</id>
+    <published>2019-03-02T07:46:47.000Z</published>
+    <updated>2019-03-02T07:53:07.361Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Network&quot;&gt;&lt;a href=&quot;#Network&quot; class=&quot;headerlink&quot; title=&quot;Network&quot;&gt;&lt;/a&gt;Network&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://www.mnot.net/blog/2018/11/27/header_compression&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Designing Headers for HTTP Compression&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;看起来是 HTTP/2 的 header compression 使用建议&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://www.mnot.net/blog/2017/05/11/status_codes&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;How to Think About HTTP Status Codes&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;HTTP status codes 使用建议。&lt;/p&gt;
+&lt;p&gt;适合结合 Rest API design 相关文章一起食用。&lt;/p&gt;
+&lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming Languages&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://tonybai.com/2016/12/21/how-to-use-timer-reset-in-golang-correctly/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;论golang Timer Reset方法使用的正确姿势&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;golang 这破 timer 坑真多&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://jonasdevlieghere.com/guaranteed-copy-elision/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Guaranteed Copy Elision&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;C++ 17 Guaranteed copy elision explained.&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
+    
+      <category term="http2" scheme="http://kingsamchen.github.io/tags/http2/"/>
+    
+      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
+    
+      <category term="database" scheme="http://kingsamchen.github.io/tags/database/"/>
+    
+      <category term="code review" scheme="http://kingsamchen.github.io/tags/code-review/"/>
+    
+      <category term="unicode" scheme="http://kingsamchen.github.io/tags/unicode/"/>
+    
+  </entry>
   
   <entry>
     <title>在 Linux 上使用深信服 VPN</title>
@@ -113,9 +155,9 @@
     
       <category term="performance" scheme="http://kingsamchen.github.io/tags/performance/"/>
     
-      <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
-    
       <category term="spinlock" scheme="http://kingsamchen.github.io/tags/spinlock/"/>
+    
+      <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
     
       <category term="ptrace" scheme="http://kingsamchen.github.io/tags/ptrace/"/>
     
@@ -669,50 +711,6 @@
       <category term="source internals" scheme="http://kingsamchen.github.io/tags/source-internals/"/>
     
       <category term="message-loop" scheme="http://kingsamchen.github.io/tags/message-loop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Oct 2018</title>
-    <link href="http://kingsamchen.github.io/2018/11/04/monthly-read-posts-in-oct-2018/"/>
-    <id>http://kingsamchen.github.io/2018/11/04/monthly-read-posts-in-oct-2018/</id>
-    <published>2018-11-04T01:38:36.000Z</published>
-    <updated>2018-11-04T01:39:08.316Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Concurrency&quot;&gt;&lt;a href=&quot;#Concurrency&quot; class=&quot;headerlink&quot; title=&quot;Concurrency&quot;&gt;&lt;/a&gt;Concurrency&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://nullprogram.com/blog/2014/09/02/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;C11 Lock-free Stack&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;使用C 11 atomic operations 实现一个轻量的 lock-free stack&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;pre-allocation，不需要考虑单个节点的销毁问题，所以不需要使用 hazard pointer&lt;/li&gt;
-&lt;li&gt;free 和 head 两个列表，两个单独的 head 均可用做 sentinel&lt;/li&gt;
-&lt;li&gt;使用 aba counter 来避免 ABA problem&lt;/li&gt;
-&lt;/ul&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.souyunku.com/2018/07/30/mysql/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;MySQL/InnoDB中，乐观锁、悲观锁、共享锁、排它锁、行锁、表锁、死锁概念的理解&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;感觉这篇讲的好混乱，几个概念是明显正交的都混在一起了。&lt;/p&gt;
-&lt;p&gt;瞄了一眼，基本脑子里都在找平常 locking mechanism 里的概念做映射了。&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://medium.com/@copyconstruct/the-method-to-epolls-madness-d9d2d6378642&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;The method to epoll’s madness&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;总体写的一般，而且内容有点乱。&lt;/p&gt;
-&lt;p&gt;madness 应该指的就是 epoll 对外表现的是引用 file descriptor 但是内部维护的确实 file descrption。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
-    
-      <category term="epoll" scheme="http://kingsamchen.github.io/tags/epoll/"/>
-    
-      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
-    
-      <category term="network" scheme="http://kingsamchen.github.io/tags/network/"/>
-    
-      <category term="RFC" scheme="http://kingsamchen.github.io/tags/RFC/"/>
     
   </entry>
   

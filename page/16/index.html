@@ -182,6 +182,76 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2016/05/23/why-git-flow-model-is-considered-harmful/">为什么我反对使用 git flow</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-05-23
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>如果论知名度，<a href="http://nvie.com/posts/a-successful-git-branching-model/" target="_blank" rel="noopener">git flow</a> 绝对是现在数一数二的 git 协作模型。甚至直到不久之前，我也在用这个模型作为我在 github 上的几个项目的工作流。</p>
+<p>但是一段时间后，我越来越觉得这个 work flow 不仅过于冗余、繁琐，而且在实际操作中充满了艰险。这种想法在我到新公司后，和多个同事（5-7人）一起协作开发一款 android 直播客户端时达到顶峰。</p>
+<p>从核心点来看，git flow 的最大亮点是：</p>
+<ul>
+<li>一个始终稳定且代表可发布产品时刻的 master 分支</li>
+<li>各自独立的开发分支，例如各种 feature 分支</li>
+</ul>
+<h3 id="坑在何处"><a href="#坑在何处" class="headerlink" title="坑在何处"></a>坑在何处</h3><p>对于客户端项目来说，稳定可发布的 master 分支完全没有什么意义。因为客户端没有所谓的线上环境，产品发布有自己单独的发布渠道（例如应用市场，官方主页等），这部分版本更迭完全是天然隔离的。</p>
+<p>而服务端项目，虽然确实需要一个稳定的，对应线上环境的分支，但是其他 work flow 也完全可以做到。例如一个简单的 master 分支和对应开发的 develop 分支。</p>
+<p>其次，git flow 第二个所谓亮点会引发一个很严重的后果：后期合并代码时连锁的冲突问题。</p>
+<p>git flow 最大的亮点导致的一个核心问题就是，大家在各自独立的分支上展开工作，工作完毕了才合并到 develop 分支，导致<strong>每个人距离共同分支（他人修改）太远</strong>。</p>
+<p>这种对彼此的代码修改互相不可知的工作流程，在后期合并代码时简直是噩梦。通常来说，需要有一个专门的人负责合并代码，并且合并某个分支时，对应分支的开发人员要在场，否则对于大块大块陌生的代码，完全没法进行合并操作。</p>
+<p>于是你就会发现，在这一期需求的收尾阶段，你浪费了大量的时间和精力在合并代码上，并且还伴随着潜在的合并出错的风险。</p>
+<p>上一周不到三天的时间内，我已经做了两次修改远程仓库的历史，抹掉新来的同事提交的大块修改代码导致的问题，这只能用灾难来形容。</p>
+<p>现在回过头来想想 git flow 这种独立多 feature 到底有效解决了什么问题？答案是有效解决了一个人为臆想的问题，即：某个要做的需求大大超前于产品的版本。</p>
+<p>就现在的环境而言，出现这种需求，99%的情况下是产品需求不合理。所以正确的做法是，把产品按在地上暴打一顿。</p>
+<h3 id="化繁为简，返璞归真"><a href="#化繁为简，返璞归真" class="headerlink" title="化繁为简，返璞归真"></a>化繁为简，返璞归真</h3><p>个人建议的 git work flow 其实早在 SVN 时代就用的很普遍了：我们只需要一个用于开发的 master 分支。</p>
+<p>对于客户端，只需要一个这样的 master 分支即可，每次到发版本，切出一个发布分支，并在 master 上打上 tag 即可。</p>
+<p>而对于服务端，一个稳定的 master 分支，加上一个开发的 develop 分支即可。</p>
+<p>这种模式下，每个人需要把修改 push 到远程分支时，都需要利用 <code>fetch &amp;&amp; rebase</code> 同步他人修改，而就算此时发生冲突，冲突的范围也绝对是能在控制之中。</p>
+<p>所以这里的核心就是：<strong>减少和公共分支的距离，尽量缩小冲突的大小</strong>。</p>
+<p>Pop quiz: 多次解决小冲突比起一次性解决大冲突会有优势吗？</p>
+<p>妈的简直废话，你没学过什么叫 divide/decrease-and-conquer 吗？</p>
+<p>git flow 这种多分枝模型，给人的感觉就是，because I can，典型的不考虑实际生产环境。</p>
+<p>多说一句，chromium 这种巨型项目，用的就是一个稳定的 master 分支这种工作流。难以想象如果他们用 git flow，最后冲突会出现什么样天崩地裂的景象啊。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2016/05/08/a-potential-danger-lurking-in-android-process-reuse-mechanism/">记一次被 Android 进程复用坑的经历</a>
         
       </h1>
@@ -572,112 +642,6 @@ $$M(i)=\begin{cases}\max\left\{M(LC(i)),M(RC(i))\right\} & \text{otherwise}\\M(L
           <p><strong><em>“Experience is what you get when you didn’t get what you wanted.”</em></strong></p>
 <p><img src="/img/20160401_131200564.jpg" alt=""></p>
 <p><img src="/img/20160401_113819226.jpg" alt=""></p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/03/24/trie-ternary-search-tree-and-autocomplete/">Trie, Ternary Search Tree, and Autocomplete</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-03-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Trie"><a href="#Trie" class="headerlink" title="Trie"></a>Trie</h2><p>对于给定前缀<em>p</em>要求返回集合中所有匹配该前缀的元素的一类问题，例如autocomplete和字典搜索，<a href="https://en.wikipedia.org/wiki/Trie" target="_blank" rel="noopener">Trie</a>是一个很自然的选择。</p>
-<p>前两天闲的蛋疼，于是自己做了一个quick-and-dirty的<a href="https://github.com/kingsamchen/Eureka/tree/master/TrieFoDict" target="_blank" rel="noopener">实现</a>，也算是小小地回顾了下当年造数据结构轮子的光景。</p>
-<p>不考虑优化手段，trie的核心性质在于：给定一个字母表<em>T</em>， 每个trie node除了表示当前一个字符之外，还有<code>len(T)</code>个child nodes，每个child node对应下一个可能的字符，于是一个字符串就这样被保存在了路径上。</p>
-<p>直觉上看，trie是通过增加宽度来减小高度（高度和最长的单词长度一直），以减小查询的时间复杂度。</p>
-<p>不过在细节上，node保存的信息可以有不同处理：</p>
-<p>第一种做法是node保存从root到此node的完整路径信息，如图：</p>
-<p><img src="/img/trie_sample_style_1.png" alt=""></p>
-<p>这么做的好处是之后需要路径信息时不需要额外的处理；当然不好的一点是node耗费的内存也变大了。</p>
-<p>第二种做法是node仅保存当前字符的信息，如图：</p>
-<p><img src="/img/trie_sample_style_2.png" alt=""></p>
-<p>我最后选择了第二种做法。</p>
-<p>另外，每个node还要有一个<code>end-of-word</code>的mark，因为路径中间的node有可能已经是一个完整的单词，例如<em>he</em>是<em>here</em>的前缀，但是两个都是完整的单词。</p>
-<p>实现提供了三个接口：</p>
-<ul>
-<li><code>Insert</code>负责插入一个word到trie中</li>
-<li><code>Contains</code>检查trie当前是否存在某个word</li>
-<li><code>Search</code>接受一个前缀，返回一个包含所有满足改前缀的word的集合</li>
-</ul>
-<p>接口的实现如果采用递归的话，会变成弱智一般的简单。</p>
-<p>不过好在就算是采用迭代，也不会麻烦到哪里去，除了<code>Search</code>。</p>
-<p>为了返回所有包含前缀的单词，实际上我们需要对trie做一个pre-order traversal，于是我们就有了一个stack。</p>
-<p>一开始我是打算用stack保存一个node里还没有处理过的child nodes。这样就需要在迭代时不断往stack里加node，以及不断地从stack里取出node做处理。</p>
-<p>我觉得这个思路很直接，并且觉着写起来会非常的流畅。但是有个不好的地方是，stack最多时需要保存所有的leaf nodes。而trie恰恰是通过增加宽度换取较低的高度，因此内存开销会比较大。</p>
-<p>回龙观周杰伦<a href="http://www.daozhihun.com/" target="_blank" rel="noopener">大木</a>老师提供了另外一个思路：利用stack保存正在处理的nodes。这样stack保存的恰好是构成目标字符串的路径，内存开销也成功压缩到了$O(h)$。</p>
-<p>不愧是德艺双馨的亚洲人气小天王，服！</p>
-<p>不过如果采用这个方法，还需要保存一个额外的信息，指明某个node已经处理过了多少child node，这样才能确定下一个要处理的child node。</p>
-<p>别忘了一个node有字母表大小个children，而我们需要在node和他的child node之前来回切换。当然，如果语言自身提供了类似<code>yield</code>的设施，那实现就轻松多了。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; Trie::Search(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix) <span class="keyword">const</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; words;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Locate the node matching the last character of `prefix`.</span></span><br><span class="line">    <span class="keyword">const</span> TrieNode* node = header_;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> ch : prefix) &#123;</span><br><span class="line">        <span class="keyword">auto</span> pos = Alphabet::GetCharacterIndex(ch);</span><br><span class="line">        <span class="keyword">if</span> (pos == Alphabet::npos) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> TrieNode* child = node-&gt;children[pos];</span><br><span class="line">        <span class="keyword">if</span> (!child) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        node = child;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// We use `processing_nodes` as a stack to maintain nodes that are being processed.</span></span><br><span class="line">    <span class="keyword">using</span> CludeNode = <span class="built_in">std</span>::pair&lt;<span class="keyword">const</span> TrieNode*, <span class="keyword">size_t</span>&gt;;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;CludeNode&gt; processing_nodes;</span><br><span class="line">    processing_nodes.emplace_back(CludeNode(node, <span class="number">0U</span>));</span><br><span class="line">    <span class="keyword">while</span> (!processing_nodes.empty()) &#123;</span><br><span class="line">        <span class="comment">// Don't access `current` after having pushed another node into `processing_nodes`.</span></span><br><span class="line">        <span class="comment">// Because the push might result in memory reallocation, rendering `current` an invalid</span></span><br><span class="line">        <span class="comment">// reference.</span></span><br><span class="line">        <span class="keyword">auto</span>&amp; current = processing_nodes.back();</span><br><span class="line">        <span class="keyword">bool</span> child_node_found = <span class="literal">false</span>;</span><br><span class="line">        <span class="keyword">while</span> (current.second &lt; current.first-&gt;children.size()) &#123;</span><br><span class="line">            <span class="keyword">const</span> TrieNode* child = current.first-&gt;children[current.second];</span><br><span class="line">            ++current.second;</span><br><span class="line">            <span class="keyword">if</span> (child) &#123;</span><br><span class="line">                processing_nodes.emplace_back(CludeNode(child, <span class="number">0U</span>));</span><br><span class="line">                child_node_found = <span class="literal">true</span>;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (!child_node_found) &#123;</span><br><span class="line">            <span class="keyword">if</span> (processing_nodes.back().first-&gt;last_char_of_word) &#123;</span><br><span class="line">                <span class="built_in">std</span>::<span class="built_in">string</span> word = prefix;</span><br><span class="line">                <span class="built_in">std</span>::for_each(processing_nodes.cbegin() + <span class="number">1</span>, processing_nodes.cend(),</span><br><span class="line">                              [&amp;word](<span class="keyword">const</span> <span class="keyword">auto</span>&amp; clude_node) &#123;</span><br><span class="line">                    word += clude_node.first-&gt;character;</span><br><span class="line">                &#125;);</span><br><span class="line">                words.push_back(<span class="built_in">std</span>::move(word));</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            processing_nodes.pop_back();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> words;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>对于写迭代形式的算法，我一直比较推荐采用<a href="https://en.wikipedia.org/wiki/Loop_invariant" target="_blank" rel="noopener">循环不变式</a>（loop invariant）去理解的做法。这几乎是我认为一个人能从算法导论里学到的<strong>最精华的基础</strong>。</p>
-<h2 id="Ternary-Search-Tree"><a href="#Ternary-Search-Tree" class="headerlink" title="Ternary Search Tree"></a>Ternary Search Tree</h2><p>默认的trie内存开销比较大，所以又有很多针对内存做了优化的改进数据结构，<a href="https://en.wikipedia.org/wiki/Ternary_search_tree" target="_blank" rel="noopener">ternary search tree</a>便是其中之一。</p>
-<p>如名所述，ternary search tree的一个node只有三个child nodes：left, middle, right。</p>
-<p><img src="/img/ternary-search-tree.png" alt=""></p>
-<p>三子节点的做法来源于，一次比较会产生三种结果：大、小、相等。</p>
-<p>假设字符间的大小关系为字符在字母表的先后顺序，TST的核心规则如下：</p>
-<ul>
-<li>如果字符<code>c</code>和当前node的字符相等，表示当前字符匹配，则进入当前node的middle-child</li>
-<li>如果字符<code>c</code>比当前node的字符小，则进入当前node的left-child尝试匹配</li>
-<li>如果字符<code>c</code>比当前node的字符大，则进入当前node的right-child尝试匹配</li>
-</ul>
-<p>如果把TST放在一个三维空间上考虑的话，我认为left-child和right-child更像是当前node的sibling nodes。</p>
-<p>匹配过程就像从顶部的root node一直向下搜索，匹配时middle-node连接下一层的node，失败时在当前层由sibling nodes构成的平面上搜索。</p>
-<p>不过因为二维平面更加容易理解，所以还是在这个维度上考虑。</p>
-<p><code>Insert</code>和<code>Contains</code>的非递归实现并不难，只要选择好loop invariant。</p>
-<p>我在实现时选择的loop invariant是：</p>
-<ol>
-<li>每次对一个字符的迭代结束后，一定停留在这个字符对应的node上</li>
-<li>每次开始迭代时，始终尝试进入当前node（上一轮迭代结束停留的位置）的middle-node</li>
-<li>第2步失败时，根据比较信息在左子树/右子树中找到目标node</li>
-</ol>
-<p>并且为了实现方便，root node被我实现为一个sentinel node。</p>
-<p>不过非递归的<code>Search</code>实现起来非常繁琐，因为一个node的三个child nodes不在一个语义层，所以需要为了遍历需要用两个stack维护不同的信息。</p>
-<p>我在纸上尝试了一下就回头选择了递归地实现=’’=。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SearchWord</span><span class="params">(Node* node, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt;* words, <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt;* seq,</span></span></span><br><span class="line"><span class="function"><span class="params">                <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    seq-&gt;push_back(Alphabet::GetCharacter(node-&gt;char_index));</span><br><span class="line">    <span class="keyword">if</span> (node-&gt;end_word) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="function"><span class="built_in">string</span> <span class="title">word</span><span class="params">(prefix)</span></span>;</span><br><span class="line">        word.append(seq-&gt;begin(), seq-&gt;end());</span><br><span class="line">        words-&gt;push_back(<span class="built_in">std</span>::move(word));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kMiddle]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kMiddle], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    seq-&gt;pop_back();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kLeft]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kLeft], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kRight]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kRight], words, seq, prefix);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; TernaryTree::Search(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; prefix) <span class="keyword">const</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; words;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Locate the node matching the last character of `prefix`.</span></span><br><span class="line">    <span class="keyword">const</span> Node* node = root_;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> ch : prefix) &#123;</span><br><span class="line">        <span class="keyword">auto</span> index = Alphabet::GetCharacterIndex(ch);</span><br><span class="line">        <span class="keyword">if</span> (index == Alphabet::npos) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">const</span> Node* next_node = node-&gt;children[Node::kMiddle];</span><br><span class="line">        <span class="keyword">if</span> (!next_node) &#123;</span><br><span class="line">            <span class="keyword">return</span> words;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (index != next_node-&gt;char_index) &#123;</span><br><span class="line">            <span class="keyword">if</span> (index &lt; next_node-&gt;char_index) &#123;</span><br><span class="line">                next_node = next_node-&gt;children[Node::kLeft];</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                next_node = next_node-&gt;children[Node::kRight];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (!next_node) &#123;</span><br><span class="line">                <span class="keyword">return</span> words;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        node = next_node;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (node-&gt;end_word) &#123;</span><br><span class="line">        words.push_back(prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt; sequence;</span><br><span class="line">    <span class="keyword">if</span> (node-&gt;children[Node::kMiddle]) &#123;</span><br><span class="line">        SearchWord(node-&gt;children[Node::kMiddle], &amp;words, &amp;sequence, prefix);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> words;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>完整的实现在<a href="https://github.com/kingsamchen/Eureka/tree/master/TernarySearchTree" target="_blank" rel="noopener">这里</a></p>
-<h2 id="Epilogue"><a href="#Epilogue" class="headerlink" title="Epilogue"></a>Epilogue</h2><p>我会写Trie是因为看到了<a href="https://www.toptal.com/java/the-trie-a-neglected-data-structure" target="_blank" rel="noopener">the-trie-a-neglected-data-structure</a>这篇文章，有张图片也是从文章里截取的。</p>
-<p>而Ternary Search Tree则是不小心看到了<a href="http://igoro.com/archive/efficient-auto-complete-with-a-ternary-search-tree/" target="_blank" rel="noopener">efficient-auto-complete-with-a-ternary-search-tree</a>，同样从文章里“借”了一张图片</p>
-<p>再次对两位作者表示感谢！</p>
-<p>其实一开始写实现时，我犹豫了一会儿是应该用raw pointer还是smart pointer。虽然raw pointer不是什么evil的东西，但是owned raw pointers对我来说始终有点不太舒服。</p>
-<p>后来我看见了这个<a href="http://stackoverflow.com/a/5473807/1746503" target="_blank" rel="noopener">post</a>，再联想C++提供的muli-paradigms的目的就是为了<em>offer you the best-practice whenever you need, and you don’t pay what you don’t use</em>。</p>
-<p>于是我就不断地给自己洗脑：<em>nodes themselves are resources managed by a Tree</em>.</p>
-<p>再然后，我就释然了XD。</p>
 
         
       
