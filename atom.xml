@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-03-02T07:53:07.361Z</updated>
+  <updated>2019-03-24T12:42:05.458Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -17,11 +17,72 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Monthly Read Posts in Feb 2018</title>
+    <title>socks4a 协议代理</title>
+    <link href="http://kingsamchen.github.io/2019/03/24/on-socks4a-proxy-implementation/"/>
+    <id>http://kingsamchen.github.io/2019/03/24/on-socks4a-proxy-implementation/</id>
+    <published>2019-03-24T12:07:03.000Z</published>
+    <updated>2019-03-24T12:42:05.458Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;对于网络编程学习而言，尝试实现一个 proxy 是一个很好的途径。因为一个 proxy 对于 clients 来说是 server，对 remote servers 来说又是
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
+    
+      <category term="socks4a" scheme="http://kingsamchen.github.io/tags/socks4a/"/>
+    
+      <category term="socks" scheme="http://kingsamchen.github.io/tags/socks/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>推荐 Google API Design Guide</title>
+    <link href="http://kingsamchen.github.io/2019/03/13/recommend-google-api-design-guide/"/>
+    <id>http://kingsamchen.github.io/2019/03/13/recommend-google-api-design-guide/</id>
+    <published>2019-03-12T16:21:25.000Z</published>
+    <updated>2019-03-16T02:10:26.888Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a href=&quot;https://cloud.google.com/apis/design/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Google API Design Guide&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;基本上 可以看作是 Google 开放的
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="api design" scheme="http://kingsamchen.github.io/tags/api-design/"/>
+    
+      <category term="restful" scheme="http://kingsamchen.github.io/tags/restful/"/>
+    
+      <category term="grpc" scheme="http://kingsamchen.github.io/tags/grpc/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in Feb 2019</title>
     <link href="http://kingsamchen.github.io/2019/03/02/monthly-read-posts-in-feb-2019/"/>
     <id>http://kingsamchen.github.io/2019/03/02/monthly-read-posts-in-feb-2019/</id>
     <published>2019-03-02T07:46:47.000Z</published>
-    <updated>2019-03-02T07:53:07.361Z</updated>
+    <updated>2019-03-16T02:10:26.887Z</updated>
     
     <summary type="html">
     
@@ -155,9 +216,9 @@
     
       <category term="performance" scheme="http://kingsamchen.github.io/tags/performance/"/>
     
-      <category term="spinlock" scheme="http://kingsamchen.github.io/tags/spinlock/"/>
-    
       <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
+    
+      <category term="spinlock" scheme="http://kingsamchen.github.io/tags/spinlock/"/>
     
       <category term="ptrace" scheme="http://kingsamchen.github.io/tags/ptrace/"/>
     
@@ -648,69 +709,6 @@
       <category term="mintty" scheme="http://kingsamchen.github.io/tags/mintty/"/>
     
       <category term="bash" scheme="http://kingsamchen.github.io/tags/bash/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>MSVC 对多继承下的 EBO 支持的一个 workaround</title>
-    <link href="http://kingsamchen.github.io/2018/11/11/ebo-with-multiple-inheritance-in-msvc/"/>
-    <id>http://kingsamchen.github.io/2018/11/11/ebo-with-multiple-inheritance-in-msvc/</id>
-    <published>2018-11-11T02:44:37.000Z</published>
-    <updated>2018-11-11T03:24:28.971Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;首先简单介绍一下 EBO（Empty Base Class Optimization）。&lt;/p&gt;
-&lt;p&gt;因为 C++ 规定，任何一个 instance 在内存中必须要有唯一的地址，因此一个空的 class/struct 会在编译时被偷偷插入一个外人看不到的 &lt;code&gt;char mem;&lt;/code&gt;，于是这个空类的每一个 instance 都可以有一个唯一的地址了。&lt;/p&gt;
-&lt;p&gt;但是如果将这个空类作为某个类的成员时，这个隐藏的成员会被计入内存布局之中，考虑到 memory padding，有时候会导致类对象体积膨涨一倍。&lt;/p&gt;
-&lt;p&gt;例如考虑：&lt;/p&gt;
-&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;E&lt;/span&gt; &amp;#123;&lt;/span&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;A1&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    E e;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;int&lt;/span&gt; i;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;assert(&lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(E) == &lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;assert(&lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(A1) == &lt;span class=&quot;number&quot;&gt;8&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;我们会发现每一个 &lt;code&gt;A1&lt;/code&gt; 的 instance 都占了 8-byte，比起 4-byte 足足翻了一倍。&lt;/p&gt;
-&lt;p&gt;占用内存无端变大导致 cache 问题啥的就不讲了，这方面的内容任何讲 computer architecture 的书应该都会有。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="msvc" scheme="http://kingsamchen.github.io/tags/msvc/"/>
-    
-      <category term="ebo" scheme="http://kingsamchen.github.io/tags/ebo/"/>
-    
-      <category term="multiple inheritance" scheme="http://kingsamchen.github.io/tags/multiple-inheritance/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Chromium Base MessageLoop Internals (0)</title>
-    <link href="http://kingsamchen.github.io/2018/11/04/chromium-base-message-loop-internals-0/"/>
-    <id>http://kingsamchen.github.io/2018/11/04/chromium-base-message-loop-internals-0/</id>
-    <published>2018-11-04T02:04:38.000Z</published>
-    <updated>2018-11-04T02:09:41.590Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;Our fancy star in this post is class &lt;code&gt;base::MessageLoopCurrent&lt;/code&gt;.&lt;/p&gt;
-&lt;h2 id=&quot;MessageLoopCurrent&quot;&gt;&lt;a href=&quot;#MessageLoopCurrent&quot; class=&quot;headerlink&quot; title=&quot;MessageLoopCurrent&quot;&gt;&lt;/a&gt;MessageLoopCurrent&lt;/h2&gt;&lt;p&gt;Version: r70_3538&lt;br&gt;File: &lt;code&gt;base/message_loop/message_loop_current.{h, cc}&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;MessageLoopCurernt is a proxy class for interactions with the MessageLoop bound to the current thread.&lt;/p&gt;
-&lt;p&gt;It is introduced to avoid direct uses of &lt;code&gt;MessageLoop::current()&lt;/code&gt;, quoting from original comments:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Why: Historically MessageLoop::current() gave access to the full MessageLoop API, preventing both addition of powerful owner-only APIs as well as making it harder to remove callers of deprecated APIs (that need to stick around for a few owner-only use cases and re-accrue callers after cleanup per remaining publicly available).&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;Because it is a light-weight proxy, it contains only a single pointer to the MessageLoop bound to the current thread.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
-    
-      <category term="source internals" scheme="http://kingsamchen.github.io/tags/source-internals/"/>
-    
-      <category term="message-loop" scheme="http://kingsamchen.github.io/tags/message-loop/"/>
     
   </entry>
   

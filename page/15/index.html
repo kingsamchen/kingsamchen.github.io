@@ -182,6 +182,133 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/">推荐 CSAPP:3e 课程视频以及 Bomb Lab</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-11-19
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>经过差不多 7 年时间（2008 ~ 2015），CSAPP 终于出了 3rd edition；根据官方的 changelog，新版全面用 x64 的体系结构去替代了旧版的 ia-32。</p>
+<p>不管手头有没有第三版的书（讲道理其实挺贵的，机工的翻译版 2016/12 会发行，但是不知道英文版/影印版什么时候发），课程的在线视频都是很好的一个补充手段。</p>
+<p>视频地址：<a href="https://scs.hosted.panopto.com/Panopto/Pages/Sessions/List.aspx#folderID=%22b96d90ae-9871-4fae-91e2-b1627b43e25e%22&amp;maxResults=10&amp;folderQuery=%22introduction%20to%20computer%20system%22&amp;page=3" target="_blank" rel="noopener">csapp:3e coruse videos</a></p>
+<p><strong>温馨提示：需要梯子 需要梯子 需要梯子</strong></p>
+<p>另外顺手强烈建议尝试一下课程提供的 labs，例如前两天在玩的 bomb lab，简直是专门量身为 chapter 3 相关内容定制的，可以迅速帮助学习者熟悉汇编和最基本的逆向知识。</p>
+<p>与此形成强烈反差的是国内高校的课程和训练方式，简直何厚铧。</p>
+<p>labs 地址：<a href="http://csapp.cs.cmu.edu/3e/labs.html" target="_blank" rel="noopener">csapp:3e labs</a></p>
+<p><strong>（再次）温馨提示：需要梯子 需要梯子 需要梯子</strong></p>
+<p>最后贴一张 bomb lab 通关截图</p>
+<p><img src="/img/csapp_bomb_lab.png" alt=""></p>
+<p>（自白：前四关我真的是非常认真的玩的，后面两关实在太长了，<code>disas</code> 出来的内容都要好机屏幕才能显示完，实在没耐心了就直接“眼算栈平衡，手改RIP”给过去了…</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2016/10/03/install-ycm-plugin-on-WSL/">在 WSL 的 VIM 里安装 YCM</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2016-10-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>注 1：此处的 WSL 指的是 <em>Windows Subsytem for Linux</em>，不是“猥琐流”</p>
+<p>注 2：如果是在中国并且没有专用的全局科学上网线路（比如在自己家里），建议找一个类似 SS 的梯子，让 WSL 里的网络操作走代理，提高速度，避免因为某些连接被和谐导致悲剧发生。</p>
+<p>如果有 SS，那么进入 WSL 后执行命令</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">export http_proxy=http://127.0.0.1:1080</span><br><span class="line">export https_proxy=http://127.0.0.1:1080</span><br></pre></td></tr></table></figure>
+<p>对当前用户设置代理。</p>
+<p>如果需要使用 apt-get 操作，那么需要首先 <code>su</code> 进入 root 账户，在 root 下设置代理。</p>
+<p>此处设置的环境变量在某个 terminal 退出后自动销毁，下次进入 terminal 需要重复设置。如果你的代理非常稳定非常快，那么可以考虑改写 profile，避免每次手输。</p>
+<p><em><strong>Special thanks to @xqq here</strong></em></p>
+<h3 id="更新自带的-VIM"><a href="#更新自带的-VIM" class="headerlink" title="更新自带的 VIM"></a>更新自带的 VIM</h3><p>因为 WSL 里的 ubuntu 是 14.04 LTS，因此里面附带的 vim 并不满足<strong>最新</strong>的 YCM 的最低版本要求，如果不升级会出现 ycm 工作异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:pkg-vim/vim-daily</span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
+<h3 id="安装构建基础依赖"><a href="#安装构建基础依赖" class="headerlink" title="安装构建基础依赖"></a>安装构建基础依赖</h3><p>主要包括：CMake 和 python-dev packages</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install build-essential cmake</span><br><span class="line">sudo apt-get install python-dev python3-dev</span><br></pre></td></tr></table></figure>
+<h3 id="安装-VIM-插件管理器-Vundle"><a href="#安装-VIM-插件管理器-Vundle" class="headerlink" title="安装 VIM 插件管理器 Vundle"></a>安装 VIM 插件管理器 Vundle</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim</span><br></pre></td></tr></table></figure>
+<p>插件设置参考 <a href="https://github.com/VundleVim/Vundle.vim" target="_blank" rel="noopener">这里</a></p>
+<h3 id="安装-YCM"><a href="#安装-YCM" class="headerlink" title="安装 YCM"></a>安装 YCM</h3><p>虽然我们安装了 vundle，但是我们不会直接通过 vundle 装 ycm，因为太慢了。</p>
+<p>当然如果你在国外或者有科学上网专线，那就无所谓了…不过谁让我们是穷屌丝呢。</p>
+<p>首先进入目录 <code>~/.vim/bundle</code>，然后把 YCM 的 repo 拉下来，记得要用 <code>--recursive</code>，因为现在的 ycm 依赖的第三方模块太多了…</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git clone --recursive https://github.com/Valloric/YouCompleteMe.git</span><br></pre></td></tr></table></figure>
+<p>这个操作对你的梯子是一个极大的考验，如果中途 clone 挂了，就进入 ycm 的目录，接着用 submodule update 去继续拖代码即可。</p>
+<p>想当初我的 SS 在这里断了 5-6 次，每一次 connection lost 都让我问候了一遍党和国家…</p>
+<p>代码拉完之后还没结束，这个时候打开 <code>.vimrc</code>，把 ycm 加到 vundle 的设置列表里，然后打开 vim 走一遍 <code>PluginInstall</code>。你应该会看到 ycm 被飞快的安装完了（其实也就校验了一下😁）</p>
+<h3 id="编译-ycm"><a href="#编译-ycm" class="headerlink" title="编译 ycm"></a>编译 ycm</h3><p>源代码拖完了就该轮到编译了</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cd ~/.vim/bundle/YouCompleteMe</span><br><span class="line">./install.py --clang-completer</span><br></pre></td></tr></table></figure>
+<p>脚本首先会去下载 clang-3.9，然后走一遍 cmake 的编译，等一会儿就好。</p>
+<h3 id="Debut"><a href="#Debut" class="headerlink" title="Debut"></a>Debut</h3><p>来一张最终效果图</p>
+<p><img src="img/wsl_vim_ycm.jpg" alt=""></p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/">在 Windows 上构建并接入最新发布分支的 breakpad</a>
         
       </h1>
@@ -526,166 +653,6 @@
 <p>对了，<code>std::shared_ptr</code> 和 <code>std::weak_ptr</code> 倒是很机智的用两个对象来表示 owner-view 语义。</p>
 <h2 id="Conclusion"><a href="#Conclusion" class="headerlink" title="Conclusion"></a>Conclusion</h2><p>这篇 post 的目的不是说完全不能这样设计，而是说在可能的前提下尽量拆分语义，毕竟挖了大坑把别人埋进去了不是一件值得炫耀的事情。</p>
 <p>最后吐槽一下 chromium 组的某些工程师，虽然我承认 chromium 确实是一个成功的 C++ Project，但是他们有些人真的是不理解 C++，也只是把 C++ 当作一个加强版的 Java 来用。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/07/05/wicked-data-type-promotion/">Wicked Data Type Promotion</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-07-05
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>昨天在给 <a href="https://github.com/kingsamchen/KAdBlockEngine" target="_blank" rel="noopener">KAdBlockEngine</a> 的 <code>AdFilter</code> 加上序列化/反序列化的支持时，意外的又一次被 data type promotion 坑了，导致一晚上的时间都在 debug…</p>
-<h2 id="Yesterday-Case-Once-More"><a href="#Yesterday-Case-Once-More" class="headerlink" title="Yesterday-Case Once More"></a>Yesterday-Case Once More</h2><p>因为做 deserialization 时需要数据校验，所以在序列化到磁盘前会先对数据做一遍 MD5-checksum，然后再将 checksum 和实际数据分别写入磁盘。</p>
-<p>类似的，反序列化时需要从读入的文件数据里分出 checksum 和实际数据，对实际数据再做一遍 MD5-checksum 后和上次保存的 checksum 进行比对。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">kbase::<span class="function">Path <span class="title">snapshot_file</span><span class="params">(<span class="string">L"..."</span>)</span></span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> file_data = kbase::ReadFileToString(snapshot_file);</span><br><span class="line"><span class="keyword">if</span> (!file_data.empty()) &#123;</span><br><span class="line">    kbase::MD5Digest checksum;</span><br><span class="line">    <span class="keyword">auto</span> snapshot_data = file_data.data() + <span class="keyword">sizeof</span>(checksum);</span><br><span class="line">    <span class="keyword">auto</span> snapshot_data_size = file_data.size() - <span class="keyword">sizeof</span>(checksum);</span><br><span class="line">    kbase::MD5Sum(snapshot_data, snapshot_data_size, &amp;checksum);</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">std</span>::equal(checksum.cbegin(), checksum.cend(), file_data.cbegin())) &#123;</span><br><span class="line">        kbase::<span class="function">PickleReader <span class="title">snapshot</span><span class="params">(snapshot_data, snapshot_data_size)</span></span>;</span><br><span class="line">        AdFilter ad_filter = AdFilter::FromSnapshot(snapshot);</span><br><span class="line">        ad_filters_.push_back(AdFilterPair(filter_file, <span class="built_in">std</span>::move(ad_filter)));</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>于是神奇的事情出现了：当我用 <code>std::equal</code> 去比较两个 checksum 数据时，结果始终是 false，即使我在 debugger 的 memory watch 中确认了两块数据是一样的。</p>
-<p>更神奇的是，顺手把 <code>std::equal</code> 换成 <code>memcmp</code> 之后，整段代码都能够正常工作。</p>
-<p>看来问题出在 <code>std::equal</code>；But how come ?</p>
-<h2 id="Thinking-and-Resolving"><a href="#Thinking-and-Resolving" class="headerlink" title="Thinking and Resolving"></a>Thinking and Resolving</h2><p>一开始怀疑是 <code>std::equal</code> 的实现问题，于是自己用 <code>for(...)</code> 手工展开，结果却惊人地和 <code>std::equal</code> 一致，并且根据调试的反馈，应该是第一个字节比较就不等返回了。</p>
-<p>这说明 <code>std::equal</code> 的实现是正确的，问题出在使用方式上。</p>
-<p>于是下一秒瞥到了一个惊人的发现：<code>MD5Digest</code> 的数据类型是 <code>std::array&lt;uint8_t&gt;</code>，而 file_data 却是 <code>std::basic_string&lt;char&gt;</code>；而 <code>char</code> 在 MSVC 上是 signed data type。</p>
-<p>直觉告诉我我掉到了 <strong><em>data type promotion</em></strong> 这个天坑里。</p>
-<p>在 C/C++ 里对(unsigned) char/short 进行算术运算时，出于性能考虑，编译器会首先将数据扩展到 int(unsigned int)，再进行实际的运算。这个过程通常称之为 <strong><em>promotion</em></strong>。</p>
-<p>但是问题来了，signed/unsigned 数据类型在扩展时使用的指令是不一样的。</p>
-<p>考虑如下示例代码：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> <span class="keyword">char</span> lhs = <span class="number">-98</span>;</span><br><span class="line"><span class="keyword">char</span> rhs = <span class="number">-98</span>;</span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; (lhs == rhs);</span><br></pre></td></tr></table></figure>
-<p>首先，比较的结果肯定是 <code>false</code>，不然上下文就没意义了不是…</p>
-<p>接下来看一下对应的汇编代码：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    unsigned char lhs = -98;</span><br><span class="line">00007FF60EA717DE  mov         byte ptr [lhs],9Eh  </span><br><span class="line">    char rhs = -98;</span><br><span class="line">00007FF60EA717E2  mov         byte ptr [rhs],9Eh  </span><br><span class="line">    std::cout &lt;&lt; (lhs == rhs);</span><br><span class="line">00007FF60EA717E6  movzx       eax,byte ptr [lhs]  </span><br><span class="line">00007FF60EA717EA  movsx       ecx,byte ptr [rhs]  </span><br><span class="line">00007FF60EA717EE  cmp         eax,ecx</span><br></pre></td></tr></table></figure>
-<p>明显，对无符号类型的扩展使用的指令是 <code>movzx</code>，扩展时用0填充；对有符号类型的扩展指令是 <code>movsx</code>，扩展时使用<strong>符号位</strong>。</p>
-<p>这是 two’s complement 结构体系下的必然选择。</p>
-<p>但是这里有个明显的坑，如果原始数据在有符号下是负数，亦即上例中的情况，那么扩展中会用符号位填充，扩展之后高位都变成了FF..；而无符号扩展则会使用0填充，扩展之后高位都是00..；这就导致扩展后的两个数据不想等。</p>
-<p>回到一开始的坑。</p>
-<p>因为 <code>std::equal</code> 默认会使用 <code>std::equal_to&lt;&gt;</code> 作为比较的 predicate，而 <code>std::equal_to&lt;&gt;</code> 等价于使用 <code>==</code> 进行比较；而比较的两方数据又分别是 <code>char</code> 和  <code>uint8_t</code>，于是出现 promotion，导致错误。</p>
-<p>而 <code>memcmp</code> 直接比较两块内存的 bits，不会发生 promotion。</p>
-<h2 id="Afterthoughts"><a href="#Afterthoughts" class="headerlink" title="Afterthoughts"></a>Afterthoughts</h2><p>其实 CSAPP 在某一章有专门提到 data type promotion 这个问题，不过时隔多日，真是转头就忘…</p>
-<p>这个天坑说明一个道理，涉及无符合和有符号的整型比较时需要引起注意；而如果整型是 char/short 类型则更要注意。</p>
-<p>最好的解决方案是避免写除混合类型比较且没有使用 cast 明确标识的代码。</p>
-<p>这次为了偷懒直接用 std::string 保存内存块数据，最后也算是报应把… -‘’-</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/06/14/template-type-constraints-and-type-traits/">Template Type Constraints And Type Traits</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-06-14
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>模板参数类型约束在 C++ 中一直以来大概得算不上不下的一个处境。</p>
-<p>因为非运行时（编译期）的优势，对于参数类型约束的需求不像 C# 那样紧迫；但是同时又因为实例化完成的时期过早，编译器对于模板代码的处理并不能上升到一个精确的语义层次，导致的后果就是模板相关的代码的出错信息一直在井喷，而且相当一部分的错误信息完全没有卵用。</p>
-<p>最直接的例子就是拿 <code>std::sort</code> 去对一个 <code>std::list</code> 对象进行排序。</p>
-<p>早期的编译器扔出来的错误提示第一眼完全看不出再讲什么（例如找不到 <code>operator&lt;</code>的定义）；虽然经验丰富的老司机们一下就能看出问题在于 <code>std::sort</code> 要求的迭代器是 <em>random access iterator</em>, 而 <code>std::list</code> 提供的迭代器是 <em>bidirectional iterator</em>，但是原因八成是因为老司机们撸过的轮子比你用过的库还多。</p>
-<p>这个问题对于 library developer 尤为尖锐。</p>
-<p>按照原本的历史进程，解决这个大麻烦的荣耀应属 C++17 中的 <a href="http://en.cppreference.com/w/cpp/language/constraints" target="_blank" rel="noopener">Concepts</a>；然而不知道标准委员会的委员们哪根神经回路短路了，居然把这个 proposal 给 veto/reject 了，于是之前说好的大救星就这么突然被打脸了。</p>
-<h2 id="Type-Constraints"><a href="#Type-Constraints" class="headerlink" title="Type Constraints"></a>Type Constraints</h2><p>在很久很久以前，甚至比提出 concepts 这个想法还要早，曾经有一批人开始尝试自己加一些类型约束设施，已达到类似的要求。</p>
-<p>在 Herb Sutter 著名的 <em>More Exceptional C++</em> 一书中，提供了这么一个例子：</p>
-<p>假设我有一个类模板</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span> &#123;</span> ... &#125;;</span><br></pre></td></tr></table></figure>
-<p>要求 <code>Foo</code> 的实例化类型参数 <code>T</code> 必须包含一个成员函数 <code>Clone()</code>，并且这个函数的原型要<strong>严格满足</strong> <code>T* Clone() const</code>。</p>
-<p>做法是提供一个类型约束类 <code>HasClone</code></p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">HasClone</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    HasClone()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">void</span> (*pfn)() = &amp;ValidateConstraints;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ~HasClone() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    DISALLOW_COPY(HasClone);</span><br><span class="line"></span><br><span class="line">    DISALLOW_MOVE(HasClone);</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="keyword">void</span> <span class="title">ValidateConstraints</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        T* (T::*fn)() <span class="keyword">const</span> = &amp;T::Clone;</span><br><span class="line">        UNREFED_VAR(fn);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>并利用父类构造函数先于子类执行的特性</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Foo</span> :</span> HasClone&lt;T&gt; &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>对模板参数 <code>T</code> 进行约束。</p>
-<p>虽然在形式上这个构造法非常漂亮，然而在实践中，根本称不上好用。</p>
-<p>某些编译器，例如 VS 2015，在显式调用 <code>T::Clone()</code> 失败时会直接跳过 <code>HasClone</code> 的构造，直接提示目标调用点相关的错误。</p>
-<p>这意味着精心设计的类型约束类直接变成了 subordinate solution。</p>
-<h2 id="Type-Traits"><a href="#Type-Traits" class="headerlink" title="Type Traits"></a>Type Traits</h2><p>另一方面：既然不方便改善类型约束，那么可以考虑在编译期利用类型信息针对不同的类选择不同的行为。</p>
-<p>于是这个操作通常需要两部分协助： type traits 和 template specialization。</p>
-<p>举个很常见的误用 OOP 的例子：有两个类型 A 和 B，如果 B 是 A 的子类，那么进行操作1，否则进行操作2。</p>
-<p>有些人会利用 runtime type information 的方式实现，显著特征是要做 down-cast，例如 <code>dynamic_cast</code> 或者 Java 中的 <code>instanceof</code>，然而他们不知道这是 runtime polymorphism 的典型场景。</p>
-<p>不过在 C++ 中，借助 type traits，可以实现 compile time polymorphism。</p>
-<p>这里我们需要一个能够编译期判断继承关系的设施，假设它是一个名为 <code>IsDerivedDrom</code> 的类。</p>
-<p>同样来自 <em>More Exceptional C++</em>，这个实现来自脑洞炸开的 Andrei Alexandrescu：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> D, <span class="keyword">typename</span> B&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IsDerivedFrom</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">No</span> &#123;</span>&#125;;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">Yes</span> &#123;</span> No data[<span class="number">2</span>]; &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> No <span class="title">Check</span><span class="params">(...)</span></span>;</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Yes <span class="title">Check</span><span class="params">(B*)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">enum</span> &#123;</span><br><span class="line">        value = <span class="keyword">sizeof</span>(Check(<span class="keyword">static_cast</span>&lt;D*&gt;(<span class="number">0</span>))) == <span class="keyword">sizeof</span>(Yes)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>这个实现有多精巧呢？</p>
-<ol>
-<li>继承关系通过非常自然的 implicit upcast。如果 <code>D</code> 是 <code>B</code> 的子类，那么 <code>D*</code> 能够安全顺滑的转换为 <code>B*</code></li>
-<li>利用函数重载来实现编译期绑定，并且利用了不定参数形式在 overload resolution 中的 low priority</li>
-<li>sizeof 和 enum 的编译期求值行为</li>
-<li>没有任何运行时开销</li>
-</ol>
-<p>从头到脚的 compile-compiliant 的处理方式，闪耀着老司机们的智慧光芒。</p>
-<p>当然到了 C++11，可以把这个形式做更进一步的简化，让直观上更容易理解</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> D, <span class="keyword">typename</span> B&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">IsDerivedFrom</span> &#123;</span></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">false_type <span class="title">Check</span><span class="params">(...)</span></span>;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">true_type <span class="title">Check</span><span class="params">(B*)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">const</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(Check(<span class="keyword">static_cast</span>&lt;D*&gt;(<span class="literal">nullptr</span>)))::value ;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>至于剩下的怎么做 specialization 这里就不提了，自己翻书去吧。</p>
-<p>一个好消息是 C++ 11 开始，STL 内置了一大票和这个类似的 type traits 设施。</p>
-<p>在 concepts 短期无望的情况下，利用 type traits 和 specialization/overload resolution 可以做出一些更加灵活的设计，并且依托内置设施，甚至大程度可以避开自己手工跑 SFINAE，减轻生活压力。</p>
-<p>大概就这样。</p>
-<p>PS：不过其实你最后可以发现，两者前后并没有什么直接的因果关系。主要原因大概还是为了写个 post 而丧心病狂的强行拉亲戚。</p>
 
         
       
