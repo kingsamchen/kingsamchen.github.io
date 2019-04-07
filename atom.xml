@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-03-24T12:42:05.458Z</updated>
+  <updated>2019-04-07T13:25:43.817Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,82 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>统一 ezio Buffer 的算术类型读写接口</title>
+    <link href="http://kingsamchen.github.io/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/"/>
+    <id>http://kingsamchen.github.io/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/</id>
+    <published>2019-04-07T12:40:11.000Z</published>
+    <updated>2019-04-07T13:25:43.817Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;ezio Buffer 一开始的时候只为 read, write 和 peek 提供了从 &lt;code&gt;int8_t&lt;/code&gt; 到 &lt;code&gt;int64_t&lt;/code&gt; 的函数重载，如果需要处理 unsigned integers，那么就需要自己额外做 &lt;code&gt;static_cast&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;ezio 的主要客户&lt;a href=&quot;https://github.com/oceancx&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;王藏心&lt;/a&gt;同学早前抱怨过这个问题，并且同时建议我加上对 &lt;code&gt;float/double&lt;/code&gt; 的浮点数支持。&lt;/p&gt;
+&lt;p&gt;对于这个建议我一开始是抵触的：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;自己 cast 又不是不能用，额外加重载支持三个操作工作量都要翻一番呢&lt;/li&gt;
+&lt;li&gt;浮点数的 binary serialization 本来就是很难跨平台的，不是每个环境都（虽然大部分）要求使用 IEEE 754 spec。如果真的需要直接把浮点数存到网络包里，自己直接操作 underlying binary layout 不就好了…&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;于是王藏心同学一开始开的 issue 我一直没理他，于是最后他自己关掉了…&lt;/p&gt;
+&lt;p&gt;等到我自己动手写一个 socks4a proxy 的时候我发现，自己 cast 真的是…太蛋疼了…而且代码看上去还非常丑，大面积的 &lt;code&gt;static_cast&lt;/code&gt; 制造了相当一部分内容噪音。那会儿我大概有点理解王藏心同学的内心感受。&lt;/p&gt;
+&lt;p&gt;于是我思考良久，打算改造 Buffer 的这部分接口，以支持绝大多数 integer types，顺带也增加入 floating piont types 的支持，这样 read, write, peek 就基本支持了绝大多数 arithmetic types。&lt;/p&gt;
+&lt;p&gt;通过直接增加重载是我极力避免的，因为除了接口签名外，大部分实现几乎是一样的，不外乎：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;如果是单字节，直接写/读操作&lt;/li&gt;
+&lt;li&gt;如果是多字节，首先字节序转换，然后做写/读操作&lt;/li&gt;
+&lt;li&gt;如果是浮点数，首先按照对应字节大小的整数类型&lt;strong&gt;解释&lt;/strong&gt;内存，然后参考普通整数的处理&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;于是自然而然的想到直接将函数做成 function templates 来增强语义。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="SFINAE" scheme="http://kingsamchen.github.io/tags/SFINAE/"/>
+    
+      <category term="template" scheme="http://kingsamchen.github.io/tags/template/"/>
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="ezio" scheme="http://kingsamchen.github.io/tags/ezio/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Monthly Read Posts in Mar 2019</title>
+    <link href="http://kingsamchen.github.io/2019/04/02/monthly-read-posts-in-mar-2019/"/>
+    <id>http://kingsamchen.github.io/2019/04/02/monthly-read-posts-in-mar-2019/</id>
+    <published>2019-04-02T15:18:21.000Z</published>
+    <updated>2019-04-07T12:38:33.510Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Networking&quot;&gt;&lt;a href=&quot;#Networking&quot; class=&quot;headerlink&quot; title=&quot;Networking&quot;&gt;&lt;/a&gt;Networking&lt;/h2&gt;&lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="browser caching" scheme="http://kingsamchen.github.io/tags/browser-caching/"/>
+    
+      <category term="cors" scheme="http://kingsamchen.github.io/tags/cors/"/>
+    
+      <category term="docker" scheme="http://kingsamchen.github.io/tags/docker/"/>
+    
+      <category term="monorepo" scheme="http://kingsamchen.github.io/tags/monorepo/"/>
+    
+      <category term="spurious wakeup" scheme="http://kingsamchen.github.io/tags/spurious-wakeup/"/>
+    
+  </entry>
   
   <entry>
     <title>socks4a 协议代理</title>
@@ -646,69 +722,6 @@
       <category term="pthread" scheme="http://kingsamchen.github.io/tags/pthread/"/>
     
       <category term="philosophy" scheme="http://kingsamchen.github.io/tags/philosophy/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Chromium Base MessageLoop Internals (1)</title>
-    <link href="http://kingsamchen.github.io/2018/11/25/chromium-base-message-loop-internals-1/"/>
-    <id>http://kingsamchen.github.io/2018/11/25/chromium-base-message-loop-internals-1/</id>
-    <published>2018-11-25T14:47:07.000Z</published>
-    <updated>2018-11-25T14:50:56.087Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;class-MessageLoop&quot;&gt;&lt;a href=&quot;#class-MessageLoop&quot; class=&quot;headerlink&quot; title=&quot;class MessageLoop&quot;&gt;&lt;/a&gt;class MessageLoop&lt;/h2&gt;&lt;p&gt;Version: r70_3538&lt;br&gt;File: &lt;code&gt;base/message_loop/message_loop.{h, cc}&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;A &lt;code&gt;MessageLoop&lt;/code&gt; is used to process events for a particular thread, i.e. the core infrastructure for implementing Communicating Sequential Process (CSP) model.&lt;/p&gt;
-&lt;p&gt;There is at most one MessageLoop instance on a thread.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;MessageLoop&lt;/code&gt; is a farily complex class, it driveds from multiple base classes:&lt;/p&gt;
-&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;BASE_EXPORT&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;MessageLoop&lt;/span&gt; :&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; MessagePump::Delegate,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; RunLoop::Delegate,&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; MessageLoopCurrent &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// omitted...&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;h3 id=&quot;MessageLoop-Type&quot;&gt;&lt;a href=&quot;#MessageLoop-Type&quot; class=&quot;headerlink&quot; title=&quot;MessageLoop Type&quot;&gt;&lt;/a&gt;MessageLoop Type&lt;/h3&gt;&lt;p&gt;A MessageLoop has a particular type, differred by the set of asynchronous events it is capable of handling.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="chromium" scheme="http://kingsamchen.github.io/tags/chromium/"/>
-    
-      <category term="source internals" scheme="http://kingsamchen.github.io/tags/source-internals/"/>
-    
-      <category term="message-loop" scheme="http://kingsamchen.github.io/tags/message-loop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl</title>
-    <link href="http://kingsamchen.github.io/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/"/>
-    <id>http://kingsamchen.github.io/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/</id>
-    <published>2018-11-24T15:26:04.000Z</published>
-    <updated>2018-11-24T15:36:58.841Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;在 cmder 里如果不指定运行的 terminal 则会默认使用 windows cmd，而这在使用 git-bash 或者 wsl 时会经常遇到问题：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;性能底下导致交互出现显著延迟（这个发生在使用 tig 等重型 bash 命令或者使用
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="wsl" scheme="http://kingsamchen.github.io/tags/wsl/"/>
-    
-      <category term="cmder" scheme="http://kingsamchen.github.io/tags/cmder/"/>
-    
-      <category term="mintty" scheme="http://kingsamchen.github.io/tags/mintty/"/>
-    
-      <category term="bash" scheme="http://kingsamchen.github.io/tags/bash/"/>
     
   </entry>
   

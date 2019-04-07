@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="统一 ezio Buffer 的算术类型读写接口"/>
+
+
+
+
+  <meta name="keywords" content="SFINAE, template, cpp, ezio, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> 统一 ezio Buffer 的算术类型读写接口 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          统一 ezio Buffer 的算术类型读写接口
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Impl"><span class="toc-text">Impl</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Final-Result"><span class="toc-text">Final Result</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>ezio Buffer 一开始的时候只为 read, write 和 peek 提供了从 <code>int8_t</code> 到 <code>int64_t</code> 的函数重载，如果需要处理 unsigned integers，那么就需要自己额外做 <code>static_cast</code>。</p>
+<p>ezio 的主要客户<a href="https://github.com/oceancx" target="_blank" rel="noopener">王藏心</a>同学早前抱怨过这个问题，并且同时建议我加上对 <code>float/double</code> 的浮点数支持。</p>
+<p>对于这个建议我一开始是抵触的：</p>
+<ul>
+<li>自己 cast 又不是不能用，额外加重载支持三个操作工作量都要翻一番呢</li>
+<li>浮点数的 binary serialization 本来就是很难跨平台的，不是每个环境都（虽然大部分）要求使用 IEEE 754 spec。如果真的需要直接把浮点数存到网络包里，自己直接操作 underlying binary layout 不就好了…</li>
+</ul>
+<p>于是王藏心同学一开始开的 issue 我一直没理他，于是最后他自己关掉了…</p>
+<p>等到我自己动手写一个 socks4a proxy 的时候我发现，自己 cast 真的是…太蛋疼了…而且代码看上去还非常丑，大面积的 <code>static_cast</code> 制造了相当一部分内容噪音。那会儿我大概有点理解王藏心同学的内心感受。</p>
+<p>于是我思考良久，打算改造 Buffer 的这部分接口，以支持绝大多数 integer types，顺带也增加入 floating piont types 的支持，这样 read, write, peek 就基本支持了绝大多数 arithmetic types。</p>
+<p>通过直接增加重载是我极力避免的，因为除了接口签名外，大部分实现几乎是一样的，不外乎：</p>
+<ul>
+<li>如果是单字节，直接写/读操作</li>
+<li>如果是多字节，首先字节序转换，然后做写/读操作</li>
+<li>如果是浮点数，首先按照对应字节大小的整数类型<strong>解释</strong>内存，然后参考普通整数的处理</li>
+</ul>
+<p>于是自然而然的想到直接将函数做成 function templates 来增强语义。<br><a id="more"></a><br>下面以 Write 操作为例，阐述一下整体设计。</p>
+<h3 id="Impl"><a href="#Impl" class="headerlink" title="Impl"></a>Impl</h3><p>首先我们需要针对模板参数类型做限定，只支持整数和浮点数，这个可以直接用</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">static_assert</span>(<span class="built_in">std</span>::is_arithmetic&lt;T&gt;::value, <span class="string">"T must be integral or floating point"</span>);</span><br></pre></td></tr></table></figure>
+<p>保证。</p>
+<p>因为我们可以在编译期获用 <code>sizeof(T)</code> 得具体模板参数的内存大小，所以我们提供两个 <code>WriteImpl()</code> 函数，分别处理单字节和多字节的情况。</p>
+<p>函数的编译期选择可以简单的利用 tag dispatch 实现：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">single_byte</span> &#123;</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">multi_byte</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Write</span><span class="params">(T value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static_assert</span>(<span class="built_in">std</span>::is_arithmetic&lt;T&gt;::value, <span class="string">"T must be integral or floating point"</span>);</span><br><span class="line">    <span class="keyword">using</span> byte_trait =</span><br><span class="line">        <span class="built_in">std</span>::<span class="keyword">conditional_t</span>&lt;<span class="keyword">sizeof</span>(T) == <span class="number">1</span>, internal::single_byte, internal::multi_byte&gt;;</span><br><span class="line">    WriteImpl(value, byte_trait&#123;&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// private</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WriteImpl</span><span class="params">(T value, internal::single_byte)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static_assert</span>(<span class="keyword">sizeof</span>(T) == <span class="number">1</span>, <span class="string">"Require sizeof(T) == 1"</span>);</span><br><span class="line">    Write(&amp;value, <span class="keyword">sizeof</span>(value));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> I&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">WriteImpl</span><span class="params">(I value, internal::multi_byte)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">static_assert</span>(<span class="keyword">sizeof</span>(I) &gt; <span class="number">1</span>, <span class="string">"Require sizeof(I) &gt; 1"</span>);</span><br><span class="line">    <span class="keyword">auto</span> be = HostToNetwork(value);</span><br><span class="line">    Write(&amp;be, <span class="keyword">sizeof</span>(be));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接下来来考虑如何处理浮点数。</p>
+<p>因为我们已经按照单/多字节区分了函数 tag，如果再按照浮点数/整数区分一次，tag 层次会变深；而且浮点数目前肯定是多字节长度的。</p>
+<p>一个容易想到的方法是使用 SFINAE 来将多字节的情况拆分成整数和浮点数：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">floating_point_store_type</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">floating_point_store_type</span>&lt;float&gt; &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = <span class="keyword">uint32_t</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">floating_point_store_type</span>&lt;double&gt; &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = <span class="keyword">uint64_t</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> I, <span class="built_in">std</span>::<span class="keyword">enable_if_t</span>&lt;<span class="built_in">std</span>::is_integral&lt;I&gt;::value, <span class="keyword">int</span>&gt; = <span class="number">0</span>&gt;</span><br><span class="line"><span class="keyword">void</span> WriteImpl(I value, internal::multi_byte)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static_assert</span>(<span class="keyword">sizeof</span>(I) &gt; <span class="number">1</span>, <span class="string">"Require sizeof(I) &gt; 1"</span>);</span><br><span class="line">    <span class="keyword">auto</span> be = HostToNetwork(value);</span><br><span class="line">    Write(&amp;be, <span class="keyword">sizeof</span>(be));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F, <span class="built_in">std</span>::<span class="keyword">enable_if_t</span>&lt;<span class="built_in">std</span>::is_floating_point&lt;F&gt;::value, <span class="keyword">int</span>&gt; = <span class="number">0</span>&gt;</span><br><span class="line"><span class="keyword">void</span> WriteImpl(F value, internal::multi_byte)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">static_assert</span>(<span class="keyword">sizeof</span>(F) &gt; <span class="number">1</span>, <span class="string">"Require sizeof(F) &gt; 1"</span>);</span><br><span class="line">    <span class="keyword">static_assert</span>(<span class="built_in">std</span>::numeric_limits&lt;F&gt;::is_iec559, <span class="string">"IEEE 754 spec is enforced"</span>);</span><br><span class="line">    <span class="keyword">using</span> store_type = <span class="keyword">typename</span> internal::floating_point_store_type&lt;F&gt;::type;</span><br><span class="line">    WriteImpl(*<span class="keyword">reinterpret_cast</span>&lt;store_type*&gt;(&amp;value), internal::multi_byte&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>因为 <code>double</code> 和 <code>float</code> 要使用不同的存储类型去解释，所以上面还需要额外做一个 type mapping。</p>
+<p>另：我们在浮点数的处理里强制要求浮点数类型的实现是符合 IEEE 754 spec 的。</p>
+<p>这样一顿操作之后我们就已经给 Buffer 加上了通用的 Write 函数族。并且未来如果新增了类似 <code>char8_t</code> <code>int128_t</code> 什么的类型，接口实现几乎不用做任何改动。</p>
+<h3 id="Final-Result"><a href="#Final-Result" class="headerlink" title="Final Result"></a>Final Result</h3><p>用类似的方法为 <code>PeekAs()</code> 和 <code>ReadAs()</code> 增加支持后，我们可以做到：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">TEST_CASE(<span class="string">"Read trivial integral and/or floating point values"</span>, <span class="string">"[Buffer]"</span>)</span><br><span class="line">&#123;</span><br><span class="line">    Buffer buf;</span><br><span class="line"></span><br><span class="line">    SECTION(<span class="string">"read trivial integrals"</span>) &#123;</span><br><span class="line">        buf.Write(<span class="keyword">uint8_t</span>(<span class="number">0xFF</span>));</span><br><span class="line">        buf.Write(<span class="string">'a'</span>);</span><br><span class="line">        buf.Write(<span class="keyword">short</span>(<span class="number">-1</span>));</span><br><span class="line">        buf.Write(<span class="keyword">uint32_t</span>(<span class="number">0xDEADBEEF</span>));</span><br><span class="line">        buf.Write(<span class="keyword">size_t</span>(<span class="number">1024</span>));</span><br><span class="line"></span><br><span class="line">        REQUIRE(buf.ReadAs&lt;<span class="keyword">uint8_t</span>&gt;() == <span class="keyword">uint8_t</span>(<span class="number">0xFF</span>));</span><br><span class="line">        REQUIRE(buf.ReadAs&lt;<span class="keyword">char</span>&gt;() == <span class="string">'a'</span>);</span><br><span class="line">        REQUIRE(buf.ReadAs&lt;<span class="keyword">short</span>&gt;() == <span class="number">-1</span>);</span><br><span class="line">        REQUIRE(buf.ReadAs&lt;<span class="keyword">uint32_t</span>&gt;() == <span class="number">0xDEADBEEF</span>);</span><br><span class="line">        REQUIRE(buf.ReadAs&lt;<span class="keyword">size_t</span>&gt;() == <span class="number">1024</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    SECTION(<span class="string">"read floating points"</span>) &#123;</span><br><span class="line">        <span class="comment">// exact hexadecimal representation is: 0x407e0000</span></span><br><span class="line">        <span class="keyword">float</span> f = <span class="number">3.96875F</span>;</span><br><span class="line">        buf.Write(f);</span><br><span class="line">        <span class="keyword">double</span> d = <span class="number">3.1415926</span>;</span><br><span class="line">        buf.Write(d);</span><br><span class="line">        <span class="keyword">auto</span> f_ep = buf.ReadAs&lt;<span class="keyword">float</span>&gt;() - <span class="number">3.96875F</span>;</span><br><span class="line">        REQUIRE(f_ep == <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">auto</span> d_ep = <span class="built_in">std</span>::<span class="built_in">abs</span>(buf.ReadAs&lt;<span class="keyword">double</span>&gt;() - d);</span><br><span class="line">        REQUIRE(d_ep == <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可读性也变高了。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/">http://kingsamchen.github.io/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/SFINAE/">SFINAE</a>
+            
+              <a href="/tags/template/">template</a>
+            
+              <a href="/tags/cpp/">cpp</a>
+            
+              <a href="/tags/ezio/">ezio</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/04/02/monthly-read-posts-in-mar-2019/">
+        <span class="next-text nav-default">Monthly Read Posts in Mar 2019</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/';
+        this.page.identifier = '2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/';
+        this.page.title = '统一 ezio Buffer 的算术类型读写接口';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

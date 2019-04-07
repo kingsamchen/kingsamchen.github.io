@@ -182,6 +182,127 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/07/06/running-linux-gui-applications-on-windows/">在 Windows 上运行 Linux GUI 程序</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-06
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>自从 Windows 10 提供 WSL 之后，在 Windows 上运行 Linux CLI 程序并不是一个复杂的事情；然而俗话说饱暖思淫欲，既然可以做到在 Windows 上跑 Linux CLI 了，下一步自然想的是在 Windows 上跑 Linux GUI 程序。</p>
+<p>之所以要跑 GUI 是因为，无论是 vscode 还是 CLion，写 C++ 的体验都比在 terminal 里开一个 vim 要好太多了，无论你是花了多少时间配置了 <code>.vimrc</code>，在 CLion 面前都是战五渣。更何况我买了 Jetbrains 的 All product license，不用用难道留着过年吗。</p>
+<p>这里先解答两个常见疑问：</p>
+<p>Q：为什么不直接在虚拟机里使用？<br>A：因为 Linux 对 4K 屏原生支持太糟糕。哪怕 Mint 提供了 double scaling，解决了一些外观上的问题，我在 4K 的环境下一开 vscode 程序就崩溃，而且运行操作明显掉帧。<br>另外一个问题是，单纯的虚拟机操作和外界宿主太隔离，等于我得配置两套完全一样的环境（比如浏览器，常见的应用，甚至 SS 等），而且和宿主的交互非常不够便利。</p>
+<p>Q：为什么不买 macbook？<br>A：？？你是认真的么？OS X 那么垃圾的系统。再说我要写 C++ server-end 的代码，要是可以用 OS X 我为什么不直接在 Windows 上跑?</p>
+<p>另外有一个剧透：我尝试过运行 WSL 里的 Linux GUI 程序，例如 CLion，但是目前 WSL 的文件系统性能过于糟糕，CLion 一个劲的冒错误提示，所以，下面的环境假定是虚拟机里的 Linux 或者一台单独的 Linux 设备。<br>
+          <div class="read-more">
+            <a href="/2018/07/06/running-linux-gui-applications-on-windows/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/07/01/monthly-read-posts-in-jun-2018/">Monthly Read Posts in Jun 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-07-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Programming-Language"><a href="#Programming-Language" class="headerlink" title="Programming Language"></a>Programming Language</h2><p><a href="https://www.youtube.com/watch?v=iLiDezv_Frk" target="_blank" rel="noopener">CppCon 2015: Richard Powell “Intro to the C++ Object Model”
+</a></p>
+<p>基本覆盖了 POD，无需函数类，单继承的情况，扫盲效果俱佳。</p>
+<p>至于为什么没有包含 multiple inheritance / virtual inheritance，作者说自己不是很 condifent with that。</p>
+<p>讲道理，MI / VI 在一般的设计里都会尽量避免，而且各种乱七八糟的 case 很多，这里不涉及反而是个正确的做法。</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/04/06/assertions/" target="_blank" rel="noopener">Assertions</a></p>
+<p>首先，我很赞同文中作者对于 assertion 是 <em>guarantees given by the author of a piece of code to himself/herself</em> 但是接下来的大部观点都不赞同。</p>
+<p>比如作者认为不应该 assert on precodintions &amp; postconditions，因为 assertion 是 for implementation details，这个思路其实不对。</p>
+<p>关于 assertion，目前看过最好的阐述还是 <a href="https://book.douban.com/subject/3406939/" target="_blank" rel="noopener">Writing Solid Code</a>，推荐去阅读这个。</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/05/06/compile-time-computations/" target="_blank" rel="noopener">Compile-time computations</a></p>
+<p>这篇 post 展示了 constexpr functions 错误报告的常见手段：抛异常。</p>
+<p>这个在之前的某个 cppcon talk 里有专门的介绍。</p>
+<p>另外，文中更进一步，抽出专门的 constexpr validation functions，并通过 comma operator 串联。</p>
+<p>C++ 14 支持多句之后，连 comma operatos 都可以免掉了。</p>
+<hr>
+          <div class="read-more">
+            <a href="/2018/07/01/monthly-read-posts-in-jun-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/06/19/modern-cmake/">Modern CMake</a>
         
       </h1>
@@ -465,191 +586,6 @@
           <div class="read-more">
             <a href="/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/" class="read-more-link">阅读更多</a>
           </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/">浅析 shared_ptr：Boost 篇</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-05-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
-<p>MSVC STL 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">此处</a></p>
-<p>Libstdc++ 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/">此处</a></p>
-<p>注：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。</p>
-<h2 id="目标版本选择"><a href="#目标版本选择" class="headerlink" title="目标版本选择"></a>目标版本选择</h2><p>选用最新的 Boost 1.67 作为研究目标</p>
-<p>在开始正题前，先简单看一下 <code>shared_ptr</code> 的类成员，方便后续分析：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">namespace</span> detail &#123;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt; <span class="class"><span class="keyword">class</span> <span class="title">T</span> &gt; <span class="title">struct</span> <span class="title">sp_element</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="keyword">typedef</span> T type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">T</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">shared_ptr</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">typedef</span> <span class="keyword">typename</span> boost::detail::sp_element&lt; T &gt;::type element_type;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// omitted other</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    element_type * px;                 <span class="comment">// contained pointer</span></span><br><span class="line">    boost::detail::shared_count pn;    <span class="comment">// reference counter</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-          <div class="read-more">
-            <a href="/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/05/01/monthly-read-posts-in-apr-2018/">Monthly Read Post in Apr 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-05-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://www.digitalocean.com/community/tutorials/what-is-load-balancing" target="_blank" rel="noopener">What is Load Balancing?</a></p>
-<p>Digital Ocean 出品的良心文章，覆盖了：</p>
-<ul>
-<li>what is load balancing</li>
-<li>Why load balancing</li>
-<li>Traffic forwarding</li>
-<li>How does load balancer choose backend servers</li>
-<li>Avoid SPOF of load balancer itself</li>
-</ul>
-<hr>
-<p><a href="https://blog.envoyproxy.io/introduction-to-modern-network-load-balancing-and-proxying-a57f6ff80236" target="_blank" rel="noopener">Introduction to modern network load balancing and proxying</a></p>
-<p>非常详尽的一篇介绍 load balancing 的文章，前一篇的所有内容这篇都有，同时还做了一些深入的分析。</p>
-<p>例如：L4/L7 的区别；基于 lb 的 service discovery .etc</p>
-<p>尤其后面一大块讲网络拓扑的部分，没有实际经验的人表示看起来很痛苦。</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=Hjz1eBx91g8" target="_blank" rel="noopener">CppCon 2015: Gabriel Dos Reis “Contracts for Dependable C++”</a></p>
-<p>核心围绕着 interfaces as contract 来展开，针对三点：</p>
-<ul>
-<li>precondition</li>
-<li>invariants</li>
-<li>postcondition</li>
-</ul>
-<p>展开。</p>
-<p>同时提到了一些（想法）构建 programming by contract 的基础设施，例如通过 attribute 来增强语义 blahblah</p>
-<p>另，talk 有点无聊，看看 slider 就差不多了。</p>
-<hr>
-<p><a href="http://insanecoding.blogspot.co.uk/2014/05/dealing-with-randomness.html" target="_blank" rel="noopener">Dealing with randomness</a></p>
-<p>文章前半部份批判了很多不专业的现象，openssl 再次躺枪。</p>
-<p>后面提到了如果要做 cryptographic safe randomness，需要哪些东西。</p>
-<p>最后批判了一下随机数去取模这种做法。</p>
-<p>但是全文看半天也没有一个操作性很强的指导意见….</p>
-<hr>
-<p><a href="http://insanecoding.blogspot.co.uk/2014/05/a-good-idea-with-bad-usage-devurandom.html" target="_blank" rel="noopener">A good idea with bad usage: /dev/urandom</a></p>
-<p>包含 dev/random 和 /dev/urandom 的区别，以及：</p>
-<p>要从 /dev/urandom 中读取数据作为密码学安全的初始化种子应该如何正确的实现。</p>
-<hr>
-<p><a href="https://zhuanlan.zhihu.com/p/24146167" target="_blank" rel="noopener">浅论Lock 与X86 Cache 一致性</a></p>
-<p>Modern CAS implementation under the hood.</p>
-<p>稍稍覆盖了一下 MESI/MESIF 协议。</p>
-<p>但是总体来说感觉质量一般</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=WjTrfoiB0MQ" target="_blank" rel="noopener">CppCon 2015: Andrei Alexandrescu “Declarative Control Flow”</a></p>
-<p>这个 Talk 质量很高，核心就是：如何利用基础的 ScopeGuard 构建出 <code>ON_SCOPE_EXIT</code>，<code>ON_SCOPE_FAIL</code> 和 <code>ON_SCOPE_SUCCESS</code> 语义，并自动执行相应代码。</p>
-<p>RAII 这个特质在某个抽象角度上就是标题所说的 it is declarative</p>
-<p>这几个东西基本已经作为了 facebook 基础库 Folly 的一部分。</p>
-<p>最后提一下，使用 exception 作为 error reporting &amp; handling 机制还是很苦难的，需要依赖很多语言设施（RAII在这里得天独厚），根据语言提供的特性不同会有不同的坑，同时对使用者要求很高。</p>
-<p>目前看起来未来新语言使用异常作为核心错误处理机制的应该会越来越少。</p>
-<hr>
-<p><a href="http://insanecoding.blogspot.co.uk/2014/06/memory-management-in-c-and-auto.html" target="_blank" rel="noopener">Memory management in C and auto allocating sprintf() - asprintf()</a></p>
-<p>文章分两部分：</p>
-<p>第一部分叙述如何“正确”使用 <code>malloc</code> 和 <code>free</code>，核心包含</p>
-<ul>
-<li>需要处理 <code>malloc</code> 失败返回 NULL 的情况</li>
-<li>使用 <code>free</code> 释放内存之后应该把对应的 ptr 置 NULL，同时建议通过提供一个类似 <code>insane_free</code> 的宏来保证</li>
-</ul>
-<p>实话说这部分观点差不多仅适合使用 C 的情况，并且需要自己处理内存分配失败在大多数应用系统上显得过于 overkiil。</p>
-<p>C++ 在这点做的就比较好，直接抛出一个 <code>bad_alloc</code> 异常免得你有什么想法，不过我还是见过很多 catch bad_alloc 的代码。。。；chromium 的做法就比较激进了，在 Windows 上直接设置堆管理器，一旦内存分配失败就立马结束进程。</p>
-<p>第二部分是阐述，如何实现一个跨平台的 <code>asnprintf()</code>，格式化字符串时不需要外部手动设置 buffer 大小。</p>
-<p>这部分会涉及不少不同平台的 runtime 实现的差异性。</p>
-<hr>
-<p><a href="http://www.tomkleinpeter.com/2008/03/17/programmers-toolbox-part-3-consistent-hashing/" target="_blank" rel="noopener">Programmer’s Toolbox Part 3: Consistent Hashing</a></p>
-<p><a href="http://www.tom-e-white.com/2007/11/consistent-hashing.html" target="_blank" rel="noopener">Consistent Hashing</a></p>
-<p>两篇非常棒的讲解 consistent hashing 的文章，第一篇侧重概念和意义，第二篇侧重实践，并且还包含了一个简单的实现。</p>
-<hr>
-<p><a href="https://medium.com/vimeo-engineering-blog/improving-load-balancing-with-a-new-consistent-hashing-algorithm-9f1bd75709ed" target="_blank" rel="noopener">Improving load balancing with a new consistent-hashing algorithm</a></p>
-<p>一种结合 consistent hashing 和 least-connection 的负载均衡算法。</p>
-<hr>
-<p>How to read in a file in C++ <a href="http://insanecoding.blogspot.co.uk/2011/11/how-to-read-in-file-in-c.html" target="_blank" rel="noopener">1</a> &amp; <a href="http://insanecoding.blogspot.co.uk/2011/11/reading-in-entire-file-at-once-in-c.html" target="_blank" rel="noopener">2</a></p>
-<p>作者比较了几种从文件读取内容的方式（C file IO, C++ fstream, iterator .etc)以及对应的性能指标。</p>
-<p>针对同一个编译器的结果排名可以参考；跨跨编译器甚至随着编译器的优化可能结果会有不同，如果需要压榨性能最好还是做一个具体的 benchmark</p>
-<hr>
-<p><a href="https://bitmazing.com/bcblog/index.php?post/2018/04/13/Message-Only-Windows" target="_blank" rel="noopener">Message Only Windows</a></p>
-<p>message-only window 可以用来接受各种 windows 事件消息，作为 UI 消息泵使用。</p>
-<p>局限性：</p>
-<ul>
-<li>Not visible</li>
-<li>No z-order</li>
-<li>Cannot be enumerated</li>
-<li>Does not receive broadcast messages</li>
-</ul>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=sAJGoHN6Xx8" target="_blank" rel="noopener">CppCon 2015: Detlef Vollmann “Executors for C++ - A Long Story …”</a></p>
-<p>Executor proposal for C++.</p>
-<p>实话说这个 Talk 我感觉效果不好。主题不明确，听起来有点云里雾里莫名其妙；演讲者口音也是捉急…</p>
-
         
       
     </div>

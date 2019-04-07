@@ -182,6 +182,146 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/">统一 ezio Buffer 的算术类型读写接口</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>ezio Buffer 一开始的时候只为 read, write 和 peek 提供了从 <code>int8_t</code> 到 <code>int64_t</code> 的函数重载，如果需要处理 unsigned integers，那么就需要自己额外做 <code>static_cast</code>。</p>
+<p>ezio 的主要客户<a href="https://github.com/oceancx" target="_blank" rel="noopener">王藏心</a>同学早前抱怨过这个问题，并且同时建议我加上对 <code>float/double</code> 的浮点数支持。</p>
+<p>对于这个建议我一开始是抵触的：</p>
+<ul>
+<li>自己 cast 又不是不能用，额外加重载支持三个操作工作量都要翻一番呢</li>
+<li>浮点数的 binary serialization 本来就是很难跨平台的，不是每个环境都（虽然大部分）要求使用 IEEE 754 spec。如果真的需要直接把浮点数存到网络包里，自己直接操作 underlying binary layout 不就好了…</li>
+</ul>
+<p>于是王藏心同学一开始开的 issue 我一直没理他，于是最后他自己关掉了…</p>
+<p>等到我自己动手写一个 socks4a proxy 的时候我发现，自己 cast 真的是…太蛋疼了…而且代码看上去还非常丑，大面积的 <code>static_cast</code> 制造了相当一部分内容噪音。那会儿我大概有点理解王藏心同学的内心感受。</p>
+<p>于是我思考良久，打算改造 Buffer 的这部分接口，以支持绝大多数 integer types，顺带也增加入 floating piont types 的支持，这样 read, write, peek 就基本支持了绝大多数 arithmetic types。</p>
+<p>通过直接增加重载是我极力避免的，因为除了接口签名外，大部分实现几乎是一样的，不外乎：</p>
+<ul>
+<li>如果是单字节，直接写/读操作</li>
+<li>如果是多字节，首先字节序转换，然后做写/读操作</li>
+<li>如果是浮点数，首先按照对应字节大小的整数类型<strong>解释</strong>内存，然后参考普通整数的处理</li>
+</ul>
+<p>于是自然而然的想到直接将函数做成 function templates 来增强语义。<br>
+          <div class="read-more">
+            <a href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/04/02/monthly-read-posts-in-mar-2019/">Monthly Read Posts in Mar 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Networking"><a href="#Networking" class="headerlink" title="Networking"></a>Networking</h2><p><a href="https://www.mnot.net/blog/2017/03/16/browser-caching" target="_blank" rel="noopener">The State of Browser Caching, Revisited</a></p>
+<p>各家浏览器对 HTTP caching 的支持概况</p>
+<hr>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" target="_blank" rel="noopener">Cross-Origin Resource Sharing (CORS)</a></p>
+<p><a href="http://fengxu.ink/2018/02/15/ajax%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%E5%8F%8A%E7%9B%B8%E5%85%B3/" target="_blank" rel="noopener">ajax跨域请求及相关</a></p>
+<p>和 CORS 有关的两篇 posts。第一篇是 MDN 的官方教程。</p>
+<p>需要注意的是，CORS在服务端的表现<strong>不是限制</strong>某些 URL 只能被某些 domain 的请求访问，而是允许这些 URL 可以在满足要求的条件下（origin 是某个匹配 domain），允许接收跨域请求。</p>
+<p>跨域禁止的同源策略是由 browser 实施的，当收到服务端许可的情况下才会继续。</p>
+<h2 id="SRE"><a href="#SRE" class="headerlink" title="SRE"></a>SRE</h2><p><a href="https://draveness.me/docker" target="_blank" rel="noopener">Docker 核心技术与实现原理</a></p>
+<p>科普型，内容深度并不深，适合作为了解</p>
+<h2 id="Software-Engineering"><a href="#Software-Engineering" class="headerlink" title="Software Engineering"></a>Software Engineering</h2><p><a href="https://dev.to/luminousmen/what-are-the-best-software-engineering-principles--3p8n" target="_blank" rel="noopener">What Are The Best Software Engineering Principles?</a></p>
+<p>列举了一些软件工程的基本原则。</p>
+<hr>
+<p><a href="https://medium.com/@mattklein123/monorepos-please-dont-e9a279be011b" target="_blank" rel="noopener">Monorepos: Please don’t!</a></p>
+<p>这篇文章算是很标准的檄文：首先点出几个 monorepo 的理论优点然后逐一分析，得出这些优点并没没有看上去那么好；接着列举缺点。</p>
+<p>最后总结得出核心是工程师文化。</p>
+<hr>
+<p><a href="https://medium.com/@adamhjk/monorepo-please-do-3657e08a4b70" target="_blank" rel="noopener">Monorepo: please do!</a></p>
+<p>这篇文章是上面那篇的 argue，但是相比起来写的就太一般了。</p>
+<p>全片的核心论点就一个： monorepo 解决的是大团队里各个子团队的沟通提问题。</p>
+<hr>
+<p><a href="https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/" target="_blank" rel="noopener">Things You Should Never Do, Part I</a></p>
+<p>KEY: Do not rewrite your code.</p>
+<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://blogs.msdn.microsoft.com/oldnewthing/20180201-00/?p=97946" target="_blank" rel="noopener">Spurious wake-ups in Win32 condition variables</a></p>
+<p>简要解释了 Windows 上 condition variables 会出现 spurious wakeups 的两个原因</p>
+<hr>
+<p><a href="https://preshing.com/20111118/locks-arent-slow-lock-contention-is/" target="_blank" rel="noopener">Locks Aren’t Slow; Lock Contention Is</a></p>
+<p>频繁的锁竞争是使用锁慢的根本原因，剩下的就老论点：减少临界区大小，减少锁竞争发生概率 .etc</p>
+<p>文中用泊松分布模拟了实际使用 case 中锁竞争概率和性能的关系，50%的竞争下，两个线程也能由1.5x的提速</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/03/24/on-socks4a-proxy-implementation/">socks4a 协议代理</a>
         
       </h1>
@@ -452,147 +592,6 @@
 <p>依赖的版本管理直接复用 submodule 提供的特性。<br>
           <div class="read-more">
             <a href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/02/06/monthly-read-posts-in-jan-2019/">Monthly Read Posts in Jan 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-02-06
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://arne-mertz.de/2015/03/fun-without-keyword-explicit/" target="_blank" rel="noopener">Fun with(out) keyword explicit</a></p>
-<p>The old saying goes: <em>When writing a conversion operator or a constructor that can be called with one argument, make it explicit by default.</em></p>
-<p>By the way, according to comments from the author, the buggy compiler he used was C++ Builder, from Embarcadero, sigh.</p>
-<h2 id="Engineering"><a href="#Engineering" class="headerlink" title="Engineering"></a>Engineering</h2><p><a href="https://arne-mertz.de/2015/03/simple-and-clean-code-vs-performance/" target="_blank" rel="noopener">Simple and Clean Code vs. Performance</a></p>
-<ul>
-<li>Performance is not efficiency. // ?? I still can’t get this clear in a programming context.</li>
-<li>Improve performance after having profiled your system.</li>
-<li>Make sure use of correct data structures and algorithms</li>
-<li>By default write code for maintainability.</li>
-<li>Know and use your libraries, unless your profiler showed them to have bad performance.</li>
-</ul>
-<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://idea.popcount.org/2012-09-12-reinventing-spinlocks/" target="_blank" rel="noopener">Reinventing spinlocks</a></p>
-<p>when implementing spinlock unlock: a simple atomic store is enough. no need for using  a heavy CAS operation.</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="http://ithare.com/testing-memory-allocators-ptmalloc2-tcmalloc-hoard-jemalloc-while-trying-to-simulate-real-world-loads/" target="_blank" rel="noopener">Testing Memory Allocators: ptmalloc2 vs tcmalloc vs hoard vs jemalloc While Trying to Simulate Real-World Loads</a></p>
-<p>Three pre-requisites:</p>
-<ul>
-<li>test only new/delete (or malloc/free)</li>
-<li>use realistic statistic distributions; both for allocated sizes and for lifetime of allocated items</li>
-<li>access all memory at least once</li>
-</ul>
-<p>all for emulating real-world uses.</p>
-<p>conclusion:</p>
-<ul>
-<li>for cpu cycle test, every allocator is not too far from each other. each of them can outperform another one under certain conditions. benchmark is highly recommended when you decide to change your allocator.</li>
-<li>some allocators behave not so good in memory overhead, like Hoard.</li>
-</ul>
-<hr>
-<p><a href="https://idea.popcount.org/2012-12-09-lsof-cant-identify-protocol/" target="_blank" rel="noopener">lsof: can’t identify protocol</a></p>
-<ul>
-<li><code>lsof</code> for listing open files; while</li>
-<li><code>netstat</code> for displaying network related information, like connections .etc</li>
-</ul>
-<p><code>lsof</code> has issues on locating half-closed sockets.</p>
-<hr>
-<p><a href="https://idea.popcount.org/2012-12-11-linux-process-states/" target="_blank" rel="noopener">Linux process states ptrace tutorial part #1</a></p>
-<p>How <code>ptrace</code> relates with linux process states.</p>
-<p>using <code>SIGSTOP</code> and <code>SIGCONT</code> to control a process’s state and parent process receives <code>SIGCHLD</code> when child process state changes.</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/">调整 ezio 的 TCPConnection 状态事件</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-01-27
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>上上周的时候给 ezio 做了一个<a href="https://github.com/kingsamchen/ezio/commit/d9e7bde28155b5bb2f144dd4c42083d95ef7b674" target="_blank" rel="noopener">调整</a>，稍微修改了一下 <code>TCPConnection</code> 对外暴露的几个状态变化的事件。</p>
-<p>起因是在写 <a href="https://github.com/kingsamchen/ezio/blob/9a2ea3ffa43578555e8dfcfe769db10bb45e0087/examples/chat/chat_client.cpp#L62" target="_blank" rel="noopener">example/chat-client</a> 的时候，因为主线程单独跑了一个事件循环从 <code>stdin</code> 中读取用户输入，所以 <code>ChatClient</code> 以及内部的 <code>TCPClient</code> 是跑在另外的工作线程上。</p>
-<p>因为那个时候 <code>TCPClient</code> 之对外暴露了 connection 和 disconnection 的事件回调（这两个事件还统一成了一个 <code>on_connection()</code>），所以自然选择在 disconnection 的时候进行退出主循环的操作。</p>
-<p>但是这个时候会出现：</p>
-<ul>
-<li>主循环结束后立马析构 <code>ChatClient</code>，连同内部的 <code>TCPClient</code> 一起销毁。因为这部分代码跑在主线程上，所以不会和工作线程有任何 coordination。</li>
-<li><code>TCPClient</code> 会在触发 <code>on_connection()</code> 来表明连接断开后会继续做一些内部清理工作；然而因为前面已经将 <code>TCPClient</code> 析构了，导致 UAF</li>
-</ul>
-<p>而当时为了解决这个问题，采用的 workaround 时，<code>ChatClient::OnConnection()</code> 在发现连接断开后，通过 <code>RunTaskAfter()</code> 的方式延后执行 <code>EventLoop::Quit()</code>。</p>
-<p>这个做法非常丑陋而且不可靠。<br>
-          <div class="read-more">
-            <a href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/" class="read-more-link">阅读更多</a>
           </div>
         
       

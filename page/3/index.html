@@ -182,6 +182,115 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/12/07/build-your-own-handlerthread-part-4/">Build Your Own HandlerThread Part 4</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-12-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>有了前面的铺垫我们终于可以开始实现我们的主角 ActiveThread 了，虽然它登场的有点晚。</p>
+<p>这个系列的开头我们提到 <code>ActiveThread</code> 有两个鲜明的特点：</p>
+<ul>
+<li>它是线程，可以运行，代表一个单独的执行上下文（execution unit/context）</li>
+<li>每个 <code>ActiveThread</code> 内部运行一个 message-loop，方便持续的执行我们提交的任务</li>
+</ul>
+<p>这两点和 Android 原生提供的 <code>HandlerThread</code> 是一模一样的。</p>
+<p>不过和 <code>HandlerThread</code> 不同，我们这里不打算采用继承 <code>Thread</code> 的方式，而是采用 composition。原因之一是我个人非常反感传统的 OO 继承手法；并且 Java 8 开始正式支持 lambda 之后，不用继承我们的工作也可以做得很好。</p>
+<p>不适用继承同时有个好处，我们可以只暴露我们需要的接口，避免误用（比如经典的用 <code>run()</code> 而不是 <code>start()</code>）<br>
+          <div class="read-more">
+            <a href="/2018/12/07/build-your-own-handlerthread-part-4/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/12/06/build-your-own-handlerthread-part-3/">Build Your Own HandlerThread Part 3</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-12-06
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>前面我们实现了 <code>MessageLoop</code>，现在该轮到 <code>TaskRunner</code> 了。</p>
+<p>在我们的设计中，<code>TaskRunner</code> 的定位是类似 <code>Handler</code>，用来驱动/使用 <code>MessageLoop</code>，将 <code>MessageLoop</code> 隐藏在日常使用中。</p>
+<p><code>TaskRunner</code> 的实现比较简单，因为几乎所有的实际工作都是由内部的 <code>MessageLoop</code> 完成。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Our MessageLoop doesn't provide a way to complete pending tasks when it is asked to quit.</span></span><br><span class="line"><span class="comment">// Therefore our post-task methods don't care about if a task was submitted.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Instant;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskRunner</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> MessageLoop _loop;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Uses current thread's owning MessageLoop.</span></span><br><span class="line">    <span class="comment">// Throws an exception if the thread has no bound MessageLoop.</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TaskRunner</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        _loop = MessageLoop.current();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TaskRunner</span><span class="params">(MessageLoop loop)</span> </span>&#123;</span><br><span class="line">        _loop = loop;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> MessageLoop <span class="title">getMessageLoop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _loop;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postTask</span><span class="params">(Runnable r)</span> </span>&#123;</span><br><span class="line">        _loop.enqueueTask(<span class="keyword">new</span> PendingTask(r, Instant.EPOCH));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postTaskAt</span><span class="params">(Runnable r, <span class="keyword">long</span> uptimeMillis)</span> </span>&#123;</span><br><span class="line">        _loop.enqueueTask(<span class="keyword">new</span> PendingTask(r, Instant.ofEpochMilli(uptimeMillis)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postDelayedTask</span><span class="params">(Runnable r, <span class="keyword">long</span> delayMillis)</span> </span>&#123;</span><br><span class="line">        _loop.enqueueTask(<span class="keyword">new</span> PendingTask(r, Instant.now().plusMillis(delayMillis)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runTask</span><span class="params">(Runnable r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (_loop.belongsToCurrentThread()) &#123;</span><br><span class="line">            r.run();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            postTask(r);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>和 <code>Handler</code> 一个最明显的不同之处仅是我们增加了 <code>runTask()</code> 函数。</p>
+<p>和 <code>postTask()</code> 不同，如果当前线程就是 loop thread，<code>r</code> 会被立即执行。这在某些时候是一个优势。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/12/05/build-your-own-handlerthread-part-2/">Build Your Own HandlerThread Part 2</a>
         
       </h1>
@@ -489,119 +598,6 @@
 <h3 id="MessageLoop-Type"><a href="#MessageLoop-Type" class="headerlink" title="MessageLoop Type"></a>MessageLoop Type</h3><p>A MessageLoop has a particular type, differred by the set of asynchronous events it is capable of handling.<br>
           <div class="read-more">
             <a href="/2018/11/25/chromium-base-message-loop-internals-1/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/">在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-11-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>在 cmder 里如果不指定运行的 terminal 则会默认使用 windows cmd，而这在使用 git-bash 或者 wsl 时会经常遇到问题：</p>
-<ol>
-<li>性能底下导致交互出现显著延迟（这个发生在使用 tig 等重型 bash 命令或者使用 wsl中）</li>
-<li>容易因为环境属性问题导致乱码，比如 cmder 里直接运行 git-bash 的 tig 会发现提交历史的分割线都乱码了</li>
-</ol>
-<p>神奇的是 cmder 支持将某个终端内嵌到自己的宿主界面里，这样就可以在 cmder 一个程序（单指窗口，非进程）里跑多个终端环境了</p>
-<p>对于使用 mintty 跑 git-bash，假设已经安装了 git for windows，则只需要设置这个人物属性为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%ProgramFiles%\Git\usr\bin\mintty.exe /bin/bash -l -new_console:d:%userProfile%</span><br></pre></td></tr></table></figure>
-<p>即可。</p>
-<p>而对于 WSL，先安装一下 wsl-terminal，然后在 cmder 里新建一个 task，启动内容为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;C:\Programs\wsl-terminal\bin\mintty.exe&quot; /bin/wslbridge -t /usr/bin/ssh-agent /bin/zsh -l -new_console:d</span><br></pre></td></tr></table></figure>
-<p>即可。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/11/11/ebo-with-multiple-inheritance-in-msvc/">MSVC 对多继承下的 EBO 支持的一个 workaround</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-11-11
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>首先简单介绍一下 EBO（Empty Base Class Optimization）。</p>
-<p>因为 C++ 规定，任何一个 instance 在内存中必须要有唯一的地址，因此一个空的 class/struct 会在编译时被偷偷插入一个外人看不到的 <code>char mem;</code>，于是这个空类的每一个 instance 都可以有一个唯一的地址了。</p>
-<p>但是如果将这个空类作为某个类的成员时，这个隐藏的成员会被计入内存布局之中，考虑到 memory padding，有时候会导致类对象体积膨涨一倍。</p>
-<p>例如考虑：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">E</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A1</span> &#123;</span></span><br><span class="line">    E e;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">assert(<span class="keyword">sizeof</span>(E) == <span class="number">1</span>);</span><br><span class="line">assert(<span class="keyword">sizeof</span>(A1) == <span class="number">8</span>);</span><br></pre></td></tr></table></figure>
-<p>我们会发现每一个 <code>A1</code> 的 instance 都占了 8-byte，比起 4-byte 足足翻了一倍。</p>
-<p>占用内存无端变大导致 cache 问题啥的就不讲了，这方面的内容任何讲 computer architecture 的书应该都会有。<br>
-          <div class="read-more">
-            <a href="/2018/11/11/ebo-with-multiple-inheritance-in-msvc/" class="read-more-link">阅读更多</a>
           </div>
         
       
