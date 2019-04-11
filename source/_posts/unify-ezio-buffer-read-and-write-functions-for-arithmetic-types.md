@@ -6,16 +6,16 @@ tags: [cpp, template, SFINAE, ezio]
 ---
 ezio Buffer 一开始的时候只为 read, write 和 peek 提供了从 `int8_t` 到 `int64_t` 的函数重载，如果需要处理 unsigned integers，那么就需要自己额外做 `static_cast`。
 
-ezio 的主要客户[王藏心](https://github.com/oceancx)同学早前抱怨过这个问题，并且同时建议我加上对 `float/double` 的浮点数支持。
+ezio 的主要客户[藏心](https://github.com/oceancx)同学早前抱怨过这个问题，并且同时建议我加上对 `float/double` 的浮点数支持。
 
 对于这个建议我一开始是抵触的：
 
 - 自己 cast 又不是不能用，额外加重载支持三个操作工作量都要翻一番呢
 - 浮点数的 binary serialization 本来就是很难跨平台的，不是每个环境都（虽然大部分）要求使用 IEEE 754 spec。如果真的需要直接把浮点数存到网络包里，自己直接操作 underlying binary layout 不就好了...
 
-于是王藏心同学一开始开的 issue 我一直没理他，于是最后他自己关掉了...
+于是藏心同学一开始开的 issue 我一直没理他，于是最后他自己关掉了...
 
-等到我自己动手写一个 socks4a proxy 的时候我发现，自己 cast 真的是...太蛋疼了...而且代码看上去还非常丑，大面积的 `static_cast` 制造了相当一部分内容噪音。那会儿我大概有点理解王藏心同学的内心感受。
+等到我自己动手写一个 socks4a proxy 的时候我发现，自己 cast 真的是...太蛋疼了...而且代码看上去还非常丑，大面积的 `static_cast` 制造了相当一部分内容噪音。那会儿我大概有点理解藏心同学的内心感受。
 
 于是我思考良久，打算改造 Buffer 的这部分接口，以支持绝大多数 integer types，顺带也增加入 floating piont types 的支持，这样 read, write, peek 就基本支持了绝大多数 arithmetic types。
 
