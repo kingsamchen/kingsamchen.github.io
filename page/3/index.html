@@ -182,6 +182,65 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/12/07/build-your-own-handlerthread-part-finale/">Build Your Own HandlerThread Part Finale</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-12-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>至此，我们整个系列宣告完结。</p>
+<p>现在回过头往前看，是不是觉得其实这些底层的东西也没这么难？有时候只是需要一些基础和解决问题的方法罢了。</p>
+<p>Rant：做业务才真的难呢，框架和流程都给你定死了，一坨又一坨用了几年的不明觉厉的封装，如果内部文档哪个不详，又没有熟悉的人带着你，基本就净在里面绕圈子了。</p>
+<p>好了我们转回正题。</p>
+<p>整个系列的代码可见这里：<a href="https://github.com/kingsamchen/Eureka/tree/master/ActiveThread-Java" target="_blank" rel="noopener">Eureka/ActiveThread-Java</a></p>
+<p>部分还带了单元测试。</p>
+<h3 id="系列索引"><a href="#系列索引" class="headerlink" title="系列索引"></a>系列索引</h3><ul>
+<li><a href="/2018/12/03/build-your-own-handlerthread-part-0/" title="Build Your Own HandlerThread Part 0">Build Your Own HandlerThread Part 0</a></li>
+<li><a href="/2018/12/04/build-your-own-handlerthread-part-1/" title="Build Your Own HandlerThread Part 1">Build Your Own HandlerThread Part 1</a></li>
+<li><a href="/2018/12/05/build-your-own-handlerthread-part-2/" title="Build Your Own HandlerThread Part 2">Build Your Own HandlerThread Part 2</a></li>
+<li><a href="/2018/12/06/build-your-own-handlerthread-part-3/" title="Build Your Own HandlerThread Part 3">Build Your Own HandlerThread Part 3</a></li>
+<li><a href="/2018/12/07/build-your-own-handlerthread-part-4/" title="Build Your Own HandlerThread Part 4">Build Your Own HandlerThread Part 4</a>
+</li>
+</ul>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/12/07/build-your-own-handlerthread-part-4/">Build Your Own HandlerThread Part 4</a>
         
       </h1>
@@ -544,61 +603,6 @@
 <p>另外通过语义变更来消除异常我自己之前也总结过这个，原因还是因为在 C++ 里使用异常的心智负担比较高，所以自己总结了一些方法论在正确的控制异常。</p>
 <p>战术 &amp; 战略之争是一个永恒的话题，尤其对快速发展小公司来说。</p>
 
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/11/25/chromium-base-message-loop-internals-1/">Chromium Base MessageLoop Internals (1)</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-11-25
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="class-MessageLoop"><a href="#class-MessageLoop" class="headerlink" title="class MessageLoop"></a>class MessageLoop</h2><p>Version: r70_3538<br>File: <code>base/message_loop/message_loop.{h, cc}</code></p>
-<p>A <code>MessageLoop</code> is used to process events for a particular thread, i.e. the core infrastructure for implementing Communicating Sequential Process (CSP) model.</p>
-<p>There is at most one MessageLoop instance on a thread.</p>
-<p><code>MessageLoop</code> is a farily complex class, it driveds from multiple base classes:</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">BASE_EXPORT</span> <span class="title">MessageLoop</span> :</span> <span class="keyword">public</span> MessagePump::Delegate,</span><br><span class="line">                                <span class="keyword">public</span> RunLoop::Delegate,</span><br><span class="line">                                <span class="keyword">public</span> MessageLoopCurrent &#123;</span><br><span class="line">    <span class="comment">// omitted...</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="MessageLoop-Type"><a href="#MessageLoop-Type" class="headerlink" title="MessageLoop Type"></a>MessageLoop Type</h3><p>A MessageLoop has a particular type, differred by the set of asynchronous events it is capable of handling.<br>
-          <div class="read-more">
-            <a href="/2018/11/25/chromium-base-message-loop-internals-1/" class="read-more-link">阅读更多</a>
-          </div>
         
       
     </div>

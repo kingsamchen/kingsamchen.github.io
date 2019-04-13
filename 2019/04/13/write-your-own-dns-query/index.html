@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Write Your Own DNS Query"/>
+
+
+
+
+  <meta name="keywords" content="golang, dns, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/04/13/write-your-own-dns-query/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> Write Your Own DNS Query - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Write Your Own DNS Query
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-13
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#DNS-Message-Format"><span class="toc-text">DNS Message Format</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Header"><span class="toc-text">Header</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Question-Section"><span class="toc-text">Question Section</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Answer-Section"><span class="toc-text">Answer Section</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Example-DNS-Query-and-Response"><span class="toc-text">Example DNS Query and Response</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#Query"><span class="toc-text">Query</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Response"><span class="toc-text">Response</span></a></li></ol></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Final-Demo"><span class="toc-text">Final Demo</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>大部分人应该都知道 DNS 协议，以及它的用处。但是考虑过自己动手写 DNS message transmission 的应该不占多数。</p>
+<p>我们不妨考虑如何自己实现一个简单的 DNS client，完成基本的 domain name query and response parsing。</p>
+<p>因为 DNS 协议通常使用 UDP 作为其传输层协议，而且数据包是二进制包，所以实现一个这样简单的 demo 考虑用 golang 可能会省事儿不少。</p>
+<h3 id="DNS-Message-Format"><a href="#DNS-Message-Format" class="headerlink" title="DNS Message Format"></a>DNS Message Format</h3><p>大体上 DNS 不是一个复杂的协议（虽然各类坑实在不少），所有的消息，不管是 query 还是 reply，都共享一个消息格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+---------------------+</span><br><span class="line">|        Header       |</span><br><span class="line">+---------------------+</span><br><span class="line">|       Question      | the question for the name server</span><br><span class="line">+---------------------+</span><br><span class="line">|        Answer       | Resource Records (RRs) answering the question</span><br><span class="line">+---------------------+</span><br><span class="line">|      Authority      | RRs pointing toward an authority</span><br><span class="line">+---------------------+</span><br><span class="line">|      Additional     | RRs holding additional information</span><br><span class="line">+---------------------+</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Header：消息头，包含一些参数、标志位</li>
+<li>Question：包含 query 的信息，例如需要查询的 domain</li>
+<li>Answer：reply 的信息</li>
+<li>Authority：如果有信息，则表明应答的服务器是 ultimate authority server。别忘了 DNS 服务器是树形结构，通常终端用户查询的 DNS 服务器都是 local DNS server。</li>
+<li>Additional：服务器传回的一些额外数据，非用户显式需要的</li>
+</ul>
+<p>对于一个 query message，<code>Answer</code> section 是空的；而对于一个 reply message，<code>Question</code> 保存着对应 query 的数据。</p>
+<p>一般而言，终端设备收到的 reply 消息里，<code>Authority</code> 和 <code>Additional</code> 是空的。所以下面会跳过这两个 section 的描述。<br><a id="more"></a><br>另外，读写网络包的时候需要注意，需要按照 big-endian 写入多字节整数！</p>
+<h4 id="Header"><a href="#Header" class="headerlink" title="Header"></a>Header</h4><p>query 和 reply 消息的 header 格式是一样的：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                      ID                       |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|QR|   OPCODE  |AA|TC|RD|RA|   Z    |   RCODE   |	Flags row</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                    QDCOUNT                    |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                    ANCOUNT                    |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                    NSCOUNT                    |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                    ARCOUNT                    |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></pre></td></tr></table></figure>
+<p>上面每一行的大小都是 2-byte，即 16-bit</p>
+<ul>
+<li><p>ID：query 的 ID，用来串联 query - reply。可以是任何内容的数据，通常用16位随机数</p>
+</li>
+<li><p>Flags：</p>
+<ul>
+<li>QR：表明消息类型<ul>
+<li><code>0</code> query 消息</li>
+<li><code>1</code> reply 消息</li>
+</ul>
+</li>
+<li>OPCODE：表明 query 类型<ul>
+<li><code>0</code> standard query</li>
+<li><code>1</code> inverse query</li>
+<li><code>2</code> server status request</li>
+<li><code>3</code> ~ <code>15</code> reserved</li>
+</ul>
+</li>
+<li>AA：如果为 <code>1</code> 则表明这个 reply 是一个 authoritative answer；应答的服务器是 authoritive server。这个 flag 仅在 reply 消息中有用</li>
+<li>TC：为 <code>1</code> 表明消息被截断</li>
+<li>RD：置 <code>1</code> 表明使用 recursive query mode（DNS query 有两种查询模式：recursive 和 iterative），仅用于 query 消息</li>
+<li>RA：为 <code>1</code> 表明 DNS server 支持 recursive query</li>
+<li>Z：reserved</li>
+<li>RCODE：<ul>
+<li><code>0</code>：成功，无错误</li>
+<li><code>1</code>：格式错误；服务器无法解析 query 消息</li>
+<li><code>2</code>：DNS server error</li>
+<li><code>3</code>：name error；查询的 domain name 不错在</li>
+<li><code>4</code>：not implemented；不支持的查询方式</li>
+<li><code>5</code>：refused；服务器拒绝此查询（根据某种策略）</li>
+</ul>
+</li>
+<li>QCOUNT：16-bit unsigned；Question 区中查询的条目数</li>
+<li>ANCOUNT：16-bit unsigned；Answer 区中的记录数（注意 reply 中可能包含多条记录）</li>
+<li>NSCOUNT：16-bit unsigned；Authority 区中记录数</li>
+<li>ARCOUNT：16-bit unsigned；Additional 区中记录数</li>
+</ul>
+<p>实现是需要注意 flags row 某些标志使用了多个 bits，需要运用一些位操作技巧。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newQueryHeader</span><span class="params">(packet *bytes.Buffer)</span> <span class="params">(id <span class="keyword">uint16</span>)</span></span> &#123;</span><br><span class="line">	<span class="comment">// ID</span></span><br><span class="line">	rnd := rand.New(rand.NewSource(time.Now().UnixNano()))</span><br><span class="line">	id = <span class="keyword">uint16</span>(rnd.Intn(math.MaxUint16))</span><br><span class="line">	checkNoFail(binary.Write(packet, binary.BigEndian, id))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Set RD bit flag only.</span></span><br><span class="line">	packet.Write([]<span class="keyword">byte</span>&#123;<span class="number">0x01</span>, <span class="number">0x00</span>&#125;)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// QD Count</span></span><br><span class="line">	checkNoFail(binary.Write(packet, binary.BigEndian, <span class="keyword">uint16</span>(<span class="number">1</span>)))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// AN Count</span></span><br><span class="line">	checkNoFail(binary.Write(packet, binary.BigEndian, <span class="keyword">uint16</span>(<span class="number">0</span>)))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// NS Count</span></span><br><span class="line">	checkNoFail(binary.Write(packet, binary.BigEndian, <span class="keyword">uint16</span>(<span class="number">0</span>)))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// AR Count</span></span><br><span class="line">	checkNoFail(binary.Write(packet, binary.BigEndian, <span class="keyword">uint16</span>(<span class="number">0</span>)))</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> packet.Len() != _HeaderSize &#123;</span><br><span class="line">		<span class="built_in">panic</span>(errors.New(fmt.Sprintf(<span class="string">"incorrect header size; size=%d"</span>, packet.Len())))</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="Question-Section"><a href="#Question-Section" class="headerlink" title="Question Section"></a>Question Section</h4><p>对于一个 DNS query message，我们需要将查询的内容写入 question section。</p>
+<p>其格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                                               |</span><br><span class="line">/                     QNAME                     /</span><br><span class="line">/                                               /</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                     QTYPE                     |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                     QCLASS                    |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></pre></td></tr></table></figure>
+<p>QNAME 保存我们要查询的 domain name，并且要首先对 domain name 进行编码：每个用 <code>.</code> 分开的部分会编码成一个 label，label 开头是当前 label 的字符数。</p>
+<p>例如对域名 <code>example.com</code>，编码后的结果如下</p>
+<ul>
+<li>label <code>example</code>：<code>0x07 &#39;e&#39; &#39;x&#39; &#39;a&#39; &#39;m&#39; &#39;p&#39; &#39;l&#39; &#39;e&#39;</code></li>
+<li>label <code>com</code>：<code>0x03 &#39;c&#39; &#39;o&#39; &#39;m&#39;</code></li>
+</ul>
+<p>QNAME 结尾用 <code>0x00</code> 标记结束</p>
+<p>QTYPE：specifies<br>the type of the query</p>
+<ul>
+<li>0x0001: A records (host address)</li>
+<li>0x0002: name server records      (NS)</li>
+<li>0x000F: mail server records      (MX)</li>
+</ul>
+<p>QCLASS：该 query 的类别</p>
+<ul>
+<li>0x0001：represents<br>Internet address</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newQuerySection</span><span class="params">(domain <span class="keyword">string</span>, packet *bytes.Buffer)</span></span> &#123;</span><br><span class="line">	sections := strings.Split(domain, <span class="string">"."</span>)</span><br><span class="line">	<span class="keyword">for</span> _, section := <span class="keyword">range</span> sections &#123;</span><br><span class="line">		lenByte := <span class="keyword">uint8</span>(<span class="built_in">len</span>(section))</span><br><span class="line">		packet.WriteByte(<span class="keyword">byte</span>(lenByte))</span><br><span class="line">		packet.WriteString(section)</span><br><span class="line">	&#125;</span><br><span class="line">	packet.WriteByte(<span class="number">0x00</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// QTYPE = A record</span></span><br><span class="line">	checkNoFail(binary.Write(packet, binary.BigEndian, <span class="keyword">uint16</span>(<span class="number">0x0001</span>)))</span><br><span class="line">	<span class="comment">// QCLASS = Internet address</span></span><br><span class="line">	checkNoFail(binary.Write(packet, binary.BigEndian, <span class="keyword">uint16</span>(<span class="number">0x0001</span>)))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>组合一下前面的 header 和 question，我们就可以写出整个 query 的部分</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">newDNSQuery</span><span class="params">(domain <span class="keyword">string</span>)</span> <span class="params">(packet []<span class="keyword">byte</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> buf bytes.Buffer</span><br><span class="line"></span><br><span class="line">	_ = newQueryHeader(&amp;buf)</span><br><span class="line">	newQuerySection(domain, &amp;buf)</span><br><span class="line"></span><br><span class="line">	packet = buf.Bytes()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="Answer-Section"><a href="#Answer-Section" class="headerlink" title="Answer Section"></a>Answer Section</h4><p>这部分保存这服务器返回的结果信息。</p>
+<p>格式如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F  0</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                                               |</span><br><span class="line">/                                               /</span><br><span class="line">/                      NAME                     /</span><br><span class="line">|                                               |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                      TYPE                     |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                     CLASS                     |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                      TTL                      |</span><br><span class="line">|                                               |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">|                   RDLENGTH                    |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--|</span><br><span class="line">/                     RDATA                     /</span><br><span class="line">/                                               /</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></pre></td></tr></table></figure>
+<p><strong>注意：一个 reply 可能包含多个 answer 记录，每个记录都满足上面的格式要求。解析的时候需要根据 reply 中 header 里的 <code>ANCOUNT</code> 来确定到底有多少条记录。</strong></p>
+<p>NAME 保存着我们请求的域名；如果我们请求的域名实际上是一个 alias，则 NAME 里保存着真实域名。</p>
+<p>大多数情况下，这部分内容会被 packet compression。因为域名信息前面在 question 已经出现过了，所以没必要重复内容。</p>
+<p>压缩机制如下：</p>
+<p>如果采用了压缩，则这部分内容的实际二进制格式为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br><span class="line">| 1 1 |                OFFSET                   |</span><br><span class="line">+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+--+</span><br></pre></td></tr></table></figure>
+<ul>
+<li>整体是 16-bit 的记录，头两个 bits 是 <code>11</code> 代表启用了压缩</li>
+<li>后面 14 bits 是数据相对于整个 reply message 的 offset</li>
+</ul>
+<p>这里的 TYPE 和 CLASS 于 question 的 QTYPE 和 QCLASS 基本一致，除了 TYPE 多了一种类型：<code>0x0005</code> 代表 CNAME 记录</p>
+<p>TTL：是 32-bit unsigned，代表这条记录能被缓存多少秒</p>
+<p>RDLENGTH：RDATA 的长度</p>
+<p>RDATA：具体内容视 TYPE 内容而定</p>
+<ul>
+<li>TYPE = 0x0001, for A records, then data is IP address</li>
+<li>TYPE = 0x0005, for CNAME, then the data is the name of alias</li>
+<li>TYPE = 0x0002, for name servers, data is the name of server</li>
+<li>TYPE = 0x000F, for mail servers, the format is PREFERENCE + EXCHANGE</li>
+</ul>
+<p>下面是大体的解析框架，略去了部分解析数据的函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">parseResponse</span><span class="params">(resp []<span class="keyword">byte</span>)</span> <span class="params">(reply *dnsReply, err error)</span></span> &#123;</span><br><span class="line">	reply = &amp;dnsReply&#123;&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Header section first.</span></span><br><span class="line"></span><br><span class="line">	flag1 := resp[<span class="number">2</span>]</span><br><span class="line">	flag2 := resp[<span class="number">3</span>]</span><br><span class="line"></span><br><span class="line">	<span class="comment">// QR | OPCODE | AA | TC | RD</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (flag1 &amp; <span class="number">0x80</span>) == <span class="number">0</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">"flag1=%x"</span>, flag1)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"not a answer reply"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ((flag1 &gt;&gt; <span class="number">2</span>) &amp; <span class="number">0x1</span>) != <span class="number">0</span> &#123;</span><br><span class="line">		reply.AuthorativeAnswer = <span class="literal">true</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ((flag1 &gt;&gt; <span class="number">1</span>) &amp; <span class="number">0x1</span>) != <span class="number">0</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">"flag1=%x"</span>, flag1)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"response data was truncated"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// RA | Z | RCODE</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (flag2 &amp; <span class="number">0x80</span>) == <span class="number">0</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">"flag2=%x"</span>, flag2)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"remote server doesn't support recursive query"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> (flag2 &amp; <span class="number">0x0F</span>) != <span class="number">0</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">"flag2=%x"</span>, flag2)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"error response"</span>)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	ansCount := binary.BigEndian.Uint16(resp[<span class="number">6</span>:<span class="number">8</span>])</span><br><span class="line"></span><br><span class="line">	cursor := <span class="number">0</span></span><br><span class="line">	<span class="keyword">for</span> i := _HeaderSize; i &lt; <span class="built_in">len</span>(resp); i++ &#123;</span><br><span class="line">		<span class="keyword">if</span> resp[i] == <span class="number">0x00</span> &#123;</span><br><span class="line">			cursor = i + <span class="number">1</span></span><br><span class="line">			<span class="keyword">break</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// skip QTYPE &amp; QCLASS</span></span><br><span class="line">	cursor += <span class="number">4</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// process answer sections</span></span><br><span class="line">	<span class="keyword">for</span> ansCount &gt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">if</span> (resp[cursor] &amp; <span class="number">0xC0</span>) != <span class="number">0xC0</span> &#123;</span><br><span class="line">			log.Printf(<span class="string">"Name=%x"</span>, resp[cursor])</span><br><span class="line">			<span class="keyword">return</span> <span class="literal">nil</span>, errors.New(<span class="string">"answer doesn't use compression"</span>)</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		offset := <span class="keyword">int</span>(binary.BigEndian.Uint16([]<span class="keyword">byte</span>&#123;resp[cursor] &amp; <span class="number">0x3F</span>, resp[cursor+<span class="number">1</span>]&#125;))</span><br><span class="line">		name := resolveSectionDataAsString(resp[offset:])</span><br><span class="line">		cursor += <span class="number">2</span></span><br><span class="line"></span><br><span class="line">		recordType := <span class="keyword">int</span>(binary.BigEndian.Uint16(resp[cursor:cursor+<span class="number">2</span>]))</span><br><span class="line">		cursor += <span class="number">2</span></span><br><span class="line"></span><br><span class="line">		<span class="comment">// skip CLASS</span></span><br><span class="line">		cursor += <span class="number">2</span></span><br><span class="line"></span><br><span class="line">		ttl := <span class="keyword">int</span>(binary.BigEndian.Uint32(resp[cursor:cursor+<span class="number">4</span>]))</span><br><span class="line">		cursor += <span class="number">4</span></span><br><span class="line"></span><br><span class="line">		valueLen := <span class="keyword">int</span>(binary.BigEndian.Uint16(resp[cursor:cursor+<span class="number">2</span>]))</span><br><span class="line">		cursor += <span class="number">2</span></span><br><span class="line"></span><br><span class="line">		<span class="keyword">var</span> value <span class="keyword">string</span></span><br><span class="line">		<span class="keyword">if</span> recordType == _RecordTypeARecord &#123;</span><br><span class="line">			value = resolveSectionDataAsIPAddr(resp[cursor:cursor + valueLen])</span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> recordType == _RecordTypeCNAME &#123;</span><br><span class="line">			value = resolveSectionDataAsString(resp[cursor:cursor + valueLen])</span><br><span class="line">		&#125;</span><br><span class="line">		cursor += valueLen</span><br><span class="line"></span><br><span class="line">		record := &amp;dnsRecord&#123;</span><br><span class="line">			Type: recordType,</span><br><span class="line">			TTL: ttl,</span><br><span class="line">			Name: name,</span><br><span class="line">			Value: value,</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		reply.records = <span class="built_in">append</span>(reply.records, record)</span><br><span class="line"></span><br><span class="line">		ansCount--</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Example-DNS-Query-and-Response"><a href="#Example-DNS-Query-and-Response" class="headerlink" title="Example DNS Query and Response"></a>Example DNS Query and Response</h3><p>为了方便理解，我从某本教材的习题里找了一个 query 和 response 的二进制包数据</p>
+<h4 id="Query"><a href="#Query" class="headerlink" title="Query"></a>Query</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0000000: db42 0100 0001 0000 0000 0000 0377 7777 .B...........www</span><br><span class="line">0000010: 0c6e 6f72 7468 6561 7374 6572 6e03 6564 .northeastern.ed</span><br><span class="line">0000020: 7500 0001 0001                          u.....</span><br></pre></td></tr></table></figure>
+<p><img src="/img/dns_query.png" alt=""></p>
+<h4 id="Response"><a href="#Response" class="headerlink" title="Response"></a>Response</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0000000: db42 8180 0001 0001 0000 0000 0377 7777 .B...........www</span><br><span class="line">0000010: 0c6e 6f72 7468 6561 7374 6572 6e03 6564 .northeastern.ed</span><br><span class="line">0000020: 7500 0001 0001 c00c 0001 0001 0000 0258 u..............X</span><br><span class="line">0000030: 0004 9b21 1144                          ...!.D</span><br></pre></td></tr></table></figure>
+<p><img src="/img/dns_response.png" alt=""></p>
+<h3 id="Final-Demo"><a href="#Final-Demo" class="headerlink" title="Final Demo"></a>Final Demo</h3><p>完整的代码实现见 <a href="https://github.com/kingsamchen/Eureka/blob/master/DNSClient/cmd/main.go" target="_blank" rel="noopener">DNSClient/main.go</a></p>
+<p><img src="/img/dns_client_demo.png" alt=""></p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/04/13/write-your-own-dns-query/">http://kingsamchen.github.io/2019/04/13/write-your-own-dns-query/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/dns/">dns</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/">
+        <span class="next-text nav-default">统一 ezio Buffer 的算术类型读写接口</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/04/13/write-your-own-dns-query/';
+        this.page.identifier = '2019/04/13/write-your-own-dns-query/';
+        this.page.title = 'Write Your Own DNS Query';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

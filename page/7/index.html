@@ -182,6 +182,68 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/">浅析 RefCounted 和 WeakPtr：Chromium Base 篇</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-05-14
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
+<p>MSVC STL 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">此处</a></p>
+<p>Libstdc++ 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/">此处</a></p>
+<p>Boost 的分析版本请移步<a href="https://kingsamchen.github.io/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/">此处</a></p>
+<p>注 1：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。</p>
+<p>注 2：这是系列最后一篇。</p>
+<h2 id="目标版本选择"><a href="#目标版本选择" class="headerlink" title="目标版本选择"></a>目标版本选择</h2><p>Chromium tag 68.0.3421.1</p>
+<p>代码位置：<code>base/memory/ref_counted.{h, cc}</code></p>
+<h2 id="RefCountedBase-和-RefCounted"><a href="#RefCountedBase-和-RefCounted" class="headerlink" title="RefCountedBase 和 RefCounted"></a>RefCountedBase 和 RefCounted</h2><p>两个类实现了非线程安全的引用计数，即：内部计数使用的是 built-in integer</p>
+<p>先看看 <code>RefCountedBase</code> 的大致结构：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RefCountedBase</span> &#123;</span></span><br><span class="line"><span class="keyword">protected</span>:</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">RefCountedBase</span><span class="params">(StartRefCountFromZeroTag)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">RefCountedBase</span><span class="params">(StartRefCountFromOneTag)</span></span>;</span><br><span class="line"></span><br><span class="line">    ~RefCountedBase();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">AddRef</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">bool</span> <span class="title">Release</span><span class="params">()</span> <span class="keyword">const</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">mutable</span> <span class="keyword">uint32_t</span> ref_count_ = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> DCHECK_IS_ON()</span></span><br><span class="line">    <span class="keyword">mutable</span> <span class="keyword">bool</span> needs_adopt_ref_ = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">mutable</span> <span class="keyword">bool</span> in_dtor_ = <span class="literal">false</span>;</span><br><span class="line">    <span class="keyword">mutable</span> SequenceChecker sequence_checker_;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">    DISALLOW_COPY_AND_ASSIGN(RefCountedBase);</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>可以看出核心 <code>ref_count_</code> 类型是 <code>uint32_t</code></p>
+<p>ctor 和 dtor 都被定义为 protected，说明这类使用做基类；同时提供了 <code>AddRef()</code> 和 <code>Release()</code>，进行内部的计数增减。<br>
+          <div class="read-more">
+            <a href="/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/05/02/demystify-shared-ptr-and-weak-ptr-in-boost/">浅析 shared_ptr：Boost 篇</a>
         
       </h1>
@@ -704,61 +766,6 @@
 <p><a href="https://medium.com/@AikoPath/visualising-and-prioritizing-technical-debt-afc82e542681" target="_blank" rel="noopener">Visualising and Prioritizing Technical Debt</a></p>
 <p>核心：将技术债具象化，无论是采用四象限法还是技术债树。</p>
 
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/">浅析 shared_ptr：Libstdc++ 篇</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-30
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
-<p>MSVC STL 的分析版本请移步<a href="https://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">此处</a></p>
-<p>注：因为这不是第一篇分析，所以会直入主题，跳过文学写作常用的累赘的过渡。</p>
-<h2 id="版本选择与源码位置"><a href="#版本选择与源码位置" class="headerlink" title="版本选择与源码位置"></a>版本选择与源码位置</h2><p>目前的工作机是 Linux Mint 18，对应的是 Ubuntu 16.04 LTS。</p>
-<p>这个版本的系统上源包默认提供的是 GCC 5.4 和 clang 3.8，跟随的 libstdc++ 的大版本是 6。</p>
-<p>考虑到 Linux 上 clang 也是默认使用 libstdc++，且 GCC 6/7/8 使用的 libstdc++ 的大版本都是 6，因此直接选用目录 <code>/usr/include/c++/5</code> 下的源码作为研究对象。<br>
-          <div class="read-more">
-            <a href="/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/" class="read-more-link">阅读更多</a>
-          </div>
         
       
     </div>
