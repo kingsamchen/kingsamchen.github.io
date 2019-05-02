@@ -182,6 +182,78 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/04/02/monthly-read-posts-in-mar-2017/">Monthly Read Posts in Mar 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-04-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="http://playfulprogramming.blogspot.hk/2017/01/generate-lambdas-for-clarity-and.html" target="_blank" rel="noopener">Generate lambdas for clarity and performance</a></p>
+<p>Generate a class of lambdas with auto-return-type deduction.</p>
+<p>唯一比较遗憾的是特性需要 C++ 14 的支持，C++ 11 里估计需要用 <code>std::function&lt;&gt;</code> 来做 workaround</p>
+<hr>
+<p><a href="http://nullprogram.com/blog/2016/08/03/" target="_blank" rel="noopener">Appending to a File from Multiple Processes</a></p>
+<p>经验问题，写客户端的 logger 轮子时应该会经常需要考虑到这个问题。</p>
+<p>文章针对的是 POSIX 系统，不过不同系统在一些具体策略/细节上也有区别。</p>
+<p>另，Windows 上这个场景有直接的 API 调用保证。</p>
+<p>不过有点比较奇怪，chromium 的 base::logging 只提供了 Windows 下的多进程无锁 appending，POSIX/Mach 下依然用的是线程同步锁和全局锁，可能考虑的原因是实现起来坑比较大？</p>
+<hr>
+<p>OAuth 2.0 Protocol</p>
+<ol>
+<li><a href="http://tutorials.jenkov.com/oauth2/authorization.html" target="_blank" rel="noopener">oauth2 authorization</a></li>
+<li><a href="https://taozj.org/201605/principle-of-oauth2.html" target="_blank" rel="noopener">principle-of-oauth2</a></li>
+<li><a href="http://www.ruanyifeng.com/blog/2014/05/oauth_2_0.html" target="_blank" rel="noopener">oauth_2_0</a></li>
+</ol>
+<p>第二篇文章基本可以看作第一篇的翻译，但是很多地方都没有翻译出来，所以推荐主要看第一篇文章，把第二、三篇作为补充材料</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Events/GoingNative/2013/Inheritance-Is-The-Base-Class-of-Evil" target="_blank" rel="noopener">Inheritance Is The Base Class of Evil</a></p>
+<p>C9 上的一个 Tech Talk，speaker 是 Adobe 的技术大佬，但是我觉得有标题党之嫌。</p>
+<p>Talk 中展现出来的哲学观挺有意思的，比如那句 <em>There is no polymorphic type, just polymorphic use of types</em>。</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Shows/C9-GoingNative/GoingNative-53-Learning-STL-Multithreading" target="_blank" rel="noopener">Learning STL Multithreading</a></p>
+<p>虽然标题是 STL Multithreading，但是里面的核心内容基本都是原理性的，通用的。</p>
+<p>对于 mutex/condition-variable 这类比较高级的 synchronization primitives 和低级的 atomic variables 均有涉及，并且也给了实践建议。</p>
+<p>话说右边那个胖胖的小哥的口音听起来真的是容易懂…</p>
+<p>另外有个挺有意思的细节，快到最后的时候胖小哥提到了 <code>async</code> 和 <code>future</code>，他说希望大家能优先考虑这俩玩意儿，但是说了几句话又欲言又止，最后无奈地说 <em>we will discuss these later</em>。。。估计他想了想，就目前标准给的设施和实现情况，要做到 task-based paralleilism，那坑大的都可以把自己埋进去了。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/03/04/implement-apply-in-cpp-11/">在 C++ 11 中实现 apply</a>
         
       </h1>
@@ -587,109 +659,6 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dememberize</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> R, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dememberize</span>&lt;R(C::*)(Args...) const&gt; &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = R(*)(Args...);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">lambda_pointerize_impl</span> &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = <span class="keyword">typename</span> dememberize&lt;<span class="keyword">decltype</span>(&amp;T::<span class="keyword">operator</span>())&gt;::type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">using</span> lambda_pointerize = <span class="keyword">typename</span> lambda_pointerize_impl&lt;T&gt;::type;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">lambda_pointerize&lt;F&gt; lambda_decay(F lambda)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> lambda_pointerize&lt;F&gt;(lambda);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其实如果 VS 2013 支持 <code>constexpr</code> 的话，其实用起来会更优雅。</p>
 <p>另：我发现英文在自创单词上简直太有感觉了。。。。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/01/04/monthly-read-posts-in-dec-2016/">Monthly Read Posts in Dec 2016</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-01-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://ithare.com/c-performance-common-wisdoms-and-common-wisdoms/" target="_blank" rel="noopener">C++ Performance: Common Wisdoms and Common “Wisdoms”</a></p>
-<p>The post discusses some oftenly-argued performance related aspects of C++.</p>
-<p>Topics/objects include:</p>
-<ul>
-<li>C++ Exceptions – (Almost-)Zero-Cost until Thrown</li>
-<li>Smart Pointers and STL: Allocations are Still Evil</li>
-<li>Using boost:: – Case by Case and Only If You Do Need It</li>
-<li>Polymorphism – Two-Fold Impact</li>
-<li>RTTI – Can be Easily Avoided Most of the Time</li>
-<li>On Branch (mis)-Predictions and Pipeline Stalls</li>
-<li>On inline asm and SSE</li>
-<li>On inlines and force-inlines</li>
-<li>On templates</li>
-<li>On compiler flags</li>
-<li>On Manual Loop Unrolling</li>
-<li>“For-free” Optimizations a.k.a. Avoiding Premature Pessimization</li>
-</ul>
-<p>All suggestion based on a fundamental pre-requisite: Three things Really Matter for performance.</p>
-<p>The first one is Algorithm, the second one is your code being Non-Blocking, and the third one is Data Locality.</p>
-<p>The rest of the tricks, while potentially useful, should be used only on case-by-case basis, when a bottleneck is identified. Otherwise it will be a Premature Optimisation.</p>
-<p>Note: 作者是一个游戏开发者，上述观点也是结合游戏开发阐述的，因此对相当一部分高性能应用也有参考意义。</p>
-<hr>
-<p><a href="http://nvie.com/posts/iterators-vs-generators/" target="_blank" rel="noopener">Iterables vs. Iterators vs. Generators</a></p>
-<p>Key points:</p>
-<p>Anything that <strong>can return an iterator</strong> (usually via overriding <code>__iter__()</code>) is <em>iterable</em>.</p>
-<p>Anything that <strong>can be iterated</strong> (usually via overriding <code>__next__()</code>, or overriding <code>next()</code> in python 2.x) is an <em>iterator</em>.</p>
-<p>A generator is a <strong>special kind of iterator</strong>; it make you avoid writing <code>__netxt__()</code> and <code>__iter__()</code>.</p>
-<p>Two types of generator:</p>
-<ul>
-<li>Generator function: A function with yield to return value, the return value of the functio call is a generator</li>
-<li>Generator expression: A expression using comprehension-syntax</li>
-</ul>
-<p>Note：有 C++ STL 背景基本看这种问题都秒懂…</p>
-<hr>
-<p><a href="http://michael-j.net/2016/12/15/%E6%9E%B6%E6%9E%84%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E8%85%90%E5%8C%96/" target="_blank" rel="noopener">架构为什么会腐化</a></p>
-<p><strong>文中观点</strong></p>
-<ul>
-<li>不理解项目业务价值，对于实际需求把握不明确</li>
-<li>过度设计，导致扩展性差</li>
-<li>懒于重构</li>
-</ul>
-<p><strong>个人观点</strong></p>
-<ul>
-<li>明确/理解需求是第一位</li>
-<li>过度设计导致扩展性差存疑，实际上过度设计往往来源于需求把握不准</li>
-<li>初始架构设计很重要，对项目领导者要求较高</li>
-<li>重构可参考最小滑坡原则（每次离开一段代码，代码都要比刚接手时更清晰整洁）</li>
-</ul>
-<hr>
-<p><a href="https://akrzemi1.wordpress.com/2016/06/29/competing-constructors/" target="_blank" rel="noopener">Competing constructors</a></p>
-<p>Competing constructor: two constructors that would take the same sequence of arguments (if one is somehow made invisible), but also that they do different, incompatible things.</p>
-<p>Main observations:</p>
-<ul>
-<li>Competing functions complicate resolution for human beings</li>
-<li>Don’t write competing constructors, or even competing functions.</li>
-<li>Take care of class template function, one instantiation may turn into a competing function.</li>
-<li>Use tag with overload function can benefit from more clearer semantics</li>
-</ul>
 
         
       

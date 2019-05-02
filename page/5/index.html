@@ -182,6 +182,63 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/10/13/naming-a-native-thread/">Naming a Native Thread</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-10-13
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>这里所说的 naming 主要是为了能够被 debugger 识别，所以单纯的通过 TLS 存储一个额外的字符串是不够的。</p>
+<h2 id="Windows"><a href="#Windows" class="headerlink" title="Windows"></a>Windows</h2><p>Windows 上的做法有两种。</p>
+<p>第一种是利用现成的 API <a href="https://docs.microsoft.com/en-us/windows/desktop/api/processthreadsapi/nf-processthreadsapi-setthreaddescription" target="_blank" rel="noopener">SetThreadDescription()</a></p>
+<p>通过这个 API 设置的名字据说新版的 minidump 和 WinDBG 都能认了。</p>
+<p>不过缺点是这个 API 很新，从 Windows 10 1607 (build 14393) 开始才有，所以稳妥的使用方式还是从 kernel32.dll 里动态获取。</p>
+<p>第二种做法比较传统，而且很不直观，来源是 MSDN 的一篇 <a href="https://docs.microsoft.com/en-us/visualstudio/debugger/how-to-set-a-thread-name-in-native-code?view=vs-2017" target="_blank" rel="noopener">doc</a></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> DWORD kVCThreadNameException = <span class="number">0x406D1388</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> <span class="title">tagTHREADNAME_INFO</span> &#123;</span></span><br><span class="line">    DWORD dwType;  <span class="comment">// Must be 0x1000.</span></span><br><span class="line">    LPCSTR szName;  <span class="comment">// Pointer to name (in user addr space).</span></span><br><span class="line">    DWORD dwThreadID;  <span class="comment">// Thread ID (-1=caller thread).</span></span><br><span class="line">    DWORD dwFlags;  <span class="comment">// Reserved for future use, must be zero.</span></span><br><span class="line">&#125; THREADNAME_INFO;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">SetThreadName</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    THREADNAME_INFO info;</span><br><span class="line">    info.dwType = <span class="number">0x1000</span>;</span><br><span class="line">    info.szName = <span class="string">"Worker-Traditional"</span>;</span><br><span class="line">    info.dwThreadID = <span class="number">-1</span>;</span><br><span class="line">    info.dwFlags = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    __try &#123;</span><br><span class="line">        RaiseException(kVCThreadNameException, <span class="number">0</span>, <span class="keyword">sizeof</span>(info) / <span class="keyword">sizeof</span>(DWORD),</span><br><span class="line">                       <span class="keyword">reinterpret_cast</span>&lt;ULONG_PTR*&gt;(&amp;info));</span><br><span class="line">    &#125; __except(EXCEPTION_EXECUTE_HANDLER) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>基本上照搬 doc 上的代码就好了。<br>
+          <div class="read-more">
+            <a href="/2018/10/13/naming-a-native-thread/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/10/07/python-argparser-bool-arg-the-right-way/">Using Boolean Switch with Python Argparser the Right Way</a>
         
       </h1>
@@ -517,59 +574,6 @@
           <div class="read-more">
             <a href="/2018/08/31/new-toy-ezio/" class="read-more-link">阅读更多</a>
           </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/08/15/dealing-with-multiple-types-as-a-category/">Dealing With Multiple Types As a Category</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-08-15
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>Macro <code>ENSURE()</code> from KBase can ‘capture’ variables by outputing their content to the internal stringtream, provided the type of captured variables has overloaded <code>operator&lt;&lt;()</code>.</p>
-<p>However, for variables of enum-class types, which disallow implicit conversion to underlying integer, there is no easy way to enable <code>ENSURE()</code> to capture them, because every enum-class is a type, and it is not realistic to define an overloaded <code>operator&lt;&lt;()</code> for each of them.</p>
-<p>We need to handle all enum-class types as a category.</p>
-<p><code>std::is_enum&lt;T&gt;</code> can identify a type if it is an enum at compile-time (it is one of type-traits utils), and in conjunction with some SFINAE tricks, we can categorize types at compile-time and handle them with different policies.</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">general_category_tag</span> &#123;</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">wide_string_category_tag</span> &#123;</span>&#125;;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">enum_category_tag</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> = <span class="keyword">void</span>&gt;</span><br><span class="line">struct map_type_to_category</span><br><span class="line">    : general_category_tag</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">map_type_to_category</span>&lt;T, std::enable_if_t&lt;std::is_enum&lt;T&gt;::value&gt;&gt;</span></span><br><span class="line"><span class="class">    :</span> enum_category_tag</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">map_type_to_category</span>&lt;T, std::enable_if_t&lt;std::is_same&lt;T, std::wstring&gt;::value ||</span></span><br><span class="line"><span class="class">                                                std::is_same&lt;T, kbase::WStringView&gt;::value&gt;&gt;</span></span><br><span class="line"><span class="class">    :</span> wide_string_category_tag</span><br><span class="line">&#123;&#125;;</span><br></pre></td></tr></table></figure>
-<p>Now that we can decide which category a type should fall into, we then simply use tag dispatching to locate target handler.</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function">Guarantor&amp; <span class="title">CaptureVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> T&amp; value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    HandleCapturedVar(name, value, internal::map_type_to_category&lt;T&gt;&#123;&#125;);</span><br><span class="line">    <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">HandleCapturedVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> T&amp; value, internal::general_category_tag)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    RecordCapturedVar(name, value);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">HandleCapturedVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> T&amp; value, internal::wide_string_category_tag)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    RecordCapturedVar(name, WideToUTF8(value));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">HandleCapturedVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, T value, internal::enum_category_tag)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    RecordCapturedVar(name, enum_cast(value));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">RecordCapturedVar</span><span class="params">(<span class="keyword">const</span> <span class="keyword">char</span>* name, <span class="keyword">const</span> T&amp; value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    exception_desc_ &lt;&lt; <span class="string">"    "</span> &lt;&lt; name &lt;&lt; <span class="string">" = "</span> &lt;&lt; value &lt;&lt; <span class="string">"\n"</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>This design also has great extensibility.</p>
-
         
       
     </div>

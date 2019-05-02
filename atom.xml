@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-04-13T09:04:12.033Z</updated>
+  <updated>2019-05-02T15:02:53.654Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,43 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in Apr 2019</title>
+    <link href="http://kingsamchen.github.io/2019/05/02/monthly-read-posts-in-apr-2019/"/>
+    <id>http://kingsamchen.github.io/2019/05/02/monthly-read-posts-in-apr-2019/</id>
+    <published>2019-05-02T14:57:13.000Z</published>
+    <updated>2019-05-02T15:02:53.654Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming Languages&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://akrzemi1.wordpress.com/2011/09/21/destructors-that-throw/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Destructors that throw&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;C++ 11之后的 destructor 默认是 &lt;code&gt;noexcept&lt;/code&gt;，如果有 active exception 逃逸出 dtor 会直接触发 &lt;code&gt;std::terminate()&lt;/code&gt;，即使外部有 catch handler。可以用 &lt;code&gt;noexcept(false)&lt;/code&gt; 显式关闭。&lt;/p&gt;
+&lt;p&gt;因为 stack unwinding 是可以嵌套的，一个精心设计的场合下（见文中例子），可以做到多个 active exception 不在一个层次里，因此也不会触发 double-exception situation。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;a href=&quot;https://akrzemi1.wordpress.com/2011/09/28/who-calls-stdterminate/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Who calls std::terminate?&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;an exception leaves out from main function&lt;/p&gt;
+&lt;p&gt;an exception leaves out from initial function of a thread&lt;/p&gt;
+&lt;p&gt;an exception leaves out from dtor (since c++ 11 with noexcept guarantee)&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="noexcept" scheme="http://kingsamchen.github.io/tags/noexcept/"/>
+    
+      <category term="gc" scheme="http://kingsamchen.github.io/tags/gc/"/>
+    
+      <category term="mutex" scheme="http://kingsamchen.github.io/tags/mutex/"/>
+    
+      <category term="syscall" scheme="http://kingsamchen.github.io/tags/syscall/"/>
+    
+  </entry>
   
   <entry>
     <title>Write Your Own DNS Query</title>
@@ -668,40 +705,6 @@
 &lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; java.time.Instant;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;MessagePump&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Delegate&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;doWork&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;doDelayedWork&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;Instant &lt;span class=&quot;title&quot;&gt;nextDelayedWorkExpiration&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Delegate delegate)&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Quit the pump.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// This method can only be called on the thread that called run().&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;quit&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Thread-safe&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;wakeup&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
 &lt;p&gt;同时我们定义了一个 &lt;code&gt;Delegate&lt;/code&gt; interface，message-loop 需要实现这个 interface，以便让 message-pump 可以通过这个 interface 来按照自己的实现来操作 message-loop。&lt;/p&gt;
 &lt;h3 id=&quot;什么都不做的-MessagePumpDefault&quot;&gt;&lt;a href=&quot;#什么都不做的-MessagePumpDefault&quot; class=&quot;headerlink&quot; title=&quot;什么都不做的 MessagePumpDefault&quot;&gt;&lt;/a&gt;什么都不做的 MessagePumpDefault&lt;/h3&gt;&lt;p&gt;我们的 ActiveThread 运行的纯 Java 环境，不需要像 Android 那样能够获取设备输入消息（Frankly，你想做还做不了呢，我哪来的设备信息获取啊），有点类似 worker HandlerThread.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
-    
-      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
-    
-      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
-    
-      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
-    
-      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Build Your Own HandlerThread Part 0</title>
-    <link href="http://kingsamchen.github.io/2018/12/03/build-your-own-handlerthread-part-0/"/>
-    <id>http://kingsamchen.github.io/2018/12/03/build-your-own-handlerthread-part-0/</id>
-    <published>2018-12-03T15:50:08.000Z</published>
-    <updated>2018-12-08T14:02:42.468Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h3 id=&quot;立一个-Flag&quot;&gt;&lt;a href=&quot;#立一个-Flag&quot; class=&quot;headerlink&quot; title=&quot;立一个 Flag&quot;&gt;&lt;/a&gt;立一个 Flag&lt;/h3&gt;&lt;p&gt;&lt;code&gt;HandlerThread&lt;/code&gt; 是 Android runtime
-        
-      
     
     </summary>
     
