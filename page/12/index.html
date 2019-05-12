@@ -182,6 +182,155 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/">Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-09-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h3 id="现象描述"><a href="#现象描述" class="headerlink" title="现象描述"></a>现象描述</h3><p>系统是 Linux mint 18，其实就是 ubuntu 16.04 LTS，所用的 clang 版本是 apt 默认的 3.8；gdb 使用系统自带。</p>
+<p>使用 clang 编译出来的二进制，哪怕开启了 <code>-g</code> 生成调试信息，在 gdb 下 <code>std::string</code> 始终显示为 <em>incomplete type</em>；而 primitive 类型的值可以正确显示</p>
+<p>并且通过 apt 安装 lldb，使用 lldb 调试能够看到变量的值。</p>
+<p>因此基本可以确定问题发生在 gdb 和 clang 这一对上</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>来自路边社的资料：clang 的 linux 版本输出调试信息时，默认去掉了标准库相关的组件信息 （？？？ MMP）</p>
+<p>在编译时追加 <code>-fno-limit-debug-info</code> 标志，就可以保证输出完整的调试信息</p>
+<h3 id="安利时刻"><a href="#安利时刻" class="headerlink" title="安利时刻"></a>安利时刻</h3><p>为什么使用 clang 编译的原因很简单，ubuntu 16.04 上的 apt 默认的 gcc/g++ 5.4 有 bug，编译我的项目代码一定会出错…对比直接从 ppa test 安装 gcc 6.x/7.x 而言，安装 clang 无疑最省事儿…</p>
+<p>另外我发现这个问题的解决方案得益于 <a href="https://github.com/vadimcn/vscode-lldb" target="_blank" rel="noopener">vscode-lldb-debugger</a> 这个扩展。</p>
+<p>正是这个扩展在输出里通过 warning 告诉我需要用相关的编译开关输出完整调试信息，这个问题才的可以解决。（从侧面说明程序员还是应该关注一下 warning XD）</p>
+<p>最后安利一个 gdb gui 前端：<a href="https://wiki.gnome.org/Apps/Nemiver" target="_blank" rel="noopener">Nemiver</a></p>
+<p>不过现在看起来 linux 上最好的 gdb/lldb 前端应该是 vscode -.-</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/09/02/monthly-read-posts-in-aug-2017/">Monthly Read Posts in Aug 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-09-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="http://jkglei.com/progress/" target="_blank" rel="noopener">How to Feel Progress</a></p>
+<p>一篇讲述如何自我管理的 post</p>
+<p>核心内容大概就是：</p>
+<ul>
+<li>Making progress in meaningful work.</li>
+<li>Break a large project into several small pieces.</li>
+</ul>
+<hr>
+<p><a href="https://channel9.msdn.com/Events/CPP/C-PP-Con-2014/Lightning-Talks-Anatomy-of-A-Smart-Pointer" target="_blank" rel="noopener">Lightning Talks: Anatomy of A Smart Pointer</a></p>
+<p>适合新手扫盲</p>
+<p>话说作者其实在 cppcon 2015 也做了一个类似的 talk，但是没有找到视频，ppt 倒是和14年这个 tech talk 的一致</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD03V033" target="_blank" rel="noopener">C++ devirtualization in clang</a></p>
+<p>编译器有时候会根据上下文，自动 inline 某些虚函数调用。</p>
+<p>这个 talk 讲的就是 clang 在这方面的一些细节。</p>
+<p>不做编译期，对细节并不是很感兴趣。</p>
+<p>另外这个小哥应该是个俄罗斯人，口语发音实在是太卧槽了</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD02V031" target="_blank" rel="noopener">C++ WAT</a></p>
+<p>和上面那个 tech talk 一个小哥，口语听起来想死…</p>
+<p>这个 tech talk 专门介绍了一些 C++ 里的坑（UB），作为茶余饭后的点心稍微过一下就差不多了。</p>
+<p>工作里要是有人这么写代码，直接拖出去打死。</p>
+<hr>
+<p><a href="https://blog.tonyseek.com/post/tcp-tw-overview/" target="_blank" rel="noopener">TCP TIME-WAIT 笔记 - 概览</a><br><a href="http://www.brianstorti.com/tcp-flow-control/" target="_blank" rel="noopener">TCP Flow Control</a></p>
+<p>第一篇本身就是某些 post 的笔记，有时间可以读读原文</p>
+<p>第二篇非常细致的解释了 flow control</p>
+<p>实话说，理论性的教科书看了很多时候还是云里雾里的，最后还是需要实际工程的洗礼；要不怎么说人的认知是螺旋式上升的呢</p>
+<hr>
+<p><a href="https://mfreiholz.de/posts/make-a-class-thread-safe-cpp/" target="_blank" rel="noopener">Make a class thread safe C++</a></p>
+<p>这篇文章看起来很长，其实就说了一点：两个原子的函数的复合函数自身并不保证原子……</p>
+<p>….好吧，如果比较闲的话可以看看。</p>
+<hr>
+<p><a href="https://blog.baasil.io/thinking-in-parallel-d854e904d821" target="_blank" rel="noopener">Thinking in Parallel</a></p>
+<p>核心观点：thinking in parallel is to think about your data as being made up of small fixed-size subset of data that can be dealt with independently.</p>
+<hr>
+<p><a href="http://amir.rachum.com/blog/2016/09/17/shared-libraries/" target="_blank" rel="noopener">Shared Libraries: Understanding Dynamic Loading</a></p>
+<p>这篇 post 比较有意思，算是墙裂推荐。</p>
+<p>非常工程的叙述如何在 Linux 上使用 shared library，非常好的扫盲科普文。</p>
+<hr>
+<p><a href="https://insights.hpe.com/articles/how-to-write-documentation-thats-actually-useful-1707.html" target="_blank" rel="noopener">How to write documentation that’s actually useful</a></p>
+<p>前篇论证为什么要写文档；举例使用的 truck factor theory 挺好玩的…</p>
+<p>后面解释应该怎么写文档</p>
+<p>讲道理，我觉得如何写文档还真是一个和具体事情强相关的活，除非你和 MSDN 一样可以找到专门撰写的外包团队</p>
+<hr>
+<p><a href="https://segment.com/blog/a-brief-history-of-the-uuid/" target="_blank" rel="noopener">A Brief History of the UUID</a></p>
+<p>前半部分是 UUID 的考古，作者文笔还不错，可以当作阅读材料…</p>
+<p>后半部分提作者根据自己业务实现的一个 KSUID，优点是吸收 timestamp，可以 k-sortable ordered</p>
+<p>先 mark 一下，没准哪天需要</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/08/15/controlled-type-injection-in-cpp/">Controlled Type Injection in C++</a>
         
       </h1>
@@ -491,144 +640,6 @@
 <p>扫了一遍代码之后，我想到一个 workaround，实践证明确实可以：</p>
 <p>发请求前设置 <code>URLFetcher</code> 的 load flag，加上 <code>LOAD_DO_NOT_SEND_COOKIE</code>，阻止 <code>URLFetcher</code> 自己设置 cookie 的行为，完全由自己控制请求的 cookie。</p>
 <p>话说用 <code>URLFetcher</code> 被坑了好多次（算上 chromium 其他的 lib，次数可以翻翻），还好每次都能够凭借“优秀工程师的第六感”蒙中问题的 root cause，进而化险为夷。我突然感觉自己理解了什么叫 <em>文章本天成，妙笔偶得之</em>。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/07/07/bypass-proxy-in-urlfetcher/">Bypass Proxy in URLFetcher</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-07-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><code>net::URLFetcher</code> 默认情况下会使用系统代理，对于针对应用于浏览器而设计的网络组件来说，这是合情合理的；并且这也方便了测试对于网络接口的调试，因为只需要打开 Fiddler 或者 Charles，就可以看到应用发出去的 HTTP 请求。</p>
-<p>但是有时候我们又希望默认情况下不开启代理支持，比如：在我用 <code>net::URLFetcher</code> 重写某直播姬的网络通信组件后，出现了不少傻逼用户因为不知道自己系统上为什么会各种乱七八糟的本地代理而导致无法登陆。</p>
-<p>这个时候产品的策略就应该改为：默认不使用代理，如果有特殊需要，通过命令行参数启动。</p>
-<p>因为产品项目用的 chromium 的代码比较老（估计是 2x 的），这个版本的 <code>net::URLFetcher</code> 只要是使用 <code>URLRequestContextBuilder</code> 创建的 <code>URLRequestContext</code>，那么就一定会使用系统代理，这是写死在代码里的…</p>
-<p>而且 <code>URLRequestContextBuilder</code> 也没有提供额外的途径让我们修改；而一旦创建完 <code>URLRequestContext</code>，此时再设置新的 <code>ProxyService</code> 是没有用的…</p>
-<p>我觉得这是一个设计上的失误，不知道新版本的代码有没有针对这块做了什么改动。</p>
-<p>万幸，<code>URLFetcher</code> 对象可以通过 <code>SetLoadFlags()</code>，使用标志 <code>LOAD_BYPASS_PROXY</code> 来强迫当前 fetcher 对象绕过代理。</p>
-<p>于是设计就变成：如果没有外部设置，fetcher 在发出请求前设置 <code>LOAD_BYPASS_PROXY</code>。</p>
-<h3 id="Afterthoughts"><a href="#Afterthoughts" class="headerlink" title="Afterthoughts"></a>Afterthoughts</h3><p>在研究代码过程中我发现 <code>URLRequestContext</code> 理论上是可以使用自己定义的子类的；builder 创建的是内部实现的一个 <code>BasicURLRequestContext</code>。chromium 在这里的设计颇有点<strong>机制策略分离</strong>的意味。</p>
-<p>不过因为这个问题发现在新版本即将提测前，因此就将这个想法列为后续的 TODO 了。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/07/02/monthly-read-posts-in-jun-2017/">Monthly Read Posts in June 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-07-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://github.com/nixzhu/dev-blog/blob/master/2015-10-08-navi.md" target="_blank" rel="noopener">一种头像缓存策略</a></p>
-<p>本来还以为有什么惊天地的策略…这不是很普通的策略嘛…</p>
-<p><a href="http://foonathan.net/blog/2016/07/23/move-safety.html" target="_blank" rel="noopener">Move Safety</a></p>
-<p>这篇 post 引入了一个 move-safety 的概念；和 exception safety 类似，move safety 描述了一个实例被移动之后的 post-condition invariant.</p>
-<p>Why do we need move safety? Because <code>std::move()</code> creates artificial temporaries, and we might want to use them again after the move operation.</p>
-<p>4-Level Move Safety</p>
-<ul>
-<li>No move guarantee: copy only</li>
-<li>Strong move safety: moved object is valid and well-defined; like std::unique_ptr</li>
-<li>Basic move safety: moved object is valid, but its state is unspecified; like std::string, due to possible SSO.It is what the standard library guarantees for all types unless otherwise specified.</li>
-<li>No move safety: the state is invalid, and you can only call its destructor, or assign it a new value.</li>
-</ul>
-<p><a href="https://blog.tartanllama.xyz/c++/2016/07/18/stack-and-heap/" target="_blank" rel="noopener">Stack and Heap</a></p>
-<p>这篇 post 挺有意思。</p>
-<p>作者观点是，无论 <em>heap</em> 还是 <em>stack</em> 来描述一个 C++ object 的 storage location 都是不准确的，因为标准并未规定 storage location 具体是什么，而规定了所谓的 storage duration：<strong>Storage duration defines the minimum potential lifetime of the storage that contains the object</strong>.</p>
-<p>4 standard-defined storage duration:</p>
-<ul>
-<li>Static storage duration</li>
-<li>Automatic storage duration</li>
-<li>Thread storage duration</li>
-<li>Dynamic storage duration</li>
-</ul>
-<p><a href="http://www.drdobbs.com/cpp/mixin-based-programming-in-c/184404445" target="_blank" rel="noopener">Mix-in Based Programming in C++</a><br><a href="https://yanniss.github.io/practical-fmtd.pdf" target="_blank" rel="noopener">Paper: Mixed based programming in C++</a></p>
-<p>第一篇是介绍 mix-in 的 post，第二篇是在 mix-in 基础上提出一种 mix-in layer 的 paper。</p>
-<p>mix-in 是一个挺有意思的 patter，但是因为没有自身语言支持，在 C++ 里的实现有时候会遇到比较 tricky 的问题。</p>
-<p>第一篇 post 就提到了一个核心问题：如何有效地解决 mix-in classes 的 construction problem。但是讲真，post 里给出的 solution 有点诡异过头了；如果现实中的工程问题需要这样的一个解决方案，弃用 mix-in 弄不好是一个更靠谱的做法。</p>
-<p>至于第二篇 paper，其实核心所谓的 mix-in layer，概括起来就是</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Next</span> &gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">NUMBER</span> :</span> <span class="keyword">public</span> Next &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Workspace</span> :</span> <span class="keyword">public</span> Next::Workspace &#123;</span><br><span class="line">        <span class="comment">// Workspace role members</span></span><br><span class="line">    &#125;；</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Vertex</span> :</span> <span class="keyword">public</span> Next::Vertex &#123;</span><br><span class="line">        <span class="comment">// Vertex role members</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>paper 中还提到了对工程中使用 mix-in 的一些建议和 recommended practice，看看也还不错。</p>
-<p><a href="https://insouciant.org/tech/connection-management-in-chromium/" target="_blank" rel="noopener">Connection Management in Chromium</a></p>
-<p>Chromium 官方研发写的 post。</p>
-<p>提到了他们试图解决 connection latency &amp; parallelism 的问题。</p>
-<p>于是就有这么几个点：</p>
-<p>Handshakes (including TCP handshake &amp; SSL handshake) are costly. Therefore, a better connection management is on demand.</p>
-<p>Optimizations on transport layer (TCP or SPDY)</p>
-<p>.etc</p>
-<p><a href="https://www.preney.ca/paul/archives/486" target="_blank" rel="noopener">Apply tuple to function efficiently</a></p>
-<p>Yet another implementation of apply-on-tuple</p>
 
         
       

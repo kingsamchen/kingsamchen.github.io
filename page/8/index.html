@@ -182,6 +182,129 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/04/11/use-lambda-with-post-task/">Use Lambda With PostTask</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-11
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>曾经为了能在 <code>PostTask()</code> 里使用 lambda，实现了一个自动将 non-capturing lambda decay 到对应函数指针，在利用 <code>base::Bind()</code> 的方案<a href="https://kingsamchen.github.io/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/">[1]</a>。</p>
+<p>但是在使用过程中发现这个方案有几个弊端：</p>
+<ol>
+<li>因为只能使用 non-capture lambda，因此如果需要上下文，只能通过参数传入，这样代码写起来会很蛋疼</li>
+<li>VS 2013 + Resharper 的环境下，使用 <code>lambda_decay()</code> 的代码经常会出现静态分析的错误提示（不清楚是 VS2013 还是 Resharper 的问题），导致每段代码下面都会出现红色的曲线，非常惹眼</li>
+</ol>
+<p>这两天因为需要重构某个模块，又顺便思考了这个问题，后来发现之前一开始思路不太对。</p>
+<p>没有必要做一个兼容 <code>base::Bind()</code> 的解决方案，因为需要的只是在 message-loop 的 PostTask 里使用，这样只要能够将 lambda 包裹到一个 <code>base::Callback&lt;R()&gt;</code> 里就可以了，至于是不是利用 <code>base::Bind()</code> 完成，并不重要！</p>
+<p>结合之前做的 <code>base::Callback</code> 到 <code>std::function</code> 的<a href="https://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/">转换</a>，很自然的想到一个最终解决方案。</p>
+<p>代码其实非常简单：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> R&gt;</span><br><span class="line">auto InvokeLambda(const std::function&lt;R()&gt;&amp; fn) -&gt; R</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> fn();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">auto BindLambda(F&amp;&amp; lambda) -&gt; base::Callback&lt;typename std::result_of&lt;F()&gt;::type()&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> return_type = <span class="keyword">typename</span> <span class="built_in">std</span>::result_of&lt;F()&gt;::type;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> base::Bind(InvokeLambda&lt;return_type&gt;, <span class="built_in">std</span>::function&lt;return_type()&gt;(<span class="built_in">std</span>::forward&lt;F&gt;(lambda)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>判断返回类型是因为 <code>PostTaskAndReplyWithResult()</code> 会要求第一个 closure 有指定的返回值，以便第二个 clsoure 使用。</p>
+<p>使用的时候就</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> s = <span class="string">"hello, world"</span>;</span><br><span class="line">base::Closure closure = BindLambda([&amp;s] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"value of s: "</span> &lt;&lt; s &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">closure.Run();</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> cb = BindLambda([] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"with int result\n"</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1024</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; cb.Run();</span><br></pre></td></tr></table></figure>
+<p>为了使用方便，我直接往 chromium base 开了一个 ext，作为以后的扩展。</p>
+<p>因为现在 lambda 可以直接捕捉了，所以重构之后的代码看起来更具可读性；当然前提是要小心被捕捉对象的生命周期，通常这个上下文都应该使用 capture-by-value。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/">利用 vcpkg 编译带汇编优化的 libx264</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>使用 vcpkg 编译 libx264 有一个很重要的原因：可以获得 PDB，而且构建流程被大大精简了。</p>
+<p>但是这里有一个坑：vcpkg 上的 libx264 模块编译默认是开启了 <code>--disable-asm</code>，意味着构建之后的二进制不会使用 SIMD 指令集，所以性能上会有很大的问题。</p>
+<p>研究了一番之后找到了开启汇编优化的方案。</p>
+<ol>
+<li><p>从官网下载并安装 nasm-2.13</p>
+<p> vcpkg 上通过 acquire-program 提供的 nasm 只有 2.12；而编译 vcpkg 上提供的 libx264-152 需要 nasm-2.13</p>
+</li>
+<li><p>编辑 libx264 的 portfile.cmake 文件</p>
+<p> 在 set bash 的后面加一行</p>
+ <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(ENV&#123;PATH&#125; <span class="string">"c:/Programs/NASM/;$ENV&#123;PATH&#125;"</span>)</span><br></pre></td></tr></table></figure>
+<p> 这里注意替换你的真实安装目录</p>
+<p> 然后去掉构建参数中的 <code>--disable-asm</code></p>
+</li>
+</ol>
+<p>如果还有地方出错，记得根据提示查日志！</p>
+<p>开启汇编优化后生成的二进制会略大，大概 900 多 KB</p>
+<p>最后赞扬一下微软出品的 vcpkg，真是解决了 Windows 下编译一众开源软件的痛点。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/04/01/monthly-read-posts-in-mar-2018/">Monthly Read Posts in Mar 2018</a>
         
       </h1>
@@ -578,109 +701,6 @@
 <p>功能做的很粗糙，并且没有封装类似 event-loop 的东西，连接管理也基本算是纸糊的，原因还是前面说过的，只是想过一下两种模型，并且，在不研究当前流行的 paradigm 的前提下，凭借自己的 first understanding / hunch 去实现；等对这块有一段时间的研究后，作为参照，来回对比以加深理解。</p>
 <p>我觉得这是一种不错的学习方式。</p>
 <p>代码可以看 <a href="https://github.com/kingsamchen/Eureka/tree/master/ConcurrentHttpServer" target="_blank" rel="noopener">这里</a></p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/">被 FFmpeg 的日志模块撞了一下腰</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>周末的时候客服同学反馈有个用户出现了崩溃，并且要来了崩溃 dmp 文件。</p>
-<p>挂上 windbg 后发现崩溃原因是 CRT 的 <code>invalid-parameter</code> 异常，第一现场是输出 ffmpeg 的 avcodec 模块的日志。</p>
-<p>省略中间若干分析过程，直击结论：FFmpeg 的 Windows 构建并不是用 MSVC 编译的，因此在类似 <code>printf()</code> 函数的 format specifier 使用上出现了偏差。</p>
-<p>代码使用 <code>%td</code> 输出 <code>ptrdiff_t</code> 类型，而 VS2017 之前的版本并不支持这个 format specifier，因此函数调用 <code>_vsnprintf_p()</code> 出现了参数异常，导致程序挂掉。</p>
-<p>虽然 VS 2017 很厚道的支持了这个格式，但是某直播姬的工具链是 VS 2013，且短时间不可能调整，因此最后的解决方案是，上层安装的 logging hook 在输出日志时，首先修正一遍 format 里的 specifier，替换为 VS 2013 支持的 <code>%Id</code>。</p>
-<p>注意，类似的还有 <code>size_t</code> 的 format specifier。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/04/display-utf-8-string-in-vs-debugger/">在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>众所周知，UTF-8 在 Windows 上一直都不是一等公民，在 MSVC 的调试器里，<code>std::string</code> 默认按照本地编码解释，在中文系统上是 GBK 或 GB2312。</p>
-<p>于是，如果一个 <code>std::string</code> 或者 <code>char[]</code> 里存储的是 UTF-8 编码的字符串，那么非 ASCII 部分就会乱码。这在调试中是一个非常不好的体验。</p>
-<p>研究了一下发现早在 VS 2005，调试器实际上就已经支持了对 UTF-8 字符串的显示，只是不作为默认的编码。</p>
-<p>按照 UTF-8 进行解释的方式很简单，在 watch 中添加<strong>字符串起始地址</strong>，后接 <code>, s8</code> 即可。</p>
-<p>注意的是，对于 <code>std::string</code>，要用 <code>std::string::c_str()</code> 或者 <code>std::string::data()</code> 获取字符串起始地址。</p>
-<p>更简单的做法是在 intermedaite window 中，使用 <code>? str.c_str(), s8</code></p>
-<p>注：如果变量被优化后提示 <code>c_str()</code> 或 <code>data()</code> 无法访问到有效数据，则可以使用 <code>&amp;str[0]</code>。</p>
 
         
       

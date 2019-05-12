@@ -182,6 +182,134 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/11/04/monthly-read-posts-in-oct-2018/">Monthly Read Posts in Oct 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://nullprogram.com/blog/2014/09/02/" target="_blank" rel="noopener">C11 Lock-free Stack</a></p>
+<p>使用C 11 atomic operations 实现一个轻量的 lock-free stack</p>
+<ul>
+<li>pre-allocation，不需要考虑单个节点的销毁问题，所以不需要使用 hazard pointer</li>
+<li>free 和 head 两个列表，两个单独的 head 均可用做 sentinel</li>
+<li>使用 aba counter 来避免 ABA problem</li>
+</ul>
+<hr>
+<p><a href="https://www.souyunku.com/2018/07/30/mysql/" target="_blank" rel="noopener">MySQL/InnoDB中，乐观锁、悲观锁、共享锁、排它锁、行锁、表锁、死锁概念的理解</a></p>
+<p>感觉这篇讲的好混乱，几个概念是明显正交的都混在一起了。</p>
+<p>瞄了一眼，基本脑子里都在找平常 locking mechanism 里的概念做映射了。</p>
+<hr>
+<p><a href="https://medium.com/@copyconstruct/the-method-to-epolls-madness-d9d2d6378642" target="_blank" rel="noopener">The method to epoll’s madness</a></p>
+<p>总体写的一般，而且内容有点乱。</p>
+<p>madness 应该指的就是 epoll 对外表现的是引用 file descriptor 但是内部维护的确实 file descrption。<br>
+          <div class="read-more">
+            <a href="/2018/11/04/monthly-read-posts-in-oct-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/10/27/non-blocking-connect-2-and-error-handling/">Non-blocking Connect(2) and Error Handling</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-10-27
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>这是我在实现 <a href="https://github.com/kingsamchen/ezio/blob/master/ezio/connector_posix.cpp" target="_blank" rel="noopener">ezio connector</a> 时遇到的一个比较有意（keng）思（die）的问题。</p>
+<p>在使用 non-blocking 的 <code>connect(2)</code> 时，按照 manual 的<a href="https://linux.die.net/man/2/connect" target="_blank" rel="noopener">说法</a>，如果调用的返回被认为是合理的（例如 <code>EINPROGRESS</code>），那么就需要：</p>
+<ol>
+<li>将 sock fd 扔到 IO multiplexor 里，然后等待 writable 事件返回</li>
+<li>writable 返回后检查 <code>SO_ERROR</code>，确认没错后才可以认为连接建立</li>
+</ol>
+<p>然而因为 ezio 使用 <code>notifier</code> 来实现对某个 fd 的 IO 事件侦听和分发，在上面的操作中，除了 writable 事件外，默认还会加上对错误事件的侦听，即 <code>EPOLLERROR</code>，并且 event handling 的逻辑中，始终先检查 IO 事件是否包含了错误事件。</p>
+<p>在某个 test case 中发现如下情况，整理了一下顺序大概这样：</p>
+<ol>
+<li>对一个无 server listening 的地址发起 connect</li>
+<li>此时会因为 <code>EINPROGRESS</code> 的返回而建立 notifier，并且 notifier 绑定了 <code>HandleNewConnection()</code> 和 <code>HandleError()</code> 来分别处理 <code>EPOLLOUT</code> 和 <code>EPOLLERROR</code></li>
+<li>epoll 很迅速的返回，然而返回事件里同时包含了 <code>EPOLLERROR</code> 和 <code>EPOLLOUT</code>，导致先执行了 <code>HandleError()</code> 进行了错误处理，重置了 Connector 的某些状态；然后又执行了 <code>HandleNewConnection()</code>，触发了这个 handler 里的某些 precondition assertions，直接挂了程序。</li>
+</ol>
+<p>这个情况是我事先压根没考虑过的，毕竟到现在也就 <code>connect(2)</code> 里会出现 <code>HandleError()</code> 和 <code>HandleNewConnection()</code> 里包含部分一模一样的错误处理代码。</p>
+<p>而且更精彩的是，在我的 WSL (ubuntu 16.04) 里同一个 test case 的代码根本不会触发 <code>EPOLLERROR</code>，只有 <code>EPOLLOUT</code>；于是错误处理直接留到了 <code>HandleNewConnection()</code> 里检查 <code>SO_ERROR</code> 的部分，剩下的也是如丝般顺滑。</p>
+<p>最后的解决方案是修改了一下两个 handler 的语义，对 <code>HandleNewConnection()</code> 做了 error-already-handled-aware 的语义调整。</p>
+<p>另外需要提一下日志系统的重要性。</p>
+<p>在这个问题的 debugging 过程中，虽然触发了我的 <code>ENSURE(CHECK)</code>，有错误的上下文，也完整的调用栈，但是相关信息里根本看不到 <code>HandleError()</code> 被调用的痕迹；而且因为需要错误处理的点甚多，如果没有完善的 callstack + logging 机制，很难才能发现是因为 IO event 包含了 <code>EPOLLERROR</code>，导致 notifier 调用了 on-error-handler 导致的。</p>
+<p>最后吐槽一下，server 端来说 asynchronous 比 non-blocking 难写，但是对于 client 端，asynchronous 反而比 non-blocking 顺滑多了；一个 <code>ConnectEx()</code> 丢出去，定时检查一下结果就行了，简直比海飞丝还顺滑。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/10/13/naming-a-native-thread/">Naming a Native Thread</a>
         
       </h1>
@@ -444,136 +572,6 @@
 <p>最后我选择的解决方案是用 python 写一个完整的 tool，手动做了排除，代码也比较简单，看了一下都不超过 80 LOC</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># 0xCCCCCCCC</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> shlex</span><br><span class="line"><span class="keyword">import</span> subprocess</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line">FIRST_REV = <span class="string">''</span></span><br><span class="line">LAST_REV = <span class="string">''</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">run</span><span class="params">(cmd)</span>:</span></span><br><span class="line">    <span class="comment">#print('-&gt; ' + cmd)</span></span><br><span class="line">    <span class="keyword">return</span> subprocess.check_output(shlex.split(cmd)).decode(<span class="string">'utf-8'</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">query_authors</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> list(map(<span class="keyword">lambda</span> l: l.strip().split(<span class="string">'\t'</span>)[<span class="number">1</span>],</span><br><span class="line">                    run(<span class="string">'git shortlog -sn &#123;&#125;^..&#123;&#125;'</span>.format(FIRST_REV, LAST_REV)).splitlines()))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sum_commits</span><span class="params">(records)</span>:</span></span><br><span class="line">    insertion_num = <span class="number">0</span></span><br><span class="line">    deletion_num = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> stat <span class="keyword">in</span> records:</span><br><span class="line">        mr = re.search(<span class="string">r'(\d+)(?= insertion)'</span>, stat)</span><br><span class="line">        <span class="keyword">if</span> mr:</span><br><span class="line">            insertion_num += int(mr.groups()[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">        mr = re.search(<span class="string">r'(\d+)(?= deletion)'</span>, stat)</span><br><span class="line">        <span class="keyword">if</span> mr:</span><br><span class="line">            deletion_num += int(mr.groups()[<span class="number">0</span>])</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> insertion_num, deletion_num</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">print_analyzed</span><span class="params">(results)</span>:</span></span><br><span class="line">    print(<span class="string">'&#123;0:&gt;20&#125;Insertion&#123;0:&gt;10&#125;Deletion&#123;0:&gt;10&#125;Total'</span>.format(<span class="string">' '</span>))</span><br><span class="line">    <span class="keyword">for</span> author, records <span class="keyword">in</span> results.items():</span><br><span class="line">        print(<span class="string">'&#123;1:&lt;20&#125;&#123;2:&gt;6&#125;&#123;0:&lt;10&#125;&#123;3:&gt;6&#125;&#123;0:&lt;10&#125;&#123;4:&gt;6&#125;'</span>.format(<span class="string">' '</span>,</span><br><span class="line">            author, records[<span class="number">0</span>], records[<span class="number">1</span>], records[<span class="number">2</span>]))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">main</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) &lt; <span class="number">3</span>:</span><br><span class="line">        print(<span class="string">'No full range specified! Analyze entire history for current branch.'</span>)</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">global</span> FIRST_REV, LAST_REV</span><br><span class="line">    FIRST_REV = sys.argv[<span class="number">1</span>]</span><br><span class="line">    LAST_REV = sys.argv[<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">    authors = query_authors()</span><br><span class="line">    results = &#123;&#125;</span><br><span class="line">    <span class="keyword">for</span> author <span class="keyword">in</span> authors:</span><br><span class="line">        commits_query = <span class="string">'git log &#123;&#125;^..&#123;&#125; --shortstat --author="&#123;&#125;"'</span>.\</span><br><span class="line">                            format(FIRST_REV, LAST_REV, author)</span><br><span class="line">        commits = list(filter(<span class="keyword">lambda</span> s: re.search(<span class="string">'files? changed'</span>, s),</span><br><span class="line">                              run(commits_query).splitlines()))</span><br><span class="line">        total_insertions, total_deletions = sum_commits(commits)</span><br><span class="line"></span><br><span class="line">        excluded_query = commits_query + <span class="string">' --grep="Merge commits"'</span></span><br><span class="line">        excluded_commits = list(filter(<span class="keyword">lambda</span> s: re.search(<span class="string">'files? changed'</span>, s),</span><br><span class="line">                                       run(excluded_query).splitlines()))</span><br><span class="line">        excluded_insertions, excluded_deletions = sum_commits(excluded_commits)</span><br><span class="line"></span><br><span class="line">        total_insertions -= excluded_insertions</span><br><span class="line">        total_deletions -= excluded_deletions</span><br><span class="line"></span><br><span class="line">        results[author] = (total_insertions, total_deletions, total_insertions + total_deletions)</span><br><span class="line"></span><br><span class="line">    print_analyzed(results)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    main()</span><br></pre></td></tr></table></figure>
 
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/09/03/monthly-read-posts-in-aug-2018/">Monthly Read Posts in Aug 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-09-03
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://www.youtube.com/watch?v=fOV7I-nmVXw" target="_blank" rel="noopener">CppCon 2015: Fedor Pikus “The Unexceptional Exceptions”</a></p>
-<p>Handling exceptions is just as to handle errors using error code, exception is just a tool.</p>
-<p>The key point is to maintain the program state in a well defiend state.</p>
-<p>Turn error handling into resource management and use RAII to automate it; use explicit try…catch only when absolute necessary.</p>
-<p>Bonus tip: avoid uses of <code>pthread_cancel</code>.</p>
-<hr>
-<p><a href="https://itnext.io/pros-and-cons-of-functional-programming-32cdf527e1c2" target="_blank" rel="noopener">Pros and cons of functional programming</a></p>
-<p>Pure function: avoid shared state; immutable structures; function composition.</p>
-<p>Declarative: instead of answers the question ‘how to do’ in imperative style, it answers the question ‘what to do’; imperative relies on instructions while declarative relies more on expressions.</p>
-<p>Cons of FP: not suitable for graph algorithms; major shift on mind patterns.</p>
-<hr>
-<p><a href="https://www.brianstorti.com/understanding-shell-script-idiom-redirect/" target="_blank" rel="noopener">Understanding Shell Script’s idiom: 2&gt;&amp;1</a></p>
-<p>General usage:</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat foo.txt &gt; result.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
-<ol>
-<li>fd for stdout and stderr are 1 and 2 respectively</li>
-<li><code>a &gt; b</code> is a shortcut for <code>a 1&gt; b</code> and 1 here is fd value for stdout</li>
-<li>you can use <code>&amp;fd</code> to reference a fd value</li>
-<li>therefore, using <code>2&gt;&amp;1</code> would redirect stderr to stdout, and <code>1&gt;&amp;2</code> would do the opposite.</li>
-</ol>
-          <div class="read-more">
-            <a href="/2018/09/03/monthly-read-posts-in-aug-2018/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/08/31/new-toy-ezio/">开了个新坑 ezio</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-08-31
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>前段时间分别在 Linux 和 Windows 下实现了一个简单的 TCP 网络框架之后，感觉一些必要的坑都踩的差不多了，可以开始动手写一个真正的跨平台的 TCP 网络框架了。</p>
-<p>于是就有了这个新坑：ezio。</p>
-<p>ezio 这个名字是某天跑步的时候突然想到的，有几重含义：</p>
-<ul>
-<li>致敬刺客信条里的 Ezio Auditore，寓意希望这个库能够和刺客一样，虽轻量，但需要时恰到好处，不含糊</li>
-<li>致敬（碰瓷）Boost.ASIO，因为两个名字发音非常接近</li>
-<li>第三个是朋友发现的，他把 ezio 念成了 e-z-io（easy io），于是赋予了一个新的含义</li>
-</ul>
-<p>ezio 的目标是：<strong>提供同时支持 Linux 和 Windows 的轻量型非阻塞且具备扩展性（non-blocking and scalable）的 TCP 网络框架；针对 Linux 做性能侧优化，针对 Windows 做一致性开发体验的优化。</strong></p>
-<p>这个目标初看起来有点怪异，但是确实非常实际的做法。</p>
-<p>因为 Linux 和 Windows 在网络编程上存在根本的范式差异性，所以为了提供一致的对外接口，必须要有所侧重和牺牲。Linux 目前占据了绝大多数互联网产品服务器系统的份额，而 Windows 则提供了可以说是当前最好的开发环境。</p>
-<p>ezio 这个设计目标可以使得绝大多数业务逻辑在 Windows 上开发，然后在 Linux 上进行最后的部署。</p>
-          <div class="read-more">
-            <a href="/2018/08/31/new-toy-ezio/" class="read-more-link">阅读更多</a>
-          </div>
         
       
     </div>

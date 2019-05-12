@@ -182,6 +182,131 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/06/10/build-your-own-http-proxy-using-go/">Build Your Own HTTP Proxy Server Using Go</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-06-10
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>Go is a quite awesome programming language for building network applications. So I built my own HTTP proxy server using go last week.</p>
+<p>To grasp the essence of how HTTP proxy server works, I choosed to implement it on TCP transport layer, forwarding TCP traffic directly.</p>
+<p>Essentially, it runs a server, accepting incoming TCP connections and from which the server extracts target host of a request by parsing HTTP protocol messages. The server then establishes a connection to the target host, and finally operates as an intermedia, forwarding traffic from one host to another.</p>
+<p>Implementing a TCP server which is able to handle concurrent requests uing go is easier than you thought: just runs a loop to accept requests, launching a new goroutine for each new connection:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">	addr     <span class="keyword">string</span></span><br><span class="line">	listener net.Listener</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">Start</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line">	srv.listener, err = net.Listen(<span class="string">"tcp"</span>, srv.addr)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"Failed to listen at %s : %v"</span>, srv.addr, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	log.Printf(<span class="string">"Proxy is listening at %s"</span>, srv.addr)</span><br><span class="line"></span><br><span class="line">	srv.runLoop()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">runLoop</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		conn, err := srv.listener.Accept()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Printf(<span class="string">"Failed to accept an incoming connection : %v"</span>, err)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">go</span> srv.handleConnection(conn)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">handleConnection</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line">	c := newConnection(conn)</span><br><span class="line">	c.serve()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <div class="read-more">
+            <a href="/2018/06/10/build-your-own-http-proxy-using-go/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/06/01/monthly-read-posts-in-may-2018/">Monthly Read Posts in May 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-06-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h3 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h3><p><a href="http://mindhacks.cn/2011/11/04/how-to-interview-a-person-for-two-years/" target="_blank" rel="noopener">怎样花两年时间去面试一个人</a></p>
+<p>当前行业招聘的不靠谱，招揽优秀人员的难度大。</p>
+<p>脱颖而出的核心：良好的阅读习惯 + Github 项目</p>
+<p>这里说的两年是针对应届生来说的，对于已经工作的人来说，可以当作是虚指。</p>
+<p>不过文中提到的，拥抱变化的三个核心点：</p>
+<ol>
+<li>触动内心的大象</li>
+<li>建立清晰明确的目标</li>
+<li>扫清前进道路的障碍</li>
+</ol>
+<p>颇有道理。</p>
+<hr>
+<p><a href="http://gulu-dev.com/post/2014-07-28-tech-evaluation" target="_blank" rel="noopener">何判断一个技术(中间件/库/工具)的靠谱程度？</a></p>
+<p>如何做技术选型</p>
+<h3 id="System-amp-Architecture"><a href="#System-amp-Architecture" class="headerlink" title="System &amp; Architecture"></a>System &amp; Architecture</h3><p><a href="https://0xffffff.org/2017/05/01/41-linux-io/" target="_blank" rel="noopener">聊聊Linux IO</a></p>
+<p>A brief introduction to Linux I/O stack.</p>
+<p>这篇 post 的质量在国内技术博客里算是少有的干货。</p>
+<p>另，关于 page cache 和 buffer cache 的最新的内容，可以参考 Robert Love 在 quora 上的一个<a href="http://qr.ae/TUTNCz" target="_blank" rel="noopener">回答</a></p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=k12BJGSc2Nc" target="_blank" rel="noopener">CppCon 2015: John Farrier “Demystifying Floating Point”</a></p>
+<p>工程实践上使用浮点数（IEEE-754）需要注意的一些坑。</p>
+<p>看之前最好翻一下 CSAPP 中关于浮点数 IEEE-754 模型的基础知识<br>
+          <div class="read-more">
+            <a href="/2018/06/01/monthly-read-posts-in-may-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/05/30/build-your-own-thread-pool-with-cpp/">Build Your Own Threadpool With C++</a>
         
       </h1>
@@ -517,129 +642,6 @@
 <p>而 <code>std::packaged_task</code> 不是值语义，仅支持移动语义，因此无法作为 <code>std::function</code> 的一部分。</p>
 <p>最后的解决方案是引入一个 <code>std::shared_ptr</code> 作为中间层，通过 lambda 保存这个 <code>std::shared_ptr</code>。</p>
 <p>附注：本来打算开一个 post 来简单讲解一下如何从头实现一个简单可用的 thread-pool，但是因为懒癌发作，代码写完了也就不想动手写文字了。后面看看是不是有机会可以补上。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/04/11/use-lambda-with-post-task/">Use Lambda With PostTask</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-04-11
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>曾经为了能在 <code>PostTask()</code> 里使用 lambda，实现了一个自动将 non-capturing lambda decay 到对应函数指针，在利用 <code>base::Bind()</code> 的方案<a href="https://kingsamchen.github.io/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/">[1]</a>。</p>
-<p>但是在使用过程中发现这个方案有几个弊端：</p>
-<ol>
-<li>因为只能使用 non-capture lambda，因此如果需要上下文，只能通过参数传入，这样代码写起来会很蛋疼</li>
-<li>VS 2013 + Resharper 的环境下，使用 <code>lambda_decay()</code> 的代码经常会出现静态分析的错误提示（不清楚是 VS2013 还是 Resharper 的问题），导致每段代码下面都会出现红色的曲线，非常惹眼</li>
-</ol>
-<p>这两天因为需要重构某个模块，又顺便思考了这个问题，后来发现之前一开始思路不太对。</p>
-<p>没有必要做一个兼容 <code>base::Bind()</code> 的解决方案，因为需要的只是在 message-loop 的 PostTask 里使用，这样只要能够将 lambda 包裹到一个 <code>base::Callback&lt;R()&gt;</code> 里就可以了，至于是不是利用 <code>base::Bind()</code> 完成，并不重要！</p>
-<p>结合之前做的 <code>base::Callback</code> 到 <code>std::function</code> 的<a href="https://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/">转换</a>，很自然的想到一个最终解决方案。</p>
-<p>代码其实非常简单：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> R&gt;</span><br><span class="line">auto InvokeLambda(const std::function&lt;R()&gt;&amp; fn) -&gt; R</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> fn();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">auto BindLambda(F&amp;&amp; lambda) -&gt; base::Callback&lt;typename std::result_of&lt;F()&gt;::type()&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> return_type = <span class="keyword">typename</span> <span class="built_in">std</span>::result_of&lt;F()&gt;::type;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> base::Bind(InvokeLambda&lt;return_type&gt;, <span class="built_in">std</span>::function&lt;return_type()&gt;(<span class="built_in">std</span>::forward&lt;F&gt;(lambda)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>判断返回类型是因为 <code>PostTaskAndReplyWithResult()</code> 会要求第一个 closure 有指定的返回值，以便第二个 clsoure 使用。</p>
-<p>使用的时候就</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> s = <span class="string">"hello, world"</span>;</span><br><span class="line">base::Closure closure = BindLambda([&amp;s] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"value of s: "</span> &lt;&lt; s &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">closure.Run();</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> cb = BindLambda([] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"with int result\n"</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1024</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; cb.Run();</span><br></pre></td></tr></table></figure>
-<p>为了使用方便，我直接往 chromium base 开了一个 ext，作为以后的扩展。</p>
-<p>因为现在 lambda 可以直接捕捉了，所以重构之后的代码看起来更具可读性；当然前提是要小心被捕捉对象的生命周期，通常这个上下文都应该使用 capture-by-value。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/">利用 vcpkg 编译带汇编优化的 libx264</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-04-03
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>使用 vcpkg 编译 libx264 有一个很重要的原因：可以获得 PDB，而且构建流程被大大精简了。</p>
-<p>但是这里有一个坑：vcpkg 上的 libx264 模块编译默认是开启了 <code>--disable-asm</code>，意味着构建之后的二进制不会使用 SIMD 指令集，所以性能上会有很大的问题。</p>
-<p>研究了一番之后找到了开启汇编优化的方案。</p>
-<ol>
-<li><p>从官网下载并安装 nasm-2.13</p>
-<p> vcpkg 上通过 acquire-program 提供的 nasm 只有 2.12；而编译 vcpkg 上提供的 libx264-152 需要 nasm-2.13</p>
-</li>
-<li><p>编辑 libx264 的 portfile.cmake 文件</p>
-<p> 在 set bash 的后面加一行</p>
- <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(ENV&#123;PATH&#125; <span class="string">"c:/Programs/NASM/;$ENV&#123;PATH&#125;"</span>)</span><br></pre></td></tr></table></figure>
-<p> 这里注意替换你的真实安装目录</p>
-<p> 然后去掉构建参数中的 <code>--disable-asm</code></p>
-</li>
-</ol>
-<p>如果还有地方出错，记得根据提示查日志！</p>
-<p>开启汇编优化后生成的二进制会略大，大概 900 多 KB</p>
-<p>最后赞扬一下微软出品的 vcpkg，真是解决了 Windows 下编译一众开源软件的痛点。</p>
 
         
       

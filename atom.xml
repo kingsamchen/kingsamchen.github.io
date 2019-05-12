@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-05-02T15:02:53.654Z</updated>
+  <updated>2019-05-12T12:45:05.158Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,78 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>基于 semaphore 实现轻量级 mutex</title>
+    <link href="http://kingsamchen.github.io/2019/05/12/roll-your-own-light-weight-mutex/"/>
+    <id>http://kingsamchen.github.io/2019/05/12/roll-your-own-light-weight-mutex/</id>
+    <published>2019-05-12T12:10:37.000Z</published>
+    <updated>2019-05-12T12:45:05.158Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;核心是 Jeff Preshing 大牛的两篇文章&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://preshing.com/20120226/roll-your-own-lightweight-mutex/&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="mutex" scheme="http://kingsamchen.github.io/tags/mutex/"/>
+    
+      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
+    
+      <category term="synchronization" scheme="http://kingsamchen.github.io/tags/synchronization/"/>
+    
+      <category term="semaphore" scheme="http://kingsamchen.github.io/tags/semaphore/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Anvil -- An Assistant For You CMake</title>
+    <link href="http://kingsamchen.github.io/2019/05/04/anvil-for-assisting-your-cmake/"/>
+    <id>http://kingsamchen.github.io/2019/05/04/anvil-for-assisting-your-cmake/</id>
+    <published>2019-05-04T13:12:05.000Z</published>
+    <updated>2019-05-11T03:07:31.694Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h3 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot; class=&quot;headerlink&quot; title=&quot;0x00&quot;&gt;&lt;/a&gt;0x00&lt;/h3&gt;&lt;p&gt;前段时间专门抽空做了一个小工具，也就是这里要讲的主题：&lt;a href=&quot;https://github.com/kingsamchen/anvil&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;anvil&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;一开始做 anvil 的动力很简单：某次尝试体验一下 Linux SignalFD 功能时想直接使用 ezio 的 &lt;code&gt;EventLoop&lt;/code&gt; 作为基础事件循环，同时项目使用 cmake 管理。&lt;/p&gt;
+&lt;p&gt;为了省事，我直接从 ezio 的项目里抠出来 &lt;code&gt;CMakeLists.txt&lt;/code&gt; 和几个自己写的 &lt;code&gt;.cmake&lt;/code&gt; 文件，就地&lt;a href=&quot;https://github.com/kingsamchen/Eureka/tree/master/UsingSignalfd&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;修改&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;但事实证明哪怕这样，改动量也不小，原因大体是因为：cmake 里（非函数内定义的）变量作用域是全局的，通过 fetch-content 功能引入的依赖在 &lt;code&gt;add_subdirectory()&lt;/code&gt; 后的模块里也能看到上一层定义的变量，因此为了防止一些控制型变量发生冲突，我都在前面加上了对应的模块前缀。&lt;/p&gt;
+&lt;p&gt;所以我面对的就是一大坨变量名的更换，以及少部分声明/属性的调整。&lt;/p&gt;
+&lt;p&gt;考虑到大部分的文件内容都是可以模板化的，而手动“实例化”不仅费事还很容易出错，所以我就很自然地萌生了写一个工具自动化这个过程的想法。&lt;/p&gt;
+&lt;h3 id=&quot;0x01&quot;&gt;&lt;a href=&quot;#0x01&quot; class=&quot;headerlink&quot; title=&quot;0x01&quot;&gt;&lt;/a&gt;0x01&lt;/h3&gt;&lt;p&gt;在经过一两天的短暂思考后，我大致确定了这个工具的定位和需要实现的基本目标，总结起来有三个核心点：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;辅助 cmake 而不是试图替代它或深度封装&lt;/li&gt;
+&lt;li&gt;内建一个轻量型的依赖管理功能&lt;/li&gt;
+&lt;li&gt;配置化的生成 &amp;amp; 构建流程&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;首先，第一点是重中之重。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="project management" scheme="http://kingsamchen.github.io/tags/project-management/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in Apr 2019</title>
@@ -39,9 +111,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
       <category term="noexcept" scheme="http://kingsamchen.github.io/tags/noexcept/"/>
     
@@ -120,11 +192,11 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
       <category term="SFINAE" scheme="http://kingsamchen.github.io/tags/SFINAE/"/>
     
       <category term="template" scheme="http://kingsamchen.github.io/tags/template/"/>
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
       <category term="ezio" scheme="http://kingsamchen.github.io/tags/ezio/"/>
     
@@ -326,11 +398,11 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
       <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
     
       <category term="git" scheme="http://kingsamchen.github.io/tags/git/"/>
-    
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
       <category term="dependency management" scheme="http://kingsamchen.github.io/tags/dependency-management/"/>
     
@@ -623,88 +695,6 @@
 &lt;p&gt;在我们的设计中，&lt;code&gt;TaskRunner&lt;/code&gt; 的定位是类似
         
       
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
-    
-      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
-    
-      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
-    
-      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
-    
-      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Build Your Own HandlerThread Part 2</title>
-    <link href="http://kingsamchen.github.io/2018/12/05/build-your-own-handlerthread-part-2/"/>
-    <id>http://kingsamchen.github.io/2018/12/05/build-your-own-handlerthread-part-2/</id>
-    <published>2018-12-05T15:49:29.000Z</published>
-    <updated>2018-12-08T14:02:42.470Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;有了 &lt;code&gt;MessagePumpDefault&lt;/code&gt;  之后，我们就可以开始着手实现最核心的 &lt;code&gt;MessageLoop&lt;/code&gt; 了。&lt;/p&gt;
-&lt;p&gt;不过在此之前，我们还首先需要实现一个辅助设施：&lt;code&gt;PendingTask&lt;/code&gt;。&lt;/p&gt;
-&lt;h3 id=&quot;PendingTask&quot;&gt;&lt;a href=&quot;#PendingTask&quot; class=&quot;headerlink&quot; title=&quot;PendingTask&quot;&gt;&lt;/a&gt;PendingTask&lt;/h3&gt;&lt;p&gt;一个 &lt;code&gt;PendingTask&lt;/code&gt; instance 表示一个等待被执行的 task，并且这个 task 可能是一个 delayed task。&lt;/p&gt;
-&lt;p&gt;因此 &lt;code&gt;PendingTask&lt;/code&gt; 需要能够表示时序上的顺序，这个可以利用 &lt;code&gt;Instant&lt;/code&gt; 类型的一个时间戳，结合一个 &lt;code&gt;long&lt;/code&gt; 类型的 sequence-number。因为有可能两个 delayed tasks 的时间戳相同，此时就必须要用 seq-num  来区分先后顺序。&lt;/p&gt;
-&lt;p&gt;另外，&lt;code&gt;PendingTask&lt;/code&gt; 为了能够表示 task 语义，他必须可以被执行。这可以通过内部存储一个 &lt;code&gt;Runnable&lt;/code&gt; 或者 &lt;code&gt;Callable&lt;/code&gt; 成员做到。&lt;/p&gt;
-&lt;p&gt;我们的实现选择 &lt;code&gt;Runnable&lt;/code&gt;，因为&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;我们当前的实现不考虑返回值，因为实现返回值和我们的主题没有直接关系。&lt;br&gt;CSP 的并发模型上如果要考虑使用某个任务的返回值，一般会使用类似于 &lt;code&gt;PostTaskAndReplyWithResult()&lt;/code&gt; 来组合两个函数；或者更一般的，使用 continuation 来 lifting restrictions&lt;/li&gt;
-&lt;li&gt;懒得处理异常&lt;/li&gt;
-&lt;/ul&gt;
-&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;PendingTask&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; AtomicLong s_seqNumGenerator = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; AtomicLong(&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; _seqNum;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;final&lt;/span&gt; Instant _endTime;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt; Runnable _task;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    PendingTask(Runnable task, Instant endTime) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _seqNum = s_seqNumGenerator.getAndIncrement();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _endTime = endTime;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _task = task;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        _task.run();&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;Instant &lt;span class=&quot;title&quot;&gt;endTime&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; _endTime;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;seqNum&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; _seqNum;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;我们使用了 &lt;code&gt;AtomicLong&lt;/code&gt; 来存储当前的 sequence-number，因为我们不知道某个 &lt;code&gt;PendingTask&lt;/code&gt; 会在哪个线程上被创建。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
-    
-      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
-    
-      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
-    
-      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
-    
-      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Build Your Own HandlerThread Part 1</title>
-    <link href="http://kingsamchen.github.io/2018/12/04/build-your-own-handlerthread-part-1/"/>
-    <id>http://kingsamchen.github.io/2018/12/04/build-your-own-handlerthread-part-1/</id>
-    <published>2018-12-04T01:51:41.000Z</published>
-    <updated>2018-12-08T14:02:42.469Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;MessagePump&quot;&gt;&lt;a href=&quot;#MessagePump&quot; class=&quot;headerlink&quot; title=&quot;MessagePump&quot;&gt;&lt;/a&gt;MessagePump&lt;/h3&gt;&lt;p&gt;对于我们的 ActiveThread 来说，核心仍然是持续不断运行的 message-loop；但是在实现 message-loop 前，我们需要首先来实现它的“引擎”：&lt;code&gt;MessagePump&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;大体上，message-loop 要维持运转，就要能够源源不断地从某个地方获取消息/事件，而获取消息/事件的这个行为，就是由 message-pump 来完成，正如他的名字一样。&lt;/p&gt;
-&lt;p&gt;这里可能会产生一个疑问，为什么要单独抽出一个 message-pump，而不是直接把这部分实现做到 message-loop 里呢？&lt;/p&gt;
-&lt;p&gt;原因是：一个复杂的系统可能会有多个消息/事件来源，每个来源会有专门的获取、分发的方式。&lt;/p&gt;
-&lt;p&gt;例如：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;界面消息可能是从系统的 GUI 消息系统中获得。一个典型的例子是 Win32 GUI 程序所使用的 &lt;code&gt;GetMessage()&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;网络活动事件通常从 native 系统提供的 I/O multiplexor 中获得。例子包括 POSIX 标准的 &lt;code&gt;select(2)&lt;/code&gt;, &lt;code&gt;poll(2)&lt;/code&gt;；Linux 独有的 &lt;code&gt;epoll&lt;/code&gt;；以及 Windows 提供的真-异步I/O机制 IO Completion Port。&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;注：GUI 系统中多使用 messages（消息）作为术语；而网络 I/O 等倾向于使用 events（事件）作为使用术语。因为此系列文章不涉及网络 I/O，因此以后均采用&lt;em&gt;消息&lt;/em&gt;作为我们的使用术语。&lt;/p&gt;
-&lt;p&gt;注1：对于 Android 系统，他的 GUI 事件实质上是通过 &lt;code&gt;epoll&lt;/code&gt; 监听关联到 device 抽象的 pipe fd 来完成的；Linux 的各类 X-Window 实现大多也是类似做法。&lt;/p&gt;
-&lt;p&gt;所以为了解耦具体的消息来源，同时让我们的实现看上去更加有逼格，我们采取分离实现 message-pump 和 message-loop。&lt;/p&gt;
-&lt;p&gt;前面说到可能有多种 pump，所以这里我们的 &lt;code&gt;MessagePump&lt;/code&gt; 应该是一个 interface，规定了一个 message-pump 应该具有哪些基本的行为：&lt;/p&gt;
-&lt;figure class=&quot;highlight java&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; java.time.Instant;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;MessagePump&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;interface&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Delegate&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;doWork&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;boolean&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;doDelayedWork&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;function&quot;&gt;Instant &lt;span class=&quot;title&quot;&gt;nextDelayedWorkExpiration&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(Delegate delegate)&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Quit the pump.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// This method can only be called on the thread that called run().&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;quit&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// Thread-safe&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;wakeup&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;同时我们定义了一个 &lt;code&gt;Delegate&lt;/code&gt; interface，message-loop 需要实现这个 interface，以便让 message-pump 可以通过这个 interface 来按照自己的实现来操作 message-loop。&lt;/p&gt;
-&lt;h3 id=&quot;什么都不做的-MessagePumpDefault&quot;&gt;&lt;a href=&quot;#什么都不做的-MessagePumpDefault&quot; class=&quot;headerlink&quot; title=&quot;什么都不做的 MessagePumpDefault&quot;&gt;&lt;/a&gt;什么都不做的 MessagePumpDefault&lt;/h3&gt;&lt;p&gt;我们的 ActiveThread 运行的纯 Java 环境，不需要像 Android 那样能够获取设备输入消息（Frankly，你想做还做不了呢，我哪来的设备信息获取啊），有点类似 worker HandlerThread.&lt;br&gt;
     
     </summary>
     
