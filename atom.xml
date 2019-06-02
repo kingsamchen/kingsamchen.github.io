@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-05-12T12:45:05.158Z</updated>
+  <updated>2019-06-02T13:42:29.575Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in May 2019</title>
+    <link href="http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/"/>
+    <id>http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/</id>
+    <published>2019-06-02T13:40:29.000Z</published>
+    <updated>2019-06-02T13:42:29.575Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Concurrency&quot;&gt;&lt;a href=&quot;#Concurrency&quot; class=&quot;headerlink&quot; title=&quot;Concurrency&quot;&gt;&lt;/a&gt;Concurrency&lt;/h2&gt;&lt;p&gt;&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="mutex" scheme="http://kingsamchen.github.io/tags/mutex/"/>
+    
+      <category term="lockless" scheme="http://kingsamchen.github.io/tags/lockless/"/>
+    
+      <category term="memory reordering" scheme="http://kingsamchen.github.io/tags/memory-reordering/"/>
+    
+      <category term="circuit breaker" scheme="http://kingsamchen.github.io/tags/circuit-breaker/"/>
+    
+  </entry>
   
   <entry>
     <title>基于 semaphore 实现轻量级 mutex</title>
@@ -327,9 +359,9 @@
     
       <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
     
-      <category term="http2" scheme="http://kingsamchen.github.io/tags/http2/"/>
-    
       <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
+    
+      <category term="http2" scheme="http://kingsamchen.github.io/tags/http2/"/>
     
       <category term="database" scheme="http://kingsamchen.github.io/tags/database/"/>
     
@@ -436,9 +468,9 @@
     
       <category term="performance" scheme="http://kingsamchen.github.io/tags/performance/"/>
     
-      <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
-    
       <category term="spinlock" scheme="http://kingsamchen.github.io/tags/spinlock/"/>
+    
+      <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
     
       <category term="ptrace" scheme="http://kingsamchen.github.io/tags/ptrace/"/>
     
@@ -660,41 +692,6 @@
 &lt;p&gt;这两点和 Android 原生提供的 &lt;code&gt;HandlerThread&lt;/code&gt; 是一模一样的。&lt;/p&gt;
 &lt;p&gt;不过和 &lt;code&gt;HandlerThread&lt;/code&gt; 不同，我们这里不打算采用继承 &lt;code&gt;Thread&lt;/code&gt; 的方式，而是采用 composition。原因之一是我个人非常反感传统的 OO 继承手法；并且 Java 8 开始正式支持 lambda 之后，不用继承我们的工作也可以做得很好。&lt;/p&gt;
 &lt;p&gt;不适用继承同时有个好处，我们可以只暴露我们需要的接口，避免误用（比如经典的用 &lt;code&gt;run()&lt;/code&gt; 而不是 &lt;code&gt;start()&lt;/code&gt;）&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
-    
-      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
-    
-      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
-    
-      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
-    
-      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Build Your Own HandlerThread Part 3</title>
-    <link href="http://kingsamchen.github.io/2018/12/06/build-your-own-handlerthread-part-3/"/>
-    <id>http://kingsamchen.github.io/2018/12/06/build-your-own-handlerthread-part-3/</id>
-    <published>2018-12-06T14:34:48.000Z</published>
-    <updated>2018-12-08T14:02:42.470Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;前面我们实现了 &lt;code&gt;MessageLoop&lt;/code&gt;，现在该轮到 &lt;code&gt;TaskRunner&lt;/code&gt; 了。&lt;/p&gt;
-&lt;p&gt;在我们的设计中，&lt;code&gt;TaskRunner&lt;/code&gt; 的定位是类似
-        
-      
     
     </summary>
     

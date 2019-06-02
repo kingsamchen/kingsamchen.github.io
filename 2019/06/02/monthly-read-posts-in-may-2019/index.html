@@ -17,12 +17,12 @@
 
 
 
-  <meta name="description" content="Monthly Read Posts in Feb 2019"/>
+  <meta name="description" content="Monthly Read Posts in May 2019"/>
 
 
 
 
-  <meta name="keywords" content="c++, http, goroutine, http2, database, code review, unicode, KC的废墟堆" />
+  <meta name="keywords" content="mutex, lockless, memory reordering, circuit breaker, KC的废墟堆" />
 
 
 
@@ -42,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2019/03/02/monthly-read-posts-in-feb-2019/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -66,7 +66,7 @@
 
 
 
-    <title> Monthly Read Posts in Feb 2019 - KC的废墟堆 </title>
+    <title> Monthly Read Posts in May 2019 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -182,13 +182,13 @@
     <header class="post-header">
       <h1 class="post-title">
         
-          Monthly Read Posts in Feb 2019
+          Monthly Read Posts in May 2019
         
       </h1>
 
       <div class="post-meta">
         <span class="post-time">
-          2019-03-02
+          2019-06-02
         </span>
         
           <div class="post-category">
@@ -206,62 +206,46 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Network"><span class="toc-text">Network</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-Languages"><span class="toc-text">Programming Languages</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Database"><span class="toc-text">Database</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Data-Structures"><span class="toc-text">Data Structures</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrency"><span class="toc-text">Concurrency</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#System-Architect-Design"><span class="toc-text">System Architect Design</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
     </div>
   </div>
 
 
     <div class="post-content">
       
-        <h2 id="Network"><a href="#Network" class="headerlink" title="Network"></a>Network</h2><p><a href="https://www.mnot.net/blog/2018/11/27/header_compression" target="_blank" rel="noopener">Designing Headers for HTTP Compression</a></p>
-<p>看起来是 HTTP/2 的 header compression 使用建议</p>
+        <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120226/roll-your-own-lightweight-mutex/" target="_blank" rel="noopener">Roll Your Own Lightweight Mutex</a></p>
+<p>如何利用系统提供的 semaphore synchronization primitive 实现一个轻量级的 mutex</p>
 <hr>
-<p><a href="https://www.mnot.net/blog/2017/05/11/status_codes" target="_blank" rel="noopener">How to Think About HTTP Status Codes</a></p>
-<p>HTTP status codes 使用建议。</p>
-<p>适合结合 Rest API design 相关文章一起食用。</p>
-<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://tonybai.com/2016/12/21/how-to-use-timer-reset-in-golang-correctly/" target="_blank" rel="noopener">论golang Timer Reset方法使用的正确姿势</a></p>
-<p>golang 这破 timer 坑真多</p>
+<p><a href="http://cbloomrants.blogspot.com/2011/07/07-15-11-review-of-many-mutex.html" target="_blank" rel="noopener">Review of many Mutex implementations</a></p>
+<p>和上面类似，但是使用了 event pritimive 作为基本设施。</p>
+<p>因为 event 不像 semaphore 自身能够控制 running count，一旦被 evnent 被 signal 则所有 waiter 会被唤醒。因此这个实现版本在一些 edge cases 上花了不少功夫。</p>
 <hr>
-<p><a href="https://jonasdevlieghere.com/guaranteed-copy-elision/" target="_blank" rel="noopener">Guaranteed Copy Elision</a></p>
-<p>C++ 17 Guaranteed copy elision explained.<br><a id="more"></a></p>
+<p><a href="https://preshing.com/20120305/implementing-a-recursive-mutex/" target="_blank" rel="noopener">Implementing a Recursive Mutex</a></p>
+<p>如何让 mutex 支持 recursive mode</p>
+<p>注：实际设计中，尽可能避免使用 recursive lock</p>
 <hr>
-<p><a href="https://www.ardanlabs.com/blog/2018/11/goroutine-leaks-the-forgotten-sender.html" target="_blank" rel="noopener">Goroutine Leaks - The Forgotten Sender</a></p>
-<p>两个常见的 goroutine 泄露的例子。</p>
-<p>A kind advice: any time you start a Goroutine you must ask yourself:</p>
+<p><a href="https://docs.microsoft.com/en-us/windows/desktop/DxTechArts/lockless-programming" target="_blank" rel="noopener">Lockless Programming</a></p>
+<p>微软官方出品的无锁编程介绍文章。</p>
+<p>质量过硬，干货满满。</p>
+<hr>
+<p><a href="https://preshing.com/20120515/memory-reordering-caught-in-the-act/" target="_blank" rel="noopener">Memory Reordering Caught in the Act</a></p>
+<p>构造一个触发经典 memory reordering 的场景</p>
+<h2 id="System-Architect-Design"><a href="#System-Architect-Design" class="headerlink" title="System Architect Design"></a>System Architect Design</h2><p><a href="https://mp.weixin.qq.com/s/tiN6Z_VjTKZ5voFu4TFElg" target="_blank" rel="noopener">哥们，你们的系统架构中为什么要引入消息中间件？</a></p>
 <ul>
-<li>When will it terminate?</li>
-<li>What could prevent it from terminating?</li>
+<li>多个组件/服务之间的解耦</li>
+<li>剥离耗时调用异步化</li>
+<li>高峰流量作为 buffer 屏障进行流量削峰</li>
 </ul>
-<h2 id="Database"><a href="#Database" class="headerlink" title="Database"></a>Database</h2><p><a href="https://mp.weixin.qq.com/s/PbtikNJlGmsR2iLSIA4aMw" target="_blank" rel="noopener">MYSQL的SQL性能优化总结</a></p>
-<p>可以稍微看看，个人对互联网产品的 db 使用也出在学习中。</p>
 <hr>
-<p><a href="https://thomaslarock.com/2018/07/databases-101/" target="_blank" rel="noopener">Database 101</a></p>
-<p>Fundamental ideas of relational dbms and non-relational dbms.</p>
-<p>ACID V.S BASE</p>
-<p>Choose from CAP</p>
-<h2 id="Data-Structures"><a href="#Data-Structures" class="headerlink" title="Data Structures"></a>Data Structures</h2><p><a href="https://www.snellman.net/blog/archive/2016-12-13-ring-buffers/" target="_blank" rel="noopener">I’ve been writing ring buffers wrong all these years</a></p>
-<p>第三种方案实在是太 tricky 了，依赖 unsigned integer overflow to wrap around，而且 capacity 限制也必须是2次幂。</p>
-<p>通常情况下第二种方案可能会更好，性能这种东西没有确切的 benchmark 太虚了。</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://www.pagerduty.com/resources/learn/post-mortem-incident-report/" target="_blank" rel="noopener">What is an Incident Postmortem?</a></p>
-<p>An effective postmortem should include:</p>
-<ul>
-<li>a high-level summary of what happened</li>
-<li>a root cause analysis</li>
-<li>steps taken to diagnose, assess and resolve</li>
-<li>a timeline of significant activities</li>
-<li>learning and next steps</li>
-</ul>
-<p>虽然这篇 post 有打广告的嫌疑，但是内容还是足够可以的。另外要推荐 Google 出的 SRE 那本书，其中有几个章节主讲 incident management 和 writing postmortem。</p>
+<p><a href="https://medium.com/@trongdan_tran/circuit-breaker-and-retry-64830e71d0f6" target="_blank" rel="noopener">Circuit Breaker and Retry</a></p>
+<p>what is circuit breaker and why would we use it</p>
+<p>common design patterns of retry</p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://preshing.com/20120522/lightweight-in-memory-logging/" target="_blank" rel="noopener">Lightweight In-Memory Logging</a></p>
+<p>一个针对特殊场景涉及的 in-memory logging facility。</p>
+<p>尽量减少 logging 产生的指令级别开销（例如尽可能使用 intrinsic 获取相关信息）</p>
 <hr>
-<p><a href="https://sergeyzhuk.me/2018/12/29/code_review/" target="_blank" rel="noopener">How To Speed Up The Code Review</a></p>
-<p>核心观点: <em>the larget the request is, the less valuable is its review</em>.</p>
-<p>这里的 <em><strong>large</strong></em> 尤指心智负担。</p>
-<p>所以做法是，不要混合不同 category 的提交到一个 pull request，因为不同 category 的提交需要的专注度和目的不一样。</p>
-<p>不过按照个人经验要做到这个目的并不太轻松，在公司内部团队推广估计尤其困难。</p>
-<hr>
-<p><a href="https://zhuanlan.zhihu.com/p/53714077" target="_blank" rel="noopener">其实你并不懂 Unicode</a></p>
-<p>不错的扫盲文</p>
-<p>想当年做 Win32 GDI 时被 glyph 和 grapheme 搞得要死要死。</p>
+<p><a href="https://preshing.com/20120625/memory-ordering-at-compile-time/" target="_blank" rel="noopener">Memory Ordering at Compile Time</a></p>
+<p>How once upon a time does compiler reorder instructions.</p>
 
       
     </div>
@@ -277,7 +261,7 @@
     </p>
     <p class="copyright-item">
       <span>原文链接: </span>
-      <a href="http://kingsamchen.github.io/2019/03/02/monthly-read-posts-in-feb-2019/">http://kingsamchen.github.io/2019/03/02/monthly-read-posts-in-feb-2019/</a>
+      <a href="http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/">http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/</a>
     </p>
     <p class="copyright-item">
       <span>许可协议: </span>
@@ -297,19 +281,13 @@
         
           <div class="post-tags">
             
-              <a href="/tags/c/">c++</a>
+              <a href="/tags/mutex/">mutex</a>
             
-              <a href="/tags/http/">http</a>
+              <a href="/tags/lockless/">lockless</a>
             
-              <a href="/tags/goroutine/">goroutine</a>
+              <a href="/tags/memory-reordering/">memory reordering</a>
             
-              <a href="/tags/http2/">http2</a>
-            
-              <a href="/tags/database/">database</a>
-            
-              <a href="/tags/code-review/">code review</a>
-            
-              <a href="/tags/unicode/">unicode</a>
+              <a href="/tags/circuit-breaker/">circuit breaker</a>
             
           </div>
         
@@ -317,15 +295,9 @@
         
   <nav class="post-nav">
     
-      <a class="prev" href="/2019/03/13/recommend-google-api-design-guide/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text nav-default">推荐 Google API Design Guide</span>
-        <span class="prev-text nav-mobile">上一篇</span>
-      </a>
     
-    
-      <a class="next" href="/2019/02/23/using-sangfor-vpn-on-linux/">
-        <span class="next-text nav-default">在 Linux 上使用深信服 VPN</span>
+      <a class="next" href="/2019/05/12/roll-your-own-light-weight-mutex/">
+        <span class="next-text nav-default">基于 semaphore 实现轻量级 mutex</span>
         <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
@@ -432,9 +404,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://kingsamchen.github.io/2019/03/02/monthly-read-posts-in-feb-2019/';
-        this.page.identifier = '2019/03/02/monthly-read-posts-in-feb-2019/';
-        this.page.title = 'Monthly Read Posts in Feb 2019';
+        this.page.url = 'http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/';
+        this.page.identifier = '2019/06/02/monthly-read-posts-in-may-2019/';
+        this.page.title = 'Monthly Read Posts in May 2019';
     };
     (function() {
     var d = document, s = d.createElement('script');
