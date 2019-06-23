@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-06-02T13:42:29.575Z</updated>
+  <updated>2019-06-23T07:42:04.604Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>为 CommandLine 加上值指定类型转换以及一些扯淡</title>
+    <link href="http://kingsamchen.github.io/2019/06/23/add-value-type-conversion-for-cmdline/"/>
+    <id>http://kingsamchen.github.io/2019/06/23/add-value-type-conversion-for-cmdline/</id>
+    <published>2019-06-23T06:56:22.000Z</published>
+    <updated>2019-06-23T07:42:04.604Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;过去两周抽了点时间给 &lt;code&gt;KBase::CommandLine&lt;/code&gt; 做了一个&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="KBase" scheme="http://kingsamchen.github.io/tags/KBase/"/>
+    
+      <category term="command-line" scheme="http://kingsamchen.github.io/tags/command-line/"/>
+    
+      <category term="abstraction" scheme="http://kingsamchen.github.io/tags/abstraction/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in May 2019</title>
@@ -359,9 +389,9 @@
     
       <category term="http" scheme="http://kingsamchen.github.io/tags/http/"/>
     
-      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
-    
       <category term="http2" scheme="http://kingsamchen.github.io/tags/http2/"/>
+    
+      <category term="goroutine" scheme="http://kingsamchen.github.io/tags/goroutine/"/>
     
       <category term="database" scheme="http://kingsamchen.github.io/tags/database/"/>
     
@@ -656,42 +686,6 @@
 &lt;p&gt;Rant：做业务才真的难呢，框架和流程都给你定死了，一坨又一坨用了几年的不明觉厉的封装，如果内部文档哪个不详，又
         
       
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
-    
-      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
-    
-      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
-    
-      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
-    
-      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Build Your Own HandlerThread Part 4</title>
-    <link href="http://kingsamchen.github.io/2018/12/07/build-your-own-handlerthread-part-4/"/>
-    <id>http://kingsamchen.github.io/2018/12/07/build-your-own-handlerthread-part-4/</id>
-    <published>2018-12-06T16:50:37.000Z</published>
-    <updated>2018-12-08T14:02:42.470Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;有了前面的铺垫我们终于可以开始实现我们的主角 ActiveThread 了，虽然它登场的有点晚。&lt;/p&gt;
-&lt;p&gt;这个系列的开头我们提到 &lt;code&gt;ActiveThread&lt;/code&gt; 有两个鲜明的特点：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;它是线程，可以运行，代表一个单独的执行上下文（execution unit/context）&lt;/li&gt;
-&lt;li&gt;每个 &lt;code&gt;ActiveThread&lt;/code&gt; 内部运行一个 message-loop，方便持续的执行我们提交的任务&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;这两点和 Android 原生提供的 &lt;code&gt;HandlerThread&lt;/code&gt; 是一模一样的。&lt;/p&gt;
-&lt;p&gt;不过和 &lt;code&gt;HandlerThread&lt;/code&gt; 不同，我们这里不打算采用继承 &lt;code&gt;Thread&lt;/code&gt; 的方式，而是采用 composition。原因之一是我个人非常反感传统的 OO 继承手法；并且 Java 8 开始正式支持 lambda 之后，不用继承我们的工作也可以做得很好。&lt;/p&gt;
-&lt;p&gt;不适用继承同时有个好处，我们可以只暴露我们需要的接口，避免误用（比如经典的用 &lt;code&gt;run()&lt;/code&gt; 而不是 &lt;code&gt;start()&lt;/code&gt;）&lt;br&gt;
     
     </summary>
     

@@ -17,12 +17,12 @@
 
 
 
-  <meta name="description" content="Monthly Read Posts in May 2019"/>
+  <meta name="description" content="为 CommandLine 加上值指定类型转换以及一些扯淡"/>
 
 
 
 
-  <meta name="keywords" content="mutex, lockless, memory reordering, circuit breaker, KC的废墟堆" />
+  <meta name="keywords" content="KBase, command-line, abstraction, KC的废墟堆" />
 
 
 
@@ -42,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2019/06/23/add-value-type-conversion-for-cmdline/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -66,7 +66,7 @@
 
 
 
-    <title> Monthly Read Posts in May 2019 - KC的废墟堆 </title>
+    <title> 为 CommandLine 加上值指定类型转换以及一些扯淡 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -182,13 +182,13 @@
     <header class="post-header">
       <h1 class="post-title">
         
-          Monthly Read Posts in May 2019
+          为 CommandLine 加上值指定类型转换以及一些扯淡
         
       </h1>
 
       <div class="post-meta">
         <span class="post-time">
-          2019-06-02
+          2019-06-23
         </span>
         
           <div class="post-category">
@@ -203,49 +203,25 @@
 
     
     
-  <div class="post-toc" id="post-toc">
-    <h2 class="post-toc-title">文章目录</h2>
-    <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrency"><span class="toc-text">Concurrency</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#System-Architect-Design"><span class="toc-text">System Architect Design</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
-    </div>
-  </div>
-
 
     <div class="post-content">
       
-        <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120226/roll-your-own-lightweight-mutex/" target="_blank" rel="noopener">Roll Your Own Lightweight Mutex</a></p>
-<p>如何利用系统提供的 semaphore synchronization primitive 实现一个轻量级的 mutex</p>
+        <p>过去两周抽了点时间给 <code>KBase::CommandLine</code> 做了一个<a href="https://github.com/kingsamchen/KBase/commit/e15c81869a9da5422e2012f6b0c4b87be2a1bf0b" target="_blank" rel="noopener">变更</a>，重新设计了 parameter 和 switch 的用户访问接口。</p>
+<p>变更的其中一个核心改动是：获取 parameter 或 switch value 时提供了值类型的转换。</p>
+<p>有了这个 change 之后，使用者可以通过类似</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> port = cmdline.GetSwitchValueAs&lt;<span class="keyword">int</span>&gt;(<span class="string">"port"</span>, <span class="number">9876</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> limit = cmdline.GetParameterAs&lt;<span class="keyword">long</span> <span class="keyword">long</span>&gt;(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>的方式直接获取目标值，免去了自己手动将 <code>std::string</code> convert 到指定类型的操作。</p>
+<p>同时，这两个接口还支持自定义的 data type converter，用户只需要传入一个 function object 就可以定制转换过程。</p>
 <hr>
-<p><a href="http://cbloomrants.blogspot.com/2011/07/07-15-11-review-of-many-mutex.html" target="_blank" rel="noopener">Review of many Mutex implementations</a></p>
-<p>和上面类似，但是使用了 event pritimive 作为基本设施。</p>
-<p>因为 event 不像 semaphore 自身能够控制 running count，一旦被 evnent 被 signal 则所有 waiter 会被唤醒。因此这个实现版本在一些 edge cases 上花了不少功夫。</p>
-<hr>
-<p><a href="https://preshing.com/20120305/implementing-a-recursive-mutex/" target="_blank" rel="noopener">Implementing a Recursive Mutex</a></p>
-<p>如何让 mutex 支持 recursive mode</p>
-<p>注：实际设计中，尽可能避免使用 recursive lock</p>
-<hr>
-<p><a href="https://docs.microsoft.com/en-us/windows/desktop/DxTechArts/lockless-programming" target="_blank" rel="noopener">Lockless Programming</a></p>
-<p>微软官方出品的无锁编程介绍文章。</p>
-<p>质量过硬，干货满满。</p>
-<hr>
-<p><a href="https://preshing.com/20120515/memory-reordering-caught-in-the-act/" target="_blank" rel="noopener">Memory Reordering Caught in the Act</a></p>
-<p>构造一个触发经典 memory reordering 的场景</p>
-<h2 id="System-Architect-Design"><a href="#System-Architect-Design" class="headerlink" title="System Architect Design"></a>System Architect Design</h2><p><a href="https://mp.weixin.qq.com/s/tiN6Z_VjTKZ5voFu4TFElg" target="_blank" rel="noopener">哥们，你们的系统架构中为什么要引入消息中间件？</a></p>
-<ul>
-<li>多个组件/服务之间的解耦</li>
-<li>剥离耗时调用异步化</li>
-<li>高峰流量作为 buffer 屏障进行流量削峰</li>
-</ul>
-<hr>
-<p><a href="https://medium.com/@trongdan_tran/circuit-breaker-and-retry-64830e71d0f6" target="_blank" rel="noopener">Circuit Breaker and Retry</a></p>
-<p>what is circuit breaker and why would we use it</p>
-<p>common design patterns of retry</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://preshing.com/20120522/lightweight-in-memory-logging/" target="_blank" rel="noopener">Lightweight In-Memory Logging</a></p>
-<p>一个针对特殊场景涉及的 in-memory logging facility。</p>
-<p>尽量减少 logging 产生的指令级别开销（例如尽可能使用 intrinsic 获取相关信息）</p>
-<hr>
-<p><a href="https://preshing.com/20120625/memory-ordering-at-compile-time/" target="_blank" rel="noopener">Memory Ordering at Compile Time</a></p>
-<p>How once upon a time does compiler reorder instructions.</p>
+<p>和 Python 的 <code>argparse</code>；golang 的 <code>flag</code> 乃至 boost 的 <code>program_options</code> 这些需要在一开始“定义”程序使用的 switches(flags) 及其绑定的变量的库不同，<code>CommandLine</code> 对 switches 的使用更多的是一种辅助探测，非侵入式的。</p>
+<p>这种设计是有意的，因为这符合我个人的设计哲学：低层次的设计尽量避免对高层次的约束依赖。</p>
+<p>Golang 的 flags 在普通场景下看似使用便利，但是如果你在多个组件里定义了同一个名叫 <code>conf</code> 的flag，程序就会因为 <em>redefined flags</em> 而导致 panic。更不用提 panic 时甚至不会给出重复定义的上下文，只能靠你自己一个一个排查。</p>
+<p>而避免这种问题的发生的唯一方法就是，人为的规定只允许程序主模块（<code>func main()</code>）内才能定义 flag，第三方包千万不能定义flag。</p>
+<p>如果做不到这点，哪怕不发生 redefined flags 的问题，你的程序也会因为引入了第三方包而“自发”的获得了这些 flags 的定义。</p>
+<p>Python 的 <code>argparse</code> 设计上坑比 <code>flag</code> 稍少，但是在一些复杂的需求上也会让你有一种如鲠在喉的感觉。</p>
+<p>本质上，这些库充当的都是 controller 或者 manager 的角色，为了完成他们的定位，不可避免会通过提供一些高层抽象来完成建模；但是 commandline 的作用大部分时候是给主程序提供支持，作为基础库，怎么可能知道主程序对命令行有什么样的需求呢？</p>
+<p>灵活性和易用性绝大多数的时候都是相互冲突的。</p>
+<p>抽象虽然能够简化细节，做到 selective ignorance，但是同时也增加了约束，这部分约束也是抽象的代价之一。</p>
 
       
     </div>
@@ -261,7 +237,7 @@
     </p>
     <p class="copyright-item">
       <span>原文链接: </span>
-      <a href="http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/">http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/</a>
+      <a href="http://kingsamchen.github.io/2019/06/23/add-value-type-conversion-for-cmdline/">http://kingsamchen.github.io/2019/06/23/add-value-type-conversion-for-cmdline/</a>
     </p>
     <p class="copyright-item">
       <span>许可协议: </span>
@@ -281,13 +257,11 @@
         
           <div class="post-tags">
             
-              <a href="/tags/mutex/">mutex</a>
+              <a href="/tags/KBase/">KBase</a>
             
-              <a href="/tags/lockless/">lockless</a>
+              <a href="/tags/command-line/">command-line</a>
             
-              <a href="/tags/memory-reordering/">memory reordering</a>
-            
-              <a href="/tags/circuit-breaker/">circuit breaker</a>
+              <a href="/tags/abstraction/">abstraction</a>
             
           </div>
         
@@ -295,15 +269,9 @@
         
   <nav class="post-nav">
     
-      <a class="prev" href="/2019/06/23/add-value-type-conversion-for-cmdline/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text nav-default">为 CommandLine 加上值指定类型转换以及一些扯淡</span>
-        <span class="prev-text nav-mobile">上一篇</span>
-      </a>
     
-    
-      <a class="next" href="/2019/05/12/roll-your-own-light-weight-mutex/">
-        <span class="next-text nav-default">基于 semaphore 实现轻量级 mutex</span>
+      <a class="next" href="/2019/06/02/monthly-read-posts-in-may-2019/">
+        <span class="next-text nav-default">Monthly Read Posts in May 2019</span>
         <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
@@ -410,9 +378,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://kingsamchen.github.io/2019/06/02/monthly-read-posts-in-may-2019/';
-        this.page.identifier = '2019/06/02/monthly-read-posts-in-may-2019/';
-        this.page.title = 'Monthly Read Posts in May 2019';
+        this.page.url = 'http://kingsamchen.github.io/2019/06/23/add-value-type-conversion-for-cmdline/';
+        this.page.identifier = '2019/06/23/add-value-type-conversion-for-cmdline/';
+        this.page.title = '为 CommandLine 加上值指定类型转换以及一些扯淡';
     };
     (function() {
     var d = document, s = d.createElement('script');

@@ -182,6 +182,67 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/06/23/add-value-type-conversion-for-cmdline/">为 CommandLine 加上值指定类型转换以及一些扯淡</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-23
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>过去两周抽了点时间给 <code>KBase::CommandLine</code> 做了一个<a href="https://github.com/kingsamchen/KBase/commit/e15c81869a9da5422e2012f6b0c4b87be2a1bf0b" target="_blank" rel="noopener">变更</a>，重新设计了 parameter 和 switch 的用户访问接口。</p>
+<p>变更的其中一个核心改动是：获取 parameter 或 switch value 时提供了值类型的转换。</p>
+<p>有了这个 change 之后，使用者可以通过类似</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> port = cmdline.GetSwitchValueAs&lt;<span class="keyword">int</span>&gt;(<span class="string">"port"</span>, <span class="number">9876</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> limit = cmdline.GetParameterAs&lt;<span class="keyword">long</span> <span class="keyword">long</span>&gt;(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
+<p>的方式直接获取目标值，免去了自己手动将 <code>std::string</code> convert 到指定类型的操作。</p>
+<p>同时，这两个接口还支持自定义的 data type converter，用户只需要传入一个 function object 就可以定制转换过程。</p>
+<hr>
+<p>和 Python 的 <code>argparse</code>；golang 的 <code>flag</code> 乃至 boost 的 <code>program_options</code> 这些需要在一开始“定义”程序使用的 switches(flags) 及其绑定的变量的库不同，<code>CommandLine</code> 对 switches 的使用更多的是一种辅助探测，非侵入式的。</p>
+<p>这种设计是有意的，因为这符合我个人的设计哲学：低层次的设计尽量避免对高层次的约束依赖。</p>
+<p>Golang 的 flags 在普通场景下看似使用便利，但是如果你在多个组件里定义了同一个名叫 <code>conf</code> 的flag，程序就会因为 <em>redefined flags</em> 而导致 panic。更不用提 panic 时甚至不会给出重复定义的上下文，只能靠你自己一个一个排查。</p>
+<p>而避免这种问题的发生的唯一方法就是，人为的规定只允许程序主模块（<code>func main()</code>）内才能定义 flag，第三方包千万不能定义flag。</p>
+<p>如果做不到这点，哪怕不发生 redefined flags 的问题，你的程序也会因为引入了第三方包而“自发”的获得了这些 flags 的定义。</p>
+<p>Python 的 <code>argparse</code> 设计上坑比 <code>flag</code> 稍少，但是在一些复杂的需求上也会让你有一种如鲠在喉的感觉。</p>
+<p>本质上，这些库充当的都是 controller 或者 manager 的角色，为了完成他们的定位，不可避免会通过提供一些高层抽象来完成建模；但是 commandline 的作用大部分时候是给主程序提供支持，作为基础库，怎么可能知道主程序对命令行有什么样的需求呢？</p>
+<p>灵活性和易用性绝大多数的时候都是相互冲突的。</p>
+<p>抽象虽然能够简化细节，做到 selective ignorance，但是同时也增加了约束，这部分约束也是抽象的代价之一。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/06/02/monthly-read-posts-in-may-2019/">Monthly Read Posts in May 2019</a>
         
       </h1>
@@ -560,80 +621,6 @@
           <div class="read-more">
             <a href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/" class="read-more-link">阅读更多</a>
           </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/04/02/monthly-read-posts-in-mar-2019/">Monthly Read Posts in Mar 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-04-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Networking"><a href="#Networking" class="headerlink" title="Networking"></a>Networking</h2><p><a href="https://www.mnot.net/blog/2017/03/16/browser-caching" target="_blank" rel="noopener">The State of Browser Caching, Revisited</a></p>
-<p>各家浏览器对 HTTP caching 的支持概况</p>
-<hr>
-<p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" target="_blank" rel="noopener">Cross-Origin Resource Sharing (CORS)</a></p>
-<p><a href="http://fengxu.ink/2018/02/15/ajax%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%E5%8F%8A%E7%9B%B8%E5%85%B3/" target="_blank" rel="noopener">ajax跨域请求及相关</a></p>
-<p>和 CORS 有关的两篇 posts。第一篇是 MDN 的官方教程。</p>
-<p>需要注意的是，CORS在服务端的表现<strong>不是限制</strong>某些 URL 只能被某些 domain 的请求访问，而是允许这些 URL 可以在满足要求的条件下（origin 是某个匹配 domain），允许接收跨域请求。</p>
-<p>跨域禁止的同源策略是由 browser 实施的，当收到服务端许可的情况下才会继续。</p>
-<h2 id="SRE"><a href="#SRE" class="headerlink" title="SRE"></a>SRE</h2><p><a href="https://draveness.me/docker" target="_blank" rel="noopener">Docker 核心技术与实现原理</a></p>
-<p>科普型，内容深度并不深，适合作为了解</p>
-<h2 id="Software-Engineering"><a href="#Software-Engineering" class="headerlink" title="Software Engineering"></a>Software Engineering</h2><p><a href="https://dev.to/luminousmen/what-are-the-best-software-engineering-principles--3p8n" target="_blank" rel="noopener">What Are The Best Software Engineering Principles?</a></p>
-<p>列举了一些软件工程的基本原则。</p>
-<hr>
-<p><a href="https://medium.com/@mattklein123/monorepos-please-dont-e9a279be011b" target="_blank" rel="noopener">Monorepos: Please don’t!</a></p>
-<p>这篇文章算是很标准的檄文：首先点出几个 monorepo 的理论优点然后逐一分析，得出这些优点并没没有看上去那么好；接着列举缺点。</p>
-<p>最后总结得出核心是工程师文化。</p>
-<hr>
-<p><a href="https://medium.com/@adamhjk/monorepo-please-do-3657e08a4b70" target="_blank" rel="noopener">Monorepo: please do!</a></p>
-<p>这篇文章是上面那篇的 argue，但是相比起来写的就太一般了。</p>
-<p>全片的核心论点就一个： monorepo 解决的是大团队里各个子团队的沟通提问题。</p>
-<hr>
-<p><a href="https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/" target="_blank" rel="noopener">Things You Should Never Do, Part I</a></p>
-<p>KEY: Do not rewrite your code.</p>
-<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://blogs.msdn.microsoft.com/oldnewthing/20180201-00/?p=97946" target="_blank" rel="noopener">Spurious wake-ups in Win32 condition variables</a></p>
-<p>简要解释了 Windows 上 condition variables 会出现 spurious wakeups 的两个原因</p>
-<hr>
-<p><a href="https://preshing.com/20111118/locks-arent-slow-lock-contention-is/" target="_blank" rel="noopener">Locks Aren’t Slow; Lock Contention Is</a></p>
-<p>频繁的锁竞争是使用锁慢的根本原因，剩下的就老论点：减少临界区大小，减少锁竞争发生概率 .etc</p>
-<p>文中用泊松分布模拟了实际使用 case 中锁竞争概率和性能的关系，50%的竞争下，两个线程也能由1.5x的提速</p>
-
         
       
     </div>
