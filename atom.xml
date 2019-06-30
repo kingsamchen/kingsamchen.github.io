@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-06-23T07:42:04.604Z</updated>
+  <updated>2019-06-30T10:29:47.882Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,39 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>实现 compressed pair</title>
+    <link href="http://kingsamchen.github.io/2019/06/30/implementing-compressed-pair/"/>
+    <id>http://kingsamchen.github.io/2019/06/30/implementing-compressed-pair/</id>
+    <published>2019-06-30T09:58:25.000Z</published>
+    <updated>2019-06-30T10:29:47.882Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;C++ 的 &lt;code&gt;std::unique_ptr&lt;/code&gt; 有个神奇的特性：如果使用默认的 deleter（即使用 &lt;code&gt;operator delete&lt;/code&gt;），或者 non-capturing lambda 作为 deleter，则有&lt;/p&gt;
+&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::unique&amp;lt;T&amp;gt;) == &lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt;*);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;即整个对象的内存布局和 trivial pointer 一致，没有额外的开销。&lt;/p&gt;
+&lt;p&gt;这个特性的背后就是 compress-pair；这个设施能够在某个元素是一个 empty class 时避免为其分配内存。&lt;/p&gt;
+&lt;p&gt;注：这里假设你知道什么是 EBO，以及为什么会有 EBO。&lt;/p&gt;
+&lt;p&gt;这里自己动手实现一个 compressed pair：&lt;/p&gt;
+&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;20&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;21&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;22&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;23&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;24&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;25&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;26&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;27&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;28&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;29&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;30&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;31&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;32&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;33&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;34&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;35&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;36&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;37&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;38&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;39&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;40&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;41&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;42&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;43&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;44&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;45&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;46&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;47&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;48&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;template&lt;/span&gt;&amp;lt;&lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; Tx, &lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; Ty, &lt;span class=&quot;keyword&quot;&gt;bool&lt;/span&gt; = &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::is_empty&amp;lt;Tx&amp;gt;::value&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;struct CompressedPair : Tx &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Ty second;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;template&lt;/span&gt;&amp;lt;&lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; T&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;explicit&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;CompressedPair&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(T&amp;amp;&amp;amp; t)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        : Tx(),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;          second(&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::forward&amp;lt;T&amp;gt;(t))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#123;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;template&lt;/span&gt;&amp;lt;&lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; T, &lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; U&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    CompressedPair(T&amp;amp;&amp;amp; t, U&amp;amp;&amp;amp; u)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        : Tx(&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::forward&amp;lt;T&amp;gt;(t)),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;          second(&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::forward&amp;lt;U&amp;gt;(u))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#123;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;Tx&amp;amp; &lt;span class=&quot;title&quot;&gt;get_first&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;noexcept&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;    &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; *&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; Tx&amp;amp; &lt;span class=&quot;title&quot;&gt;get_first&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;noexcept&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;    &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; *&lt;span class=&quot;keyword&quot;&gt;this&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;template&lt;/span&gt;&amp;lt;&lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; Tx, &lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; Ty&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;CompressedPair&lt;/span&gt;&amp;lt;Tx, Ty, false&amp;gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Tx first;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    Ty second;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;template&lt;/span&gt;&amp;lt;&lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; T, &lt;span class=&quot;keyword&quot;&gt;typename&lt;/span&gt; U&amp;gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    CompressedPair(T&amp;amp;&amp;amp; t, U&amp;amp;&amp;amp; u)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        : first(&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::forward&amp;lt;T&amp;gt;(t)),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;          second(&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::forward&amp;lt;U&amp;gt;(u))&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#123;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;Tx&amp;amp; &lt;span class=&quot;title&quot;&gt;get_first&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;noexcept&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;    &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; first;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; Tx&amp;amp; &lt;span class=&quot;title&quot;&gt;get_first&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;noexcept&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;    &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; first;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;因为 EBO 是实现的核心，而父类的构造顺序先于子类的任何成员，上面将 &lt;code&gt;Tx&lt;/code&gt; 作为可被优化的成员。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
+    
+      <category term="ebo" scheme="http://kingsamchen.github.io/tags/ebo/"/>
+    
+      <category term="unique_ptr" scheme="http://kingsamchen.github.io/tags/unique-ptr/"/>
+    
+      <category term="optimization" scheme="http://kingsamchen.github.io/tags/optimization/"/>
+    
+  </entry>
   
   <entry>
     <title>为 CommandLine 加上值指定类型转换以及一些扯淡</title>
@@ -498,9 +531,9 @@
     
       <category term="performance" scheme="http://kingsamchen.github.io/tags/performance/"/>
     
-      <category term="spinlock" scheme="http://kingsamchen.github.io/tags/spinlock/"/>
-    
       <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
+    
+      <category term="spinlock" scheme="http://kingsamchen.github.io/tags/spinlock/"/>
     
       <category term="ptrace" scheme="http://kingsamchen.github.io/tags/ptrace/"/>
     
@@ -665,42 +698,6 @@
       <category term="signal" scheme="http://kingsamchen.github.io/tags/signal/"/>
     
       <category term="Linux" scheme="http://kingsamchen.github.io/tags/Linux/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Build Your Own HandlerThread Part Finale</title>
-    <link href="http://kingsamchen.github.io/2018/12/07/build-your-own-handlerthread-part-finale/"/>
-    <id>http://kingsamchen.github.io/2018/12/07/build-your-own-handlerthread-part-finale/</id>
-    <published>2018-12-06T17:00:48.000Z</published>
-    <updated>2018-12-08T14:02:42.471Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;至此，我们整个系列宣告完结。&lt;/p&gt;
-&lt;p&gt;现在回过头往前看，是不是觉得其实这些底层的东西也没这么难？有时候只是需要一些基础和解决问题的方法罢了。&lt;/p&gt;
-&lt;p&gt;Rant：做业务才真的难呢，框架和流程都给你定死了，一坨又一坨用了几年的不明觉厉的封装，如果内部文档哪个不详，又
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="Android" scheme="http://kingsamchen.github.io/tags/Android/"/>
-    
-      <category term="HandlerThread" scheme="http://kingsamchen.github.io/tags/HandlerThread/"/>
-    
-      <category term="Looper" scheme="http://kingsamchen.github.io/tags/Looper/"/>
-    
-      <category term="Handler" scheme="http://kingsamchen.github.io/tags/Handler/"/>
-    
-      <category term="MessageLoop" scheme="http://kingsamchen.github.io/tags/MessageLoop/"/>
     
   </entry>
   

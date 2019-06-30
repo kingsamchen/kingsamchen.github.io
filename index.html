@@ -182,6 +182,63 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/06/30/implementing-compressed-pair/">实现 compressed pair</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-30
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>C++ 的 <code>std::unique_ptr</code> 有个神奇的特性：如果使用默认的 deleter（即使用 <code>operator delete</code>），或者 non-capturing lambda 作为 deleter，则有</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sizeof</span>(<span class="built_in">std</span>::unique&lt;T&gt;) == <span class="keyword">sizeof</span>(<span class="keyword">void</span>*);</span><br></pre></td></tr></table></figure>
+<p>即整个对象的内存布局和 trivial pointer 一致，没有额外的开销。</p>
+<p>这个特性的背后就是 compress-pair；这个设施能够在某个元素是一个 empty class 时避免为其分配内存。</p>
+<p>注：这里假设你知道什么是 EBO，以及为什么会有 EBO。</p>
+<p>这里自己动手实现一个 compressed pair：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Tx, <span class="keyword">typename</span> Ty, <span class="keyword">bool</span> = <span class="built_in">std</span>::is_empty&lt;Tx&gt;::value&gt;</span><br><span class="line">struct CompressedPair : Tx &#123;</span><br><span class="line">    Ty second;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">CompressedPair</span><span class="params">(T&amp;&amp; t)</span></span></span><br><span class="line">        : Tx(),</span><br><span class="line">          second(<span class="built_in">std</span>::forward&lt;T&gt;(t))</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span><br><span class="line">    CompressedPair(T&amp;&amp; t, U&amp;&amp; u)</span><br><span class="line">        : Tx(<span class="built_in">std</span>::forward&lt;T&gt;(t)),</span><br><span class="line">          second(<span class="built_in">std</span>::forward&lt;U&gt;(u))</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Tx&amp; <span class="title">get_first</span><span class="params">()</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">const</span> Tx&amp; <span class="title">get_first</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Tx, <span class="keyword">typename</span> Ty&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">CompressedPair</span>&lt;Tx, Ty, false&gt; &#123;</span></span><br><span class="line">    Tx first;</span><br><span class="line">    Ty second;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span><br><span class="line">    CompressedPair(T&amp;&amp; t, U&amp;&amp; u)</span><br><span class="line">        : first(<span class="built_in">std</span>::forward&lt;T&gt;(t)),</span><br><span class="line">          second(<span class="built_in">std</span>::forward&lt;U&gt;(u))</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Tx&amp; <span class="title">get_first</span><span class="params">()</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> first;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">const</span> Tx&amp; <span class="title">get_first</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> first;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>因为 EBO 是实现的核心，而父类的构造顺序先于子类的任何成员，上面将 <code>Tx</code> 作为可被优化的成员。<br>
+          <div class="read-more">
+            <a href="/2019/06/30/implementing-compressed-pair/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/06/23/add-value-type-conversion-for-cmdline/">为 CommandLine 加上值指定类型转换以及一些扯淡</a>
         
       </h1>
@@ -554,72 +611,6 @@
 <p>一般而言，终端设备收到的 reply 消息里，<code>Authority</code> 和 <code>Additional</code> 是空的。所以下面会跳过这两个 section 的描述。<br>
           <div class="read-more">
             <a href="/2019/04/13/write-your-own-dns-query/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/">统一 ezio Buffer 的算术类型读写接口</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-04-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>ezio Buffer 一开始的时候只为 read, write 和 peek 提供了从 <code>int8_t</code> 到 <code>int64_t</code> 的函数重载，如果需要处理 unsigned integers，那么就需要自己额外做 <code>static_cast</code>。</p>
-<p>ezio 的主要客户<a href="https://github.com/oceancx" target="_blank" rel="noopener">藏心</a>同学早前抱怨过这个问题，并且同时建议我加上对 <code>float/double</code> 的浮点数支持。</p>
-<p>对于这个建议我一开始是抵触的：</p>
-<ul>
-<li>自己 cast 又不是不能用，额外加重载支持三个操作工作量都要翻一番呢</li>
-<li>浮点数的 binary serialization 本来就是很难跨平台的，不是每个环境都（虽然大部分）要求使用 IEEE 754 spec。如果真的需要直接把浮点数存到网络包里，自己直接操作 underlying binary layout 不就好了…</li>
-</ul>
-<p>于是藏心同学一开始开的 issue 我一直没理他，于是最后他自己关掉了…</p>
-<p>等到我自己动手写一个 socks4a proxy 的时候我发现，自己 cast 真的是…太蛋疼了…而且代码看上去还非常丑，大面积的 <code>static_cast</code> 制造了相当一部分内容噪音。那会儿我大概有点理解藏心同学的内心感受。</p>
-<p>于是我思考良久，打算改造 Buffer 的这部分接口，以支持绝大多数 integer types，顺带也增加入 floating piont types 的支持，这样 read, write, peek 就基本支持了绝大多数 arithmetic types。</p>
-<p>通过直接增加重载是我极力避免的，因为除了接口签名外，大部分实现几乎是一样的，不外乎：</p>
-<ul>
-<li>如果是单字节，直接写/读操作</li>
-<li>如果是多字节，首先字节序转换，然后做写/读操作</li>
-<li>如果是浮点数，首先按照对应字节大小的整数类型<strong>解释</strong>内存，然后参考普通整数的处理</li>
-</ul>
-<p>于是自然而然的想到直接将函数做成 function templates 来增强语义。<br>
-          <div class="read-more">
-            <a href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/" class="read-more-link">阅读更多</a>
           </div>
         
       

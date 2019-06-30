@@ -182,6 +182,64 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">浅析 shared_ptr：MSVC STL 篇</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-16
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>序言请移步<a href="https://kingsamchen.github.io/2018/03/13/shared-ptr-internals-introduction/">此处</a></p>
+<p>因为这是系列第一篇，所以会带一些功能的 demo，以方便叙述。</p>
+<h2 id="How-shared-ptr-new-T-differs-from-make-shared"><a href="#How-shared-ptr-new-T-differs-from-make-shared" class="headerlink" title="How shared_ptr(new T()) differs from make_shared()"></a>How shared_ptr<t>(new T()) differs from make_shared<t>()</t></t></h2><p>首先考虑 <code>shared_ptr</code> 对象的创建，对于给定类型 <code>T</code>，假设通过</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> ptr = <span class="built_in">std</span>::make_shared&lt;T&gt;(...);</span><br></pre></td></tr></table></figure>
+<p>创建一个实例。</p>
+<p>看一下函数代码：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> _<span class="title">Ty</span>,</span></span><br><span class="line"><span class="class">         <span class="title">class</span>... _<span class="title">Types</span>&gt;</span></span><br><span class="line"><span class="class">_<span class="title">NODISCARD</span> <span class="title">inline</span> <span class="title">shared_ptr</span>&lt;_Ty&gt; <span class="title">make_shared</span>(_<span class="title">Types</span>&amp;&amp;... _<span class="title">Args</span>)</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">    <span class="comment">// make a shared_ptr</span></span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">auto</span> _Rx = <span class="keyword">new</span> _Ref_count_obj&lt;_Ty&gt;(_STD forward&lt;_Types&gt;(_Args)...);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">shared_ptr</span>&lt;_Ty&gt; _Ret;</span><br><span class="line">    _Ret._Set_ptr_rep_and_enable_shared(_Rx-&gt;_Getptr(), _Rx);</span><br><span class="line">    <span class="keyword">return</span> (_Ret);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里首先在 heap 上创建了一个 <code>_Ref_count_obj&lt;_Ty&gt;</code> 对象，通过 <code>std::forward()</code> 将 <code>make_shared()</code> 的参数转发作为构造函数；接着通过 default contructor 创建了一个 <code>shared_ptr&lt;_Ty&gt;</code>，并调用 <code>_Set_ptr_rep_and_enable_shared()</code> 设置相关数据。</p>
+<p>因为创建 <code>_Ty</code> 实例需要的参数 <code>_Args</code> 被转发到了 <code>_Ref_count_obj</code> 的构造函数中，且 <code>shared_ptr</code> 的 default constructor 实质上是一个 <em>constexpr function</em>，因此猜测 <code>shared_ptr</code> 自身并不负责创建其管理的 object instance，而是将这部分操作“委托”给 <code>_Ref_count_obj</code>。<br>
+          <div class="read-more">
+            <a href="/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/03/13/shared-ptr-internals-introduction/">浅析 shared_ptr：序论</a>
         
       </h1>
@@ -495,78 +553,6 @@
 <p>是日</p>
 <p>靴子落地</p>
 <p><a href="https://music.163.com/#/song?id=93175" target="_blank" rel="noopener">https://music.163.com/#/song?id=93175</a></p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/02/18/retrospection-of-the-2017/">2017 小结</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-02-18
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>上一次写年终总结大概在三四年前，因为老博客数据没有备份的缘故，具体是什么时候也记不清了。</p>
-<p>BTW，其实我也不是很记得一开始为什么要在春节期间而不是元旦时写上一年的总结。可能和往常元旦时还未放假有关。</p>
-<p>17年总体上还算符合个人发展的预期：</p>
-<p>上半年接了原来主站投稿工具的锅，和另外一个同事花了一个月多，完全从头开始硬生生的做了一个新版本的投稿工具，还带着新版本要求的压制功能。后续又迭代了两三个版本，后面最新的 v2.0 甚至都已经开始支持简单的视频编辑。</p>
-<p>虽然因为业务上的调（zhan）整（dui），8月份开始不再迭代新的功能，但是这三四个月的时间也刷了不少 HTTP uplaod，multithreading，architecture design 等相关经验。</p>
-<p>这段时间的后期，还抽了一些时间，重写了项目整套 HTTP API 网络通信层，基本上擦干净了原来某个能力不行的前同事堆的一坨屎，还了16年底的一个心愿。</p>
-<p>这一通重写又刷了不少设计架构的经验，同时对 HTTP 协议有了更深的理解，毕竟用的 chromium net 实在是太 building block 了。不过同时又一次证明了：<strong>绝知此事要躬行</strong> 以及 <strong>汝欲学诗，功夫在诗外</strong> 的真理。</p>
-<p>下半年开始，因为业务调整，基本只有直播姬一个项目，并且因为自己还是侧重技术，所以对业务需求不是太感冒，项目上主要还是挑了一些技术债清理，解决一些没人愿意做的差事。</p>
-<p>因为对接的专项产品还算靠谱的缘故，直播姬自身的迭代也一直在小步前进，甚至年底时做了一次大更新，版本跳上了 v2.0。</p>
-<p>与此同时自己也小刷了一把管理（product &amp; people）的经验，发现自己虽然不是什么管理奇才，但也至少耳聪目明，悟的快，学的快，当年在北京时老领导的各种饭桌谈话中展现方法论也逐渐纳入了自己的技能包。</p>
-<p>Once again，相比下，我还是更喜欢技术，技术无论多复杂，比起管理的人而言，远远没有那么多不确定性。</p>
-<p>接近年底时部门发生了一次大震荡，一轮 reorg 后，老领导从主站调到了直播任技术总监，那会儿我大概能猜到高层对这块业务带来的营收期望有多高，以及，对原来业务贡献的不满；以及 —— 未来部门将有大变化，这大概也应该是 18 年的部门主旋律。</p>
-<p>国庆前后经历了一次校招，被发配到了武汉和广州。上一次经历校招是四年前，而这次我的角色变成了面试官。</p>
-<p>参与校招想来只有一个好处：练习自己辨人的能力。或许未来某一天这个能力会变成我的基本要求之一。</p>
-<p>不过参加了这次校招，面了不少 985/211 的应届毕业生之后，我至少发现当年没有读研究生的决定是非常正确的，毕竟我（当年）已经没有资本再荒废另一个三年了。</p>
-<p>17年年底一直到2月初，和一个前同事帮另外一个前同事做了一个 demo，以方便他去争（hu）取（you）创业投资，中间断断续续占用了一些私人时间，不过最后还好是按照预期做出来了。虽然我对这事儿没有太大想法，但是万一突然那天变成了一块额外收入也说不定呢~</p>
-<p>回想生活上，3月份捡了小区一只大概7个月的流浪橘猫，起了个名字叫 Turing，喂养了两个月成功从一开始 2KG 不到涨到了 4KG 多，遗憾是5月12号那天打算带他去打第二针疫苗的时候，他从猫包里挣脱出来，头也不回的一路跑进了小区北门的一片草丛里。</p>
-<p>我找了一下午，还是没有发现他的踪迹，也为此伤心了几天。</p>
-<p>四天后，在豆瓣上看到有人发了小奶猫的领养帖子，按捺不住心中的冲动，当天就联系了发帖人，带回了一只小奶猫，后来媳妇儿给起了个名字叫<em>小石榴</em>。</p>
-<p>小石榴一开始身体不是很好，又是拉稀又是腹胀，精心照顾了一个月，小家伙才慢慢开始茁壮成长，并一发不可收拾…</p>
-<p>后来又过了一个月，发帖人联系我，问我能不能在领养最后剩下的两只奶猫，我心一横就答应了，于是就有了后来的 小荷花（花花）和 小天（黑黑）。</p>
-<p>犹记得花花和黑黑刚来到家时，小石榴护着自己食物的样子，让人捧腹。你们可都是一个娘胎出来的亲生姊妹啊！</p>
-<p>混熟后，我和三只喵喵开始了没羞没臊的生活，直到 —— 三只喵越长越大我开始感到有压力后把黑黑送给了游戏部的一个同事。</p>
-<p>虽然很久没有打听黑黑的近况了，但是我还是衷心希望她能够健康成长，和她两个快要变成猪的姐姐一样 :)</p>
-<p>由于提早给石榴和花花做了绝育手术，因此她们直接躲过了第一次发情，她们至今都开心得和一个100公斤的姑娘一样~</p>
-<p>最后展望一下 18 年（再不结束我要睡着了…），希望今年能顺利转服务端，继续自己的技术追求之路；同时喵喵们也健康快乐的成长。</p>
-<p>最后的最后，希望能早日搬进杭州的房子，每天和媳妇儿在沙发上看看电影拌拌嘴，撸着石榴和花花。</p>
 
         
       

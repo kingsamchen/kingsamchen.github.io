@@ -182,6 +182,64 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/12/07/build-your-own-handlerthread-part-4/">Build Your Own HandlerThread Part 4</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-12-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>有了前面的铺垫我们终于可以开始实现我们的主角 ActiveThread 了，虽然它登场的有点晚。</p>
+<p>这个系列的开头我们提到 <code>ActiveThread</code> 有两个鲜明的特点：</p>
+<ul>
+<li>它是线程，可以运行，代表一个单独的执行上下文（execution unit/context）</li>
+<li>每个 <code>ActiveThread</code> 内部运行一个 message-loop，方便持续的执行我们提交的任务</li>
+</ul>
+<p>这两点和 Android 原生提供的 <code>HandlerThread</code> 是一模一样的。</p>
+<p>不过和 <code>HandlerThread</code> 不同，我们这里不打算采用继承 <code>Thread</code> 的方式，而是采用 composition。原因之一是我个人非常反感传统的 OO 继承手法；并且 Java 8 开始正式支持 lambda 之后，不用继承我们的工作也可以做得很好。</p>
+<p>不适用继承同时有个好处，我们可以只暴露我们需要的接口，避免误用（比如经典的用 <code>run()</code> 而不是 <code>start()</code>）<br>
+          <div class="read-more">
+            <a href="/2018/12/07/build-your-own-handlerthread-part-4/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/12/06/build-your-own-handlerthread-part-3/">Build Your Own HandlerThread Part 3</a>
         
       </h1>
@@ -541,63 +599,6 @@
           <div class="read-more">
             <a href="/2018/11/25/chromium-base-message-loop-internals-1/" class="read-more-link">阅读更多</a>
           </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/11/24/running-bash-and-wsl-under-mintty-in-cmder/">在 cmder 里以 mintty 为终端的方式运行 bash 和 wsl</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-11-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>在 cmder 里如果不指定运行的 terminal 则会默认使用 windows cmd，而这在使用 git-bash 或者 wsl 时会经常遇到问题：</p>
-<ol>
-<li>性能底下导致交互出现显著延迟（这个发生在使用 tig 等重型 bash 命令或者使用 wsl中）</li>
-<li>容易因为环境属性问题导致乱码，比如 cmder 里直接运行 git-bash 的 tig 会发现提交历史的分割线都乱码了</li>
-</ol>
-<p>神奇的是 cmder 支持将某个终端内嵌到自己的宿主界面里，这样就可以在 cmder 一个程序（单指窗口，非进程）里跑多个终端环境了</p>
-<p>对于使用 mintty 跑 git-bash，假设已经安装了 git for windows，则只需要设置这个人物属性为</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%ProgramFiles%\Git\usr\bin\mintty.exe /bin/bash -l -new_console:d:%userProfile%</span><br></pre></td></tr></table></figure>
-<p>即可。</p>
-<p>而对于 WSL，先安装一下 wsl-terminal，然后在 cmder 里新建一个 task，启动内容为：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&quot;C:\Programs\wsl-terminal\bin\mintty.exe&quot; /bin/wslbridge -t /usr/bin/ssh-agent /bin/zsh -l -new_console:d</span><br></pre></td></tr></table></figure>
-<p>即可。</p>
-
         
       
     </div>

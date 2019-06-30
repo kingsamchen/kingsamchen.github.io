@@ -182,6 +182,114 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/10/29/emulate-haskell-infix-operator-in-cpp/">Emulate Haskell Infix Operator in CPP</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-10-29
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>Usage at a glance</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;vector&gt;</span></span>
+
+<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-string" style="color: rgb(162, 252, 162);">"infix_op.h"</span></span>
+
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
+</span>{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> find = Infix([](<span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>&amp; container, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>&amp; value) {
+        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::find(container.begin(), container.end(), value);
+    });
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> seq = <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">vector</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span>&gt; { <span class="hljs-number" style="color: rgb(211, 99, 99);">1</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">3</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">5</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">7</span>, <span class="hljs-number" style="color: rgb(211, 99, 99);">9</span> };
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">bool</span> found = (seq | find | <span class="hljs-number" style="color: rgb(211, 99, 99);">7</span>) != seq.cend();
+    <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">cout</span> &lt;&lt; found &lt;&lt; <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">endl</span>;
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
+}</pre>
+
+<p>Implementation:</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">pragma</span> once</span>
+
+<span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;xutility&gt;</span></span>
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">struct</span> InfixOp {
+    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">explicit</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">InfixOp</span><span class="hljs-params">(BinaryFn&amp;&amp; fn)</span>
+        : <span class="hljs-title" style="color: rgb(255, 255, 170);">fn_</span><span class="hljs-params">(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(fn)</span>)
+    </span>{}
+
+    BinaryFn fn_;
+};
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
+InfixOp&lt;BinaryFn&gt; Infix(BinaryFn&amp;&amp; fn)
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> InfixOp&lt;BinaryFn&gt;(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(fn));
+}
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> T, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">struct</span> InfixExpr {
+    InfixExpr(T&amp;&amp; lhs, BinaryFn&amp;&amp; op)
+        : lhs_(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;T&gt;(lhs)), op_(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;BinaryFn&gt;(op))
+    {}
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> U&gt;
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">decltype</span>(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span>) <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(U&amp;&amp; rhs)
+    {
+        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> op_(lhs_, <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;U&gt;(rhs));
+    }
+
+    T lhs_;
+    BinaryFn op_;
+};
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">template</span>&lt;<span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> T, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">typename</span> BinaryFn&gt;
+InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 194, 140);">operator</span>|(T&amp;&amp; lhs, InfixOp&lt;BinaryFn&gt; op)
+{
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> InfixExpr&lt;T, BinaryFn&gt;(<span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::forward&lt;T&gt;(lhs), <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::move(op.fn_));
+}</pre>
+
+<p>Have fun.</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/10/21/implement-bililive-command-mapping-macros/">一个轻量型的 Command-Mapping Macros</a>
         
       </h1>
@@ -557,82 +665,6 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">wchar_t</span>* env_name = <span class="string">L"KCPath"</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">wchar_t</span>* str = <span class="string">L""</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Failed, and last error code will be set.</span></span><br><span class="line">    DWORD size_needed = GetEnvironmentVariableW(env_name, <span class="literal">nullptr</span>, <span class="number">0</span>);</span><br><span class="line">    assert(size_needed == <span class="number">0</span>);</span><br><span class="line">    assert(GetLastError() == ERROR_ENVVAR_NOT_FOUND);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// set an empty string.</span></span><br><span class="line">    BOOL rv = SetEnvironmentVariableW(env_name, str);</span><br><span class="line">    assert(rv);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Request buffer size from the API.</span></span><br><span class="line">    <span class="comment">// Returned size includes null-terminate character.</span></span><br><span class="line">    size_needed = GetEnvironmentVariableW(env_name, <span class="literal">nullptr</span>, <span class="number">0</span>);</span><br><span class="line">    assert(size_needed == <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">wchar_t</span> buf[MAX_PATH] &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    DWORD size_read = GetEnvironmentVariableW(env_name, buf, MAX_PATH);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// WAT? is last call failed?</span></span><br><span class="line">    assert(size_read == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> err = GetLastError();</span><br><span class="line">    <span class="comment">// Boom!</span></span><br><span class="line">    assert(err == ERROR_ENVVAR_NOT_FOUND);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>这个故事告诉我们，一个接口的返回值语义的清晰和不重叠是多么的重要。</p>
 <p>最后：这个故事来自于我一个很意外的单元测试用例；我一开始一度以为问题出在 <code>GetEnvironmentVariableW()</code> 不能正确处理空字符串值，以至于这篇 post 最开始的标题是 <em>the werid behavior of GetEnvironmentVariable</em>；但是在我编写 PoC 的阶段我却发现问题怎么也复现不出来…经过快有半小时的跟踪分析后，我才最终确定真正的 root cause；这也告诉我们一个道理，verification 是多么的重要…</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/08/01/monthly-read-posts-in-july-2017/">Monthly Read Posts in June 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-08-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://medium.com/swlh/starting-a-tech-startup-with-c-6b5d5856e6de" target="_blank" rel="noopener">Starting a tech startup with C++</a></p>
-<p>又名，Facebook 开源项目宣传广告。</p>
-<p>不过实话说，以 Facebook 写 C++ 那部分代码的恣意姿态，如果团队的平均水平够不到中上的槛，弄不好项目还没发布自己就先挂了。</p>
-<p>Andrei Alexendrescu：我仿佛听见有人在背后黑我…</p>
-<hr>
-<p><a href="https://metricpanda.com/tips-for-productive-debugging-with-gdb" target="_blank" rel="noopener">Tips for Productive Debugging with GDB</a><br><a href="https://www.youtube.com/watch?v=PorfLSr3DDI&amp;t=24s" target="_blank" rel="noopener">CppCon 2015: Greg Law “ Give me 15 minutes &amp; I’ll change your view of GDB”</a></p>
-<p>GDB Tips…</p>
-<p>第二个是 CppCon 2015 的一个 talk，感觉还凑合吧。不过实话说，15分钟我都能撸一发了，何必浪费时间在这个上…上个靠谱的前端不才应该是正确的姿势么…</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=PorfLSr3DDI&amp;t=24s" target="_blank" rel="noopener">CppCOn 2015: Visualize Template Instantiation</a></p>
-<p>这个 talk 的团队基于 Eclipse 做了一个 Cevelop，杀手锏功能就是 able to visualize template instantiation</p>
-<p>不过比较蛋疼的是演示关键部分的时候，摄像机没有给对位置…</p>
-<p>（希望 JetBrains 早点吧这个功能抄过去…）</p>
-<p>PS：这个 speaker 神似我的初中语文老师….</p>
-<hr>
-<p><a href="http://mariusbancila.ro/blog/2016/10/31/a-better-date-and-time-c-library/" target="_blank" rel="noopener">A better date and time C++ library</a></p>
-<p>安利了 Howard Hinnant 写的一个 date lib。</p>
-<p>而且据说这个 lib 很有机会进入标准库；现在标准库的 chrono 只是针对 timing 设计而没有对 date 的有力支持确实太蛋疼了</p>
-<hr>
-<p><a href="http://www.jianshu.com/p/71cf3ce064b8" target="_blank" rel="noopener">理解基于 TCP 的应用层通信协议</a></p>
-<p>大水文一篇，基本没有一点营养。</p>
-<p>不客气地说，现在国内开发者刊物上，大部分内容都是这种没有什么营养、容易误导读者，而且还浪费时间的文章。</p>
-<p>挂出来批判一下</p>
-<p><a href="http://jm.taobao.org/2017/06/08/20170608/" target="_blank" rel="noopener">就是要你懂 TCP</a><br><a href="http://jm.taobao.org/2017/06/01/20170601/" target="_blank" rel="noopener">就是要你懂 TCP | 最经典的TCP性能问题</a><br><a href="http://jm.taobao.org/2017/05/25/525-1/" target="_blank" rel="noopener">关于TCP 半连接队列和全连接队列</a></p>
-<p>阿里中间件团队官方博客的三篇 TCP 相关分享。</p>
-<p>算是有水平的内容文。</p>
-<p>第一篇介绍了一下 TCP 的基础内容；第二篇介绍了 delayed ack 和 nagle’s algorithm；第三篇涉及 sync queue 和 accept queue 的处理问题</p>
-<p><a href="http://ithare.com/tcp-peculiarities-for-games-part-1/" target="_blank" rel="noopener">TCP Peculiarities for Games, part 1</a><br><a href="http://ithare.com/tcp-peculiarities-as-applied-to-games-part-ii/" target="_blank" rel="noopener">TCP Peculiarities as Applied to Games, Part II</a></p>
-<p>一个游戏服务端开发大牛的两篇关于游戏服务端 TCP 开发相关的文章。</p>
-<p>两篇文章内容不光已经涵盖了前面阿里中间件团队的前两篇内容，还谈到了一些容易被忽略的点，例如 Head-of-Line Blocking。</p>
-<p>第二篇还专门针对游戏服务端的业务特点，给了一些建议</p>
 
         
       
