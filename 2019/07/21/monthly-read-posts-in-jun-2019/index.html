@@ -17,10 +17,12 @@
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="Monthly Read Posts in June 2019"/>
 
 
 
+
+  <meta name="keywords" content="golang, memory model, KC的废墟堆" />
 
 
 
@@ -40,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2019/07/21/monthly-read-posts-in-jun-2019/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -64,11 +66,7 @@
 
 
 
-    <title>
-  
-    PROGRAMMING · KC的废墟堆
-  
-</title>
+    <title> Monthly Read Posts in June 2019 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -180,183 +178,135 @@
           <div id="content" class="content">
             
   
-  <section id="archive" class="archive">
-    
-      
-        <div class="archive-title category">
-          <h2 class="archive-name">PROGRAMMING</h2>
-        </div>
-      
-    
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Monthly Read Posts in June 2019
+        
+      </h1>
 
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-07-21
-          
+      <div class="post-meta">
+        <span class="post-time">
+          2019-07-21
         </span>
-        <span class="archive-post-title">
-          <a href="/2019/07/21/monthly-read-posts-in-jun-2019/" class="archive-post-link">
-            Monthly Read Posts in June 2019
-          </a>
-        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
       </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrency"><span class="toc-text">Concurrency</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-Languages"><span class="toc-text">Programming Languages</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120710/memory-barriers-are-like-source-control-operations/" target="_blank" rel="noopener">Memory Barriers Are Like Source Control Operations</a></p>
+<p>用 VCS 来类比四种 memory fence</p>
+<hr>
+<p><a href="https://preshing.com/20120913/acquire-and-release-semantics/" target="_blank" rel="noopener">Acquire and Release Semantics</a></p>
+<p>C++ provides acquire and release semantics, which are in fact founded on barriers.</p>
+<p>acquire semantcis: <code>#LoadLoad</code> and <code>#LoadStore</code>; apply to read operations.</p>
+<p>Acquire semantics prevent memory reordering of the read-acquire with any read or write operation that follows it in program order.</p>
+<p>release sematncis: <code>#StoreStore</code> and <code>#LoadStore</code>; apply to write operations.</p>
+<p>Release semantics prevent memory reordering of the write-release with any read or write operation that precedes it in program order.</p>
+<hr>
+<p><a href="https://preshing.com/20120930/weak-vs-strong-memory-models/" target="_blank" rel="noopener">Weak vs. Strong Memory Models</a></p>
+<p>Categories of memory models.</p>
+<hr>
+<p><a href="https://preshing.com/20121019/this-is-why-they-call-it-a-weakly-ordered-cpu/" target="_blank" rel="noopener">This Is Why They Call It a Weakly-Ordered CPU</a></p>
+<p>Memory reordering in ARM cpus</p>
+<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://go101.org/article/nil.html" target="_blank" rel="noopener">golang nil 101</a></p>
+<p>屎坑子真多。</p>
+<hr>
+<p><a href="https://www.teamten.com/lawrence/writings/why-i-dont-like-go.html" target="_blank" rel="noopener">why-i-dont-like-go.html</a></p>
+<p>深有感触…</p>
+<p>而且居然还是2016年的文章</p>
+
+      
+    </div>
+
     
       
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-06-30
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/06/30/implementing-compressed-pair/" class="archive-post-link">
-            实现 compressed pair
-          </a>
-        </span>
-      </div>
-    
       
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-06-23
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/06/23/add-value-type-conversion-for-cmdline/" class="archive-post-link">
-            为 CommandLine 加上值指定类型转换以及一些扯淡
-          </a>
-        </span>
-      </div>
-    
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/07/21/monthly-read-posts-in-jun-2019/">http://kingsamchen.github.io/2019/07/21/monthly-read-posts-in-jun-2019/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
       
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-06-02
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/06/02/monthly-read-posts-in-may-2019/" class="archive-post-link">
-            Monthly Read Posts in May 2019
-          </a>
-        </span>
-      </div>
-    
+
+
       
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-05-12
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/05/12/roll-your-own-light-weight-mutex/" class="archive-post-link">
-            基于 semaphore 实现轻量级 mutex
-          </a>
-        </span>
-      </div>
-    
       
+    
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-05-02
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/05/02/monthly-read-posts-in-apr-2019/" class="archive-post-link">
-            Monthly Read Posts in Apr 2019
-          </a>
-        </span>
-      </div>
     
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-04-13
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/04/13/write-your-own-dns-query/" class="archive-post-link">
-            Write Your Own DNS Query
-          </a>
-        </span>
-      </div>
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-04-07
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/" class="archive-post-link">
-            统一 ezio Buffer 的算术类型读写接口
-          </a>
-        </span>
-      </div>
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-04-02
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/04/02/monthly-read-posts-in-mar-2019/" class="archive-post-link">
-            Monthly Read Posts in Mar 2019
-          </a>
-        </span>
-      </div>
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-03-13
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/03/13/recommend-google-api-design-guide/" class="archive-post-link">
-            推荐 Google API Design Guide
-          </a>
-        </span>
-      </div>
-    
-  </section>
-
-  
-  <nav class="pagination">
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/memory-model/">memory model</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
     
     
-      <a class="next" href="/categories/PROGRAMMING/page/2/">
-        <span class="next-text">下一页</span>
+      <a class="next" href="/2019/06/30/implementing-compressed-pair/">
+        <span class="next-text nav-default">实现 compressed pair</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
   </nav>
 
+      </footer>
+    
+
+  </article>
 
 
           </div>
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
       </main>
@@ -438,9 +388,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = '';
-        this.page.identifier = 'categories/PROGRAMMING/index.html';
-        this.page.title = '';
+        this.page.url = 'http://kingsamchen.github.io/2019/07/21/monthly-read-posts-in-jun-2019/';
+        this.page.identifier = '2019/07/21/monthly-read-posts-in-jun-2019/';
+        this.page.title = 'Monthly Read Posts in June 2019';
     };
     (function() {
     var d = document, s = d.createElement('script');

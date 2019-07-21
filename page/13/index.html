@@ -182,6 +182,72 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/08/08/an-example-of-bad-api-design-getenvironmentvariable/">GetEnvironmentVariable, API 设计的反面教材</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-08-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>本次 post 的主角 <code>GetEnvironmentVariableW()</code> 用于获取某个环境变量的值，它的文档可以参见<a href="https://msdn.microsoft.com/en-us/library/windows/desktop/ms683188.aspx" target="_blank" rel="noopener">这里</a>，看的时候记得仔细研究一下返回值细节。</p>
+<p>这个 API 的设计可以说是一个生动的反面教材。</p>
+<p>根据 MSDN，它的返回值如下：</p>
+<ul>
+<li>如果成功，则返回保存到缓存中的值的字符数，<strong>不包括 terminating null character</strong></li>
+<li>如果缓冲区不够，那么就返回需要的缓冲区大小，以字符数计数，且<strong>包含 terminating null character</strong></li>
+<li>如果函数失败，则<strong>返回 0</strong> （具体细节由 <code>GetLastError()</code> 给出）</li>
+</ul>
+<p>这里不吐槽在返回值非 0 的前提下，存在两种计数的返回值，我们考虑一种很 rare 的情况：环境变量的值是一个 empty string 时，这个 API 应该返回什么</p>
+<p>Windows 上是可以通过 <code>SetEnvironmentVariableW()</code> 将某个环境变量的值设置为空字符串的</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span>* env_name = <span class="string">L"KCPath"</span>;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">wchar_t</span>* str = <span class="string">L""</span>;</span><br><span class="line">BOOL rv = SetEnvironmentVariableW(env_name, str);</span><br><span class="line">assert(rv);</span><br></pre></td></tr></table></figure>
+<p>那么此时用 <code>GetEnvironmentVariableW()</code> 获取值时，会返回 0 （因为不包含 terminating null，字符数为 0）。那么问题来了，如果我事先不知道这是一个空字符串，那么我怎么知道这个返回 0 意味着失败还是空字符串？</p>
+<p>答案是没法区分，即使你再进一步调用 <code>GetLastError()</code>。</p>
+<p>为什么？</p>
+<p>因为 <code>GetLastError()</code> 的文档说的很清楚：在大部分 API <strong>失败</strong>时， calling thread 的 last error code 会被设置；而有部分（少量）API在成功时，也会设置 last error code。</p>
+<p>但是很遗憾，通过实验验证，环境变量相关的 API 不属于后者。</p>
+<p>这意味着存在一种可能：首先调用了某个环境变量的API，例如 <code>GetEnvironmentVariableW()</code>，但是他失败了，于是 last error code 被设置了；然后紧接着的代码片段利用 <code>GetEnvironmentVariableW()</code> 获取了某个环境变量的值，而这个值是 empty string，于是 API 返回 0；此时你调用了一下 <code>GetLastError()</code>，他返回了一开始调用 API 错误设置的那个错误值，于是这下你就以为后面的调用失败了….</p>
+<p>来上一个 PoC 吧</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">wchar_t</span>* env_name = <span class="string">L"KCPath"</span>;</span><br><span class="line">    <span class="keyword">const</span> <span class="keyword">wchar_t</span>* str = <span class="string">L""</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Failed, and last error code will be set.</span></span><br><span class="line">    DWORD size_needed = GetEnvironmentVariableW(env_name, <span class="literal">nullptr</span>, <span class="number">0</span>);</span><br><span class="line">    assert(size_needed == <span class="number">0</span>);</span><br><span class="line">    assert(GetLastError() == ERROR_ENVVAR_NOT_FOUND);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// set an empty string.</span></span><br><span class="line">    BOOL rv = SetEnvironmentVariableW(env_name, str);</span><br><span class="line">    assert(rv);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Request buffer size from the API.</span></span><br><span class="line">    <span class="comment">// Returned size includes null-terminate character.</span></span><br><span class="line">    size_needed = GetEnvironmentVariableW(env_name, <span class="literal">nullptr</span>, <span class="number">0</span>);</span><br><span class="line">    assert(size_needed == <span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">wchar_t</span> buf[MAX_PATH] &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    DWORD size_read = GetEnvironmentVariableW(env_name, buf, MAX_PATH);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// WAT? is last call failed?</span></span><br><span class="line">    assert(size_read == <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">auto</span> err = GetLastError();</span><br><span class="line">    <span class="comment">// Boom!</span></span><br><span class="line">    assert(err == ERROR_ENVVAR_NOT_FOUND);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个故事告诉我们，一个接口的返回值语义的清晰和不重叠是多么的重要。</p>
+<p>最后：这个故事来自于我一个很意外的单元测试用例；我一开始一度以为问题出在 <code>GetEnvironmentVariableW()</code> 不能正确处理空字符串值，以至于这篇 post 最开始的标题是 <em>the werid behavior of GetEnvironmentVariable</em>；但是在我编写 PoC 的阶段我却发现问题怎么也复现不出来…经过快有半小时的跟踪分析后，我才最终确定真正的 root cause；这也告诉我们一个道理，verification 是多么的重要…</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/08/01/monthly-read-posts-in-july-2017/">Monthly Read Posts in June 2017</a>
         
       </h1>
@@ -558,65 +624,6 @@
 <p>一个简单的示例如下：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">Inc</span><span class="params">(<span class="keyword">int</span> i)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> ++i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Foo</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="built_in">std</span>::<span class="built_in">string</span>, <span class="keyword">int</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Test</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    Test()</span><br><span class="line">        : msg_(<span class="string">"test"</span>), weak_ptr_factory_(<span class="keyword">this</span>)</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Bark</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; data)</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; data &lt;&lt; <span class="string">":\t"</span> &lt;&lt; msg_ &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> msg_;</span><br><span class="line">    base::WeakPtrFactory&lt;Test&gt; weak_ptr_factory_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"--- test case 1 ---\n"</span>;</span><br><span class="line">    <span class="built_in">std</span>::function&lt;<span class="keyword">int</span>(<span class="keyword">int</span>)&gt; fn(MakeCallable(base::Bind(&amp;Inc)));</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; fn(<span class="number">5</span>) &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"--- test case 2 ---\n"</span>;</span><br><span class="line">    Test* ptr = <span class="keyword">new</span> Test();</span><br><span class="line">    <span class="built_in">std</span>::function&lt;<span class="keyword">void</span>()&gt; mfn(</span><br><span class="line">        MakeCallable(base::Bind(&amp;Test::Bark, ptr-&gt;weak_ptr_factory_.GetWeakPtr(), <span class="string">"inside"</span>)));</span><br><span class="line">    mfn();</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"release test instance\n"</span>;</span><br><span class="line">    <span class="keyword">delete</span> ptr;</span><br><span class="line">    mfn();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>小巧优雅纯天然</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/06/05/activate-the-first-application-instance-when-there-is-one/">禁止程序多实例并存并且自动激活第一个实例</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-06-05
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>多实例检测非常常规，在程序启动时直接检查用来标记的内核对象是否存在即可，一般都是使用 <code>Mutex</code>。</p>
-<p>麻烦的点在于如何激活第一个实例，显示它的主窗口。</p>
-<p>某直播姬一开始的想法是利用 Pipe 建立 IPC 通讯连接，然后后续实例通过发送消息，让主实例 activate 自己的窗口。</p>
-<p>嗯，看起来没毛病，但是做起来问题很多。</p>
-<p>首先，IPC 建立需要时间，通讯需要时间，并且断开 IPC 后主实例（Windows 下）一定得需要重新创建一个 Pipe；更加诡异的是，我在本地编译的 Rlease 版本明明可以工作，利用构建机编译出来的版本，子实例管道连接一直失败….</p>
-<p>于是看起来 IPC 是一个很自然地选择，实际上却是一个导致复杂度暴涨的下策。</p>
-<p>另一个思路是创建一个 Event 内核对象，后续实例直接通过 signal 这个 event 内核对象来通知主实例。</p>
-<p>但是这里实现起来有个麻烦的地方：如果要追求简单化，那么就需要一个单独的线程 wait 在这个内核对象上，负责接收通知，缺点是要浪费掉一个线程；如果不想资源浪费，那么考虑到很多框架都提供了 async i/o 的 wrapper，所以可以利用这个点，你开心的话可以挂到 IOCP 上。</p>
-<p>嗯，等等，我们是想做啥来着？！</p>
-<p>绕了一圈最后想想还是这样算了:</p>
-<p>利用 <code>RegisterWindowMessage()</code> 注册一个自定义消息，主实例在 UI message loop / window message procedure 里监听这个消息；子实例启动后就利用 <code>BroadcastMessage()</code> 或者 <code>PostMessage()</code> 广播一下这个消息。</p>
-<p>这样有个额外的好处，主实例收到消息直接是在 UI 线程，省掉一次 post task。</p>
-<p>某直播姬最后采用的就是这个方案，为此我加了一个 class 起了个名字叫 <em>SingleInstanceGuarantor</em>，嗯，有点中二的感觉。</p>
-<p>最后要注意一点，如果框架封装了 window procedure，将几个活动窗口的 window procedure 聚合到一个 message handler 里的话，可能会收到多条消息，可以利用消息的 timestamp 过滤一下。</p>
 
         
       
