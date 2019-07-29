@@ -182,6 +182,67 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/07/29/learning-mysql-rants/">学习 MySQL 的一些吐槽</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-07-29
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>最近学习 MySQL 的过程中发现一些很坑的点，总结记录如下：</p>
+<ol>
+<li>RDBMS 虽然理论很早就有了，但是近些年的实际应用进化已经导致各家独立。不同引擎实现不同，甚至连 spec 都不同。</li>
+<li>不考虑 Oracl, SQL Server 这种传统行业使用的，PostgreSQL 和 MySQL 之间差异性也不小，体现在 transaction, locking 上。甚至 MariaDB 和 MySQL 未来的差异可能也会变大。</li>
+<li>靠谱的资料很难找，尤其是针对研发而非 DBA 的靠谱的资料。</li>
+<li>国内互联网上至少 90% 的内容对于 MySQL 事务/锁的高级议题是有问题的。不知道是不是中文圈的尿性就是东拼西凑一大抄…其中涉及最多的有 1) 各种锁机制 2）MVCC 3）non-repeatable read 4）phantom read</li>
+<li>第四条是我在交叉对比各方资料后得出的结论，因为互相矛盾的点太多了</li>
+<li>对于 MySQL，最靠谱的还是参照官方 manual；比如官方的 glossary 就是一个很赞的东西，有了定义才能明确问题 <a href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/glossary.html</a></li>
+<li>自己本地动手实践也是一个很重要的途径</li>
+</ol>
+<hr>
+<p>说起来 DB （之前 &amp;&amp; 目前）应该是我最鶸的一块了。</p>
+<p>在我还在上中学的时候（2005 ~ 2010）彼时的想法大概是未来找一份软件开发工程师的工作。</p>
+<p>那会儿互联网产业还未兴起，软件开发差不多等同于写桌面客户端。我对数据库的印象停留在大企业内部自用的 Oracle 或者 Microsoft SQL Server，或者外包专用的 MySQL（LAMP），以及几乎没有人用的 Access / Visual Fox Pro；总之…都不是很好的印象。</p>
+<p>于是本科期间几乎没怎么正经学过 RDBMS，唯一有印象的大概就是会写几条 SQL…</p>
+<p>14 年毕业到转到后端前，有机会接触到的 DB 也只有 SQLite，单机存储数据库嘛，会随便写几条 SQL 就已经足够完成任务了，真是挺寒碜。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/07/21/monthly-read-posts-in-jun-2019/">Monthly Read Posts in June 2019</a>
         
       </h1>
@@ -557,63 +618,6 @@
 <p>首先，第一点是重中之重。<br>
           <div class="read-more">
             <a href="/2019/05/04/anvil-for-assisting-your-cmake/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/05/02/monthly-read-posts-in-apr-2019/">Monthly Read Posts in Apr 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-05-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://akrzemi1.wordpress.com/2011/09/21/destructors-that-throw/" target="_blank" rel="noopener">Destructors that throw</a></p>
-<p>C++ 11之后的 destructor 默认是 <code>noexcept</code>，如果有 active exception 逃逸出 dtor 会直接触发 <code>std::terminate()</code>，即使外部有 catch handler。可以用 <code>noexcept(false)</code> 显式关闭。</p>
-<p>因为 stack unwinding 是可以嵌套的，一个精心设计的场合下（见文中例子），可以做到多个 active exception 不在一个层次里，因此也不会触发 double-exception situation。</p>
-<hr>
-<p><a href="https://akrzemi1.wordpress.com/2011/09/28/who-calls-stdterminate/" target="_blank" rel="noopener">Who calls std::terminate?</a></p>
-<p>an exception leaves out from main function</p>
-<p>an exception leaves out from initial function of a thread</p>
-<p>an exception leaves out from dtor (since c++ 11 with noexcept guarantee)<br>
-          <div class="read-more">
-            <a href="/2019/05/02/monthly-read-posts-in-apr-2019/" class="read-more-link">阅读更多</a>
           </div>
         
       

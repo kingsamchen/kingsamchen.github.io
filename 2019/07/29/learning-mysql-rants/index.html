@@ -17,12 +17,12 @@
 
 
 
-  <meta name="description" content="Monthly Read Posts in Nov 2016"/>
+  <meta name="description" content="学习 MySQL 的一些吐槽"/>
 
 
 
 
-  <meta name="keywords" content="monthly read posts, https, stack frame layout, x86-64 ABI, DRY, KC的废墟堆" />
+  <meta name="keywords" content="rant, mysql, 吐槽, KC的废墟堆" />
 
 
 
@@ -42,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2019/07/29/learning-mysql-rants/"/>
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
@@ -66,7 +66,7 @@
 
 
 
-    <title> Monthly Read Posts in Nov 2016 - KC的废墟堆 </title>
+    <title> 学习 MySQL 的一些吐槽 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -182,18 +182,18 @@
     <header class="post-header">
       <h1 class="post-title">
         
-          Monthly Read Posts in Nov 2016
+          学习 MySQL 的一些吐槽
         
       </h1>
 
       <div class="post-meta">
         <span class="post-time">
-          2016-12-04
+          2019-07-29
         </span>
         
           <div class="post-category">
             
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
             
           </div>
         
@@ -206,47 +206,22 @@
 
     <div class="post-content">
       
-        <p><a href="http://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64" target="_blank" rel="noopener">Stack Frame Layout on X86-64</a></p>
-<p><strong>Main observations</strong></p>
-<p>For AMD64 X64 ABI compiliant platforms (such as Linux), the major changes include:</p>
-<ul>
-<li>Introduces a red-zone storage area on the stack</li>
-<li>Officially makes frame pointer explicitly optional</li>
-</ul>
-<p>For Windows X64 ABI(though depictated in supplementary):</p>
-<ul>
-<li>No red-zone; instead, a pre-allocated home-space is enforced for every function call</li>
-<li>Cleanup of old calling convention legacy; no more worry about cdecl/fastcall/stdcall etc.</li>
-</ul>
-<p><a href="http://www.golgi.io/security-ssl-tls/" target="_blank" rel="noopener">Understanding Security in IoT: SSL/TLS</a><br><a href="http://insights.thoughtworkers.org/talk-about-https/" target="_blank" rel="noopener">我也想来谈谈HTTPS</a></p>
-<p><strong>Why HTTPS</strong></p>
-<p>Why HTTP is not secure?</p>
-<p>Because it transports information in plain text and with no anti-eavesdroping protection.</p>
-<p><strong>How does it work</strong></p>
-<p>After TCP connection is established, the client and server will futher start TLS/SSL handshake:</p>
+        <p>最近学习 MySQL 的过程中发现一些很坑的点，总结记录如下：</p>
 <ol>
-<li>Client-Hello</li>
-<li>Server-Hello</li>
-<li>Authentication and Key Exchange</li>
-<li>Server-Finish</li>
-<li>Client-Finish</li>
+<li>RDBMS 虽然理论很早就有了，但是近些年的实际应用进化已经导致各家独立。不同引擎实现不同，甚至连 spec 都不同。</li>
+<li>不考虑 Oracl, SQL Server 这种传统行业使用的，PostgreSQL 和 MySQL 之间差异性也不小，体现在 transaction, locking 上。甚至 MariaDB 和 MySQL 未来的差异可能也会变大。</li>
+<li>靠谱的资料很难找，尤其是针对研发而非 DBA 的靠谱的资料。</li>
+<li>国内互联网上至少 90% 的内容对于 MySQL 事务/锁的高级议题是有问题的。不知道是不是中文圈的尿性就是东拼西凑一大抄…其中涉及最多的有 1) 各种锁机制 2）MVCC 3）non-repeatable read 4）phantom read</li>
+<li>第四条是我在交叉对比各方资料后得出的结论，因为互相矛盾的点太多了</li>
+<li>对于 MySQL，最靠谱的还是参照官方 manual；比如官方的 glossary 就是一个很赞的东西，有了定义才能明确问题 <a href="https://dev.mysql.com/doc/refman/8.0/en/glossary.html" target="_blank" rel="noopener">https://dev.mysql.com/doc/refman/8.0/en/glossary.html</a></li>
+<li>自己本地动手实践也是一个很重要的途径</li>
 </ol>
-<p><strong>Extra Bonus</strong></p>
-<p>How to use openssl for https.</p>
-<p>帧哥在他的<a href="http://blog.syscallx.com" target="_blank" rel="noopener">技术博客分站</a>上有三篇和 TLS/SSL 协议实现相关的 posts，可以放到下个月的 reading list 里</p>
-<p><a href="http://thereignn.ghost.io/on-dry-and-the-cost-of-wrongful-abstractions/" target="_blank" rel="noopener">ON DRY AND THE COST OF WRONGFUL ABSTRACTIONS</a></p>
-<p><strong>Insight</strong></p>
-<p>Duplicating code sometimes can be a good thing (when the cost imposed by abstractions is too high); namely, context matters.</p>
-<p><strong>Reasons</strong></p>
-<p>Programmers spend far more time reading code (to understand logic behind) than writing code.</p>
-<p>Abstractions cut both ways: every abstraction comes at a cost.</p>
-<p>Every abstraction imposes an extra layer of knowledge, which places cognitive load on brain, and in turn, increases the time spent on understanding that piece of code.</p>
-<p>In some extreme cases(everything is encapsulated in abstractions), the abstraction lost its value, and became a wrongful one.</p>
-<p><strong>Conclusion</strong></p>
-<p>Always abstract if the cost of abstraction does not surpass the cost of duplicating code.</p>
-<p>But, it’s just hard to get it right in real practice.</p>
-<p><strong>Extra Comments</strong></p>
-<p>之前看过一篇类似的 post，标题大概是 <em>dependency versus redundancy</em>，印象中里面叙述的观点比这边更加的具体。</p>
+<hr>
+<p>说起来 DB （之前 &amp;&amp; 目前）应该是我最鶸的一块了。</p>
+<p>在我还在上中学的时候（2005 ~ 2010）彼时的想法大概是未来找一份软件开发工程师的工作。</p>
+<p>那会儿互联网产业还未兴起，软件开发差不多等同于写桌面客户端。我对数据库的印象停留在大企业内部自用的 Oracle 或者 Microsoft SQL Server，或者外包专用的 MySQL（LAMP），以及几乎没有人用的 Access / Visual Fox Pro；总之…都不是很好的印象。</p>
+<p>于是本科期间几乎没怎么正经学过 RDBMS，唯一有印象的大概就是会写几条 SQL…</p>
+<p>14 年毕业到转到后端前，有机会接触到的 DB 也只有 SQLite，单机存储数据库嘛，会随便写几条 SQL 就已经足够完成任务了，真是挺寒碜。</p>
 
       
     </div>
@@ -262,7 +237,7 @@
     </p>
     <p class="copyright-item">
       <span>原文链接: </span>
-      <a href="http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/">http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/</a>
+      <a href="http://kingsamchen.github.io/2019/07/29/learning-mysql-rants/">http://kingsamchen.github.io/2019/07/29/learning-mysql-rants/</a>
     </p>
     <p class="copyright-item">
       <span>许可协议: </span>
@@ -282,15 +257,11 @@
         
           <div class="post-tags">
             
-              <a href="/tags/monthly-read-posts/">monthly read posts</a>
+              <a href="/tags/rant/">rant</a>
             
-              <a href="/tags/https/">https</a>
+              <a href="/tags/mysql/">mysql</a>
             
-              <a href="/tags/stack-frame-layout/">stack frame layout</a>
-            
-              <a href="/tags/x86-64-ABI/">x86-64 ABI</a>
-            
-              <a href="/tags/DRY/">DRY</a>
+              <a href="/tags/吐槽/">吐槽</a>
             
           </div>
         
@@ -298,15 +269,9 @@
         
   <nav class="post-nav">
     
-      <a class="prev" href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text nav-default">利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader</span>
-        <span class="prev-text nav-mobile">上一篇</span>
-      </a>
     
-    
-      <a class="next" href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/">
-        <span class="next-text nav-default">避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理</span>
+      <a class="next" href="/2019/07/21/monthly-read-posts-in-jun-2019/">
+        <span class="next-text nav-default">Monthly Read Posts in June 2019</span>
         <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
@@ -413,9 +378,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://kingsamchen.github.io/2016/12/04/monthly-read-posts-in-nov-2016/';
-        this.page.identifier = '2016/12/04/monthly-read-posts-in-nov-2016/';
-        this.page.title = 'Monthly Read Posts in Nov 2016';
+        this.page.url = 'http://kingsamchen.github.io/2019/07/29/learning-mysql-rants/';
+        this.page.identifier = '2019/07/29/learning-mysql-rants/';
+        this.page.title = '学习 MySQL 的一些吐槽';
     };
     (function() {
     var d = document, s = d.createElement('script');
