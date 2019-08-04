@@ -182,6 +182,86 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/08/04/monthly-read-posts-in-july-2019/">Monthly Read Posts in July 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://medium.com/@blanchon.vincent/go-understand-the-design-of-sync-pool-2dde3024e277" target="_blank" rel="noopener">Go: Understand the Design of Sync.Pool</a></p>
+<p>Insights:</p>
+<ol>
+<li><p>package 的 <code>init()</code> 函数中注册 runtime GC 的回调，以清理池子中的数据</p>
+</li>
+<li><p>会为每个 P 创建一个 <code>pool</code> 实例；每个实例包含 <em>private</em> 和 <em>shared</em> 两部分。</p>
+<p> 其中 private 只能由 P 自己访问，因此无需考虑并发安全；shared 能被其他的 P 访问，需要考虑并发安全。</p>
+</li>
+<li><p><code>Get()</code> 的操作顺序：private area -&gt; shared area -&gt; create via New()</p>
+</li>
+<li><p><code>Put()</code> 会尝试先把 item 放回 private area，如果 private 没有 item；否则就放到 shared area。</p>
+</li>
+</ol>
+<hr>
+<p><a href="https://medium.com/@pedram.esmaeeli/a-pattern-for-overcoming-non-determinism-of-golang-select-statement-139dbe93db98" target="_blank" rel="noopener">A pattern for overcoming non-determinism of Golang select statement</a></p>
+<p>文章里说的 non-determinism 指的是在一个 <code>select</code> statement 中监听多个 channel，channel的触发顺序是非确定性的。</p>
+<p>这点应该算是一个 well-known background。</p>
+<p>至于作者的做法，通过提供一个 interface ，把多个不同类型的 channel 给合并成了一个…</p>
+<h2 id="Algorithms"><a href="#Algorithms" class="headerlink" title="Algorithms"></a>Algorithms</h2><p><a href="https://preshing.com/20121224/how-to-generate-a-sequence-of-unique-random-integers/" target="_blank" rel="noopener">How to Generate a Sequence of Unique Random Integers</a></p>
+<p>利用了 quadratic residues 的一个性质：</p>
+<ol>
+<li>x^2 mod p is unique as long 2x &lt; p</li>
+<li>在（1）基础上，p - x^2 mod p is unique, as long p mod 4 = 3</li>
+</ol>
+<p>在此基础上设计一个 one-to-one 的排列函数 f；并且只要 f 的复合函数仍然满足 one-to-one，也仍然能够保持前面的 unique 性质。</p>
+<p>BTW：说起来后面应该抽个时间补一下数学和算法了…</p>
+<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="http://www.moserware.com/2008/09/how-do-locks-lock.html" target="_blank" rel="noopener">How Do Locks Lock?</a></p>
+<p>.NET 中 reader-writer lock 的一些内部实现。</p>
+<p>.NET 的 rwlock 支持所谓的 upgrade/promotion，将一个 reader-lock 提升为 writer lock。</p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://justinmeiners.github.io/the-skills-programmers-lack/" target="_blank" rel="noopener">The Skills Poor Programmers Lack</a></p>
+<ol>
+<li>understand the working details</li>
+<li>anticipate problems</li>
+<li>learn to design and architect</li>
+</ol>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/07/29/learning-mysql-rants/">学习 MySQL 的一些吐槽</a>
         
       </h1>
@@ -557,68 +637,6 @@
 <p>因为这三个 intrinsic 函数编译后同样生成 <code>lock xadd</code> 指令，但是后者返回的是 original value 指令相比下少一条。</p>
 <p><strong>0x04</strong> <code>try_lock()</code> 的实现需要用到 CAS 指令，开销更大，因此在 recursive mode 的实现中，仅当当前线程不是 owning thread 时再去尝试改变 mutex 状态是一个更好的实现。</p>
 
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/05/04/anvil-for-assisting-your-cmake/">Anvil -- An Assistant For You CMake</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-05-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p>前段时间专门抽空做了一个小工具，也就是这里要讲的主题：<a href="https://github.com/kingsamchen/anvil" target="_blank" rel="noopener">anvil</a></p>
-<p>一开始做 anvil 的动力很简单：某次尝试体验一下 Linux SignalFD 功能时想直接使用 ezio 的 <code>EventLoop</code> 作为基础事件循环，同时项目使用 cmake 管理。</p>
-<p>为了省事，我直接从 ezio 的项目里抠出来 <code>CMakeLists.txt</code> 和几个自己写的 <code>.cmake</code> 文件，就地<a href="https://github.com/kingsamchen/Eureka/tree/master/UsingSignalfd" target="_blank" rel="noopener">修改</a>。</p>
-<p>但事实证明哪怕这样，改动量也不小，原因大体是因为：cmake 里（非函数内定义的）变量作用域是全局的，通过 fetch-content 功能引入的依赖在 <code>add_subdirectory()</code> 后的模块里也能看到上一层定义的变量，因此为了防止一些控制型变量发生冲突，我都在前面加上了对应的模块前缀。</p>
-<p>所以我面对的就是一大坨变量名的更换，以及少部分声明/属性的调整。</p>
-<p>考虑到大部分的文件内容都是可以模板化的，而手动“实例化”不仅费事还很容易出错，所以我就很自然地萌生了写一个工具自动化这个过程的想法。</p>
-<h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>在经过一两天的短暂思考后，我大致确定了这个工具的定位和需要实现的基本目标，总结起来有三个核心点：</p>
-<ol>
-<li>辅助 cmake 而不是试图替代它或深度封装</li>
-<li>内建一个轻量型的依赖管理功能</li>
-<li>配置化的生成 &amp; 构建流程</li>
-</ol>
-<p>首先，第一点是重中之重。<br>
-          <div class="read-more">
-            <a href="/2019/05/04/anvil-for-assisting-your-cmake/" class="read-more-link">阅读更多</a>
-          </div>
         
       
     </div>

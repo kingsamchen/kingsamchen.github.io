@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-07-29T12:48:58.378Z</updated>
+  <updated>2019-08-04T03:11:52.310Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Monthly Read Posts in July 2019</title>
+    <link href="http://kingsamchen.github.io/2019/08/04/monthly-read-posts-in-july-2019/"/>
+    <id>http://kingsamchen.github.io/2019/08/04/monthly-read-posts-in-july-2019/</id>
+    <published>2019-08-04T02:55:30.000Z</published>
+    <updated>2019-08-04T03:11:52.310Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="sync.pool" scheme="http://kingsamchen.github.io/tags/sync-pool/"/>
+    
+      <category term="quadratic residues" scheme="http://kingsamchen.github.io/tags/quadratic-residues/"/>
+    
+      <category term="reader-writer lock" scheme="http://kingsamchen.github.io/tags/reader-writer-lock/"/>
+    
+  </entry>
   
   <entry>
     <title>学习 MySQL 的一些吐槽</title>
@@ -660,37 +690,6 @@
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
       <category term="rant" scheme="http://kingsamchen.github.io/tags/rant/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Dec 2018</title>
-    <link href="http://kingsamchen.github.io/2019/01/01/monthly-read-posts-in-dec-2018/"/>
-    <id>http://kingsamchen.github.io/2019/01/01/monthly-read-posts-in-dec-2018/</id>
-    <published>2019-01-01T07:36:47.000Z</published>
-    <updated>2019-01-01T08:05:24.007Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming Languages&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://medium.com/golangspec/init-functions-in-go-eac191b3860a&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;init functions in Go&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;这篇 post 总结起来就是深入浅出。&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://www.fluentcpp.com/2017/01/05/the-importance-of-knowing-stl-algorithms/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;The importance of knowing STL algorithms&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;能熟练运用 STL algorithms 是一个 experienced c++ programmer 的基本要求。&lt;/p&gt;
-&lt;p&gt;另外里面提到了使用 algorithms 的两个 pitfalls，其中一个是滥用 &lt;code&gt;for_each()&lt;/code&gt;，这个确实有点意思。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-      <category term="algorithms" scheme="http://kingsamchen.github.io/tags/algorithms/"/>
-    
-      <category term="redis" scheme="http://kingsamchen.github.io/tags/redis/"/>
-    
-      <category term="code quality" scheme="http://kingsamchen.github.io/tags/code-quality/"/>
     
   </entry>
   
