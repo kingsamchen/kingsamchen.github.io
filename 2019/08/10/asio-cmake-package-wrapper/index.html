@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head>
+    
+<meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+<meta name="theme-color" content="#f8f5ec" />
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="安利 asio-cmake"/>
+
+
+
+
+  <meta name="keywords" content="cpp, asio, cmake, KC的废墟堆" />
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/08/10/asio-cmake-package-wrapper/"/>
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> 安利 asio-cmake - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          安利 asio-cmake
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-10
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-Background"><span class="toc-text">0x00 Background</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-ASIO-CMake-Wrapper"><span class="toc-text">0x01 ASIO-CMake Wrapper</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-Sample"><span class="toc-text">0x02 Sample</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Extra-Bonus"><span class="toc-text">0x03 Extra Bonus</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x04-Misc"><span class="toc-text">0x04 Misc</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="0x00-Background"><a href="#0x00-Background" class="headerlink" title="0x00 Background"></a>0x00 Background</h2><p>考虑到 ASIO 的相当一部分组件（subset）已经进入了 C++ 20 Networking TS，未来再经过一些小调整之后成为标准库的一员基本板上钉钉。</p>
+<p>那么提前熟悉一下 ASIO 也不是什么坏事，毕竟没准等到 C++ 23 的时候，coroutine, networking, executor 啥的都已经很完备了，谁都可以用 C++ 实现一些性能不差的 server-end 代码了（比如 RPC 框架？）。</p>
+<p>不过和使用 Boost 类似，使用 ASIO 作为依赖库也不是一件容易的事情；毕竟自 modern C++ 元年至今都8年了，CMake 还在成为 de facto building system 的道路上挣扎，广泛接受的包管理依然不见踪影…</p>
+<h2 id="0x01-ASIO-CMake-Wrapper"><a href="#0x01-ASIO-CMake-Wrapper" class="headerlink" title="0x01 ASIO-CMake Wrapper"></a>0x01 ASIO-CMake Wrapper</h2><p>陈年老账就不再扯了，得益于 CMake 3.2 开始提倡的 taget-based properties 和 CMake 3.11 开始提供的 <code>FetchContent</code> module，我花了一些时间实现了一个基于 <code>FetchContent</code> 的 asio-cmake wrapper。<br><a id="more"></a><br>这个 wrapper 本质就是一个 <code>CMakeLists.txt</code> 文件，它能够</p>
+<ol>
+<li><p>下载指定版本的 ASIO 源码</p>
+</li>
+<li><p>创建一个 <code>asio</code> target，并且将刚才下载的源码设置为 <code>asio</code> 的 <code>target_include_directories</code>。因为 ASIO 是 header only library，所以这里只需要暴露头文件即可</p>
+</li>
+<li><p>为 <code>asio</code> 这个 taget 进行必要的预设置，例如宏定义 <code>ASIO_STANDALONE</code> ，POSIX 环境下链接 <code>pthread</code> 等等</p>
+</li>
+</ol>
+<p>对于需要依赖 ASIO 的工程，只需要通过 <code>add_subdirectory()</code> 的方式引入包含这个 <code>CMakeLists.txt</code> 文件的目录，就可以获得前面定义好的 <code>asio</code> 这个targe；然后只需要加入到 <code>target_link_libraries</code> 列表里就完事了。</p>
+<h2 id="0x02-Sample"><a href="#0x02-Sample" class="headerlink" title="0x02 Sample"></a>0x02 Sample</h2><p>直接举个例子：</p>
+<p>假设我们有一个 <code>asio_demo</code> 工程需要依赖 ASIO，我们把 asio-cmake 文件放到工程的 <code>asio_dep</code> 目录中，结构如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">asio_demo</span><br><span class="line">│-- CMakeLists.txt</span><br><span class="line">│-- main.cpp</span><br><span class="line">│</span><br><span class="line">└─asio_dep</span><br><span class="line">  |</span><br><span class="line">  └─ CMakeLists.txt	# our wrapper file</span><br></pre></td></tr></table></figure>
+<p>那我们只需要在顶层 <code>CMakeLists.txt</code> 中实现如下定义即可：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cmake_minimum_required</span>(VERSION <span class="number">3.12</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">project</span>(asio-demo)</span><br><span class="line"></span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD <span class="number">14</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_STANDARD_REQUIRED <span class="keyword">ON</span>)</span><br><span class="line"><span class="keyword">set</span>(CMAKE_CXX_EXTENSIONS <span class="keyword">OFF</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># specify asio src version.</span></span><br><span class="line"><span class="keyword">set</span>(ASIO_CMAKE_ASIO_TAG asio-<span class="number">1</span>-<span class="number">12</span>-<span class="number">2</span>)</span><br><span class="line"><span class="keyword">add_subdirectory</span>(asio_dep)</span><br><span class="line"></span><br><span class="line"><span class="keyword">add_executable</span>(asio_demo main.cpp)</span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span>(asio_demo PRIVATE asio)</span><br></pre></td></tr></table></figure>
+<p>剩下的事情 CMake 都会帮你弄好。</p>
+<p>BTW：如果你在中国大陆，记的先设置代理 🤐，毕竟 ASIO 源码说小不小。</p>
+<h2 id="0x03-Extra-Bonus"><a href="#0x03-Extra-Bonus" class="headerlink" title="0x03 Extra Bonus"></a>0x03 Extra Bonus</h2><p>这个做法有两个额外的优点。</p>
+<p>第一个优点是，因为 asio-cmake 本身也是一个 git repository，所以你甚至可以利用 <code>FetchContent</code> module 直接拉取 asio-cmake 作为你的 dep，然后 asio-cmake 内部处理的时候会进行 ASIO 源码下载和属性设置。</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span>(FetchContent)</span><br><span class="line"></span><br><span class="line">FetchContent_Declare(asio-cmake</span><br><span class="line">  GIT_REPOSITORY https://github.com/kingsamchen/asio-cmake.git</span><br><span class="line">  GIT_TAG        origin/master</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Specify asio version</span></span><br><span class="line"><span class="keyword">set</span>(ASIO_CMAKE_ASIO_TAG asio-<span class="number">1</span>-<span class="number">12</span>-<span class="number">2</span>)</span><br><span class="line">FetchContent_MakeAvailable(asio-cmake)</span><br><span class="line"></span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">target_link_libraries</span>(proj-name</span><br><span class="line">  PRIVATE asio</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>第二个优点比较润物细无声。</p>
+<p>虽然 ASIO 自身并没有提供 cmake 支持，但是基于 Modern CMake 提倡的 target-based properties 机制和 <code>FetchContent</code> 模块，我们事实上可以给任意项目提供一个类似的 cmake-wrapper。</p>
+<p>比如给 Boost 提供一个模块粒度的 wrapper。</p>
+<h2 id="0x04-Misc"><a href="#0x04-Misc" class="headerlink" title="0x04 Misc"></a>0x04 Misc</h2><p>由于我个人是 C++ 源码依赖的拥趸，因此源码依赖对我来说在这里不是一个缺点。</p>
+<p>项目地址：<a href="https://github.com/kingsamchen/asio-cmake" target="_blank" rel="noopener">https://github.com/kingsamchen/asio-cmake</a></p>
+<p>欢迎 PR。</p>
+<p>最后如同我在 README 文件里说的：</p>
+<blockquote>
+<p> Make ASIO &amp;&amp; C++ Great Again</p>
+</blockquote>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/08/10/asio-cmake-package-wrapper/">http://kingsamchen.github.io/2019/08/10/asio-cmake-package-wrapper/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/cpp/">cpp</a>
+            
+              <a href="/tags/asio/">asio</a>
+            
+              <a href="/tags/cmake/">cmake</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/08/04/monthly-read-posts-in-july-2019/">
+        <span class="next-text nav-default">Monthly Read Posts in July 2019</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/08/10/asio-cmake-package-wrapper/';
+        this.page.identifier = '2019/08/10/asio-cmake-package-wrapper/';
+        this.page.title = '安利 asio-cmake';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

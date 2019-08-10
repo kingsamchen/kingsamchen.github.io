@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-08-04T03:11:52.310Z</updated>
+  <updated>2019-08-10T10:13:53.871Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>安利 asio-cmake</title>
+    <link href="http://kingsamchen.github.io/2019/08/10/asio-cmake-package-wrapper/"/>
+    <id>http://kingsamchen.github.io/2019/08/10/asio-cmake-package-wrapper/</id>
+    <published>2019-08-10T08:33:28.000Z</published>
+    <updated>2019-08-10T10:13:53.871Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;0x00-Background&quot;&gt;&lt;a href=&quot;#0x00-Background&quot; class=&quot;headerlink&quot; title=&quot;0x00 Background&quot;&gt;&lt;/a&gt;0x00 Background&lt;/h2&gt;&lt;p&gt;考虑到 ASIO 的相当一部分组件（subset）已经进入了 C++ 20 Networking TS，未来再经过一些小调整之后成为标准库的一员基本板上钉钉。&lt;/p&gt;
+&lt;p&gt;那么提前熟悉一下 ASIO 也不是什么坏事，毕竟没准等到 C++ 23 的时候，coroutine, networking, executor 啥的都已经很完备了，谁都可以用 C++ 实现一些性能不差的 server-end 代码了（比如 RPC 框架？）。&lt;/p&gt;
+&lt;p&gt;不过和使用 Boost 类似，使用 ASIO 作为依赖库也不是一件容易的事情；毕竟自 modern C++ 元年至今都8年了，CMake 还在成为 de facto building system 的道路上挣扎，广泛接受的包管理依然不见踪影…&lt;/p&gt;
+&lt;h2 id=&quot;0x01-ASIO-CMake-Wrapper&quot;&gt;&lt;a href=&quot;#0x01-ASIO-CMake-Wrapper&quot; class=&quot;headerlink&quot; title=&quot;0x01 ASIO-CMake Wrapper&quot;&gt;&lt;/a&gt;0x01 ASIO-CMake Wrapper&lt;/h2&gt;&lt;p&gt;陈年老账就不再扯了，得益于 CMake 3.2 开始提倡的 taget-based properties 和 CMake 3.11 开始提供的 &lt;code&gt;FetchContent&lt;/code&gt; module，我花了一些时间实现了一个基于 &lt;code&gt;FetchContent&lt;/code&gt; 的 asio-cmake wrapper。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+  </entry>
   
   <entry>
     <title>Monthly Read Posts in July 2019</title>
@@ -264,11 +291,11 @@
       <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
     
       <category term="project management" scheme="http://kingsamchen.github.io/tags/project-management/"/>
     
@@ -658,38 +685,6 @@
       <category term="ezio" scheme="http://kingsamchen.github.io/tags/ezio/"/>
     
       <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>来一口 golang 做的玻璃渣</title>
-    <link href="http://kingsamchen.github.io/2019/01/08/bad-smells-in-golang/"/>
-    <id>http://kingsamchen.github.io/2019/01/08/bad-smells-in-golang/</id>
-    <published>2019-01-08T14:35:57.000Z</published>
-    <updated>2019-01-27T03:03:43.579Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;转到后端差不多也快三个月了，拿 golang 糊代码的时间算上自己平时写的一些练手 demo 加起来差不多也有一个月。&lt;/p&gt;
-&lt;p&gt;这将近一个月的时间过来差不多能体会到 golang 的设计精髓，那就是：&lt;em&gt;simple &amp;amp; stupid, being convenient as the first class support&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;换句话说就是：短平快糙猛，满口玻璃渣，怎么方便怎么来。&lt;/p&gt;
-&lt;p&gt;所以接下来不免俗地是吐槽 golang 设计的内容。&lt;/p&gt;
-&lt;p&gt;吐槽不考虑 PLT 上的设计，纯粹从日常堆业务逻辑出发。毕竟理论的东西我一个鶸也不懂，且 golang 的设计目的就是方便应届毕业生快速堆业务代码。&lt;/p&gt;
-&lt;p&gt;以下吐槽点的顺序为自己在实际中遇到的顺序逆序。&lt;/p&gt;
-&lt;h3 id=&quot;Flaky-Goroutines&quot;&gt;&lt;a href=&quot;#Flaky-Goroutines&quot; class=&quot;headerlink&quot; title=&quot;Flaky Goroutines&quot;&gt;&lt;/a&gt;Flaky Goroutines&lt;/h3&gt;&lt;p&gt;golang 里起一个 goroutine 很方便，但是目前感觉 goroutine 太过于 flaky，有点飘。一旦没用 &lt;code&gt;chan struct{}&lt;/code&gt; 或者 &lt;code&gt;sync.WaitGroup&lt;/code&gt; ”固定好“，就总有一种这玩意儿是不是已经脱离自己手心的感觉。&lt;/p&gt;
-&lt;p&gt;另外不知道是不是很多用 golang 的人之前都是 php / python 的背景，相当一部分人其实对 goroutine-safe 没有什么概念。不过严格来说这个不是 golang 自身的问题。&lt;/p&gt;
-&lt;h3 id=&quot;Cannot-assign-to-fields-within-short-declaration-notation&quot;&gt;&lt;a href=&quot;#Cannot-assign-to-fields-within-short-declaration-notation&quot; class=&quot;headerlink&quot; title=&quot;Cannot assign to fields within short declaration notation&quot;&gt;&lt;/a&gt;Cannot assign to fields within short declaration notation&lt;/h3&gt;&lt;p&gt;代码段&lt;/p&gt;
-&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;foobar&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;keyword&quot;&gt;bool&lt;/span&gt;, error)&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;true&lt;/span&gt;, &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;var&lt;/span&gt; err error&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	ok, err := foobar()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; err != &lt;span class=&quot;literal&quot;&gt;nil&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		fmt.Println(&lt;span class=&quot;string&quot;&gt;&quot;error&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&amp;#125; &lt;span class=&quot;keyword&quot;&gt;else&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;		fmt.Println(ok)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;	&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;是合法的，因为 &lt;code&gt;ok&lt;/code&gt; 之前并没有被定义，所以这里 &lt;code&gt;err&lt;/code&gt; 可以蹭着使用 &lt;code&gt;:=&lt;/code&gt;。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-      <category term="rant" scheme="http://kingsamchen.github.io/tags/rant/"/>
     
   </entry>
   

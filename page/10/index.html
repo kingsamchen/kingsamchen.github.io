@@ -182,6 +182,57 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/">被 FFmpeg 的日志模块撞了一下腰</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>周末的时候客服同学反馈有个用户出现了崩溃，并且要来了崩溃 dmp 文件。</p>
+<p>挂上 windbg 后发现崩溃原因是 CRT 的 <code>invalid-parameter</code> 异常，第一现场是输出 ffmpeg 的 avcodec 模块的日志。</p>
+<p>省略中间若干分析过程，直击结论：FFmpeg 的 Windows 构建并不是用 MSVC 编译的，因此在类似 <code>printf()</code> 函数的 format specifier 使用上出现了偏差。</p>
+<p>代码使用 <code>%td</code> 输出 <code>ptrdiff_t</code> 类型，而 VS2017 之前的版本并不支持这个 format specifier，因此函数调用 <code>_vsnprintf_p()</code> 出现了参数异常，导致程序挂掉。</p>
+<p>虽然 VS 2017 很厚道的支持了这个格式，但是某直播姬的工具链是 VS 2013，且短时间不可能调整，因此最后的解决方案是，上层安装的 logging hook 在输出日志时，首先修正一遍 format 里的 specifier，替换为 VS 2013 支持的 <code>%Id</code>。</p>
+<p>注意，类似的还有 <code>size_t</code> 的 format specifier。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/03/04/display-utf-8-string-in-vs-debugger/">在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</a>
         
       </h1>
@@ -556,72 +607,6 @@ LPFN_DISCONNECTEX DisconnectEx = <span class="hljs-literal" style="color: rgb(25
 <p>因为 Windows 程序的 DLL 在加载时很有可能因为 <em>preferred base address</em> 被占用了导致 DLL 的符号地址需要先经过一次 rebase；再考虑 ASLR 的影响，崩溃时的 EIP/RIP 基本上是不能拿来作为崩溃标识的，因为同一处崩溃的地址可能每次运行都会变。</p>
 <p>解决方案是通过 <code>GetModuleHandleW()</code> 拿到模块实际的加载地址，然后再和前面的崩溃地址做一次 distance 运算就可以拿到了模块内地址偏移。</p>
 <p>这样，name+offset 基本上可以作为 key 用来做崩溃信息的聚合。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/02/02/monthly-read-posts-in-jan-2018/">Monthly Read Posts in Jan 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-02-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://solarianprogrammer.com/2017/12/27/cpp-17-constexpr-everything-as-much-as-the-compiler-can/" target="_blank" rel="noopener">C++17 constexpr everything (or as much as the compiler can)</a></p>
-<p>名字不明觉厉结果是入门级读物，有点水…</p>
-<hr>
-<p><a href="https://blogs.msdn.microsoft.com/satyem/2012/08/13/threads-stack/" target="_blank" rel="noopener">Thread’s Stack</a></p>
-<p>Windows 线程栈内存的布局，包括 guard page 来提示栈溢出的一些细节</p>
-<hr>
-<p><strong>下面是一些 Talk</strong></p>
-<p><a href="https://www.youtube.com/watch?v=LIb3L4vKZ7U" target="_blank" rel="noopener">allocator Is to Allocation what vector Is to Vexation - Andrei Alexandrescu - CppCon 2015</a></p>
-<p>只能说不明觉厉，因为学不到什么有用的东西…</p>
-<p><a href="https://www.youtube.com/watch?v=TRgWJuQhkQo" target="_blank" rel="noopener">CLANG C2 for Windows - Jim Radigan - CppCon 2015</a></p>
-<p>演讲者似乎是这个项目的主导，并且实现了 MSVC 的 coroutine。</p>
-<p>期待什么时候 clang/c2 可以作为 MSVC 的默认配置…</p>
-<p>另：演讲者长得有点像 house of cards S4 里的 Mark Usher，很 charming</p>
-<p><a href="https://www.youtube.com/watch?v=-ROXIG4raiA" target="_blank" rel="noopener">Applying functional programming in code design - Michał Dominiak - CppCon 2015</a></p>
-<p>很糟糕的一个 talk，难以想象这么有意思的 topic，talk 全程居然没有一行代码的展示….</p>
-<p>不过里面提到的 node-based data structures 适合用来实现 functional programming 的一些基础设施，我一开始完全是懵逼的，直到看了 Seven Concurrency in Seven Weeks 里的第一章还是第二章，才意识到核心是什么。可见这个 talk 是多么的不友好。</p>
-<p><a href="https://www.youtube.com/watch?v=DS2m7T6NKZQ" target="_blank" rel="noopener">C++11, 14, 17 Atomics - the Deep Dive - Michael Wong - CppCon 2015</a></p>
-<p>作者是 IBM compiler team 的 director，说话有点意思。</p>
-<p>另外这个 talk 的 PPT 值得研究一下，尤其是涉及到 happens-before / synchronized-with .etc 这类同步语义的内容</p>
-<hr>
-<p>因为一月份快接近年底了，事情比较多，也很杂，所以自己的学习进度明显被拖慢了，希望从2月份开始能够迅速回到正常节奏。</p>
 
         
       
