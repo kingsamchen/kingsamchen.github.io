@@ -182,6 +182,57 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/08/18/resolve-clashed-cmake-function-call/">解决 CMake 依赖工程中同名 cmake 函数调用混乱</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-18
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>拿 learn-asio 这个项目练手时发现一个问题：learn-asio 依赖了 KBase，这两个项目都是我用 anvil 进行托管的，所以两个项目的 cmake 目录里各自有一份 <code>compiler_*.cmake</code>。</p>
+<p>因为 <code>compiler_*.cmake</code> 提供的函数 <code>apply_common_compiler_property_to_target()</code> 默认使用了非常严格的属性，导致构建 asio 练手工程出现很多 warning 和静态分析的错误，所以为了省事我把 learn-asio 的这个函数做了宽松化处理。</p>
+<p>但是重新构建的时候发现没有效果。</p>
+<p>检查了一圈之后发现这个函数的调用变成了 KBase 目录下的版本，猜想可能原因是我首先引入了当前工程目录下的这个 .cmake 模块文件；然后又通过加载依赖的方式引入了 KBase 的 .cmake 模块文件，导致同名函数直接被覆盖成了最后出现的依赖提供的版本。</p>
+<p>研究了一下没想到怎么解决，于是看了一下 folly 的处理方式，惊讶地发现 folly 是直接把项目名称 hardcode 进了函数里…</p>
+<p>最后仿照着给 anvil 做了一个 <a href="https://github.com/kingsamchen/anvil/commit/dca6eaf97bcba4b930bfc4c3dcc64312d6a70a35" target="_blank" rel="noopener">patch</a></p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/08/10/asio-cmake-package-wrapper/">安利 asio-cmake</a>
         
       </h1>
@@ -543,84 +594,6 @@
 <p>本质上，这些库充当的都是 controller 或者 manager 的角色，为了完成他们的定位，不可避免会通过提供一些高层抽象来完成建模；但是 commandline 的作用大部分时候是给主程序提供支持，作为基础库，怎么可能知道主程序对命令行有什么样的需求呢？</p>
 <p>灵活性和易用性绝大多数的时候都是相互冲突的。</p>
 <p>抽象虽然能够简化细节，做到 selective ignorance，但是同时也增加了约束，这部分约束也是抽象的代价之一。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/06/02/monthly-read-posts-in-may-2019/">Monthly Read Posts in May 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-06-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120226/roll-your-own-lightweight-mutex/" target="_blank" rel="noopener">Roll Your Own Lightweight Mutex</a></p>
-<p>如何利用系统提供的 semaphore synchronization primitive 实现一个轻量级的 mutex</p>
-<hr>
-<p><a href="http://cbloomrants.blogspot.com/2011/07/07-15-11-review-of-many-mutex.html" target="_blank" rel="noopener">Review of many Mutex implementations</a></p>
-<p>和上面类似，但是使用了 event pritimive 作为基本设施。</p>
-<p>因为 event 不像 semaphore 自身能够控制 running count，一旦被 evnent 被 signal 则所有 waiter 会被唤醒。因此这个实现版本在一些 edge cases 上花了不少功夫。</p>
-<hr>
-<p><a href="https://preshing.com/20120305/implementing-a-recursive-mutex/" target="_blank" rel="noopener">Implementing a Recursive Mutex</a></p>
-<p>如何让 mutex 支持 recursive mode</p>
-<p>注：实际设计中，尽可能避免使用 recursive lock</p>
-<hr>
-<p><a href="https://docs.microsoft.com/en-us/windows/desktop/DxTechArts/lockless-programming" target="_blank" rel="noopener">Lockless Programming</a></p>
-<p>微软官方出品的无锁编程介绍文章。</p>
-<p>质量过硬，干货满满。</p>
-<hr>
-<p><a href="https://preshing.com/20120515/memory-reordering-caught-in-the-act/" target="_blank" rel="noopener">Memory Reordering Caught in the Act</a></p>
-<p>构造一个触发经典 memory reordering 的场景</p>
-<h2 id="System-Architect-Design"><a href="#System-Architect-Design" class="headerlink" title="System Architect Design"></a>System Architect Design</h2><p><a href="https://mp.weixin.qq.com/s/tiN6Z_VjTKZ5voFu4TFElg" target="_blank" rel="noopener">哥们，你们的系统架构中为什么要引入消息中间件？</a></p>
-<ul>
-<li>多个组件/服务之间的解耦</li>
-<li>剥离耗时调用异步化</li>
-<li>高峰流量作为 buffer 屏障进行流量削峰</li>
-</ul>
-<hr>
-<p><a href="https://medium.com/@trongdan_tran/circuit-breaker-and-retry-64830e71d0f6" target="_blank" rel="noopener">Circuit Breaker and Retry</a></p>
-<p>what is circuit breaker and why would we use it</p>
-<p>common design patterns of retry</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://preshing.com/20120522/lightweight-in-memory-logging/" target="_blank" rel="noopener">Lightweight In-Memory Logging</a></p>
-<p>一个针对特殊场景涉及的 in-memory logging facility。</p>
-<p>尽量减少 logging 产生的指令级别开销（例如尽可能使用 intrinsic 获取相关信息）</p>
-<hr>
-<p><a href="https://preshing.com/20120625/memory-ordering-at-compile-time/" target="_blank" rel="noopener">Memory Ordering at Compile Time</a></p>
-<p>How once upon a time does compiler reorder instructions.</p>
 
         
       

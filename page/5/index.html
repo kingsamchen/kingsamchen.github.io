@@ -182,6 +182,67 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/12/05/build-your-own-handlerthread-part-2/">Build Your Own HandlerThread Part 2</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-12-05
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>有了 <code>MessagePumpDefault</code>  之后，我们就可以开始着手实现最核心的 <code>MessageLoop</code> 了。</p>
+<p>不过在此之前，我们还首先需要实现一个辅助设施：<code>PendingTask</code>。</p>
+<h3 id="PendingTask"><a href="#PendingTask" class="headerlink" title="PendingTask"></a>PendingTask</h3><p>一个 <code>PendingTask</code> instance 表示一个等待被执行的 task，并且这个 task 可能是一个 delayed task。</p>
+<p>因此 <code>PendingTask</code> 需要能够表示时序上的顺序，这个可以利用 <code>Instant</code> 类型的一个时间戳，结合一个 <code>long</code> 类型的 sequence-number。因为有可能两个 delayed tasks 的时间戳相同，此时就必须要用 seq-num  来区分先后顺序。</p>
+<p>另外，<code>PendingTask</code> 为了能够表示 task 语义，他必须可以被执行。这可以通过内部存储一个 <code>Runnable</code> 或者 <code>Callable</code> 成员做到。</p>
+<p>我们的实现选择 <code>Runnable</code>，因为</p>
+<ul>
+<li>我们当前的实现不考虑返回值，因为实现返回值和我们的主题没有直接关系。<br>CSP 的并发模型上如果要考虑使用某个任务的返回值，一般会使用类似于 <code>PostTaskAndReplyWithResult()</code> 来组合两个函数；或者更一般的，使用 continuation 来 lifting restrictions</li>
+<li>懒得处理异常</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">PendingTask</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> AtomicLong s_seqNumGenerator = <span class="keyword">new</span> AtomicLong(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">long</span> _seqNum;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> Instant _endTime;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Runnable _task;</span><br><span class="line"></span><br><span class="line">    PendingTask(Runnable task, Instant endTime) &#123;</span><br><span class="line">        _seqNum = s_seqNumGenerator.getAndIncrement();</span><br><span class="line">        _endTime = endTime;</span><br><span class="line"></span><br><span class="line">        _task = task;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        _task.run();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Instant <span class="title">endTime</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _endTime;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">long</span> <span class="title">seqNum</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _seqNum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我们使用了 <code>AtomicLong</code> 来存储当前的 sequence-number，因为我们不知道某个 <code>PendingTask</code> 会在哪个线程上被创建。<br>
+          <div class="read-more">
+            <a href="/2018/12/05/build-your-own-handlerthread-part-2/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/12/04/build-your-own-handlerthread-part-1/">Build Your Own HandlerThread Part 1</a>
         
       </h1>
@@ -541,63 +602,6 @@
 <p>占用内存无端变大导致 cache 问题啥的就不讲了，这方面的内容任何讲 computer architecture 的书应该都会有。<br>
           <div class="read-more">
             <a href="/2018/11/11/ebo-with-multiple-inheritance-in-msvc/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/11/04/chromium-base-message-loop-internals-0/">Chromium Base MessageLoop Internals (0)</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-11-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>Our fancy star in this post is class <code>base::MessageLoopCurrent</code>.</p>
-<h2 id="MessageLoopCurrent"><a href="#MessageLoopCurrent" class="headerlink" title="MessageLoopCurrent"></a>MessageLoopCurrent</h2><p>Version: r70_3538<br>File: <code>base/message_loop/message_loop_current.{h, cc}</code></p>
-<p>MessageLoopCurernt is a proxy class for interactions with the MessageLoop bound to the current thread.</p>
-<p>It is introduced to avoid direct uses of <code>MessageLoop::current()</code>, quoting from original comments:</p>
-<blockquote>
-<p>Why: Historically MessageLoop::current() gave access to the full MessageLoop API, preventing both addition of powerful owner-only APIs as well as making it harder to remove callers of deprecated APIs (that need to stick around for a few owner-only use cases and re-accrue callers after cleanup per remaining publicly available).</p>
-</blockquote>
-<p>Because it is a light-weight proxy, it contains only a single pointer to the MessageLoop bound to the current thread.<br>
-          <div class="read-more">
-            <a href="/2018/11/04/chromium-base-message-loop-internals-0/" class="read-more-link">阅读更多</a>
           </div>
         
       
