@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="Using Boolean Switch with Python Argparser the Right Way"/>
+  <meta name="description" content="Using Boolean Switch with Python Argparser the Right Way">
 
 
 
 
-  <meta name="keywords" content="python, argparser, bool argument, KC的废墟堆" />
+  <meta name="keywords" content="python, argparser, bool argument, KC的废墟堆">
 
 
 
@@ -38,14 +38,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2018/10/07/python-argparser-bool-arg-the-right-way/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2018/10/07/python-argparser-bool-arg-the-right-way/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -214,7 +214,7 @@
     <div class="post-content">
       
         <h2 id="The-Context"><a href="#The-Context" class="headerlink" title="The Context"></a>The Context</h2><p>之前拿 Python 写了一个 CMake 的 build driver，因为要控制一些编译参数，所以使用了如下代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">'--build-test'</span>, dest=<span class="string">'build_test'</span>, type=bool, default=<span class="keyword">True</span>)</span><br><span class="line">args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">no_build_unittest = <span class="keyword">not</span> args.build_test</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">'--build-test'</span>, dest=<span class="string">'build_test'</span>, type=bool, default=<span class="literal">True</span>)</span><br><span class="line">args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">no_build_unittest = <span class="keyword">not</span> args.build_test</span><br></pre></td></tr></table></figure>
 <p>后来有一次偶然发现，无论指定 <code>--build-test=False</code> 还是 <code>--build-test=false</code> 还是 <code>--build-test=0</code>，<code>args.build_test</code> 的值永远是 <code>True</code>。</p>
 <p>然后一脸懵逼。</p>
 <p>万幸有万能的 Stackoverflow，搜了一下发现有人遇到了类似的问题。</p>

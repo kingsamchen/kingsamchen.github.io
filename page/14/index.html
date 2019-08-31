@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="Gone with the ruins">
 
 
 
@@ -36,14 +36,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/page/14/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/page/14/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -176,6 +176,65 @@
           <div id="content" class="content">
             
   <section id="posts" class="posts">
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/07/24/terminate-child-processes-on-close-using-job-object/">利用 Job 内核对象实现父进程关闭时自动结束所有子进程</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-07-24
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>投稿工具的压制功能一直来都有一个问题：如果主进程被强行结束了（例如利用任务管理器），那么创建的 ffmpeg 压制进程仍然会继续运行。</p>
+<p>因为 ffmpeg 是以二进制的方式部署的，因此不存在修改它的代码，自己和主进程建立 IPC 监控的方式。</p>
+<p>至于采用远线程注入的方式来强行 HACK，我一直对这种无视客观规律的霸道方式都不太感冒，毕竟我们又不是做安全软件。</p>
+<p>所以我想到了曾经在 Windows 核心编程中看到的一个方法：使用 Job 内核对象。</p>
+<p>核心方法总结起来就是一句话：将 ffmpeg 压制进程加入到一个 Job 对象中，利用 Job 对象的 <em>Kill-On-Close</em> 特性，在 Job 内核对象被释放时，Job 内的所有进程都会被系统结束。</p>
+<p>于是我写了一个 demo snippet，解决了几个坑之后验证了我的想法。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;conio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cassert&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">LaunchAndWait</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::wstring&amp; cmdline, HANDLE job)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">wchar_t</span> buf[<span class="number">255</span>] &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    wcscpy_s(buf, cmdline.c_str());</span><br><span class="line"></span><br><span class="line">    STARTUPINFO startup &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    startup.cb = <span class="keyword">sizeof</span>(startup);</span><br><span class="line">    PROCESS_INFORMATION process_information &#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!CreateProcessW(<span class="literal">nullptr</span>,</span><br><span class="line">                        buf,</span><br><span class="line">                        <span class="literal">nullptr</span>,</span><br><span class="line">                        <span class="literal">nullptr</span>,</span><br><span class="line">                        FALSE,</span><br><span class="line">                        CREATE_SUSPENDED | CREATE_BREAKAWAY_FROM_JOB,   <span class="comment">// important</span></span><br><span class="line">                        <span class="literal">nullptr</span>,</span><br><span class="line">                        <span class="literal">nullptr</span>,</span><br><span class="line">                        &amp;startup,</span><br><span class="line">                        &amp;process_information)) &#123;</span><br><span class="line">        <span class="keyword">auto</span> err = GetLastError();</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">"Failed to create process: "</span> &lt;&lt; err;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!AssignProcessToJobObject(job, process_information.hProcess)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">"Failed to assign process to job: "</span> &lt;&lt; GetLastError();</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ResumeThread(process_information.hThread);</span><br><span class="line"></span><br><span class="line">    CloseHandle(process_information.hProcess);</span><br><span class="line">    CloseHandle(process_information.hThread);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    BOOL is_in_job;</span><br><span class="line">    IsProcessInJob(GetCurrentProcess(), <span class="literal">nullptr</span>, &amp;is_in_job);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Is the main process in job: "</span> &lt;&lt; is_in_job &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Wait for constructing job object!\n"</span>;</span><br><span class="line"></span><br><span class="line">    HANDLE job = CreateJobObjectW(<span class="literal">nullptr</span>, <span class="literal">nullptr</span>);</span><br><span class="line">    <span class="keyword">if</span> (!job) &#123;</span><br><span class="line">        <span class="keyword">auto</span> err = GetLastError();</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">"Failed to create job: "</span> &lt;&lt; err &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Enforce limits.</span></span><br><span class="line">    JOBOBJECT_EXTENDED_LIMIT_INFORMATION job_limits;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;job_limits, <span class="number">0</span>, <span class="keyword">sizeof</span>(job_limits));</span><br><span class="line">    job_limits.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!SetInformationJobObject(job, JobObjectExtendedLimitInformation, &amp;job_limits, <span class="keyword">sizeof</span>(job_limits))) &#123;</span><br><span class="line">        <span class="keyword">auto</span> err = GetLastError();</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">"Failed to set job information: "</span> &lt;&lt; err &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Job object created! Launch test subjects...\n"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> r = LaunchAndWait(<span class="string">LR"(C:\Windows\notepad.exe)"</span>, job);</span><br><span class="line">    assert(r);</span><br><span class="line"></span><br><span class="line">    _getch();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>最终的产品代码思路是完全一样的，当然代码不可能像上面这样随意。</p>
+<p>这里有两个比较隐蔽的坑（MSDN 上不一定能看到）需要注意一下：</p>
+<p>第一个是创建进程时最好带上 <code>CREATE_BREAKAWAY_FROM_JOB</code>，因为 Job 属性存在自动继承性：如果一个进程属于一个 Job，那么他创建的子进程会自动关联到这个 Job。</p>
+<p><code>explorer</code> 和 VS 都是存在于 Job 中的，因此如果在这两个环境下运行程序， <code>IsProcessInJob()</code> 会返回 <code>true</code></p>
+<p>第二个坑特别隐蔽：我一开始的 test subject 是 calc.exe，在 Windows 10 上这是一个 UWP 程序，然而无论我怎么做，calc 进程都活得好好的，一点不像是被约束的样子。。。甚至所有 API 的调用都并没有返回错误。</p>
+<p>而当我将 test subject 换成 Win32 程序 notepad.exe 之后，功能就可以正常跑了….</p>
+<p>我猜想这大概和 UWP 程序的一些安全特性有关，不过因为本身对安全并没有偏执的热爱，所以在这个点上就没有继续深入了。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
     
       
   <article class="post">
@@ -553,57 +612,6 @@
 <p>文中试图实现的机制不就是 ctor 和 dtor 所做的么……</p>
 <p>而对于其他可能需要子类调用父类虚函数的场景，我认为，non-vitual-interface idiom已经足够了。</p>
 <p>BTW：就工程领域而言，可能对 GUI 框架来说，文中的一些套路还是有用的；不过因为个人在这方面没有什么经验，因此持保留意见</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/05/08/fix-full-minidump-issue-of-breakpad/">修复 Breakpad 不能启用 Full Minidump</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-05-08
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>发布分支为 chrome-58 的 google-breakpad 存在无法启用 full minidump 的问题，表现症状是，一旦启用 <code>MiniDumpWithFullMemory</code> 标志，则输出的 dump 文件为 0 字节，但是整个 dump 生成流程没有任何其他异常，相关返回值甚至是 <code>true</code>。</p>
-<p>经过一个上午的跟踪调试，发现问题出现在，breakpad 针对 <code>MiniDumpWithFullMemory</code> 做了特殊处理（会生成一个普通的 minidump 和一个 full dump，后者的文件名多了一个full 后缀），但是这个版本（chrome-58）里却忘了调用生成 full dump 的生成函数…..</p>
-<p>解决方法：对 <a href="(https://github.com/google/breakpad/blob/67649c61853108eb0c29703f6ff0db42e9d69f10/src/client/windows/crash_generation/crash_generation_server.cc">master</a> 和 ) 分支的 <code>CrashGenerationServer::GenerateDump</code> 和 <a href="https://github.com/google/breakpad/blob/chrome_58/src/client/windows/crash_generation/crash_generation_server.cc" target="_blank" rel="noopener">chrome-58</a> 分支做一个 diff，将缺的代码加回来…</p>
-<p>缺失的代码就是下面这段…</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// If the client requests a full memory dump, we will write a normal mini</span></span><br><span class="line"><span class="comment">// dump and a full memory dump. Both dump files use the same uuid as file</span></span><br><span class="line"><span class="comment">// name prefix.</span></span><br><span class="line"><span class="keyword">if</span> (client.dump_type() &amp; MiniDumpWithFullMemory) &#123;</span><br><span class="line">  <span class="built_in">std</span>::wstring full_dump_path;</span><br><span class="line">  <span class="keyword">if</span> (!dump_generator.GenerateFullDumpFile(&amp;full_dump_path)) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>另外，开启了 full minidump 模式之后，完整的 dump 体积会暴增到 200MB 上下，要做好心理准备。</p>
 
         
       

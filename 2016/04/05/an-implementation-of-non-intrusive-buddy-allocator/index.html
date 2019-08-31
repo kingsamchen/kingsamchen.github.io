@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="挖坟：一个非侵入式的 buddy allocator 实现"/>
+  <meta name="description" content="挖坟：一个非侵入式的 buddy allocator 实现">
 
 
 
 
-  <meta name="keywords" content="algorithms, buddy-allocator, KC的废墟堆" />
+  <meta name="keywords" content="algorithms, buddy-allocator, KC的废墟堆">
 
 
 
@@ -38,14 +38,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2016/04/05/an-implementation-of-non-intrusive-buddy-allocator/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2016/04/05/an-implementation-of-non-intrusive-buddy-allocator/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -217,10 +217,10 @@
 <p>于是我想，应该有必要整理一下，万一哪天真的需要呢？</p>
 <h2 id="Theory"><a href="#Theory" class="headerlink" title="Theory"></a>Theory</h2><p>Non-intrusive 的做法是，不在实际分配的内存中加入 meta-data，而是将 buddy-allocator 自身做成一个 allocation bookkeeper。</p>
 <p>考虑到 allocator 要求管理的内存块必须是$2^k, k \in Z$大小，我们可以把一块内存对应的 bookkeeping 做成一棵 perfect binary tree。以大小为 8K 的内存块为例，对应的 perfect binary tree 结构如下：</p>
-<p><img src="/img/memory_chunk_in_perfect_binary_tree.png" alt=""></p>
+<p><img src="/img/memory_chunk_in_perfect_binary_tree.png" alt></p>
 <p>每一个节点对应内存块中的一个可用区域（考虑从上往下的映射）；最下层叶子节点对应完整的内存块，每个叶子节点对应一个最小的内存单元；父节点对应的内存区域包含子节点对应的内存区域。</p>
 <p>而 perfect binary tree 又可以用数组来表示（实际上是特殊的 complete binary tree），一方面可以提升内存利用率（没有额外的前后继指针），又可以提高访问性能（减少动态分配以及连续内存带来的 cache-locality）。</p>
-<p><img src="/img/memory_chunk_in_array.png" alt=""></p>
+<p><img src="/img/memory_chunk_in_array.png" alt></p>
 <h2 id="Implementation"><a href="#Implementation" class="headerlink" title="Implementation"></a>Implementation</h2><p>为了实现方便以及让分配、释放算法看起来更加简洁，作如下两个设定</p>
 <ul>
 <li>定义 <em>maximum consecutive block (MCB)</em> 为一个能被直接管理的最大的连续内存区域，大小仍然要满足$2^k$的要求</li>
@@ -232,7 +232,7 @@ $$M(i)=\begin{cases}\max\left\{M(LC(i)),M(RC(i))\right\} & \text{otherwise}\\M(L
 
 <p>上面 $M(i)$ 表示节点 $i$ 的 MCB 值，也即实际保存在节点里的值；$LC(i)$ 和 $RC(i)$ 分别表示节点 $i$ 的左子节点和右子节点。</p>
 <p>仍然以前面 8K 大小的内存块举例，假设我们要从内存块里分配出大小 1K 的内存，那么这棵树的状态则变成如下样子：</p>
-<p><img src="/img/allocate_1K_out_of_8K.png" alt=""></p>
+<p><img src="/img/allocate_1K_out_of_8K.png" alt></p>
 <p>后面实现过程中会发现这个定义解决掉了很多麻烦。</p>
 <h3 id="implementing-allocation"><a href="#implementing-allocation" class="headerlink" title="implementing allocation"></a>implementing allocation</h3><p>分配算法大体顺序如下：</p>
 <ol>

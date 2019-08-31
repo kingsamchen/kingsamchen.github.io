@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-08-18T13:18:12.754Z</updated>
+  <updated>2019-08-31T16:20:19.661Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Acquire/Release Operation 和 Acquire/Release Fence</title>
+    <link href="http://kingsamchen.github.io/2019/08/31/acquire-release-operations-and-fences/"/>
+    <id>http://kingsamchen.github.io/2019/08/31/acquire-release-operations-and-fences/</id>
+    <published>2019-08-31T15:26:19.000Z</published>
+    <updated>2019-08-31T16:20:19.661Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;其实是 Jeff Preshing 的 &lt;a href=&quot;https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="memory fence" scheme="http://kingsamchen.github.io/tags/memory-fence/"/>
+    
+      <category term="memory ordering" scheme="http://kingsamchen.github.io/tags/memory-ordering/"/>
+    
+  </entry>
   
   <entry>
     <title>解决 CMake 依赖工程中同名 cmake 函数调用混乱</title>
@@ -39,9 +69,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
       <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
   </entry>
   
@@ -66,9 +96,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
-    
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
     
   </entry>
   
@@ -322,9 +352,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
       <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
       <category term="project management" scheme="http://kingsamchen.github.io/tags/project-management/"/>
     
@@ -647,42 +677,6 @@
       <category term="git" scheme="http://kingsamchen.github.io/tags/git/"/>
     
       <category term="dependency management" scheme="http://kingsamchen.github.io/tags/dependency-management/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Jan 2019</title>
-    <link href="http://kingsamchen.github.io/2019/02/06/monthly-read-posts-in-jan-2019/"/>
-    <id>http://kingsamchen.github.io/2019/02/06/monthly-read-posts-in-jan-2019/</id>
-    <published>2019-02-06T11:32:23.000Z</published>
-    <updated>2019-02-10T06:50:22.886Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="c++" scheme="http://kingsamchen.github.io/tags/c/"/>
-    
-      <category term="linux" scheme="http://kingsamchen.github.io/tags/linux/"/>
-    
-      <category term="performance" scheme="http://kingsamchen.github.io/tags/performance/"/>
-    
-      <category term="spinlock" scheme="http://kingsamchen.github.io/tags/spinlock/"/>
-    
-      <category term="allocator" scheme="http://kingsamchen.github.io/tags/allocator/"/>
-    
-      <category term="ptrace" scheme="http://kingsamchen.github.io/tags/ptrace/"/>
     
   </entry>
   

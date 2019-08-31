@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="Gone with the ruins">
 
 
 
@@ -36,14 +36,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/page/4/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/page/4/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -182,6 +182,65 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/">调整 ezio 的 TCPConnection 状态事件</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-01-27
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>上上周的时候给 ezio 做了一个<a href="https://github.com/kingsamchen/ezio/commit/d9e7bde28155b5bb2f144dd4c42083d95ef7b674" target="_blank" rel="noopener">调整</a>，稍微修改了一下 <code>TCPConnection</code> 对外暴露的几个状态变化的事件。</p>
+<p>起因是在写 <a href="https://github.com/kingsamchen/ezio/blob/9a2ea3ffa43578555e8dfcfe769db10bb45e0087/examples/chat/chat_client.cpp#L62" target="_blank" rel="noopener">example/chat-client</a> 的时候，因为主线程单独跑了一个事件循环从 <code>stdin</code> 中读取用户输入，所以 <code>ChatClient</code> 以及内部的 <code>TCPClient</code> 是跑在另外的工作线程上。</p>
+<p>因为那个时候 <code>TCPClient</code> 之对外暴露了 connection 和 disconnection 的事件回调（这两个事件还统一成了一个 <code>on_connection()</code>），所以自然选择在 disconnection 的时候进行退出主循环的操作。</p>
+<p>但是这个时候会出现：</p>
+<ul>
+<li>主循环结束后立马析构 <code>ChatClient</code>，连同内部的 <code>TCPClient</code> 一起销毁。因为这部分代码跑在主线程上，所以不会和工作线程有任何 coordination。</li>
+<li><code>TCPClient</code> 会在触发 <code>on_connection()</code> 来表明连接断开后会继续做一些内部清理工作；然而因为前面已经将 <code>TCPClient</code> 析构了，导致 UAF</li>
+</ul>
+<p>而当时为了解决这个问题，采用的 workaround 时，<code>ChatClient::OnConnection()</code> 在发现连接断开后，通过 <code>RunTaskAfter()</code> 的方式延后执行 <code>EventLoop::Quit()</code>。</p>
+<p>这个做法非常丑陋而且不可靠。<br>
+          <div class="read-more">
+            <a href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/01/08/bad-smells-in-golang/">来一口 golang 做的玻璃渣</a>
         
       </h1>
@@ -228,7 +287,7 @@
           </div>
         
       
-    </div>
+    </p></div>
 
     
 
@@ -283,7 +342,7 @@
           </div>
         
       
-    </div>
+    </p></div>
 
     
 
@@ -529,58 +588,7 @@
           </div>
         
       
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/12/06/build-your-own-handlerthread-part-3/">Build Your Own HandlerThread Part 3</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-12-06
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>前面我们实现了 <code>MessageLoop</code>，现在该轮到 <code>TaskRunner</code> 了。</p>
-<p>在我们的设计中，<code>TaskRunner</code> 的定位是类似 <code>Handler</code>，用来驱动/使用 <code>MessageLoop</code>，将 <code>MessageLoop</code> 隐藏在日常使用中。</p>
-<p><code>TaskRunner</code> 的实现比较简单，因为几乎所有的实际工作都是由内部的 <code>MessageLoop</code> 完成。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Our MessageLoop doesn't provide a way to complete pending tasks when it is asked to quit.</span></span><br><span class="line"><span class="comment">// Therefore our post-task methods don't care about if a task was submitted.</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.time.Instant;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskRunner</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> MessageLoop _loop;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Uses current thread's owning MessageLoop.</span></span><br><span class="line">    <span class="comment">// Throws an exception if the thread has no bound MessageLoop.</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TaskRunner</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        _loop = MessageLoop.current();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">TaskRunner</span><span class="params">(MessageLoop loop)</span> </span>&#123;</span><br><span class="line">        _loop = loop;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> MessageLoop <span class="title">getMessageLoop</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> _loop;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postTask</span><span class="params">(Runnable r)</span> </span>&#123;</span><br><span class="line">        _loop.enqueueTask(<span class="keyword">new</span> PendingTask(r, Instant.EPOCH));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postTaskAt</span><span class="params">(Runnable r, <span class="keyword">long</span> uptimeMillis)</span> </span>&#123;</span><br><span class="line">        _loop.enqueueTask(<span class="keyword">new</span> PendingTask(r, Instant.ofEpochMilli(uptimeMillis)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postDelayedTask</span><span class="params">(Runnable r, <span class="keyword">long</span> delayMillis)</span> </span>&#123;</span><br><span class="line">        _loop.enqueueTask(<span class="keyword">new</span> PendingTask(r, Instant.now().plusMillis(delayMillis)));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runTask</span><span class="params">(Runnable r)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (_loop.belongsToCurrentThread()) &#123;</span><br><span class="line">            r.run();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            postTask(r);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>和 <code>Handler</code> 一个最明显的不同之处仅是我们增加了 <code>runTask()</code> 函数。</p>
-<p>和 <code>postTask()</code> 不同，如果当前线程就是 loop thread，<code>r</code> 会被立即执行。这在某些时候是一个优势。</p>
-
-        
-      
-    </div>
+    </p></div>
 
     
 

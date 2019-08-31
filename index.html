@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="Gone with the ruins">
 
 
 
@@ -36,14 +36,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -182,6 +182,56 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/08/31/acquire-release-operations-and-fences/">Acquire/Release Operation 和 Acquire/Release Fence</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-31
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>其实是 Jeff Preshing 的 <a href="https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/" target="_blank" rel="noopener">Acquire and Release Fences Don’t Work the Way You’d Expect</a> 这篇文章的笔记。</p>
+<p>acquire-release operation 和 acquire-release fence 之间存在非常 subtle 的区别，很多人都在这个上犯过错误。</p>
+<p>比如 Jeff Preshing 自己，以及 Herb Sutter。</p>
+<p>个人习惯，笔记一开始就是在 onenote 里，懒得重新做一遍 markdown 了，索性转成 PDF 直接内嵌。</p>
+<iframe src="https://onedrive.live.com/embed?cid=4496A33F126535A6&resid=4496A33F126535A6%2149246&authkey=AG4NakEdjaO2xII&em=2" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/08/18/resolve-clashed-cmake-function-call/">解决 CMake 依赖工程中同名 cmake 函数调用混乱</a>
         
       </h1>
@@ -272,7 +322,7 @@
           </div>
         
       
-    </div>
+    </p></div>
 
     
 
@@ -536,68 +586,7 @@
           </div>
         
       
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/06/23/add-value-type-conversion-for-cmdline/">为 CommandLine 加上值指定类型转换以及一些扯淡</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-06-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>过去两周抽了点时间给 <code>KBase::CommandLine</code> 做了一个<a href="https://github.com/kingsamchen/KBase/commit/e15c81869a9da5422e2012f6b0c4b87be2a1bf0b" target="_blank" rel="noopener">变更</a>，重新设计了 parameter 和 switch 的用户访问接口。</p>
-<p>变更的其中一个核心改动是：获取 parameter 或 switch value 时提供了值类型的转换。</p>
-<p>有了这个 change 之后，使用者可以通过类似</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> port = cmdline.GetSwitchValueAs&lt;<span class="keyword">int</span>&gt;(<span class="string">"port"</span>, <span class="number">9876</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> limit = cmdline.GetParameterAs&lt;<span class="keyword">long</span> <span class="keyword">long</span>&gt;(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
-<p>的方式直接获取目标值，免去了自己手动将 <code>std::string</code> convert 到指定类型的操作。</p>
-<p>同时，这两个接口还支持自定义的 data type converter，用户只需要传入一个 function object 就可以定制转换过程。</p>
-<hr>
-<p>和 Python 的 <code>argparse</code>；golang 的 <code>flag</code> 乃至 boost 的 <code>program_options</code> 这些需要在一开始“定义”程序使用的 switches(flags) 及其绑定的变量的库不同，<code>CommandLine</code> 对 switches 的使用更多的是一种辅助探测，非侵入式的。</p>
-<p>这种设计是有意的，因为这符合我个人的设计哲学：低层次的设计尽量避免对高层次的约束依赖。</p>
-<p>Golang 的 flags 在普通场景下看似使用便利，但是如果你在多个组件里定义了同一个名叫 <code>conf</code> 的flag，程序就会因为 <em>redefined flags</em> 而导致 panic。更不用提 panic 时甚至不会给出重复定义的上下文，只能靠你自己一个一个排查。</p>
-<p>而避免这种问题的发生的唯一方法就是，人为的规定只允许程序主模块（<code>func main()</code>）内才能定义 flag，第三方包千万不能定义flag。</p>
-<p>如果做不到这点，哪怕不发生 redefined flags 的问题，你的程序也会因为引入了第三方包而“自发”的获得了这些 flags 的定义。</p>
-<p>Python 的 <code>argparse</code> 设计上坑比 <code>flag</code> 稍少，但是在一些复杂的需求上也会让你有一种如鲠在喉的感觉。</p>
-<p>本质上，这些库充当的都是 controller 或者 manager 的角色，为了完成他们的定位，不可避免会通过提供一些高层抽象来完成建模；但是 commandline 的作用大部分时候是给主程序提供支持，作为基础库，怎么可能知道主程序对命令行有什么样的需求呢？</p>
-<p>灵活性和易用性绝大多数的时候都是相互冲突的。</p>
-<p>抽象虽然能够简化细节，做到 selective ignorance，但是同时也增加了约束，这部分约束也是抽象的代价之一。</p>
-
-        
-      
-    </div>
+    </p></div>
 
     
 

@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="Gone with the ruins">
 
 
 
@@ -36,14 +36,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/page/6/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/page/6/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -182,6 +182,62 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/11/11/ebo-with-multiple-inheritance-in-msvc/">MSVC 对多继承下的 EBO 支持的一个 workaround</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-11-11
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>首先简单介绍一下 EBO（Empty Base Class Optimization）。</p>
+<p>因为 C++ 规定，任何一个 instance 在内存中必须要有唯一的地址，因此一个空的 class/struct 会在编译时被偷偷插入一个外人看不到的 <code>char mem;</code>，于是这个空类的每一个 instance 都可以有一个唯一的地址了。</p>
+<p>但是如果将这个空类作为某个类的成员时，这个隐藏的成员会被计入内存布局之中，考虑到 memory padding，有时候会导致类对象体积膨涨一倍。</p>
+<p>例如考虑：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">E</span> &#123;</span>&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A1</span> &#123;</span></span><br><span class="line">    E e;</span><br><span class="line">    <span class="keyword">int</span> i;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">assert(<span class="keyword">sizeof</span>(E) == <span class="number">1</span>);</span><br><span class="line">assert(<span class="keyword">sizeof</span>(A1) == <span class="number">8</span>);</span><br></pre></td></tr></table></figure>
+<p>我们会发现每一个 <code>A1</code> 的 instance 都占了 8-byte，比起 4-byte 足足翻了一倍。</p>
+<p>占用内存无端变大导致 cache 问题啥的就不讲了，这方面的内容任何讲 computer architecture 的书应该都会有。<br>
+          <div class="read-more">
+            <a href="/2018/11/11/ebo-with-multiple-inheritance-in-msvc/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/11/04/chromium-base-message-loop-internals-0/">Chromium Base MessageLoop Internals (0)</a>
         
       </h1>
@@ -225,7 +281,7 @@
           </div>
         
       
-    </div>
+    </p></div>
 
     
 
@@ -289,7 +345,7 @@
           </div>
         
       
-    </div>
+    </p></div>
 
     
 
@@ -410,7 +466,7 @@
           </div>
         
       
-    </div>
+    </p></div>
 
     
 
@@ -453,7 +509,7 @@
 
         
           <h2 id="The-Context"><a href="#The-Context" class="headerlink" title="The Context"></a>The Context</h2><p>之前拿 Python 写了一个 CMake 的 build driver，因为要控制一些编译参数，所以使用了如下代码：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">'--build-test'</span>, dest=<span class="string">'build_test'</span>, type=bool, default=<span class="keyword">True</span>)</span><br><span class="line">args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">no_build_unittest = <span class="keyword">not</span> args.build_test</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line">parser = argparse.ArgumentParser()</span><br><span class="line">parser.add_argument(<span class="string">'--build-test'</span>, dest=<span class="string">'build_test'</span>, type=bool, default=<span class="literal">True</span>)</span><br><span class="line">args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">no_build_unittest = <span class="keyword">not</span> args.build_test</span><br></pre></td></tr></table></figure>
 <p>后来有一次偶然发现，无论指定 <code>--build-test=False</code> 还是 <code>--build-test=false</code> 还是 <code>--build-test=0</code>，<code>args.build_test</code> 的值永远是 <code>True</code>。</p>
 <p>然后一脸懵逼。</p>
 <p>万幸有万能的 Stackoverflow，搜了一下发现有人遇到了类似的问题。</p>
@@ -524,58 +580,7 @@
           </div>
         
       
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/09/26/made-a-pr-for-ydiff/">给 ydiff 提了个 PR</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-09-26
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://github.com/ymattw/ydiff" target="_blank" rel="noopener">ydiff</a> 是基于 CLI 的一个 diff tool，支持 side-by-side 模式</p>
-<p>前段时间在 surface 上 pip 安装后发现不能使用，直接提示找不到 <code>SIGPIPE</code>；看来这玩意儿压根没考虑过支持 Windows。</p>
-<p>因为觉得这个程序有点好玩，所以花了点时间对源代码做了一点修改，增加了对 Windows 的支持。</p>
-<p>（其实就是做了一下 SIGPIPE 的兼容问题）</p>
-<p>然后给作者提了一个 PR：<a href="https://github.com/ymattw/ydiff/pull/81" target="_blank" rel="noopener">https://github.com/ymattw/ydiff/pull/81</a></p>
-<p>最后赞一下 python 内建的 decorator 机制，做非侵入式的函数 hook 还是很便捷的。</p>
-
-        
-      
-    </div>
+    </p></div>
 
     
 

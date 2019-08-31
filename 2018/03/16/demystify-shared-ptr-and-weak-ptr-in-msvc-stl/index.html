@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="浅析 shared_ptr：MSVC STL 篇"/>
+  <meta name="description" content="浅析 shared_ptr：MSVC STL 篇">
 
 
 
 
-  <meta name="keywords" content="c++, visual studio, shared_ptr, shared_ptr-internals, source-code-study, weak_ptr, KC的废墟堆" />
+  <meta name="keywords" content="c++, shared_ptr, visual studio, shared_ptr-internals, source-code-study, weak_ptr, KC的废墟堆">
 
 
 
@@ -38,14 +38,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2018/03/16/demystify-shared-ptr-and-weak-ptr-in-msvc-stl/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -316,7 +316,7 @@
 <p>如果画一下</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> sp = <span class="built_in">std</span>::make_shared&lt;SharedThisD&gt;();</span><br></pre></td></tr></table></figure>
 <p>sp 的结构图，那么大概是这样（部分手绘，忽略渣效果）：</p>
-<p><img src="/img/enable_shared_from_this_msvc.png" alt=""></p>
+<p><img src="/img/enable_shared_from_this_msvc.png" alt></p>
 <p>可以看出，完成构造之后 <code>enable_shared_from_this</code> 保存了指向子类的 weak-ptr，加上用来管理的 <code>shared_ptr</code>，ref-count 控制块里：</p>
 <ul>
 <li>use-count 是 1</li>
@@ -427,9 +427,9 @@
             
               <a href="/tags/c/">c++</a>
             
-              <a href="/tags/visual-studio/">visual studio</a>
-            
               <a href="/tags/shared-ptr/">shared_ptr</a>
+            
+              <a href="/tags/visual-studio/">visual studio</a>
             
               <a href="/tags/shared-ptr-internals/">shared_ptr-internals</a>
             

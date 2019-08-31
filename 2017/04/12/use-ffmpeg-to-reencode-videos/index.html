@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="使用 ffmpeg 压制视频"/>
+  <meta name="description" content="使用 ffmpeg 压制视频">
 
 
 
 
-  <meta name="keywords" content="ffmpeg, C#, 视频压制, KC的废墟堆" />
+  <meta name="keywords" content="ffmpeg, C#, 视频压制, KC的废墟堆">
 
 
 
@@ -38,14 +38,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -216,7 +216,7 @@
 </ul>
 <p>因此在项目提测结束，基本验收通过之后，我想籍由这个功能，重新回忆一下 C# 和 WPF （噫，怎么老是再回忆这个…），所以花了一个周末，就有了 <a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleVideoEncoder" target="_blank" rel="noopener">SimpleVideoEncoder</a></p>
 <p>但是在实现过程中我发现，纵使有 async/await，它也不是银弹，也有他覆盖不了的 case；而我对 C#/.NET 的多线程模型实在是完全不懂，导致某些细节完全没法下手（只能说某些case 下，CSP 真是好用到想哭，还好 WPF 的 UI-thread 提供了一个 <code>Dispatcher</code> 支持了对 UI 线程的 CSP；再将需求简化到 Demo 程度后，勉强实现了出来。</p>
-<p><img src="/img/ffmpeg-encode.png" alt=""></p>
+<p><img src="/img/ffmpeg-encode.png" alt></p>
 <p>上层界面基于 WPF，但是没有走 MVVM。</p>
 <p>实话说，经过一年半（距离上次写 EasyKeeper），自己主导过两个不大不小的项目后，对于为什么需要有 MVC/MVP/MVVM 有了一些更实际的想法，并且也能理解有时候过分追求这些反而是一种坑。</p>
 <p>考虑到目前应该是没法公开为投稿工具写的那部分代码（压制模块算起来大概有 1K+ lines of code），所以这个 <em>SimpleVideoEncoder</em> 的意义也大大折扣，基本只能作为一个 ffmpeg 压制功能的简单展示…</p>

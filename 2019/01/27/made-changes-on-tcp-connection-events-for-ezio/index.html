@@ -1,28 +1,28 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="调整 ezio 的 TCPConnection 状态事件"/>
+  <meta name="description" content="调整 ezio 的 TCPConnection 状态事件">
 
 
 
 
-  <meta name="keywords" content="ezio, tcp, KC的废墟堆" />
+  <meta name="keywords" content="ezio, tcp, KC的废墟堆">
 
 
 
@@ -38,14 +38,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -224,7 +224,7 @@
 <p>而当时为了解决这个问题，采用的 workaround 时，<code>ChatClient::OnConnection()</code> 在发现连接断开后，通过 <code>RunTaskAfter()</code> 的方式延后执行 <code>EventLoop::Quit()</code>。</p>
 <p>这个做法非常丑陋而且不可靠。<br><a id="more"></a><br><strong>注意：任何在生产环境中需要依靠 delay-execution，比如很多人喜欢的 <code>sleep()</code>，<code>postDelayedTask()</code> .etc 来实现恰好的同步都是错误的，因为上下文调度的不确定性，这种做法基本就是给自己挖坑。</strong></p>
 <h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><p>在花了一点时间做了一个 UML 时序图将 <code>TCPConnection</code> 以及对应的 <code>TCPServer</code> 和 <code>TCPClient</code> 关联之后</p>
-<p><img src="/img/life_sequence_of_tcp_connecion.svg" alt=""></p>
+<p><img src="/img/life_sequence_of_tcp_connecion.svg" alt></p>
 <p>我发现其实我需要的，大概就是增加一个 <code>TCPConnection</code> 实例销毁的事件回调。</p>
 <p>于是我们就有：</p>
 <table>
