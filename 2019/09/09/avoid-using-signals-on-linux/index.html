@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="避免在 Linux 上使用 signals">
+
+
+
+
+  <meta name="keywords" content="Linux, Unix, signal, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/09/09/avoid-using-signals-on-linux/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> 避免在 Linux 上使用 signals - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          避免在 Linux 上使用 signals
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-09
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-背景回顾：什么是-signal？"><span class="toc-text">0x00 背景回顾：什么是 signal？</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-signal-的奇妙特性（天坑）"><span class="toc-text">0x01 signal 的奇妙特性（天坑）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Signal-Handling-and-Reentrant-functions"><span class="toc-text">Signal Handling and Reentrant functions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Pending-Signals-and-Signal-Coalescence"><span class="toc-text">Pending Signals and Signal Coalescence</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#System-Calls-Can-Be-Interrupted"><span class="toc-text">System Calls Can Be Interrupted</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Multithreading-is-Not-Compatible-With-Signals"><span class="toc-text">Multithreading is Not Compatible With Signals</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-IO事件替代法"><span class="toc-text">0x02 IO事件替代法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#signalfd"><span class="toc-text">signalfd</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#The-self-pipe-trick"><span class="toc-text">The self-pipe trick</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#最佳实践总结"><span class="toc-text">最佳实践总结</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>首先承认这个标题乍看之下很像 troll，但真的不是 troll；“避免使用”总的来说更接近 <em>whenever possible</em> 的意思。</p>
+<p>另外，这篇 post 面向的主要是偏底层的、直接使用 system calls 或其 runtime wrapper（glibc）的开发者，最典型的比如 C/C++ 开发者。</p>
+<p>其他语言的开发者通常因为要么 runtime “屏蔽”了这部分内容（如 Java）；要么 runtime 自身对这部分做了较大的抽象/改造（如 Golang），因此很难对此 post 提到的各种观点/做法产生共鸣。</p>
+<p>FYI：自从工作后中文写作能力一直在退化，因此这篇文章如果存在语句不通顺或者用词不当的地方，烦请见谅。</p>
+<h2 id="0x00-背景回顾：什么是-signal？"><a href="#0x00-背景回顾：什么是-signal？" class="headerlink" title="0x00 背景回顾：什么是 signal？"></a>0x00 背景回顾：什么是 signal？</h2><p>signal 源自 Unix，后来成为 POSIX 标准的一部分，现在则被几乎所有的 *nix 系统支持。</p>
+<p>signal 本质上是一种通讯机制，用于系统在某个事件（event）发生时通知某个进程（或线程）。<br><a id="more"></a><br>典型的 signal 如</p>
+<ul>
+<li><code>SIGSEGV</code> 程序发生段错误</li>
+<li><code>SIGINT</code> 终端控制台中触发了 Ctrl+C</li>
+<li><code>SIGCHLD</code> 某个子进程结束</li>
+<li>…</li>
+</ul>
+<p>注：较完整的 signal 列表可以参见 <a href="http://man7.org/linux/man-pages/man7/signal.7.html" target="_blank" rel="noopener">signal.7</a> 中的 <em>Signal numbering for standard signals</em> 一节。</p>
+<p>signal 的信息传递涉及两个步骤：</p>
+<ol>
+<li><p>发送 signal：如果某个 signal 要被发往进程 P，则操作系统会更新进程 P 的执行上下文数据以标识 P 将要接收 signal</p>
+</li>
+<li><p>signal 接收：当操作系统将执行上下文切回进程 P 时，操作系统会检查 P 是否有未被屏蔽的活跃的（unblocked &amp; pending） signal；如果存在则强制进程 P 对其进行处理。<br>如果同时存在多个这样的 signal，则通过一套选择机制选出一个 signal；通常先选择 signal # 最小的。</p>
+</li>
+</ol>
+<p>对于某个 signal，进程 P 可以选择收到之后</p>
+<ul>
+<li>执行默认行为（可能是直接结束程序；也可能是忽略）</li>
+<li>强制忽略</li>
+<li>执行先前安装的 signal handler；这是一个由用户提供的自定义函数</li>
+</ul>
+<h2 id="0x01-signal-的奇妙特性（天坑）"><a href="#0x01-signal-的奇妙特性（天坑）" class="headerlink" title="0x01 signal 的奇妙特性（天坑）"></a>0x01 signal 的奇妙特性（天坑）</h2><p>signal 因为其各种神奇的特性，在业界常被冠之以 <em>“probably one of the worst parts of UNIX APIs”</em>。</p>
+<h3 id="Signal-Handling-and-Reentrant-functions"><a href="#Signal-Handling-and-Reentrant-functions" class="headerlink" title="Signal Handling and Reentrant functions"></a>Signal Handling and Reentrant functions</h3><p>当一个进程要通过 signal handler 处理某个 signal 时，原有的执行流程会被操作系统打断（interrupted），紧接着执行 signal handler，结束后恢复执行先前被打断的流程。</p>
+<p>所以存在一个可能：</p>
+<ol>
+<li>执行某 A 函数过程中被打断</li>
+<li>执行 signal handler</li>
+<li>signal handler 中又调用了 A 函数</li>
+</ol>
+<p>如果A函数存在非局部的副作用，例如使用了某个全局变量或者静态变量，则两次执行后可能导致这个变量处于一个不一致的状态，例如 <code>printf()</code>。</p>
+<p>更糟糕的是，如果 A 函数会分配内存，并且在分配内存过程中被打断，那么由于内存分配（如 <code>malloc()</code>）的实现可能底层使用了锁，导致 signal handler 中调用 A 函数分配内存时出现死锁。</p>
+<p>因此能在 signal handler 内调用的函数必须要具备 <strong>reentrant（可重入）</strong> 这一特性。这一类函数的学名叫 <em>async signal safe functions</em>。</p>
+<p>Linux 上 signal-safe 的函数列表可见<a href="http://man7.org/linux/man-pages/man7/signal-safety.7.html" target="_blank" rel="noopener">这里</a>；把作用类似的函数合并同类项之后发现其实符合要求的函数并不是很多。</p>
+<h3 id="Pending-Signals-and-Signal-Coalescence"><a href="#Pending-Signals-and-Signal-Coalescence" class="headerlink" title="Pending Signals and Signal Coalescence"></a>Pending Signals and Signal Coalescence</h3><p>当类型为 S 的 signal handler 被执行时，系统会 block 此类型后续的 signal，导致后续的这个类型的 signal 进入 pending 状态，一直等到 signal handler 结束执行才会触发接收。</p>
+<p>同时，如果有一个类型为 S 的 signal 处于 pending 状态，那么后续 S 类型的 signal 都会被丢弃，仿佛被合并一般。</p>
+<p>这个特性表明：如果存在一个类型为 S 的 pending signal，则<strong>至少有一个</strong> S 类型的 signal 被系统派发给当前进程。</p>
+<p>注：哪怕不在执行 signal handler 中，一个 signal 被生成之后也不会立即被进程响应。这个时候 signal 也处于 pending 状态。所以 signal coalescence 可以发生在你毫无准备地时候。</p>
+<h3 id="System-Calls-Can-Be-Interrupted"><a href="#System-Calls-Can-Be-Interrupted" class="headerlink" title="System Calls Can Be Interrupted"></a>System Calls Can Be Interrupted</h3><p>前面说过，如果进程收到一个信号，则系统可以在调度上下文时候强制进程对信号做出处理。</p>
+<p>如果进程此时正在执行一些 IO 相关的 syscall，那么这个 syscall 会失败，并返回 <code>EINTR</code>。</p>
+<p>蛋疼的是，BSD、Solaris、Linux 对于是否自动 restart syscall，哪些 syscall 可以被 restart 的做法是不同的。</p>
+<p>所以有了相对更靠谱的 <code>sigaction()</code> 以及 <code>SA_RESTART</code> 来取代糟糕的 <code>signal()</code>。</p>
+<p>然而，即使是在 Linux 上，使用 <code>SA_RESTART</code> 也不能保证所有的 syscall 能够重启而不返回 <code>EINTR</code>，见<a href="http://man7.org/linux/man-pages/man7/signal.7.html" target="_blank" rel="noopener">Interruption of system calls and library functions by signal handlers</a></p>
+<p>但是相比起 <code>signal()</code>，只要能使用 <code>sigaction()</code> 就应该使用这个 syscall；至少它又<a href="http://man7.org/linux/man-pages/man2/signal.2.html" target="_blank" rel="noopener">更好的 portability</a></p>
+<h3 id="Multithreading-is-Not-Compatible-With-Signals"><a href="#Multithreading-is-Not-Compatible-With-Signals" class="headerlink" title="Multithreading is Not Compatible With Signals"></a>Multithreading is Not Compatible With Signals</h3><p>单纯的 signal handling 已经很难了，线程的出现让这个问题变得难上加难。</p>
+<p>Linux 上线程出现的很晚，NTPL（aka POSIX Threads） 进入内核也是在 2.6 之后，比起从 Unix 时代就有的 signal 而言，它们俩之间存在至少几十年的代差。</p>
+<p>自从引入线程之后，Linux 的 signal 按照接收层级大致分成两类：</p>
+<ol>
+<li>process-directed，即发送目标是一个 PID。可以通过 <code>kill()</code> 触发；目前绝大多数 signal 都是这个类型。</li>
+<li>thread-directed，即发送目标是一个 thread，可以通过 <code>pthread_kill()</code> 人为触发，典型代表是 <code>SIGSEGV</code></li>
+</ol>
+<p>对于 process-directed signals，如果进程有多个线程，则系统会选择<strong>任意</strong>一个线程来处理这个 signal，选择的原则是尽可能不阻碍 signal 处理。</p>
+<p>所以面对一个系统发过来的 signal，你很可能都不知道下一个时刻哪个线程会被突然拉取处理这个 signal。</p>
+<p>另外前面提到 signal handler 中能做的事情有限，约束非常严格。</p>
+<p>牵扯到多线程之后，signal handler 的约束列表里可以加上：<strong>绝对不能使用任何 pthread 函数</strong>。</p>
+<p>另外，很多原先的 signal 相关的函数可能都会有多线程对应的版本，因为原来的那些函数可能是 non-thread-safe的，在多线程中使用基本是 unspecified behavior。</p>
+<p>典型的比如 <code>sigprocmask()</code> 就有对应的 <code>pthread_sigmask()</code>。</p>
+<p>强行在多线程程序里使用 signal 的后果就是，不光要考虑很难的 thread-safety 还要考虑很坑的 signal-safety，这画面实在太美。</p>
+<h2 id="0x02-IO事件替代法"><a href="#0x02-IO事件替代法" class="headerlink" title="0x02 IO事件替代法"></a>0x02 IO事件替代法</h2><p>虽然你可以主动不使用 signal，但是因为这是传达系统事件的机制，你很可能面临着不得不对某些 signal 进行处理的场景，比如通过处理 <code>SIGINT</code>，<code>SIGQUIT</code>，<code>SIGTERM</code> 来实现服务的 graceful shutdown。</p>
+<p>一种经典的对 signal 进行处理的方式是将 signal 转换为某个 file descriptor 的 IO 活动事件，并且将这个 fd 关联到某个的 IO multiplexor 上，fd 的 IO handler 不会受到先前提到的 signal handler 的各种约束，处理上和普通的 IO 没有明显的差别。</p>
+<h3 id="signalfd"><a href="#signalfd" class="headerlink" title="signalfd"></a>signalfd</h3><p>Linux 自内核 2.6 以来便提供了 <code>signalfd(2)</code>，可以允许你创建一个 fd 并且当某个 signal 来时 fd 变为可读。</p>
+<p>具体的使用方式可以参考 man 上的<a href="http://man7.org/linux/man-pages/man2/signalfd.2.html" target="_blank" rel="noopener">例子</a>，这里不再重复引用。</p>
+<p>这里提几个使用 <code>signalfd(2)</code> 需要注意的点。</p>
+<p><strong># 0</strong> </p>
+<p>要使用 <code>signalfd(2)</code> 接管某个 signal，必须首先将这个 signal 屏蔽。</p>
+<p>这是因为 <code>signalfd(2)</code> 并没有改变现有的 signal 分发机制。如果不屏蔽 signal，那么 signal 依然会被系统派发到进程中。通过屏蔽这个 signal 将其转为 pending 状态，触发 signalfd 的可读事件。</p>
+<p>signalfd 被读取后，对应的 signal 从进程的 signal 列表里移除。</p>
+<p><strong># 1</strong></p>
+<p>传统的单线程模式下，屏蔽使用 <code>sigprocmask()</code> 完成。然而在多线程里使用这个函数，使用这个函数只能修改当前线程的 signal mask，同时调用行为也是不确定且不安全的。</p>
+<p>此时必须要需要使用 <code>pthread_sigmask()</code>。</p>
+<p>新创建的线程会自动继承调用线程的 signal mask。</p>
+<p>修改 signal mask 后创建的子进程也会继承父进程的 signal mask。因此通常来说，在调用 <code>exec*()</code> 之前应该 unblock signal，不管实在单线程还是多线程里。</p>
+<p>当然现实世界里其他程序会不会这么做是另外一件事。</p>
+<p><strong># 2</strong></p>
+<p><code>signalfd(2)</code> 无法承接同步产生的 signal。</p>
+<p>这类 signal 的两个典型的代表分别是：<code>SIGSEGV</code> 和 <code>SIGFPE</code>。</p>
+<p>对于这类 signal，需要使用后面的方法来处理。</p>
+<p><strong># 3</strong></p>
+<p>总的来说，在 Linux 下使用 <code>signalfd(2)</code> 是一个较为便捷的方法。</p>
+<p>它的最大缺陷大概是只能在 Linux 平台上使用，不具备通用性。</p>
+<h3 id="The-self-pipe-trick"><a href="#The-self-pipe-trick" class="headerlink" title="The self-pipe trick"></a>The self-pipe trick</h3><p>这是一个有历史的做法。</p>
+<p>这个做法的核心可以用两句话来概括：</p>
+<ol>
+<li>创建一个匿名管道 <code>pipe(2)</code>，将读端和写段都设置为 non-blocking</li>
+<li>程序在 signal handler 里利用 <code>write(2)</code> 往 pipe 的写端写一个字节；读端绑定到某个 IO multiplexor 上，通过可读事件触发。</li>
+</ol>
+<p>实际例子可参见 <em>The Linux Programming Interface</em> 这本书中的这个 <a href="https://github.com/posborne/linux-programming-interface-exercises/blob/master/tlpi-dist/altio/self_pipe.c" target="_blank" rel="noopener">sample</a>。</p>
+<p>使用这个方法的好处是，不需要额外屏蔽 signal，而是直接利用了原来的 signal disposition &amp; handling；同时几乎所有 POSIX 平台都支持这种做法。</p>
+<p>如果需要管理多个 signal，那么可以：</p>
+<ol>
+<li>为每个 signal 使用一套 pipe pair；或者</li>
+<li>signal handler 中往写端写入激发的 signal number，大概是四个字节；读端读出后 dispatch 到对应的 handler。</li>
+</ol>
+<p>另一种类似的扩展方法是，将 anonymous pipe 替换为 unix domain socket，其余的做法基本一致。</p>
+<p>这是 Qt 官方文档中使用的<a href="https://doc.qt.io/qt-5/unix-signals.html" target="_blank" rel="noopener">方法</a>。</p>
+<h2 id="最佳实践总结"><a href="#最佳实践总结" class="headerlink" title="最佳实践总结"></a>最佳实践总结</h2><p>这里点一下题目，最佳时间就是：尽可能不用 signal。</p>
+<p>包括但不限于：</p>
+<ul>
+<li><p>不拿 signal 做 IPC</p>
+<p>请使用 pipe / fifo / unix domain socket 甚至 tcp/udp socket 等更靠谱的方式</p>
+</li>
+<li><p>不要使用基于 signal 的系统函数，比如 <code>alarm()</code>，<code>timer_create()</code> 等。基本集中于定时器相关的。</p>
+<p>对于这种需求，请使用 poller wait 或者 timerfd。</p>
+</li>
+<li><p>对于 <code>SIGCHLD</code>，如果不需要关心子进程何时死亡，那么可以直接将 <code>SIGCHLD</code> 的 handler 设置为 <code>SIG_IGN</code>，让系统自动 reap 结束的子进程。</p>
+</li>
+<li><p>对于确实需要处理（注意这里说的是处理）的 signal，使用前面说到的 IO 事件替代法，将 signal 转换为 fd 的 IO 活动进行处理。</p>
+</li>
+</ul>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/09/09/avoid-using-signals-on-linux/">http://kingsamchen.github.io/2019/09/09/avoid-using-signals-on-linux/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/Linux/">Linux</a>
+            
+              <a href="/tags/Unix/">Unix</a>
+            
+              <a href="/tags/signal/">signal</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/09/01/monthly-read-posts-in-aug-2019/">
+        <span class="next-text nav-default">Monthly Read Posts in Aug 2019</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/09/09/avoid-using-signals-on-linux/';
+        this.page.identifier = '2019/09/09/avoid-using-signals-on-linux/';
+        this.page.title = '避免在 Linux 上使用 signals';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

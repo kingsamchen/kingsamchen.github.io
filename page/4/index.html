@@ -182,6 +182,67 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/">C++ 工程依赖管理新方向：CMake & Git</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-10
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>本文内容中提及的 CMake 均指提倡 target-based properties 的 <a href="https://kingsamchen.github.io/2018/06/19/modern-cmake/">modern cmake</a>，而非史前版本的 legacy cmake。</p>
+<h3 id="The-Right-Way-源码依赖"><a href="#The-Right-Way-源码依赖" class="headerlink" title="The Right Way: 源码依赖"></a>The Right Way: 源码依赖</h3><p>对于 C++ 工程而言，只要 ABI 的问题还存在，源码依赖就是最稳妥最普适最可靠的依赖引入方式；即使这些引入的源码在构建中会单独编译成（动/静态）库。</p>
+<p>同时，GitHub 成为开源文化社区的标杆后，获取实现了某一功能的第三方库的源代码的难度大大降低。</p>
+<p>因此个人倾向上：只要允许，都应该以特定版本的源码引入的方式去依赖一个第三方库。</p>
+<p>事实上，Google Facebook 这些大厂内部实行的 monorepo 也是源码依赖的一种实现方式，因为某个工程需要的依赖源码都可以一并获取到。</p>
+<p>在使用 CMake 作为构建系统的工程体系下，要以源码依赖的方式添加一个子工程只需要使用 <code>add_subdirectory()</code> 添加目标工程的顶层目录（根 <code>CMakeLists.txt</code> 所在的目录）。</p>
+<h3 id="Git-Submodule-一次不完美的尝试"><a href="#Git-Submodule-一次不完美的尝试" class="headerlink" title="Git Submodule: 一次不完美的尝试"></a>Git Submodule: 一次不完美的尝试</h3><p>我的个人项目 KBase 和 ezio，在此之前都是通过 git submodule 的方式引入自己需要的依赖源代码，然后通过</p>
+<ul>
+<li>Visual Studio 子工程添加到解决方案（Windows 平台）</li>
+<li>CMake <code>add_subdirectory()</code> 建联（*nix 平台）</li>
+</ul>
+<p>依赖的版本管理直接复用 submodule 提供的特性。<br>
+          <div class="read-more">
+            <a href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/02/06/monthly-read-posts-in-jan-2019/">Monthly Read Posts in Jan 2019</a>
         
       </h1>
@@ -550,65 +611,6 @@
 <p>那么，要在 Windows 上实现类似的效果，必须要能够拿到主线程的 <code>EvenetLoop</code>，我思前想后，除了引入一个 main event-loop 的概念之外，很难保持当前抽象框架上解决这个问题。</p>
 <p>同时为可考虑到两个平台的基本行为的一致性，最终我放弃了这个特性。</p>
 <p>毕竟，在服务器上跑着的服务，一般都是由类似 <code>supervisor</code> 驱动并且长期运行在后台的 XD。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/12/07/build-your-own-handlerthread-part-finale/">Build Your Own HandlerThread Part Finale</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-12-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>至此，我们整个系列宣告完结。</p>
-<p>现在回过头往前看，是不是觉得其实这些底层的东西也没这么难？有时候只是需要一些基础和解决问题的方法罢了。</p>
-<p>Rant：做业务才真的难呢，框架和流程都给你定死了，一坨又一坨用了几年的不明觉厉的封装，如果内部文档哪个不详，又没有熟悉的人带着你，基本就净在里面绕圈子了。</p>
-<p>好了我们转回正题。</p>
-<p>整个系列的代码可见这里：<a href="https://github.com/kingsamchen/Eureka/tree/master/ActiveThread-Java" target="_blank" rel="noopener">Eureka/ActiveThread-Java</a></p>
-<p>部分还带了单元测试。</p>
-<h3 id="系列索引"><a href="#系列索引" class="headerlink" title="系列索引"></a>系列索引</h3><ul>
-<li><a href="/2018/12/03/build-your-own-handlerthread-part-0/" title="Build Your Own HandlerThread Part 0">Build Your Own HandlerThread Part 0</a></li>
-<li><a href="/2018/12/04/build-your-own-handlerthread-part-1/" title="Build Your Own HandlerThread Part 1">Build Your Own HandlerThread Part 1</a></li>
-<li><a href="/2018/12/05/build-your-own-handlerthread-part-2/" title="Build Your Own HandlerThread Part 2">Build Your Own HandlerThread Part 2</a></li>
-<li><a href="/2018/12/06/build-your-own-handlerthread-part-3/" title="Build Your Own HandlerThread Part 3">Build Your Own HandlerThread Part 3</a></li>
-<li><a href="/2018/12/07/build-your-own-handlerthread-part-4/" title="Build Your Own HandlerThread Part 4">Build Your Own HandlerThread Part 4</a>
-</li>
-</ul>
 
         
       

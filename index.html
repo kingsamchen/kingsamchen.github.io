@@ -182,6 +182,61 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/09/09/avoid-using-signals-on-linux/">避免在 Linux 上使用 signals</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-09
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>首先承认这个标题乍看之下很像 troll，但真的不是 troll；“避免使用”总的来说更接近 <em>whenever possible</em> 的意思。</p>
+<p>另外，这篇 post 面向的主要是偏底层的、直接使用 system calls 或其 runtime wrapper（glibc）的开发者，最典型的比如 C/C++ 开发者。</p>
+<p>其他语言的开发者通常因为要么 runtime “屏蔽”了这部分内容（如 Java）；要么 runtime 自身对这部分做了较大的抽象/改造（如 Golang），因此很难对此 post 提到的各种观点/做法产生共鸣。</p>
+<p>FYI：自从工作后中文写作能力一直在退化，因此这篇文章如果存在语句不通顺或者用词不当的地方，烦请见谅。</p>
+<h2 id="0x00-背景回顾：什么是-signal？"><a href="#0x00-背景回顾：什么是-signal？" class="headerlink" title="0x00 背景回顾：什么是 signal？"></a>0x00 背景回顾：什么是 signal？</h2><p>signal 源自 Unix，后来成为 POSIX 标准的一部分，现在则被几乎所有的 *nix 系统支持。</p>
+<p>signal 本质上是一种通讯机制，用于系统在某个事件（event）发生时通知某个进程（或线程）。<br>
+          <div class="read-more">
+            <a href="/2019/09/09/avoid-using-signals-on-linux/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/09/01/monthly-read-posts-in-aug-2019/">Monthly Read Posts in Aug 2019</a>
         
       </h1>
@@ -545,72 +600,6 @@
 <p>那会儿互联网产业还未兴起，软件开发差不多等同于写桌面客户端。我对数据库的印象停留在大企业内部自用的 Oracle 或者 Microsoft SQL Server，或者外包专用的 MySQL（LAMP），以及几乎没有人用的 Access / Visual Fox Pro；总之…都不是很好的印象。</p>
 <p>于是本科期间几乎没怎么正经学过 RDBMS，唯一有印象的大概就是会写几条 SQL…</p>
 <p>14 年毕业到转到后端前，有机会接触到的 DB 也只有 SQLite，单机存储数据库嘛，会随便写几条 SQL 就已经足够完成任务了，真是挺寒碜。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/07/21/monthly-read-posts-in-jun-2019/">Monthly Read Posts in June 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-07-21
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120710/memory-barriers-are-like-source-control-operations/" target="_blank" rel="noopener">Memory Barriers Are Like Source Control Operations</a></p>
-<p>用 VCS 来类比四种 memory fence</p>
-<hr>
-<p><a href="https://preshing.com/20120913/acquire-and-release-semantics/" target="_blank" rel="noopener">Acquire and Release Semantics</a></p>
-<p>C++ provides acquire and release semantics, which are in fact founded on barriers.</p>
-<p>acquire semantcis: <code>#LoadLoad</code> and <code>#LoadStore</code>; apply to read operations.</p>
-<p>Acquire semantics prevent memory reordering of the read-acquire with any read or write operation that follows it in program order.</p>
-<p>release sematncis: <code>#StoreStore</code> and <code>#LoadStore</code>; apply to write operations.</p>
-<p>Release semantics prevent memory reordering of the write-release with any read or write operation that precedes it in program order.</p>
-<hr>
-<p><a href="https://preshing.com/20120930/weak-vs-strong-memory-models/" target="_blank" rel="noopener">Weak vs. Strong Memory Models</a></p>
-<p>Categories of memory models.</p>
-<hr>
-<p><a href="https://preshing.com/20121019/this-is-why-they-call-it-a-weakly-ordered-cpu/" target="_blank" rel="noopener">This Is Why They Call It a Weakly-Ordered CPU</a></p>
-<p>Memory reordering in ARM cpus</p>
-<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://go101.org/article/nil.html" target="_blank" rel="noopener">golang nil 101</a></p>
-<p>屎坑子真多。</p>
-<hr>
-<p><a href="https://www.teamten.com/lawrence/writings/why-i-dont-like-go.html" target="_blank" rel="noopener">why-i-dont-like-go.html</a></p>
-<p>深有感触…</p>
-<p>而且居然还是2016年的文章</p>
 
         
       
