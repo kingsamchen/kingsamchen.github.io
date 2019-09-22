@@ -182,6 +182,85 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/11/09/found-a-lambda-implementation-bug-on-visuals-studio-2013/">发现一个（疑似）VS 2013 lambda 实现的 Bug</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-11-09
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>考虑如下代码段：</p>
+<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;iostream&gt;</span></span>
+
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Foo {
+<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
+    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Thunk</span><span class="hljs-params">()</span>
+    </span>{
+        <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> lambda = [](Foo* f, <span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">char</span>* msg) {
+            <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> pfn = &amp;Foo::Print;  <span class="hljs-comment" style="color: rgb(136, 136, 136);">// complained this statement</span>
+            (*f.*pfn)(msg);
+        };
+
+        lambda(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">this</span>, <span class="hljs-string" style="color: rgb(162, 252, 162);">"abc"</span>);
+    }
+
+    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Print</span><span class="hljs-params">(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">const</span> <span class="hljs-keyword" style="color: rgb(252, 194, 140);">char</span>* msg)</span>
+    </span>{
+        <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">cout</span> &lt;&lt; msg &lt;&lt; <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::<span class="hljs-built_in" style="color: rgb(255, 255, 170);">endl</span>;
+    }
+};
+
+<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
+</span>{
+    Foo foo;
+
+    foo.Thunk();
+
+    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
+}</pre>
+
+<p>在 Visual Studio 2013 with update 5 上会提示编译警告：</p>
+<p>“<em>Line 16: warning C4573: the usage of ‘Foo::Print’ requires the compiler to capture ‘this’ but the current default capture mode does not allow it</em>“</p>
+<p>然而相同的代码在 Visual Studio 2017 上，以及 <a href="https://wandbox.org/permlink/F9Y82SFLZku2FwBZ" target="_blank" rel="noopener">clang 3.8</a> 上均不会出现类似警告。</p>
+<p>我在 StackOverflow 上提了<a href="https://stackoverflow.com/questions/47177263/why-get-pointer-to-member-function-inside-lambda-triggers-warning-on-vs2013" target="_blank" rel="noopener">一个问题</a>，然而截止本文发布前，并没有看起来靠谱的答案出现。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/11/02/monthly-read-posts-in-oct-2017/">Monthly Read Posts in Oct 2017</a>
         
       </h1>
@@ -609,66 +688,6 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
 <p>前半部分是 UUID 的考古，作者文笔还不错，可以当作阅读材料…</p>
 <p>后半部分提作者根据自己业务实现的一个 KSUID，优点是吸收 timestamp，可以 k-sortable ordered</p>
 <p>先 mark 一下，没准哪天需要</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/08/15/controlled-type-injection-in-cpp/">Controlled Type Injection in C++</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-08-15
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>之前实现 kbase 的 <code>ENSURE</code> 宏支持如下用法</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Throw a std::runtime_error when condition is violated.</span></span><br><span class="line">ENSURE(RAISE, cond)(var).Require();</span><br><span class="line"></span><br><span class="line"><span class="comment">// Throw a MyException when condition is violated.</span></span><br><span class="line">ENSURE(RAISE, cond)(var).Require&lt;MyException&gt;();</span><br></pre></td></tr></table></figure>
-<p>这几天在重新审视的时候觉得将自定义异常类型依托 <code>Require()</code> 注入是一个有问题的设计：强行耦合了 <strong>RAISE</strong> 这个行为的具体策略和行为无关的 <code>Require()</code> 函数，在设计语义上给人感觉莫名其妙。</p>
-<p>更加糟糕的是，因为 <code>ENSURE</code> 宏依托的 <code>Guarantor</code> 类不是一个 class template，自定义异常类的信息没办法直接保存在类中，导致 <code>Require&lt;MyException&gt;()</code> 的重载实现非常丑陋…</p>
-<p>于是我想，如果能将异常类型注入通过一个单独的函数完成，并且保存在类成员中，那上面提到的两个问题都可以得到解决</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Call ThrowIn to configure exception type that will be raised.</span></span><br><span class="line"><span class="comment">// And there is only one Require().</span></span><br><span class="line">ENSURE(RAISE, cond)(var).ThrowIn&lt;MyException&gt;.Require();</span><br></pre></td></tr></table></figure>
-<p>并且由于 <code>ThrowIn()</code> 函数具有 configuration 的语义，哪怕实际操作只是 performed-in-debug-only 的 <code>CHECK</code>，也不会有任何违和感</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// We configured exception type but we don't raise an exception at all.</span></span><br><span class="line">ENSURE(CHECK, cond)(var).ThrowIn&lt;MyException&gt;.Require();</span><br></pre></td></tr></table></figure>
-<p>由于个人极度不希望将 <code>Guarantor</code> 变成一个 class template，因此不能使用常规方法保存这个注入的类型信息，换言之，我们大概需要一种能够将类的类型和他包含的某个成员的类型信息的关联拆开。</p>
-<p>然后我就想到了 <code>std::shared_ptr</code>。</p>
-<p><code>std::shared_ptr</code> 的神奇之处在于，他的 deleter 不是自己类型的一部分，而且可以在运行期替换，which literally is what we need！</p>
-<p>于是我就照猫画虎，写了一个 exception-pump，做类似的事情（不过我只是研究了一下实现逻辑，才没有傻到真的去看 <code>std::shared_ptr</code> 的源代码呢 XD）：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExceptionPump</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="keyword">virtual</span> ~ExceptionPump() = <span class="keyword">default</span>;</span><br><span class="line">    <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">Throw</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; what)</span> <span class="keyword">const</span> </span>= <span class="number">0</span>;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> E&gt;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ExceptionPumpImpl</span> :</span> <span class="keyword">public</span> ExceptionPump &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Throw</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp; what)</span> <span class="keyword">const</span> override</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">throw</span> E(what);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Guarantor</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> E&gt;</span><br><span class="line">    <span class="function">Guarantor&amp; <span class="title">ThrowIn</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">static_assert</span>(<span class="built_in">std</span>::is_base_of&lt;<span class="built_in">std</span>::exception, E&gt;::value, <span class="string">"E is not a std::exception"</span>);</span><br><span class="line">        exception_pump_ = <span class="built_in">std</span>::make_unique&lt;internal::ExceptionPumpImpl&lt;E&gt;&gt;();</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">void</span> Guarantor::DoThrow()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">if</span> (!exception_pump_) &#123;</span><br><span class="line">            exception_pump_ = <span class="built_in">std</span>::make_unique&lt;internal::ExceptionPumpImpl&lt;EnsureFailure&gt;&gt;();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        exception_pump_-&gt;Throw(exception_desc_.str());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;internal::ExceptionPump&gt; exception_pump_;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><code>exception_pmp_</code> 仅会在需要是才会创建具体对象实例，因此对仅使用 <code>CHECK</code> 行为的语句来说，这块可以认为是 zero-cost</p>
-<p>BTW：在我改完这部分代码之后，我把 <code>RAISE</code> 改名成了 <code>THROW</code>，感觉和上下文更加 consistent 一些</p>
 
         
       

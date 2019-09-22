@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="ASIO Buffer 使用简记">
+
+
+
+
+  <meta name="keywords" content="ASIO, networking, buffer, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/09/22/simple-notes-on-using-asio-buffer/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> ASIO Buffer 使用简记 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          ASIO Buffer 使用简记
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-22
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        <p>近段有相当一部分时间在<a href="https://github.com/kingsamchen/Eureka/tree/master/learn-asio" target="_blank" rel="noopener">熟悉和练习 ASIO</a>。</p>
+<p>练习过程中发现 ASIO 中如何使用&amp;管理 buffer 是新手大概率会遇到的问题。</p>
+<p>结合最近几个 practice demo，稍微简单总结了一下使用经验：</p>
+<p><strong>0x00</strong></p>
+<p><code>const_buffer</code> 和 <code>mutable_buffer</code> 是两个 fundamental buffer classes。二者的区别在语义上表达的很明显了。</p>
+<p>实现上二者提供的接口非常一致，除了一个面向 <code>const void*</code>，另一个面向 <code>void*</code>。这点可以从 ctor 和 <code>data()</code> 中看出。</p>
+<p>另外，为了和 C++ 现有的 const cast semantics 保持一致，一个 <code>mutable_buffer</code> 对象可以 implicitly converted to <code>const_buffer</code>。</p>
+<a id="more"></a>
+<p>IO 操作上，<code>const_buffer</code> 通常对应一个 write operation，而 <code>mutable_buffer</code> 通常对应一个 read operation。</p>
+<p><strong>0x01</strong></p>
+<p><code>asio::buffer()</code> 可以根据用户提供的 buffer 创建一个 <code>const_buffer</code> 或 <code>mutable_buffer</code>。</p>
+<p>并且因为上面提到的 buffer-constness semantics，哪怕此时创建出来的是 <code>mutable_buffer</code>，也能自动转换到目标需要的 <code>const_buffer</code>。</p>
+<p>所以大部分场合下，只需要使用 <code>asio::buffer()</code> 构建 IO buffer。</p>
+<p><strong>0x02</strong></p>
+<p>上面说的 IO buffer 非常像 <code>std::string_view</code>，它们只 refer 某一块现有的内存，不会获得内存的 ownership。</p>
+<p>因此，使用者必须保证用作 buffer 的内存的生命周期在整个 IO 操作期间都有效。</p>
+<p>这是刚使用 ASIO 时很容易犯的一个错误。</p>
+<p>对于有 Windows IOCP 编程经验的人来说，这点很容易理解，因为异步 IO 必须事先提供好内存，而 ASIO 采纳的刚好也是 proactor model。</p>
+<p><strong>0x03</strong></p>
+<p>对于 <code>asio::async_read_until()</code>，配套的 buffer 是 <a href="http://think-async.com/Asio/asio-1.12.2/doc/asio/reference/DynamicBuffer.html" target="_blank" rel="noopener">dynamic buffer</a>。</p>
+<p>因为这个函数需要读到某个 <code>delim</code> 或者 <code>pred</code> 满足才会返回，因此 buffer 大小无法实现确定。</p>
+<p><em>dynamic buffer</em> 的要求之一就是支持 <em><strong>memory storage can be automatically resized as required</strong></em></p>
+<p>另，满足 dynamic buffer 的前提条件是：需要是一个 const buffer 或者 mutable buffer。</p>
+<p>使用上，<code>std::string</code> 和 <code>std::vector&lt;char&gt;</code> 可以直接作为底层存储使用。</p>
+<p><code>asio::dyanmic_buffer()</code> 可以直接创建 dynamic buffer class。</p>
+<p><strong>0x04</strong></p>
+<p>如果接受了上面 dynamic buffer 的设定，那么一定要注意，对于普通的 const buffer 或者 mutable buffer，如果使用 <code>asio::buffer()</code> 构造时不显式指定大小，那么内部会直接使用底层存储的 <code>size()</code> 作为大小。</p>
+<p>如果底层存储为 empty，那么会导致每次 IO 操作提供的 buffer 为空，会导致 IO 操作立即返回，且 <code>std::error_code</code> 没有任何错误。</p>
+<p>这里和使用 dyanmic buffer 不同。</p>
+<p>我在实现基于 ASIO 的 <a href="https://github.com/kingsamchen/Eureka/tree/master/learn-asio/socks4a" target="_blank" rel="noopener">socks4a proxy</a> 时就被这个细节坑了一下。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/09/22/simple-notes-on-using-asio-buffer/">http://kingsamchen.github.io/2019/09/22/simple-notes-on-using-asio-buffer/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/ASIO/">ASIO</a>
+            
+              <a href="/tags/networking/">networking</a>
+            
+              <a href="/tags/buffer/">buffer</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/09/09/avoid-using-signals-on-linux/">
+        <span class="next-text nav-default">避免在 Linux 上使用 signals</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/09/22/simple-notes-on-using-asio-buffer/';
+        this.page.identifier = '2019/09/22/simple-notes-on-using-asio-buffer/';
+        this.page.title = 'ASIO Buffer 使用简记';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>
