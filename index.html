@@ -182,6 +182,67 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/10/01/review-dclp-and-memory-reordering/">复习：DCLP 和 Memory Reordering</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-10-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>本文是对 Jeff Preshing 的 <a href="https://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/" target="_blank" rel="noopener">Double Checked Locking Is Fixed in C++ 11</a> 笔记。</p>
+<h3 id="0x00-传统实现"><a href="#0x00-传统实现" class="headerlink" title="0x00 传统实现"></a>0x00 传统实现</h3><p>因为 synchronization 只需要在实例第一次创建时保证；此后（ <code>instance != nullptr</code> 时）都不需要锁来保证 synchronization。</p>
+<p>在第一次判断实例为空和上锁之间存在一个 potential race，因此上锁后需要再一次判断实例是否为空。</p>
+<p>这也是 double checked 的来由。</p>
+<p>所以一个传统但并不100%正确的 DCLP 实现如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lock(mtx);</span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> Singleton();				<span class="comment">// &lt;-- key point</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// omit explicit static field initialization.</span></span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::mutex mtx;</span><br><span class="line">    <span class="keyword">static</span> Singleton* instance;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这基本是早起 C++ DCLP 的实现架子。</p>
+<h3 id="0x01-问题：内存乱序以及为什么锁帮不了忙"><a href="#0x01-问题：内存乱序以及为什么锁帮不了忙" class="headerlink" title="0x01 问题：内存乱序以及为什么锁帮不了忙"></a>0x01 问题：内存乱序以及为什么锁帮不了忙</h3><p>语句</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">instance = <span class="keyword">new</span> Singleton();</span><br></pre></td></tr></table></figure>
+<p>在 C++ 中实际上等效于</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tmp = <span class="keyword">operator</span> <span class="keyword">new</span>(<span class="keyword">sizeof</span>(Singleton));  <span class="comment">// step 1: allocate memory via operator new</span></span><br><span class="line"><span class="keyword">new</span>(tmp) Singleton;                     <span class="comment">// step 2: placement-new for construction</span></span><br><span class="line">instance = tmp;                         <span class="comment">// step 3: assign addr to instance</span></span><br></pre></td></tr></table></figure>
+<p>注意：其中除了分配内存是固定第一步之外，构造对象和赋值内存地址的<strong>生成代码顺序</strong>是由编译器自己决定。这里的顺序只是一种可能性。<br>
+          <div class="read-more">
+            <a href="/2019/10/01/review-dclp-and-memory-reordering/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/09/22/simple-notes-on-using-asio-buffer/">ASIO Buffer 使用简记</a>
         
       </h1>
@@ -519,86 +580,6 @@
         
       
     </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/08/04/monthly-read-posts-in-july-2019/">Monthly Read Posts in July 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-08-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://medium.com/@blanchon.vincent/go-understand-the-design-of-sync-pool-2dde3024e277" target="_blank" rel="noopener">Go: Understand the Design of Sync.Pool</a></p>
-<p>Insights:</p>
-<ol>
-<li><p>package 的 <code>init()</code> 函数中注册 runtime GC 的回调，以清理池子中的数据</p>
-</li>
-<li><p>会为每个 P 创建一个 <code>pool</code> 实例；每个实例包含 <em>private</em> 和 <em>shared</em> 两部分。</p>
-<p> 其中 private 只能由 P 自己访问，因此无需考虑并发安全；shared 能被其他的 P 访问，需要考虑并发安全。</p>
-</li>
-<li><p><code>Get()</code> 的操作顺序：private area -&gt; shared area -&gt; create via New()</p>
-</li>
-<li><p><code>Put()</code> 会尝试先把 item 放回 private area，如果 private 没有 item；否则就放到 shared area。</p>
-</li>
-</ol>
-<hr>
-<p><a href="https://medium.com/@pedram.esmaeeli/a-pattern-for-overcoming-non-determinism-of-golang-select-statement-139dbe93db98" target="_blank" rel="noopener">A pattern for overcoming non-determinism of Golang select statement</a></p>
-<p>文章里说的 non-determinism 指的是在一个 <code>select</code> statement 中监听多个 channel，channel的触发顺序是非确定性的。</p>
-<p>这点应该算是一个 well-known background。</p>
-<p>至于作者的做法，通过提供一个 interface ，把多个不同类型的 channel 给合并成了一个…</p>
-<h2 id="Algorithms"><a href="#Algorithms" class="headerlink" title="Algorithms"></a>Algorithms</h2><p><a href="https://preshing.com/20121224/how-to-generate-a-sequence-of-unique-random-integers/" target="_blank" rel="noopener">How to Generate a Sequence of Unique Random Integers</a></p>
-<p>利用了 quadratic residues 的一个性质：</p>
-<ol>
-<li>x^2 mod p is unique as long 2x &lt; p</li>
-<li>在（1）基础上，p - x^2 mod p is unique, as long p mod 4 = 3</li>
-</ol>
-<p>在此基础上设计一个 one-to-one 的排列函数 f；并且只要 f 的复合函数仍然满足 one-to-one，也仍然能够保持前面的 unique 性质。</p>
-<p>BTW：说起来后面应该抽个时间补一下数学和算法了…</p>
-<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="http://www.moserware.com/2008/09/how-do-locks-lock.html" target="_blank" rel="noopener">How Do Locks Lock?</a></p>
-<p>.NET 中 reader-writer lock 的一些内部实现。</p>
-<p>.NET 的 rwlock 支持所谓的 upgrade/promotion，将一个 reader-lock 提升为 writer lock。</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://justinmeiners.github.io/the-skills-programmers-lack/" target="_blank" rel="noopener">The Skills Poor Programmers Lack</a></p>
-<ol>
-<li>understand the working details</li>
-<li>anticipate problems</li>
-<li>learn to design and architect</li>
-</ol>
-
-        
-      
-    </div>
 
     
 

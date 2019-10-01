@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-09-22T14:15:31.794Z</updated>
+  <updated>2019-10-01T08:40:09.015Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,41 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>复习：DCLP 和 Memory Reordering</title>
+    <link href="http://kingsamchen.github.io/2019/10/01/review-dclp-and-memory-reordering/"/>
+    <id>http://kingsamchen.github.io/2019/10/01/review-dclp-and-memory-reordering/</id>
+    <published>2019-10-01T04:29:03.000Z</published>
+    <updated>2019-10-01T08:40:09.015Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;本文是对 Jeff Preshing 的 &lt;a href=&quot;https://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Double Checked Locking Is Fixed in C++ 11&lt;/a&gt; 笔记。&lt;/p&gt;
+&lt;h3 id=&quot;0x00-传统实现&quot;&gt;&lt;a href=&quot;#0x00-传统实现&quot; class=&quot;headerlink&quot; title=&quot;0x00 传统实现&quot;&gt;&lt;/a&gt;0x00 传统实现&lt;/h3&gt;&lt;p&gt;因为 synchronization 只需要在实例第一次创建时保证；此后（ &lt;code&gt;instance != nullptr&lt;/code&gt; 时）都不需要锁来保证 synchronization。&lt;/p&gt;
+&lt;p&gt;在第一次判断实例为空和上锁之间存在一个 potential race，因此上锁后需要再一次判断实例是否为空。&lt;/p&gt;
+&lt;p&gt;这也是 double checked 的来由。&lt;/p&gt;
+&lt;p&gt;所以一个传统但并不100%正确的 DCLP 实现如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Singleton&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; Singleton* &lt;span class=&quot;title&quot;&gt;GetInstance&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;    &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (instance == &lt;span class=&quot;literal&quot;&gt;nullptr&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::lock_guard&amp;lt;&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::mutex&amp;gt; lock(mtx);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (instance == &lt;span class=&quot;literal&quot;&gt;nullptr&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                instance = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Singleton();				&lt;span class=&quot;comment&quot;&gt;// &amp;lt;-- key point&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; instance;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// omit explicit static field initialization.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::mutex mtx;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; Singleton* instance;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这基本是早起 C++ DCLP 的实现架子。&lt;/p&gt;
+&lt;h3 id=&quot;0x01-问题：内存乱序以及为什么锁帮不了忙&quot;&gt;&lt;a href=&quot;#0x01-问题：内存乱序以及为什么锁帮不了忙&quot; class=&quot;headerlink&quot; title=&quot;0x01 问题：内存乱序以及为什么锁帮不了忙&quot;&gt;&lt;/a&gt;0x01 问题：内存乱序以及为什么锁帮不了忙&lt;/h3&gt;&lt;p&gt;语句&lt;/p&gt;
+&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;instance = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Singleton();&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;在 C++ 中实际上等效于&lt;/p&gt;
+&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;tmp = &lt;span class=&quot;keyword&quot;&gt;operator&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;(&lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(Singleton));  &lt;span class=&quot;comment&quot;&gt;// step 1: allocate memory via operator new&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;(tmp) Singleton;                     &lt;span class=&quot;comment&quot;&gt;// step 2: placement-new for construction&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;instance = tmp;                         &lt;span class=&quot;comment&quot;&gt;// step 3: assign addr to instance&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;注意：其中除了分配内存是固定第一步之外，构造对象和赋值内存地址的&lt;strong&gt;生成代码顺序&lt;/strong&gt;是由编译器自己决定。这里的顺序只是一种可能性。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="singleton" scheme="http://kingsamchen.github.io/tags/singleton/"/>
+    
+      <category term="memory-reordering" scheme="http://kingsamchen.github.io/tags/memory-reordering/"/>
+    
+  </entry>
   
   <entry>
     <title>ASIO Buffer 使用简记</title>
@@ -632,37 +667,6 @@
       <category term="socks4a" scheme="http://kingsamchen.github.io/tags/socks4a/"/>
     
       <category term="socks" scheme="http://kingsamchen.github.io/tags/socks/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>推荐 Google API Design Guide</title>
-    <link href="http://kingsamchen.github.io/2019/03/13/recommend-google-api-design-guide/"/>
-    <id>http://kingsamchen.github.io/2019/03/13/recommend-google-api-design-guide/</id>
-    <published>2019-03-12T16:21:25.000Z</published>
-    <updated>2019-03-16T02:10:26.888Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;a href=&quot;https://cloud.google.com/apis/design/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Google API Design Guide&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;基本上 可以看作是 Google 开放的
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="api design" scheme="http://kingsamchen.github.io/tags/api-design/"/>
-    
-      <category term="restful" scheme="http://kingsamchen.github.io/tags/restful/"/>
-    
-      <category term="grpc" scheme="http://kingsamchen.github.io/tags/grpc/"/>
     
   </entry>
   

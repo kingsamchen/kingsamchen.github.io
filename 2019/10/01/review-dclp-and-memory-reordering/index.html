@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="复习：DCLP 和 Memory Reordering">
+
+
+
+
+  <meta name="keywords" content="cpp, singleton, memory-reordering, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/10/01/review-dclp-and-memory-reordering/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> 复习：DCLP 和 Memory Reordering - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          复习：DCLP 和 Memory Reordering
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-10-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x00-传统实现"><span class="toc-text">0x00 传统实现</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-问题：内存乱序以及为什么锁帮不了忙"><span class="toc-text">0x01 问题：内存乱序以及为什么锁帮不了忙</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-C-11-和内存模型"><span class="toc-text">0x02 C++ 11 和内存模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-平台架构"><span class="toc-text">0x03 平台架构</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>本文是对 Jeff Preshing 的 <a href="https://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/" target="_blank" rel="noopener">Double Checked Locking Is Fixed in C++ 11</a> 笔记。</p>
+<h3 id="0x00-传统实现"><a href="#0x00-传统实现" class="headerlink" title="0x00 传统实现"></a>0x00 传统实现</h3><p>因为 synchronization 只需要在实例第一次创建时保证；此后（ <code>instance != nullptr</code> 时）都不需要锁来保证 synchronization。</p>
+<p>在第一次判断实例为空和上锁之间存在一个 potential race，因此上锁后需要再一次判断实例是否为空。</p>
+<p>这也是 double checked 的来由。</p>
+<p>所以一个传统但并不100%正确的 DCLP 实现如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lock(mtx);</span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> Singleton();				<span class="comment">// &lt;-- key point</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// omit explicit static field initialization.</span></span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::mutex mtx;</span><br><span class="line">    <span class="keyword">static</span> Singleton* instance;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>这基本是早起 C++ DCLP 的实现架子。</p>
+<h3 id="0x01-问题：内存乱序以及为什么锁帮不了忙"><a href="#0x01-问题：内存乱序以及为什么锁帮不了忙" class="headerlink" title="0x01 问题：内存乱序以及为什么锁帮不了忙"></a>0x01 问题：内存乱序以及为什么锁帮不了忙</h3><p>语句</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">instance = <span class="keyword">new</span> Singleton();</span><br></pre></td></tr></table></figure>
+<p>在 C++ 中实际上等效于</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tmp = <span class="keyword">operator</span> <span class="keyword">new</span>(<span class="keyword">sizeof</span>(Singleton));  <span class="comment">// step 1: allocate memory via operator new</span></span><br><span class="line"><span class="keyword">new</span>(tmp) Singleton;                     <span class="comment">// step 2: placement-new for construction</span></span><br><span class="line">instance = tmp;                         <span class="comment">// step 3: assign addr to instance</span></span><br></pre></td></tr></table></figure>
+<p>注意：其中除了分配内存是固定第一步之外，构造对象和赋值内存地址的<strong>生成代码顺序</strong>是由编译器自己决定。这里的顺序只是一种可能性。<br><a id="more"></a><br>多线程环境下，DCLP 要能正常工作的一个前提是：如果某个线程 看到 <code>instance</code> 非空，那么 <code>instance</code> 对应的对象必须是构造完毕的；==i.e. 执行 step 3 之前，step 1 和 step 2 必须是已经完成的。==</p>
+<p>不幸的是，因为代码优化的需求，导致两个后果：</p>
+<ol>
+<li>编译器生成代码时会存在乱序</li>
+<li>现代多核CPU不光每个核存在执行指令乱序，同一段代码不同核同一时刻的执行的顺序都可能是不同的</li>
+</ol>
+<p>这就会导致上面的例子中，可能出现：</p>
+<ol>
+<li>线程 A 先更新了 <code>instance</code> 地址到新内存</li>
+<li>线程 B 进入函数，检查发现 <code>instance</code> 不为空；但是此时对象尚未构造完毕，使用对象就跪了</li>
+</ol>
+<p>另外，这里即使你自己引入一个临时对象 <code>tmp</code>，也解决不了问题。因为生成的代码本来就用了临时对象，这个解决不了乱序的问题。</p>
+<p><strong>无助的🔒</strong></p>
+<p>一个不是很容易被理解的点是，这里明明用了锁来保证 synchronization，为什么也会出问题呢？</p>
+<p>尤其对一些比较“资深“的开发者来说，他们知道锁本身是带有 memory fence 功能的。</p>
+<p>这里为了方便说明问题，我们按照语句拆解后的版本来分析：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> Singleton* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        lock.Lock();                                <span class="comment">// &lt;-- acquire lock</span></span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            tmp = <span class="keyword">operator</span> <span class="keyword">new</span>(<span class="keyword">sizeof</span>(Singleton));  <span class="comment">// step 1: allocate memory via operator new</span></span><br><span class="line">            instance = tmp;                         <span class="comment">// step 2: assign addr to instance</span></span><br><span class="line">            <span class="keyword">new</span>(instance) Singleton;                <span class="comment">// step 3: placement-new for construction</span></span><br><span class="line">        &#125;</span><br><span class="line">        lock.Unlock();                              <span class="comment">// &lt;-- release lock</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> instance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>首先，锁本身确实是可以作为 guard variable 来保障 acquire-release 语义：Lock 操作充当 read-acquire operation，Unock 操作充当 write-release operation。</p>
+<p>其次，acquire-release 语义提供了一个可见性保证：a write-release operation synchronizes-with a read-acquire operation.</p>
+<p>这个约束下，一个线程在临界区内的任何写操作在 unlock 之后，对其他任意<strong>进入</strong>临界区的线程都是可见的。</p>
+<p>但是很不幸的事，DCLP 实现下，第一次判断，即L3，是在临界区外。</p>
+<p>所以</p>
+<ul>
+<li><p>临界区内的代码虽然不能重排出临界区，但是相互之间仍旧可以重排</p>
+</li>
+<li><p>某个线程在 L3 发现 <code>instance</code> 不为空不能保证这个对象在另外一个线程已经构造完毕。</p>
+</li>
+</ul>
+<h3 id="0x02-C-11-和内存模型"><a href="#0x02-C-11-和内存模型" class="headerlink" title="0x02 C++ 11 和内存模型"></a>0x02 C++ 11 和内存模型</h3><p>在 C++ 11 之前，C++ 标准里的 abstract machine 是单线程的，也自然的没有 memory model 相关的规定。</p>
+<p>因此：</p>
+<ul>
+<li>编译器的乱序优化只保证单线程内的 observable behavior 不变</li>
+<li>没有标准内的东西能够指导编译器或者 CPU 来抵抗乱序</li>
+</ul>
+<p>随着 modern C++ 的时代到来，这些问题都被稳妥地解决了。</p>
+<p>现在利用 C++ atomic 设施可以正确实现 DCLP：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">auto</span> tmp = instance.load(<span class="built_in">std</span>::memory_order_acquire);    <span class="comment">// &lt;-- read-acquire operation</span></span><br><span class="line">        <span class="keyword">if</span> (tmp == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lock(mtx);</span><br><span class="line">            tmp = instance.load(<span class="built_in">std</span>::memory_order_relaxed);     <span class="comment">// &lt;-- relaxed is enough</span></span><br><span class="line">            <span class="keyword">if</span> (tmp == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                tmp = <span class="keyword">new</span> Singleton();</span><br><span class="line">                instance.store(tmp, <span class="built_in">std</span>::memory_order_release); <span class="comment">// &lt;-- write-release operation</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::mutex mtx;</span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::atomic&lt;Singleton*&gt; instance;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>L5 和 L11 通过 acquire-releaes 语义保证了正确的内存顺序。</p>
+<p>L8 不需要额外约束，原因我们前面已经说了。</p>
+<p><strong>使用 acquire / release fence</strong></p>
+<p>上面的例子是通过 acquire-release operations 来避免乱序，如果你看过我之前的<a href="https://kingsamchen.github.io/2019/08/31/acquire-release-operations-and-fences/">某篇文章</a>，我们知道使用 memory fence 可以产生更强的内存序约束。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> Singleton* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> tmp = instance.load(<span class="built_in">std</span>::memory_order_relaxed);            <span class="comment">// &lt;-- relaxed</span></span><br><span class="line">    <span class="built_in">std</span>::atomic_thread_fence(<span class="built_in">std</span>::memory_order_acquire);            <span class="comment">// &lt;-- acquire fence</span></span><br><span class="line">    <span class="keyword">if</span> (tmp == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">        <span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lock(mtx);</span><br><span class="line">        tmp = instance.load(<span class="built_in">std</span>::memory_order_relaxed);</span><br><span class="line">        <span class="keyword">if</span> (tmp == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            tmp = <span class="keyword">new</span> Singleton();</span><br><span class="line">            <span class="built_in">std</span>::atomic_thread_fence(<span class="built_in">std</span>::memory_order_release);    <span class="comment">// &lt;-- release fence</span></span><br><span class="line">            instance.store(tmp, <span class="built_in">std</span>::memory_order_relaxed);         <span class="comment">// &lt;-- relaxed</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> tmp;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="0x03-平台架构"><a href="#0x03-平台架构" class="headerlink" title="0x03 平台架构"></a>0x03 平台架构</h3><p>在 X86/64 架构上，读/写操作自带 acquire-release 语义，因此上面的代码的作用基本是指导编译器生成代码。不对 CPU 的执行有影响。</p>
+<p>生成的代码会直接是用一个简单的 <code>mov</code> 指令。</p>
+<p><a href="https://gcc.godbolt.org/z/wkrfCZ" target="_blank" rel="noopener">https://gcc.godbolt.org/z/wkrfCZ</a></p>
+<p>不过如果在上面的例子里，使用 seuqntial consistent 语义，即 atomic 操作不带 memory-order 参数，则即使在 X86/64 平台上，也会生成带有 full barrier 的指令，例如 <code>xchg</code>。</p>
+<p>参见：<a href="https://gcc.godbolt.org/z/0zpCqJ" target="_blank" rel="noopener">https://gcc.godbolt.org/z/0zpCqJ</a></p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/10/01/review-dclp-and-memory-reordering/">http://kingsamchen.github.io/2019/10/01/review-dclp-and-memory-reordering/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/cpp/">cpp</a>
+            
+              <a href="/tags/singleton/">singleton</a>
+            
+              <a href="/tags/memory-reordering/">memory-reordering</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/09/22/simple-notes-on-using-asio-buffer/">
+        <span class="next-text nav-default">ASIO Buffer 使用简记</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/10/01/review-dclp-and-memory-reordering/';
+        this.page.identifier = '2019/10/01/review-dclp-and-memory-reordering/';
+        this.page.title = '复习：DCLP 和 Memory Reordering';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

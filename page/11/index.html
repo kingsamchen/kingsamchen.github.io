@@ -182,6 +182,58 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/03/04/display-utf-8-string-in-vs-debugger/">在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>众所周知，UTF-8 在 Windows 上一直都不是一等公民，在 MSVC 的调试器里，<code>std::string</code> 默认按照本地编码解释，在中文系统上是 GBK 或 GB2312。</p>
+<p>于是，如果一个 <code>std::string</code> 或者 <code>char[]</code> 里存储的是 UTF-8 编码的字符串，那么非 ASCII 部分就会乱码。这在调试中是一个非常不好的体验。</p>
+<p>研究了一下发现早在 VS 2005，调试器实际上就已经支持了对 UTF-8 字符串的显示，只是不作为默认的编码。</p>
+<p>按照 UTF-8 进行解释的方式很简单，在 watch 中添加<strong>字符串起始地址</strong>，后接 <code>, s8</code> 即可。</p>
+<p>注意的是，对于 <code>std::string</code>，要用 <code>std::string::c_str()</code> 或者 <code>std::string::data()</code> 获取字符串起始地址。</p>
+<p>更简单的做法是在 intermedaite window 中，使用 <code>? str.c_str(), s8</code></p>
+<p>注：如果变量被优化后提示 <code>c_str()</code> 或 <code>data()</code> 无法访问到有效数据，则可以使用 <code>&amp;str[0]</code>。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/03/02/monthly-read-posts-in-feb-2018/">Monthly Read Posts in Feb 2018</a>
         
       </h1>
@@ -570,63 +622,6 @@ LPFN_DISCONNECTEX DisconnectEx = <span class="hljs-literal" style="color: rgb(25
 <p>另外这个 talk 的 PPT 值得研究一下，尤其是涉及到 happens-before / synchronized-with .etc 这类同步语义的内容</p>
 <hr>
 <p>因为一月份快接近年底了，事情比较多，也很杂，所以自己的学习进度明显被拖慢了，希望从2月份开始能够迅速回到正常节奏。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/23/initialize-atom-flag-the-right-way/">正确地初始化 std::atomic_flag</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>根据标准文档的要求，<code>std::atomic_flag</code> 只有利用 <code>ATOMIC_FLAG_INIT</code> 初始化之后，才获得一个确定的初始状态。</p>
-<p>现在假设我们要自己实现一个 spin-lock，那么只需要利用 <code>std::atomic_flag</code> 实现一个 spin-mutex：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    SpinMutex()</span><br><span class="line">        : flag_(ATOMIC_FLAG_INIT)</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>事实上，知名著作 <em>C++ Concurrency in Action 1st Edition</em> 中介绍 <code>std::atomic_flag</code> 时用的也是一模一样的代码。</p>
-<p>然而，这段代码在比较新的 C++ 编译器上会编译失败。</p>
-<p>VS2017 直接提示失败，Clang 3.9 出现一个警告。</p>
-<p>问题的根源是，标准委员会对：如何时用 <code>ATOMIC_FLAG_INIT</code> 初始化 <code>std::atomic_flag</code> 存在分歧和反复，导致 C++ 11 和 C++ 14 在这个点上存在不一致。</p>
-<p>万能的 StackOverflow 刚好有一个<a href="https://stackoverflow.com/questions/24437396/stdatomic-flag-as-member-variable" target="_blank" rel="noopener">相关的问题</a></p>
-<h3 id="正确的做法"><a href="#正确的做法" class="headerlink" title="正确的做法"></a>正确的做法</h3><p>正确的做法仍然是遵循标准要求的 <em>used in the copy-initialized context</em>，即：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// Initialize to clear state.</span></span><br><span class="line">    <span class="comment">// Don't use initialization list for `flag_`.</span></span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_ = ATOMIC_FLAG_INIT;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="MISC"><a href="#MISC" class="headerlink" title="MISC"></a>MISC</h3><p>在 VS2017 中，可以在 member initialization list 中用 <code>{}</code> 而不是 <code>()</code> 初始化，能正常编译通过。但是同一做法在其他编译器上没有效果。</p>
-<p>因此，在这种涉及 unspecified 的点上，尽量使用标准的做法，避免之后更换编译器踩坑。</p>
 
         
       

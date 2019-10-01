@@ -182,6 +182,77 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/06/01/monthly-read-posts-in-may-2018/">Monthly Read Posts in May 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-06-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h3 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h3><p><a href="http://mindhacks.cn/2011/11/04/how-to-interview-a-person-for-two-years/" target="_blank" rel="noopener">怎样花两年时间去面试一个人</a></p>
+<p>当前行业招聘的不靠谱，招揽优秀人员的难度大。</p>
+<p>脱颖而出的核心：良好的阅读习惯 + Github 项目</p>
+<p>这里说的两年是针对应届生来说的，对于已经工作的人来说，可以当作是虚指。</p>
+<p>不过文中提到的，拥抱变化的三个核心点：</p>
+<ol>
+<li>触动内心的大象</li>
+<li>建立清晰明确的目标</li>
+<li>扫清前进道路的障碍</li>
+</ol>
+<p>颇有道理。</p>
+<hr>
+<p><a href="http://gulu-dev.com/post/2014-07-28-tech-evaluation" target="_blank" rel="noopener">何判断一个技术(中间件/库/工具)的靠谱程度？</a></p>
+<p>如何做技术选型</p>
+<h3 id="System-amp-Architecture"><a href="#System-amp-Architecture" class="headerlink" title="System &amp; Architecture"></a>System &amp; Architecture</h3><p><a href="https://0xffffff.org/2017/05/01/41-linux-io/" target="_blank" rel="noopener">聊聊Linux IO</a></p>
+<p>A brief introduction to Linux I/O stack.</p>
+<p>这篇 post 的质量在国内技术博客里算是少有的干货。</p>
+<p>另，关于 page cache 和 buffer cache 的最新的内容，可以参考 Robert Love 在 quora 上的一个<a href="http://qr.ae/TUTNCz" target="_blank" rel="noopener">回答</a></p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=k12BJGSc2Nc" target="_blank" rel="noopener">CppCon 2015: John Farrier “Demystifying Floating Point”</a></p>
+<p>工程实践上使用浮点数（IEEE-754）需要注意的一些坑。</p>
+<p>看之前最好翻一下 CSAPP 中关于浮点数 IEEE-754 模型的基础知识<br>
+          <div class="read-more">
+            <a href="/2018/06/01/monthly-read-posts-in-may-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/05/30/build-your-own-thread-pool-with-cpp/">Build Your Own Threadpool With C++</a>
         
       </h1>
@@ -578,68 +649,6 @@
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> s = <span class="string">"hello, world"</span>;</span><br><span class="line">base::Closure closure = BindLambda([&amp;s] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"value of s: "</span> &lt;&lt; s &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">closure.Run();</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> cb = BindLambda([] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"with int result\n"</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1024</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; cb.Run();</span><br></pre></td></tr></table></figure>
 <p>为了使用方便，我直接往 chromium base 开了一个 ext，作为以后的扩展。</p>
 <p>因为现在 lambda 可以直接捕捉了，所以重构之后的代码看起来更具可读性；当然前提是要小心被捕捉对象的生命周期，通常这个上下文都应该使用 capture-by-value。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/">利用 vcpkg 编译带汇编优化的 libx264</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-04-03
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>使用 vcpkg 编译 libx264 有一个很重要的原因：可以获得 PDB，而且构建流程被大大精简了。</p>
-<p>但是这里有一个坑：vcpkg 上的 libx264 模块编译默认是开启了 <code>--disable-asm</code>，意味着构建之后的二进制不会使用 SIMD 指令集，所以性能上会有很大的问题。</p>
-<p>研究了一番之后找到了开启汇编优化的方案。</p>
-<ol>
-<li><p>从官网下载并安装 nasm-2.13</p>
-<p> vcpkg 上通过 acquire-program 提供的 nasm 只有 2.12；而编译 vcpkg 上提供的 libx264-152 需要 nasm-2.13</p>
-</li>
-<li><p>编辑 libx264 的 portfile.cmake 文件</p>
-<p> 在 set bash 的后面加一行</p>
- <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(ENV&#123;PATH&#125; <span class="string">"c:/Programs/NASM/;$ENV&#123;PATH&#125;"</span>)</span><br></pre></td></tr></table></figure>
-<p> 这里注意替换你的真实安装目录</p>
-<p> 然后去掉构建参数中的 <code>--disable-asm</code></p>
-</li>
-</ol>
-<p>如果还有地方出错，记得根据提示查日志！</p>
-<p>开启汇编优化后生成的二进制会略大，大概 900 多 KB</p>
-<p>最后赞扬一下微软出品的 vcpkg，真是解决了 Windows 下编译一众开源软件的痛点。</p>
 
         
       
