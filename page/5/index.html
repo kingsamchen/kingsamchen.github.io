@@ -182,6 +182,61 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/01/01/monthly-read-posts-in-dec-2018/">Monthly Read Posts in Dec 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-01-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://medium.com/golangspec/init-functions-in-go-eac191b3860a" target="_blank" rel="noopener">init functions in Go</a></p>
+<p>这篇 post 总结起来就是深入浅出。</p>
+<hr>
+<p><a href="https://www.fluentcpp.com/2017/01/05/the-importance-of-knowing-stl-algorithms/" target="_blank" rel="noopener">The importance of knowing STL algorithms</a></p>
+<p>能熟练运用 STL algorithms 是一个 experienced c++ programmer 的基本要求。</p>
+<p>另外里面提到了使用 algorithms 的两个 pitfalls，其中一个是滥用 <code>for_each()</code>，这个确实有点意思。<br>
+          <div class="read-more">
+            <a href="/2019/01/01/monthly-read-posts-in-dec-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/12/16/expand-linux-vm-disk-size/">虚拟机 Linux Mint 磁盘扩容</a>
         
       </h1>
@@ -523,71 +578,6 @@
 <p>我们使用了 <code>AtomicLong</code> 来存储当前的 sequence-number，因为我们不知道某个 <code>PendingTask</code> 会在哪个线程上被创建。<br>
           <div class="read-more">
             <a href="/2018/12/05/build-your-own-handlerthread-part-2/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/12/04/build-your-own-handlerthread-part-1/">Build Your Own HandlerThread Part 1</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-12-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h3 id="MessagePump"><a href="#MessagePump" class="headerlink" title="MessagePump"></a>MessagePump</h3><p>对于我们的 ActiveThread 来说，核心仍然是持续不断运行的 message-loop；但是在实现 message-loop 前，我们需要首先来实现它的“引擎”：<code>MessagePump</code>。</p>
-<p>大体上，message-loop 要维持运转，就要能够源源不断地从某个地方获取消息/事件，而获取消息/事件的这个行为，就是由 message-pump 来完成，正如他的名字一样。</p>
-<p>这里可能会产生一个疑问，为什么要单独抽出一个 message-pump，而不是直接把这部分实现做到 message-loop 里呢？</p>
-<p>原因是：一个复杂的系统可能会有多个消息/事件来源，每个来源会有专门的获取、分发的方式。</p>
-<p>例如：</p>
-<ul>
-<li>界面消息可能是从系统的 GUI 消息系统中获得。一个典型的例子是 Win32 GUI 程序所使用的 <code>GetMessage()</code></li>
-<li>网络活动事件通常从 native 系统提供的 I/O multiplexor 中获得。例子包括 POSIX 标准的 <code>select(2)</code>, <code>poll(2)</code>；Linux 独有的 <code>epoll</code>；以及 Windows 提供的真-异步I/O机制 IO Completion Port。</li>
-</ul>
-<p>注：GUI 系统中多使用 messages（消息）作为术语；而网络 I/O 等倾向于使用 events（事件）作为使用术语。因为此系列文章不涉及网络 I/O，因此以后均采用<em>消息</em>作为我们的使用术语。</p>
-<p>注1：对于 Android 系统，他的 GUI 事件实质上是通过 <code>epoll</code> 监听关联到 device 抽象的 pipe fd 来完成的；Linux 的各类 X-Window 实现大多也是类似做法。</p>
-<p>所以为了解耦具体的消息来源，同时让我们的实现看上去更加有逼格，我们采取分离实现 message-pump 和 message-loop。</p>
-<p>前面说到可能有多种 pump，所以这里我们的 <code>MessagePump</code> 应该是一个 interface，规定了一个 message-pump 应该具有哪些基本的行为：</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.time.Instant;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">interface</span> <span class="title">MessagePump</span> </span>&#123;</span><br><span class="line">    <span class="class"><span class="keyword">interface</span> <span class="title">Delegate</span> </span>&#123;</span><br><span class="line">        <span class="function"><span class="keyword">boolean</span> <span class="title">doWork</span><span class="params">()</span></span>;</span><br><span class="line">        <span class="function"><span class="keyword">boolean</span> <span class="title">doDelayedWork</span><span class="params">()</span></span>;</span><br><span class="line">        <span class="function">Instant <span class="title">nextDelayedWorkExpiration</span><span class="params">()</span></span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">(Delegate delegate)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Quit the pump.</span></span><br><span class="line">    <span class="comment">// This method can only be called on the thread that called run().</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">quit</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Thread-safe</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">wakeup</span><span class="params">()</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>同时我们定义了一个 <code>Delegate</code> interface，message-loop 需要实现这个 interface，以便让 message-pump 可以通过这个 interface 来按照自己的实现来操作 message-loop。</p>
-<h3 id="什么都不做的-MessagePumpDefault"><a href="#什么都不做的-MessagePumpDefault" class="headerlink" title="什么都不做的 MessagePumpDefault"></a>什么都不做的 MessagePumpDefault</h3><p>我们的 ActiveThread 运行的纯 Java 环境，不需要像 Android 那样能够获取设备输入消息（Frankly，你想做还做不了呢，我哪来的设备信息获取啊），有点类似 worker HandlerThread.<br>
-          <div class="read-more">
-            <a href="/2018/12/04/build-your-own-handlerthread-part-1/" class="read-more-link">阅读更多</a>
           </div>
         
       

@@ -17,10 +17,12 @@
 
 
 
-  <meta name="description" content="Gone with the ruins">
+  <meta name="description" content="Windows 上使用 Git Tips 两则">
 
 
 
+
+  <meta name="keywords" content="git, powershell, KC的废墟堆">
 
 
 
@@ -40,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/tags/git/">
+<link rel="canonical" href="http://kingsamchen.github.io/2019/10/19/two-git-tips-on-windows/">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
@@ -64,11 +66,7 @@
 
 
 
-    <title>
-  
-    git · KC的废墟堆
-  
-</title>
+    <title> Windows 上使用 Git Tips 两则 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -180,88 +178,122 @@
           <div id="content" class="content">
             
   
-  <section id="archive" class="archive">
-    
-      
-        <div class="archive-title tag">
-          <h2 class="archive-name">git</h2>
-        </div>
-      
-    
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Windows 上使用 Git Tips 两则
+        
+      </h1>
 
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-10-19
-          
+      <div class="post-meta">
+        <span class="post-time">
+          2019-10-19
         </span>
-        <span class="archive-post-title">
-          <a href="/2019/10/19/two-git-tips-on-windows/" class="archive-post-link">
-            Windows 上使用 Git Tips 两则
-          </a>
-        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
       </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Windows-Terminal-中-git-log-显示-UTF-8-编码的中文"><span class="toc-text">Windows Terminal 中 git log 显示 UTF-8 编码的中文</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Filename-too-long-导致-checkout-失败"><span class="toc-text">Filename too long 导致 checkout 失败</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="Windows-Terminal-中-git-log-显示-UTF-8-编码的中文"><a href="#Windows-Terminal-中-git-log-显示-UTF-8-编码的中文" class="headerlink" title="Windows Terminal 中 git log 显示 UTF-8 编码的中文"></a>Windows Terminal 中 git log 显示 UTF-8 编码的中文</h2><p>这个准确的说其实是 powershell 自己的问题。</p>
+<p>打开当前用户对应的 powershell 的 profile 文件，如果没有就创建一个，目录一般位于 <code>C:\Users\&lt;user&gt;\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1</code></p>
+<p>添加：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$env:LANG</span>=zh_CN.UTF8</span><br></pre></td></tr></table></figure>
+<p>然后重启 powershell 即可。</p>
+<h2 id="Filename-too-long-导致-checkout-失败"><a href="#Filename-too-long-导致-checkout-失败" class="headerlink" title="Filename too long 导致 checkout 失败"></a>Filename too long 导致 checkout 失败</h2><p>原因是 git 默认使用旧版的 Windows API，对于路径的支持最大为 <code>MAX_PATH</code>（多么熟悉的宏）。</p>
+<p>解决方法是直接开启 git 对 windows 的长文件名支持，执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.longpaths true</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
     
       
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2019-02-10
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/" class="archive-post-link">
-            C++ 工程依赖管理新方向：CMake & Git
-          </a>
-        </span>
-      </div>
-    
       
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2018-09-14
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2018/09/14/git-invert-grep-bug/" class="archive-post-link">
-            Git Invert-grep Bug
-          </a>
-        </span>
-      </div>
-    
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/10/19/two-git-tips-on-windows/">http://kingsamchen.github.io/2019/10/19/two-git-tips-on-windows/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
       
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-05-23
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/05/23/why-git-flow-model-is-considered-harmful/" class="archive-post-link">
-            为什么我反对使用 git flow
-          </a>
-        </span>
-      </div>
-    
-  </section>
 
-  
-  <nav class="pagination">
+
+      
+      
     
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/git/">git</a>
+            
+              <a href="/tags/powershell/">powershell</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/10/01/review-dclp-and-memory-reordering/">
+        <span class="next-text nav-default">复习：DCLP 和 Memory Reordering</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
     
   </nav>
 
+      </footer>
+    
+
+  </article>
 
 
           </div>
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
       </main>
@@ -343,9 +375,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = '';
-        this.page.identifier = 'tags/git/index.html';
-        this.page.title = '';
+        this.page.url = 'http://kingsamchen.github.io/2019/10/19/two-git-tips-on-windows/';
+        this.page.identifier = '2019/10/19/two-git-tips-on-windows/';
+        this.page.title = 'Windows 上使用 Git Tips 两则';
     };
     (function() {
     var d = document, s = d.createElement('script');

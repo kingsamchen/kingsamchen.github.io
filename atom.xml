@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-10-01T08:40:09.015Z</updated>
+  <updated>2019-10-19T09:27:44.767Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Windows 上使用 Git Tips 两则</title>
+    <link href="http://kingsamchen.github.io/2019/10/19/two-git-tips-on-windows/"/>
+    <id>http://kingsamchen.github.io/2019/10/19/two-git-tips-on-windows/</id>
+    <published>2019-10-19T09:12:14.000Z</published>
+    <updated>2019-10-19T09:27:44.767Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Windows-Terminal-中-git-log-显示-UTF-8-编码的中文&quot;&gt;&lt;a href=&quot;#Windows-Terminal-中-git-log-显示-UTF-8-编码的中文&quot; class=&quot;headerlink&quot; title=&quot;Windows
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="git" scheme="http://kingsamchen.github.io/tags/git/"/>
+    
+      <category term="powershell" scheme="http://kingsamchen.github.io/tags/powershell/"/>
+    
+  </entry>
   
   <entry>
     <title>复习：DCLP 和 Memory Reordering</title>
@@ -201,9 +229,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
-    
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
     
   </entry>
   
@@ -228,9 +256,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
       <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
   </entry>
   
@@ -484,9 +512,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
-    
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
     
       <category term="project management" scheme="http://kingsamchen.github.io/tags/project-management/"/>
     
@@ -637,36 +665,6 @@
       <category term="monorepo" scheme="http://kingsamchen.github.io/tags/monorepo/"/>
     
       <category term="spurious wakeup" scheme="http://kingsamchen.github.io/tags/spurious-wakeup/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>socks4a 协议代理</title>
-    <link href="http://kingsamchen.github.io/2019/03/24/on-socks4a-proxy-implementation/"/>
-    <id>http://kingsamchen.github.io/2019/03/24/on-socks4a-proxy-implementation/</id>
-    <published>2019-03-24T12:07:03.000Z</published>
-    <updated>2019-03-24T12:42:05.458Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;对于网络编程学习而言，尝试实现一个 proxy 是一个很好的途径。因为一个 proxy 对于 clients 来说是 server，对 remote servers 来说又是
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="proxy" scheme="http://kingsamchen.github.io/tags/proxy/"/>
-    
-      <category term="socks4a" scheme="http://kingsamchen.github.io/tags/socks4a/"/>
-    
-      <category term="socks" scheme="http://kingsamchen.github.io/tags/socks/"/>
     
   </entry>
   

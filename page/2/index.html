@@ -182,6 +182,59 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/08/10/asio-cmake-package-wrapper/">安利 asio-cmake</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-10
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="0x00-Background"><a href="#0x00-Background" class="headerlink" title="0x00 Background"></a>0x00 Background</h2><p>考虑到 ASIO 的相当一部分组件（subset）已经进入了 C++ 20 Networking TS，未来再经过一些小调整之后成为标准库的一员基本板上钉钉。</p>
+<p>那么提前熟悉一下 ASIO 也不是什么坏事，毕竟没准等到 C++ 23 的时候，coroutine, networking, executor 啥的都已经很完备了，谁都可以用 C++ 实现一些性能不差的 server-end 代码了（比如 RPC 框架？）。</p>
+<p>不过和使用 Boost 类似，使用 ASIO 作为依赖库也不是一件容易的事情；毕竟自 modern C++ 元年至今都8年了，CMake 还在成为 de facto building system 的道路上挣扎，广泛接受的包管理依然不见踪影…</p>
+<h2 id="0x01-ASIO-CMake-Wrapper"><a href="#0x01-ASIO-CMake-Wrapper" class="headerlink" title="0x01 ASIO-CMake Wrapper"></a>0x01 ASIO-CMake Wrapper</h2><p>陈年老账就不再扯了，得益于 CMake 3.2 开始提倡的 taget-based properties 和 CMake 3.11 开始提供的 <code>FetchContent</code> module，我花了一些时间实现了一个基于 <code>FetchContent</code> 的 asio-cmake wrapper。<br>
+          <div class="read-more">
+            <a href="/2019/08/10/asio-cmake-package-wrapper/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/08/04/monthly-read-posts-in-july-2019/">Monthly Read Posts in July 2019</a>
         
       </h1>
@@ -568,74 +621,6 @@
 <hr>
 <p><a href="https://preshing.com/20120625/memory-ordering-at-compile-time/" target="_blank" rel="noopener">Memory Ordering at Compile Time</a></p>
 <p>How once upon a time does compiler reorder instructions.</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/05/12/roll-your-own-light-weight-mutex/">基于 semaphore 实现轻量级 mutex</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-05-12
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>核心是 Jeff Preshing 大牛的两篇文章</p>
-<ul>
-<li><a href="https://preshing.com/20120226/roll-your-own-lightweight-mutex/" target="_blank" rel="noopener">Roll Your Own Lightweight Mutex</a></li>
-<li><a href="https://preshing.com/20120305/implementing-a-recursive-mutex/" target="_blank" rel="noopener">Implementing a Recursive Mutex</a></li>
-</ul>
-<p>讲述如何利用操作系统（Windows）提供的基础同步原语，例如 semaphore，实现一个轻量级的 mutex 同步原语。</p>
-<p>这个 home-made mutex 有如下特点：</p>
-<ul>
-<li>支持常规的 <code>lock()</code>, <code>unkock()</code> 和 <code>try_lock()</code></li>
-<li>在没有 race 的情况下 lock/unlock 操作都是简单的 atomic operations，开销小</li>
-<li>支持 recursive mode（第二篇文章里阐述）</li>
-</ul>
-<p>之所以说是轻量级，是因为这个实现缺少一些高级功能，例如 <code>CRITICAL_SECTION</code> 提供的多核环境下阻塞线程前会进入 spinning state；同时在 Linux 等系统下，缺少应对 thread priority inversion 的能力 .etc</p>
-<p>在功能够用的情况下，根据 Jeff Preshing 给出的 benchmark，这个 Lightweight mutex 性能不俗。</p>
-<h2 id="前方大量评注（吐槽）"><a href="#前方大量评注（吐槽）" class="headerlink" title="前方大量评注（吐槽）"></a>前方大量评注（吐槽）</h2><p>如果你看完了这两篇文章并且也大致上弄明白了文章里给出的实现代码，可以继续往下看。</p>
-<p><strong>0x00</strong> 事实上，Windows 的 <code>CRITICAL_SECTION</code> 也是类似的实现。当然附属功能多了不少就是。</p>
-<p><strong>0x01</strong> 第二篇文章里为了实现 recursive mode，给每个 mutex 增加了一个 owner-thread 的成员。实际上，哪怕是非 recursive 的实现都应该有这个成员：因为 mutex 区别于单纯的 semaphore 的一个核心特点是，它具有 ownership 的概念。</p>
-<p>因此第一篇文章里的实现是有欠缺的，会导致线程 A 上的 lock 能被线程 B unlock。</p>
-<p>这个行为直接暴露了底层 semaphore 的语义，但不是 mutex 自身的语义。</p>
-<p><strong>0x02</strong> Golang 的 <code>Mutex</code> 实现上没有 ownership 的概念，选择了直接暴露了底层的 semaphore 语义。这是一个很迷的设计，GitHub 上有人提了 issue，但是官方给的回复非常的 interesting。</p>
-<p><strong>0x03</strong> 示例代码里，原子的增/减用的是 <code>_InterlockedIncrement()</code> 和 <code>_InterlockedDecrement()</code>；这两个 intrinsics 会返回更新后的值。所以相比下，使用 <code>_InterlockedExchangeAdd()</code> 会更加高效。</p>
-<p>因为这三个 intrinsic 函数编译后同样生成 <code>lock xadd</code> 指令，但是后者返回的是 original value 指令相比下少一条。</p>
-<p><strong>0x04</strong> <code>try_lock()</code> 的实现需要用到 CAS 指令，开销更大，因此在 recursive mode 的实现中，仅当当前线程不是 owning thread 时再去尝试改变 mutex 状态是一个更好的实现。</p>
 
         
       
