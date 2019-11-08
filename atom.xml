@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-11-04T14:09:43.877Z</updated>
+  <updated>2019-11-08T17:03:00.810Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>uber automaxprocs 源码分析</title>
+    <link href="http://kingsamchen.github.io/2019/11/09/src-study-uber-automaxprocs/"/>
+    <id>http://kingsamchen.github.io/2019/11/09/src-study-uber-automaxprocs/</id>
+    <published>2019-11-08T16:43:11.000Z</published>
+    <updated>2019-11-08T17:03:00.810Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近直播内部的 golang 服务都使用了 uber 出品的 automaxprocs 这个库。&lt;/p&gt;
+&lt;p&gt;据伟大的 @ice 马总说，这个库解决了一个困扰B站整个golang（container）技术栈一年多的问题。&lt;/p&gt;
+&lt;p&gt;出于好奇这个库到底做了什么 magic，能够解决这个持续了一年多的 pain in the ass，抽了一点时间，稍微翻了一下库的源代码，记录如下。&lt;/p&gt;
+&lt;h1 id=&quot;automaxprocs-解决了什么问题&quot;&gt;&lt;a href=&quot;#automaxprocs-解决了什么问题&quot; class=&quot;headerlink&quot; title=&quot;automaxprocs 解决了什么问题&quot;&gt;&lt;/a&gt;automaxprocs 解决了什么问题&lt;/h1&gt;&lt;p&gt;线上容器里的服务通常都对 CPU 资源做了限制，例如默认的 4C。&lt;/p&gt;
+&lt;p&gt;但是在容器里通过 &lt;code&gt;lscpu&lt;/code&gt; 仍然能看到宿主机的所有 CPU 核心：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;rchitecture:          x86_64&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;CPU op-mode(s):        32-bit, 64-bit&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Byte Order:            Little Endian&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;CPU(s):                48&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;On-line CPU(s) list:   0-47&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Thread(s) per core:    2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Core(s) per socket:    12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Socket(s):             2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;NUMA node(s):          2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Vendor ID:             GenuineIntel&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;CPU family:            6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Model:                 79&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Model name:            Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Stepping:              1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;这就导致 golang 服务默认会拿宿主机的 CPU 核心数来调用 &lt;code&gt;runtime.GOMAXPROCS()&lt;/code&gt;，导致 P 数量远远大于可用的 CPU 核心，引起频繁上下文切换，影响高负载情况下的服务性能。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="automaxprocs" scheme="http://kingsamchen.github.io/tags/automaxprocs/"/>
+    
+  </entry>
   
   <entry>
     <title>一个轮子：基于 token bucket 的 rate-limit</title>
@@ -259,9 +287,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
       <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
   </entry>
   
@@ -286,9 +314,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
-    
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
     
   </entry>
   
@@ -542,9 +570,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
       <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
       <category term="project management" scheme="http://kingsamchen.github.io/tags/project-management/"/>
     
@@ -619,48 +647,6 @@
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
       <category term="dns" scheme="http://kingsamchen.github.io/tags/dns/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>统一 ezio Buffer 的算术类型读写接口</title>
-    <link href="http://kingsamchen.github.io/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/"/>
-    <id>http://kingsamchen.github.io/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/</id>
-    <published>2019-04-07T12:40:11.000Z</published>
-    <updated>2019-04-13T02:48:22.102Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;ezio Buffer 一开始的时候只为 read, write 和 peek 提供了从 &lt;code&gt;int8_t&lt;/code&gt; 到 &lt;code&gt;int64_t&lt;/code&gt; 的函数重载，如果需要处理 unsigned integers，那么就需要自己额外做 &lt;code&gt;static_cast&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;ezio 的主要客户&lt;a href=&quot;https://github.com/oceancx&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;藏心&lt;/a&gt;同学早前抱怨过这个问题，并且同时建议我加上对 &lt;code&gt;float/double&lt;/code&gt; 的浮点数支持。&lt;/p&gt;
-&lt;p&gt;对于这个建议我一开始是抵触的：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;自己 cast 又不是不能用，额外加重载支持三个操作工作量都要翻一番呢&lt;/li&gt;
-&lt;li&gt;浮点数的 binary serialization 本来就是很难跨平台的，不是每个环境都（虽然大部分）要求使用 IEEE 754 spec。如果真的需要直接把浮点数存到网络包里，自己直接操作 underlying binary layout 不就好了…&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;于是藏心同学一开始开的 issue 我一直没理他，于是最后他自己关掉了…&lt;/p&gt;
-&lt;p&gt;等到我自己动手写一个 socks4a proxy 的时候我发现，自己 cast 真的是…太蛋疼了…而且代码看上去还非常丑，大面积的 &lt;code&gt;static_cast&lt;/code&gt; 制造了相当一部分内容噪音。那会儿我大概有点理解藏心同学的内心感受。&lt;/p&gt;
-&lt;p&gt;于是我思考良久，打算改造 Buffer 的这部分接口，以支持绝大多数 integer types，顺带也增加入 floating piont types 的支持，这样 read, write, peek 就基本支持了绝大多数 arithmetic types。&lt;/p&gt;
-&lt;p&gt;通过直接增加重载是我极力避免的，因为除了接口签名外，大部分实现几乎是一样的，不外乎：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;如果是单字节，直接写/读操作&lt;/li&gt;
-&lt;li&gt;如果是多字节，首先字节序转换，然后做写/读操作&lt;/li&gt;
-&lt;li&gt;如果是浮点数，首先按照对应字节大小的整数类型&lt;strong&gt;解释&lt;/strong&gt;内存，然后参考普通整数的处理&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;于是自然而然的想到直接将函数做成 function templates 来增强语义。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="SFINAE" scheme="http://kingsamchen.github.io/tags/SFINAE/"/>
-    
-      <category term="template" scheme="http://kingsamchen.github.io/tags/template/"/>
-    
-      <category term="ezio" scheme="http://kingsamchen.github.io/tags/ezio/"/>
     
   </entry>
   

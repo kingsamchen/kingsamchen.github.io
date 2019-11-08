@@ -182,6 +182,58 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/10/21/implement-bililive-command-mapping-macros/">一个轻量型的 Command-Mapping Macros</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-10-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>某 Bililive 沿用了 Chromium 负责在 UI 层不同模块通讯的 command/handler 的机制，但是因为 Chromium 对 command 机制使用得很节制，因此相关的代码量不多，其处理函数一直是一个大大的 <code>switch...case</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ExecuteCommandWithParams</span><span class="params">(Bililive* receiver, <span class="keyword">int</span> command, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">switch</span> (command) &#123;</span><br><span class="line">        <span class="keyword">case</span> IDC_ALPHA:</span><br><span class="line">            <span class="comment">// handler code</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">case</span> IDC_BRAVO:</span><br><span class="line">            <span class="comment">// handler code</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">case</span> IDC_CHARLIE:</span><br><span class="line">            <span class="comment">// handler code</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然而到了 Bililive 这里，因为开发人员水平限制，没有最好模块内外的通讯规划，导致存在大量的 command 通信，而 handler 代码依然是直接原封不动写在 <code>switch</code> 里。于是 <code>ExecuteCommandWithParams()</code> 就包含了上千行的实现，而且由于都在一个函数内，没有语法上的 scope 和清晰的语义划分，维护起来相当痛苦。</p>
+<p>一个有效的解决方案是采用类似 MFC Message-Mapping 的方式，将不同的 message handler 分离到单独的函数里。至于参数，因为所有 command 的参数都是一致的，直接简化了处理。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/logging.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BEGIN_BILILIVE_COMMAND_MAP(cmd_receiver, cmd_id, cmd_params)        \</span></span><br><span class="line">    &#123;                                                                       \</span><br><span class="line">        <span class="keyword">auto</span> __receiver = cmd_receiver;                                     \</span><br><span class="line">        <span class="keyword">auto</span> __id = cmd_id;                                                 \</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; __params = cmd_params;                                  \</span><br><span class="line">        <span class="keyword">switch</span> (cmd_id) &#123;                                                   \</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ON_BILILIVE_COMMAND(cmd_id, fn)                                     \</span></span><br><span class="line">    <span class="keyword">case</span> cmd_id: &#123;                                                          \</span><br><span class="line">        fn(__receiver, __params);                                           \</span><br><span class="line">    &#125;                                                                       \</span><br><span class="line">    <span class="keyword">break</span>;                                                                  \</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ON_BILILIVE_COMMAND_UNHANDLED_ERROR()                               \</span></span><br><span class="line">    <span class="keyword">default</span>: &#123;                                                              \</span><br><span class="line">        NOTREACHED() &lt;&lt; <span class="string">"Unhandled command "</span> &lt;&lt; __id;                       \</span><br><span class="line">    &#125;                                                                       \</span><br><span class="line">    <span class="keyword">break</span>;                                                                  \</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> END_BILILIVE_COMMAND_MAP()                                          \</span></span><br><span class="line">        &#125;                                                                   \</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>于是处理相关的代码就变成</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnAlpha</span><span class="params">(Bililive* receiver, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnBravo</span><span class="params">(Bililive* receiver, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnCharlie</span><span class="params">(Bililive* receiver, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ExecuteCommandWithParams</span><span class="params">(Bililive* receiver, <span class="keyword">int</span> command, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    BEGIN_BILILIVE_COMMAND_MAP(receiver, command, params)</span><br><span class="line">        ON_BILILIVE_COMMAND(IDC_ALPHA, OnAlpha)</span><br><span class="line">        ON_BILILIVE_COMMAND(IDC_BRAVO, OnBravo)</span><br><span class="line">        ON_BILILIVE_COMMAND(IDC_CHARLIE, OnCharlie)</span><br><span class="line">        ON_BILILIVE_COMMAND_UNHANDLED_ERROR()</span><br><span class="line">    END_BILILIVE_COMMAND_MAP()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/10/01/monthly-read-posts-in-sep-2017/">Monthly Read Posts in Sep 2017</a>
         
       </h1>
@@ -581,65 +633,6 @@
 <p>一个游戏服务端开发大牛的两篇关于游戏服务端 TCP 开发相关的文章。</p>
 <p>两篇文章内容不光已经涵盖了前面阿里中间件团队的前两篇内容，还谈到了一些容易被忽略的点，例如 Head-of-Line Blocking。</p>
 <p>第二篇还专门针对游戏服务端的业务特点，给了一些建议</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/07/24/terminate-child-processes-on-close-using-job-object/">利用 Job 内核对象实现父进程关闭时自动结束所有子进程</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-07-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>投稿工具的压制功能一直来都有一个问题：如果主进程被强行结束了（例如利用任务管理器），那么创建的 ffmpeg 压制进程仍然会继续运行。</p>
-<p>因为 ffmpeg 是以二进制的方式部署的，因此不存在修改它的代码，自己和主进程建立 IPC 监控的方式。</p>
-<p>至于采用远线程注入的方式来强行 HACK，我一直对这种无视客观规律的霸道方式都不太感冒，毕竟我们又不是做安全软件。</p>
-<p>所以我想到了曾经在 Windows 核心编程中看到的一个方法：使用 Job 内核对象。</p>
-<p>核心方法总结起来就是一句话：将 ffmpeg 压制进程加入到一个 Job 对象中，利用 Job 对象的 <em>Kill-On-Close</em> 特性，在 Job 内核对象被释放时，Job 内的所有进程都会被系统结束。</p>
-<p>于是我写了一个 demo snippet，解决了几个坑之后验证了我的想法。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;conio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;cassert&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;Windows.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">LaunchAndWait</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::wstring&amp; cmdline, HANDLE job)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">wchar_t</span> buf[<span class="number">255</span>] &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    wcscpy_s(buf, cmdline.c_str());</span><br><span class="line"></span><br><span class="line">    STARTUPINFO startup &#123;<span class="number">0</span>&#125;;</span><br><span class="line">    startup.cb = <span class="keyword">sizeof</span>(startup);</span><br><span class="line">    PROCESS_INFORMATION process_information &#123;<span class="literal">nullptr</span>&#125;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!CreateProcessW(<span class="literal">nullptr</span>,</span><br><span class="line">                        buf,</span><br><span class="line">                        <span class="literal">nullptr</span>,</span><br><span class="line">                        <span class="literal">nullptr</span>,</span><br><span class="line">                        FALSE,</span><br><span class="line">                        CREATE_SUSPENDED | CREATE_BREAKAWAY_FROM_JOB,   <span class="comment">// important</span></span><br><span class="line">                        <span class="literal">nullptr</span>,</span><br><span class="line">                        <span class="literal">nullptr</span>,</span><br><span class="line">                        &amp;startup,</span><br><span class="line">                        &amp;process_information)) &#123;</span><br><span class="line">        <span class="keyword">auto</span> err = GetLastError();</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">"Failed to create process: "</span> &lt;&lt; err;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!AssignProcessToJobObject(job, process_information.hProcess)) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">"Failed to assign process to job: "</span> &lt;&lt; GetLastError();</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ResumeThread(process_information.hThread);</span><br><span class="line"></span><br><span class="line">    CloseHandle(process_information.hProcess);</span><br><span class="line">    CloseHandle(process_information.hThread);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    BOOL is_in_job;</span><br><span class="line">    IsProcessInJob(GetCurrentProcess(), <span class="literal">nullptr</span>, &amp;is_in_job);</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Is the main process in job: "</span> &lt;&lt; is_in_job &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Wait for constructing job object!\n"</span>;</span><br><span class="line"></span><br><span class="line">    HANDLE job = CreateJobObjectW(<span class="literal">nullptr</span>, <span class="literal">nullptr</span>);</span><br><span class="line">    <span class="keyword">if</span> (!job) &#123;</span><br><span class="line">        <span class="keyword">auto</span> err = GetLastError();</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">"Failed to create job: "</span> &lt;&lt; err &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Enforce limits.</span></span><br><span class="line">    JOBOBJECT_EXTENDED_LIMIT_INFORMATION job_limits;</span><br><span class="line">    <span class="built_in">memset</span>(&amp;job_limits, <span class="number">0</span>, <span class="keyword">sizeof</span>(job_limits));</span><br><span class="line">    job_limits.BasicLimitInformation.LimitFlags = JOB_OBJECT_LIMIT_KILL_ON_JOB_CLOSE;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (!SetInformationJobObject(job, JobObjectExtendedLimitInformation, &amp;job_limits, <span class="keyword">sizeof</span>(job_limits))) &#123;</span><br><span class="line">        <span class="keyword">auto</span> err = GetLastError();</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">cerr</span> &lt;&lt; <span class="string">"Failed to set job information: "</span> &lt;&lt; err &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Job object created! Launch test subjects...\n"</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">bool</span> r = LaunchAndWait(<span class="string">LR"(C:\Windows\notepad.exe)"</span>, job);</span><br><span class="line">    assert(r);</span><br><span class="line"></span><br><span class="line">    _getch();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>最终的产品代码思路是完全一样的，当然代码不可能像上面这样随意。</p>
-<p>这里有两个比较隐蔽的坑（MSDN 上不一定能看到）需要注意一下：</p>
-<p>第一个是创建进程时最好带上 <code>CREATE_BREAKAWAY_FROM_JOB</code>，因为 Job 属性存在自动继承性：如果一个进程属于一个 Job，那么他创建的子进程会自动关联到这个 Job。</p>
-<p><code>explorer</code> 和 VS 都是存在于 Job 中的，因此如果在这两个环境下运行程序， <code>IsProcessInJob()</code> 会返回 <code>true</code></p>
-<p>第二个坑特别隐蔽：我一开始的 test subject 是 calc.exe，在 Windows 10 上这是一个 UWP 程序，然而无论我怎么做，calc 进程都活得好好的，一点不像是被约束的样子。。。甚至所有 API 的调用都并没有返回错误。</p>
-<p>而当我将 test subject 换成 Win32 程序 notepad.exe 之后，功能就可以正常跑了….</p>
-<p>我猜想这大概和 UWP 程序的一些安全特性有关，不过因为本身对安全并没有偏执的热爱，所以在这个点上就没有继续深入了。</p>
 
         
       

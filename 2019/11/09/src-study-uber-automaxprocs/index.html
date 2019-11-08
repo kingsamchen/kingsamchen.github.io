@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="uber automaxprocs 源码分析">
+
+
+
+
+  <meta name="keywords" content="golang, automaxprocs, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/11/09/src-study-uber-automaxprocs/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> uber automaxprocs 源码分析 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          uber automaxprocs 源码分析
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-11-09
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#automaxprocs-解决了什么问题"><span class="toc-text">automaxprocs 解决了什么问题</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#automaxprocs-源码分析"><span class="toc-text">automaxprocs 源码分析</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#Grand-Tour"><span class="toc-text">Grand Tour</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#获取进程的-cgroup-信息"><span class="toc-text">获取进程的 cgroup 信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#获取进程的-mountinfo"><span class="toc-text">获取进程的 mountinfo</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#找到目标-cgroup-path"><span class="toc-text">找到目标 cgroup path</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#计算-cpu-配额"><span class="toc-text">计算 cpu 配额</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#彩蛋"><span class="toc-text">彩蛋</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x0"><span class="toc-text">0x0</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x1"><span class="toc-text">0x1</span></a></li></ol></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>最近直播内部的 golang 服务都使用了 uber 出品的 automaxprocs 这个库。</p>
+<p>据伟大的 @ice 马总说，这个库解决了一个困扰B站整个golang（container）技术栈一年多的问题。</p>
+<p>出于好奇这个库到底做了什么 magic，能够解决这个持续了一年多的 pain in the ass，抽了一点时间，稍微翻了一下库的源代码，记录如下。</p>
+<h1 id="automaxprocs-解决了什么问题"><a href="#automaxprocs-解决了什么问题" class="headerlink" title="automaxprocs 解决了什么问题"></a>automaxprocs 解决了什么问题</h1><p>线上容器里的服务通常都对 CPU 资源做了限制，例如默认的 4C。</p>
+<p>但是在容器里通过 <code>lscpu</code> 仍然能看到宿主机的所有 CPU 核心：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">rchitecture:          x86_64</span><br><span class="line">CPU op-mode(s):        32-bit, 64-bit</span><br><span class="line">Byte Order:            Little Endian</span><br><span class="line">CPU(s):                48</span><br><span class="line">On-line CPU(s) list:   0-47</span><br><span class="line">Thread(s) per core:    2</span><br><span class="line">Core(s) per socket:    12</span><br><span class="line">Socket(s):             2</span><br><span class="line">NUMA node(s):          2</span><br><span class="line">Vendor ID:             GenuineIntel</span><br><span class="line">CPU family:            6</span><br><span class="line">Model:                 79</span><br><span class="line">Model name:            Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz</span><br><span class="line">Stepping:              1</span><br></pre></td></tr></table></figure>
+<p>这就导致 golang 服务默认会拿宿主机的 CPU 核心数来调用 <code>runtime.GOMAXPROCS()</code>，导致 P 数量远远大于可用的 CPU 核心，引起频繁上下文切换，影响高负载情况下的服务性能。<br><a id="more"></a><br>automaxprocs 能够正确识别容器允许使用的核心数，合理的设置 go processor，避免这个问题。</p>
+<h1 id="automaxprocs-源码分析"><a href="#automaxprocs-源码分析" class="headerlink" title="automaxprocs 源码分析"></a>automaxprocs 源码分析</h1><h2 id="Grand-Tour"><a href="#Grand-Tour" class="headerlink" title="Grand Tour"></a>Grand Tour</h2><p>包级别的 <code>init()</code> 函数（代码位置在 <code>automaxprocs/automaxprocs.go</code>）实现了导入这个包即可产生作用：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	maxprocs.Set(maxprocs.Logger(log.Printf))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>核心函数就是 <code>maxprocs.Set()</code>；这个函数会从当前的 cgroups 里获取设置的 CPU quota，然后转换为合适的 <code>GOMAXPROCS</code>。</p>
+<p>核心逻辑（略去一些细节）：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> config <span class="keyword">struct</span> &#123;</span><br><span class="line">	printf        <span class="function"><span class="keyword">func</span><span class="params">(<span class="keyword">string</span>, ...<span class="keyword">interface</span>&#123;&#125;)</span>                      // <span class="title">logger</span></span></span><br><span class="line"><span class="function">	<span class="title">procs</span>         <span class="title">func</span><span class="params">(<span class="keyword">int</span>)</span> <span class="params">(<span class="keyword">int</span>, iruntime.CPUQuotaStatus, error)</span></span></span><br><span class="line"><span class="function">	<span class="title">minGOMAXPROCS</span> <span class="title">int</span></span></span><br><span class="line"><span class="function">&#125;</span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function">// <span class="title">within</span> <span class="title">func</span> <span class="title">Set</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">cfg</span> := &amp;<span class="title">config</span></span>&#123;</span><br><span class="line">    procs:         iruntime.CPUQuotaToGOMAXPROCS,</span><br><span class="line">    minGOMAXPROCS: <span class="number">1</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">maxProcs, status, err := cfg.procs(cfg.minGOMAXPROCS)</span><br><span class="line"></span><br><span class="line">runtime.GOMAXPROCS(maxProcs)</span><br></pre></td></tr></table></figure>
+<p>可以看出主要的工作都在 <code>iruntime.CPUQuotaToGOMAXPROCS()</code> 里完成。</p>
+<p>至于 <code>minGOMAXPROCS</code> 的作用</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">maxProcs = max(cpu_quota, minGOMAXPROCS)</span><br></pre></td></tr></table></figure>
+<p>避免外部 cpu quota 设置的过小。</p>
+<h2 id="获取进程的-cgroup-信息"><a href="#获取进程的-cgroup-信息" class="headerlink" title="获取进程的 cgroup 信息"></a>获取进程的 cgroup 信息</h2><p>核心函数之一的 <code>parseCGroupSubsystems()</code> 可以通过解析 <code>/proc/$pid/cgroup</code> 文件，返回这个进程的 cgroup subsystem table，对应的数据结构是：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// key 其实就是 subsystem</span></span><br><span class="line">subsystems := <span class="built_in">make</span>(<span class="keyword">map</span>[<span class="keyword">string</span>]*CGroupSubsys)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> CGroupSubsys <span class="keyword">struct</span> &#123;</span><br><span class="line">	ID         <span class="keyword">int</span></span><br><span class="line">	Subsystems []<span class="keyword">string</span></span><br><span class="line">	Name       <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里看一下 <code>/proc/$pid/cgroup</code> 的样子（从线上找了一个服务）：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">10:pids:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">9:perf_event:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">8:net_cls,net_prio:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">7:freezer:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">6:devices:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">5:memory:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">4:blkio:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">--&gt; 3:cpu,cpuacct:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">2:cpuset:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br><span class="line">1:name=systemd:/kubepods/burstable/pod5627f0a1-010c-11ea-90fe-d0946603da2e/f090bf4f93ec9d1f4f12b56b2ed40268c1e1c3a0bb8a92799dd99caeca80147d</span><br></pre></td></tr></table></figure>
+<p>每行都是一条记录，记录的每个 field 之间用 <code>:</code> 分割，从左至右分别是：</p>
+<ul>
+<li>id</li>
+<li>subsystems，多个 subsystem 之间用 <code>,</code> 分隔</li>
+<li>pathname</li>
+</ul>
+<p>这里的目标是包含 <code>cpu</code> 这个 subsystem 的这条记录；其他的记录其实无关紧要。</p>
+<p>同时注意一下 <code>pathname</code> 这个字段，代表进程所属的 cgroup hierarchy 的路径，并且一个相对于 cgroup hierarchy 的 mount point 的一个相对路径。</p>
+<p>BTW：这里能看到一条记录可能有多个 subsystem，所以前面的 table 最后会出现多个 subsystem key 指向的其实是同一个 <code>CGroupSubsys</code> 实例。</p>
+<h2 id="获取进程的-mountinfo"><a href="#获取进程的-mountinfo" class="headerlink" title="获取进程的 mountinfo"></a>获取进程的 mountinfo</h2><p>类似的，核心函数 <code>parseMountInfo()</code> 会打开进程的 <code>mountinfo</code> 文件，然后将每一行记录解析成对应的 <code>MountInfo</code> 结构</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MountPoint <span class="keyword">struct</span> &#123;</span><br><span class="line">	MountID        <span class="keyword">int</span></span><br><span class="line">	ParentID       <span class="keyword">int</span></span><br><span class="line">	DeviceID       <span class="keyword">string</span></span><br><span class="line">	Root           <span class="keyword">string</span></span><br><span class="line">	MountPoint     <span class="keyword">string</span></span><br><span class="line">	Options        []<span class="keyword">string</span></span><br><span class="line">	OptionalFields []<span class="keyword">string</span></span><br><span class="line">	FSType         <span class="keyword">string</span></span><br><span class="line">	MountSource    <span class="keyword">string</span></span><br><span class="line">	SuperOptions   []<span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>看一下一个示例 <code>mountinfo</code> 文件内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root@data-guru-129126-b9bf4d97-rrd65:/# cat /proc/24/mountinfo | grep cgroup</span><br><span class="line">1879 1878 0:147 / /sys/fs/cgroup ro,nosuid,nodev,noexec,relatime - tmpfs tmpfs rw,mode=755</span><br><span class="line">1880 1879 0:23 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/systemd ro,nosuid,nodev,noexec,relatime master:10 - cgroup cgroup rw,xattr,release_agent=/lib/systemd/systemd-cgroups-agent,name=systemd</span><br><span class="line">1881 1879 0:25 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/cpuset ro,nosuid,nodev,noexec,relatime master:13 - cgroup cgroup rw,cpuset</span><br><span class="line">--&gt; 1882 1879 0:26 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/cpu,cpuacct ro,nosuid,nodev,noexec,relatime master:14 - cgroup cgroup rw,cpu,cpuacct</span><br><span class="line">1884 1879 0:27 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/blkio ro,nosuid,nodev,noexec,relatime master:15 - cgroup cgroup rw,blkio</span><br><span class="line">1885 1879 0:28 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/memory ro,nosuid,nodev,noexec,relatime master:16 - cgroup cgroup rw,memory</span><br><span class="line">1886 1879 0:29 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/devices ro,nosuid,nodev,noexec,relatime master:17 - cgroup cgroup rw,devices</span><br><span class="line">1887 1879 0:30 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/freezer ro,nosuid,nodev,noexec,relatime master:18 - cgroup cgroup rw,freezer</span><br><span class="line">1888 1879 0:31 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/net_cls,net_prio ro,nosuid,nodev,noexec,relatime master:19 - cgroup cgroup rw,net_cls,net_prio</span><br><span class="line">1889 1879 0:32 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/perf_event ro,nosuid,nodev,noexec,relatime master:20 - cgroup cgroup rw,perf_event</span><br><span class="line">1890 1879 0:33 /kubepods/burstable/pod7462dcc7-010a-11ea-90fe-d0946603da2e/85ca96fbb5ee9855ce56da4731bf346786f62b6199a58f66edfb0b7e96b73854 /sys/fs/cgroup/pids ro,nosuid,nodev,noexec,relatime master:21 - cgroup cgroup rw,pids</span><br></pre></td></tr></table></figure>
+<p>每条记录的字段用空格分隔，字段 <code>-</code> 表示后面都是 options</p>
+<p>共有三个字段需要我们关心：</p>
+<ul>
+<li>索引为3的字段；组成当前挂载点根路径的文件系统的路径，对应 <code>MountInfo.Root</code></li>
+<li>索引为4的字段；当前挂载点相对于进程根目录的路径，对应 <code>MountInfo.MountPoint</code></li>
+<li><code>-</code> 字段之后的第一个字段，代表 filesystem type，对应 <code>MountInfo.FsType</code>；我们其实只需要 <code>cgroup</code>。</li>
+<li>上面 fstype 字段之后的第二个字段，是 subsystems，subsystem之间用,分割；这里我们其实需要的是包含 <code>cpu</code> 的这个 subsystem</li>
+</ul>
+<h2 id="找到目标-cgroup-path"><a href="#找到目标-cgroup-path" class="headerlink" title="找到目标 cgroup path"></a>找到目标 cgroup path</h2><p>有了前两步之后，就可以找到进程对应的 <code>cpu</code> 这个 subsystem 的 CGroup path。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// CGroup represents the data structure for a Linux control group.</span></span><br><span class="line"><span class="keyword">type</span> CGroup <span class="keyword">struct</span> &#123;</span><br><span class="line">	path <span class="keyword">string</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这部分操作在 lambda 函数 <code>newMountPoint()</code> 中。</p>
+<p>总结起来就是：</p>
+<ol>
+<li>在 mountinfo 文件中找到 <code>fstype = cgroup &amp;&amp; subsystems.contains(cpu)</code> 的记录，分离出 <code>root</code> 和 <code>mount-point</code>。</li>
+<li>在 cgroup 文件中找到 <code>subsystems.contains(cpu)</code> 的记录，分理出 pathname</li>
+<li><code>cgroupPath = Join(mount_point, relative(root, pathname))</code><br><code>relative()</code> 函数返回 pathname 相对于 root 的相对路径</li>
+</ol>
+<p>BTW：实践中发现 <code>root</code> 和 <code>pathname</code> 基本一致，这样返回的相对路径就是 <code>.</code>；最后组合的最终路径都是 <code>/sys/fs/cgroup/cpu</code></p>
+<p>不过考虑到不同发行版甚至不同版本的 docker / k8s 行为可能存在不一致，所以最具有移植性还是上面的做法。</p>
+<h2 id="计算-cpu-配额"><a href="#计算-cpu-配额" class="headerlink" title="计算 cpu 配额"></a>计算 cpu 配额</h2><p>有了前面的目录路径之后，该目录下的：</p>
+<ul>
+<li><code>cfs.cpu_period_us</code> 文件记录了调度周期，单位是 us；默认值一般是 100’000，即 100 ms</li>
+<li><code>cfs.cpu_quota_us</code> 记录了每个调度周期进程允许使用 cpu 的量，单位也是 us。<br>值为 -1 表示无限制；对于 4C 的容器，这个值一般是 400’000</li>
+</ul>
+<blockquote>
+<p>Aside：这两个值限制的是进程使用 cpu 的时间。<br>上述设置下表示：每 100ms 的调度周期内，该进程可以使用 400ms 的 cpu 时间，所以看起来的效果是可以使用4个CPU核心<br>更详细的内容请参考 Linux kernel 的文档：<a href="https://www.kernel.org/doc/Documentation/scheduler/sched-bwc.txt" target="_blank" rel="noopener">CFS Bandwidth Control</a></p>
+</blockquote>
+<p>quota 和 period 的比值就是 docker 为容器设置的 CPU 核数配置。</p>
+<p>这个值也是 automaxprocs 为 <code>runtime.GOMAXPROCS()</code> 设置的值。</p>
+<p>这部分逻辑对应库函数：<code>CGoups.CPUQuota()</code></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>容器技术（docker）通过 Linux kernel 提供的 cgroups 机制来实现资源隔离和限制，但是这种限制有时候会出现反直觉的结果。</p>
+<p>上面的分析过程看，虽然这个库做的事情比较简单，但是要注意的是，我们是通过逆向工程（由果推因）来分析的这个问题。</p>
+<p>如果需要从正面解决（执因索果），那么就需要对 1）容器实现细节 2）linux 内核中 cgroups 的实现细节 有很深的了解。</p>
+<p>这恐怕也是过了一年多才找到解决方案，而且最后还是直接使用别人的solution的原因。</p>
+<h1 id="彩蛋"><a href="#彩蛋" class="headerlink" title="彩蛋"></a>彩蛋</h1><h2 id="0x0"><a href="#0x0" class="headerlink" title="0x0"></a>0x0</h2><p>事实上，automaxprocs 仅针对于使用 CFS 调度策略的实例。</p>
+<p>CFS 调度测类只限制进程的运行配额，不设置 processor affinity。所以在 4C 的限制下，理论上 G-P-M 调度模型下的 M 可以运行在任意物理核心上</p>
+<p>查看 <code>/sys/fs/cgroup/cpuset/cpuset.cpus</code> 这个文件可以发现没有做任何物理核心上的限制。</p>
+<p>docker 创建容器时可以使用 <code>--cpus=x</code> 来实现。</p>
+<h2 id="0x1"><a href="#0x1" class="headerlink" title="0x1"></a>0x1</h2><p>对于<strong>只</strong>使用 cpuset 策略的容器来说，其实没必要使用这个库。</p>
+<p>因为 cpuset 直接设置了容器的 processor affinity，然后神奇的是，golang 的 <code>runtime.NumCores()</code> 获取的核心数是考虑过 processor affinity 的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// @ /usr/local/go/src/runtime/os_linux.go</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">getproccount</span><span class="params">()</span> <span class="title">int32</span></span> &#123;</span><br><span class="line">	<span class="comment">// This buffer is huge (8 kB) but we are on the system stack</span></span><br><span class="line">	<span class="comment">// and there should be plenty of space (64 kB).</span></span><br><span class="line">	<span class="comment">// Also this is a leaf, so we're not holding up the memory for long.</span></span><br><span class="line">	<span class="comment">// See golang.org/issue/11823.</span></span><br><span class="line">	<span class="comment">// The suggested behavior here is to keep trying with ever-larger</span></span><br><span class="line">	<span class="comment">// buffers, but we don't have a dynamic memory allocator at the</span></span><br><span class="line">	<span class="comment">// moment, so that's a bit tricky and seems like overkill.</span></span><br><span class="line">	<span class="keyword">const</span> maxCPUs = <span class="number">64</span> * <span class="number">1024</span></span><br><span class="line">	<span class="keyword">var</span> buf [maxCPUs / <span class="number">8</span>]<span class="keyword">byte</span></span><br><span class="line">	r := sched_getaffinity(<span class="number">0</span>, unsafe.Sizeof(buf), &amp;buf[<span class="number">0</span>])</span><br><span class="line">	<span class="keyword">if</span> r &lt; <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	n := <span class="keyword">int32</span>(<span class="number">0</span>)</span><br><span class="line">	<span class="keyword">for</span> _, v := <span class="keyword">range</span> buf[:r] &#123;</span><br><span class="line">		<span class="keyword">for</span> v != <span class="number">0</span> &#123;</span><br><span class="line">			n += <span class="keyword">int32</span>(v &amp; <span class="number">1</span>)</span><br><span class="line">			v &gt;&gt;= <span class="number">1</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> n == <span class="number">0</span> &#123;</span><br><span class="line">		n = <span class="number">1</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> n</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>sched_getaffinity()</code> 其实是一个 <a href="http://man7.org/linux/man-pages/man2/sched_setaffinity.2.html" target="_blank" rel="noopener">linux syscall</a></p>
+<p>注：虽然 <code>runtime.NumCores()</code> 是根据亲缘性获取的，但是这个值第一次初始化之后与就不再变化了，即使后面 processor affinity 在运行过程中被更改了。。。</p>
+<p>所以有人提了一个相关的 issue：<a href="https://github.com/golang/go/issues/11609" target="_blank" rel="noopener">runtime: NumCPU does not change when process affinity changes</a></p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/11/09/src-study-uber-automaxprocs/">http://kingsamchen.github.io/2019/11/09/src-study-uber-automaxprocs/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/automaxprocs/">automaxprocs</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/11/04/token-bucket-based-rate-limit/">
+        <span class="next-text nav-default">一个轮子：基于 token bucket 的 rate-limit</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/11/09/src-study-uber-automaxprocs/';
+        this.page.identifier = '2019/11/09/src-study-uber-automaxprocs/';
+        this.page.title = 'uber automaxprocs 源码分析';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

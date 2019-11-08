@@ -182,6 +182,62 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/11/09/src-study-uber-automaxprocs/">uber automaxprocs 源码分析</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-11-09
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>最近直播内部的 golang 服务都使用了 uber 出品的 automaxprocs 这个库。</p>
+<p>据伟大的 @ice 马总说，这个库解决了一个困扰B站整个golang（container）技术栈一年多的问题。</p>
+<p>出于好奇这个库到底做了什么 magic，能够解决这个持续了一年多的 pain in the ass，抽了一点时间，稍微翻了一下库的源代码，记录如下。</p>
+<h1 id="automaxprocs-解决了什么问题"><a href="#automaxprocs-解决了什么问题" class="headerlink" title="automaxprocs 解决了什么问题"></a>automaxprocs 解决了什么问题</h1><p>线上容器里的服务通常都对 CPU 资源做了限制，例如默认的 4C。</p>
+<p>但是在容器里通过 <code>lscpu</code> 仍然能看到宿主机的所有 CPU 核心：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">rchitecture:          x86_64</span><br><span class="line">CPU op-mode(s):        32-bit, 64-bit</span><br><span class="line">Byte Order:            Little Endian</span><br><span class="line">CPU(s):                48</span><br><span class="line">On-line CPU(s) list:   0-47</span><br><span class="line">Thread(s) per core:    2</span><br><span class="line">Core(s) per socket:    12</span><br><span class="line">Socket(s):             2</span><br><span class="line">NUMA node(s):          2</span><br><span class="line">Vendor ID:             GenuineIntel</span><br><span class="line">CPU family:            6</span><br><span class="line">Model:                 79</span><br><span class="line">Model name:            Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz</span><br><span class="line">Stepping:              1</span><br></pre></td></tr></table></figure>
+<p>这就导致 golang 服务默认会拿宿主机的 CPU 核心数来调用 <code>runtime.GOMAXPROCS()</code>，导致 P 数量远远大于可用的 CPU 核心，引起频繁上下文切换，影响高负载情况下的服务性能。<br>
+          <div class="read-more">
+            <a href="/2019/11/09/src-study-uber-automaxprocs/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/11/04/token-bucket-based-rate-limit/">一个轮子：基于 token bucket 的 rate-limit</a>
         
       </h1>
@@ -539,56 +595,6 @@
 <p>所以说索引不加好，破事一堆。</p>
 <h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6" target="_blank" rel="noopener">Creating a Linux service with systemd</a></p>
 <p>看起来比使用 supervisor 靠谱</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/08/31/acquire-release-operations-and-fences/">Acquire/Release Operation 和 Acquire/Release Fence</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-08-31
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>其实是 Jeff Preshing 的 <a href="https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/" target="_blank" rel="noopener">Acquire and Release Fences Don’t Work the Way You’d Expect</a> 这篇文章的笔记。</p>
-<p>acquire-release operation 和 acquire-release fence 之间存在非常 subtle 的区别，很多人都在这个上犯过错误。</p>
-<p>比如 Jeff Preshing 自己，以及 Herb Sutter。</p>
-<p>个人习惯，笔记一开始就是在 onenote 里，懒得重新做一遍 markdown 了，索性转成 PDF 直接内嵌。</p>
-<iframe src="https://onedrive.live.com/embed?cid=4496A33F126535A6&resid=4496A33F126535A6%2149246&authkey=AG4NakEdjaO2xII&em=2" width="800" height="600" frameborder="0" scrolling="no"></iframe>
 
         
       

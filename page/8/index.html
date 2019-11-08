@@ -182,6 +182,57 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/09/26/made-a-pr-for-ydiff/">给 ydiff 提了个 PR</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-09-26
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://github.com/ymattw/ydiff" target="_blank" rel="noopener">ydiff</a> 是基于 CLI 的一个 diff tool，支持 side-by-side 模式</p>
+<p>前段时间在 surface 上 pip 安装后发现不能使用，直接提示找不到 <code>SIGPIPE</code>；看来这玩意儿压根没考虑过支持 Windows。</p>
+<p>因为觉得这个程序有点好玩，所以花了点时间对源代码做了一点修改，增加了对 Windows 的支持。</p>
+<p>（其实就是做了一下 SIGPIPE 的兼容问题）</p>
+<p>然后给作者提了一个 PR：<a href="https://github.com/ymattw/ydiff/pull/81" target="_blank" rel="noopener">https://github.com/ymattw/ydiff/pull/81</a></p>
+<p>最后赞一下 python 内建的 decorator 机制，做非侵入式的函数 hook 还是很便捷的。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/09/14/git-invert-grep-bug/">Git Invert-grep Bug</a>
         
       </h1>
@@ -526,72 +577,6 @@
         
       
     </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/07/01/monthly-read-posts-in-jun-2018/">Monthly Read Posts in Jun 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-07-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Programming-Language"><a href="#Programming-Language" class="headerlink" title="Programming Language"></a>Programming Language</h2><p><a href="https://www.youtube.com/watch?v=iLiDezv_Frk" target="_blank" rel="noopener">CppCon 2015: Richard Powell “Intro to the C++ Object Model”
-</a></p>
-<p>基本覆盖了 POD，无需函数类，单继承的情况，扫盲效果俱佳。</p>
-<p>至于为什么没有包含 multiple inheritance / virtual inheritance，作者说自己不是很 condifent with that。</p>
-<p>讲道理，MI / VI 在一般的设计里都会尽量避免，而且各种乱七八糟的 case 很多，这里不涉及反而是个正确的做法。</p>
-<hr>
-<p><a href="https://akrzemi1.wordpress.com/2011/04/06/assertions/" target="_blank" rel="noopener">Assertions</a></p>
-<p>首先，我很赞同文中作者对于 assertion 是 <em>guarantees given by the author of a piece of code to himself/herself</em> 但是接下来的大部观点都不赞同。</p>
-<p>比如作者认为不应该 assert on precodintions &amp; postconditions，因为 assertion 是 for implementation details，这个思路其实不对。</p>
-<p>关于 assertion，目前看过最好的阐述还是 <a href="https://book.douban.com/subject/3406939/" target="_blank" rel="noopener">Writing Solid Code</a>，推荐去阅读这个。</p>
-<hr>
-<p><a href="https://akrzemi1.wordpress.com/2011/05/06/compile-time-computations/" target="_blank" rel="noopener">Compile-time computations</a></p>
-<p>这篇 post 展示了 constexpr functions 错误报告的常见手段：抛异常。</p>
-<p>这个在之前的某个 cppcon talk 里有专门的介绍。</p>
-<p>另外，文中更进一步，抽出专门的 constexpr validation functions，并通过 comma operator 串联。</p>
-<p>C++ 14 支持多句之后，连 comma operatos 都可以免掉了。</p>
-<hr>
-          <div class="read-more">
-            <a href="/2018/07/01/monthly-read-posts-in-jun-2018/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
 
     
 
