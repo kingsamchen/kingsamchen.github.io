@@ -182,6 +182,57 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/04/23/std-funcion-must-be-copyable/">std::function Must be Copyable</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-23
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>前几天在写一个 <a href="https://github.com/kingsamchen/Eureka/tree/master/TinyThreadPool" target="_blank" rel="noopener">ThreadPool 的轮子</a>的时候，碰到一个问题：无论我用什么办法，都不能将 <code>std::packaged_task</code> 传递到 <code>std::function</code> 中，编译器始终提示访问了 <code>std::packaged_task</code> 被删除的拷贝构造函数。</p>
+<p>在这个点卡了许久，未果，翻了一下 cpp reference，突然发现一个细节：<code>std::function</code> 必须是支持复制的，顿时茅塞顿开。</p>
+<p><code>std::function</code> 包裹的函数对象必须足够轻量，使得 pass-by-value 的 context 下不会出现明显的大量开销，因此这个类型要求指语义是符合逻辑的。</p>
+<p>而 <code>std::packaged_task</code> 不是值语义，仅支持移动语义，因此无法作为 <code>std::function</code> 的一部分。</p>
+<p>最后的解决方案是引入一个 <code>std::shared_ptr</code> 作为中间层，通过 lambda 保存这个 <code>std::shared_ptr</code>。</p>
+<p>附注：本来打算开一个 post 来简单讲解一下如何从头实现一个简单可用的 thread-pool，但是因为懒癌发作，代码写完了也就不想动手写文字了。后面看看是不是有机会可以补上。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/04/11/use-lambda-with-post-task/">Use Lambda With PostTask</a>
         
       </h1>
@@ -652,55 +703,6 @@
 <li>Chromium Base：严格来说 Chromium Base 的实现和标准库的完全不同，放在这里只是因为我对 chromium 这个项目有一种特殊的情感/好感。这个团队是真的知道工程化团队的重要性以及能够推进团队工程化，代码一致性极高，很少出现炫技的情况（望向 Facebook 和 Microsoft）。即使部分代码的架构和实现不能算是 C++ Best Practices，也不能掩盖他们整体的工程能力。</li>
 </ul>
 <p>后面会为每个实现版本写一篇单独的 post，至于最后有没有一篇 summing up，就看后面有没有时间，或者这个必要了 :-)</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/">Tiny Concurrent Http Server on Windows and Linux</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-08
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>前段时间趁着春节，分别基于 IOCP 和 epoll 实现了 demo 级别的 http server（在遵守 http 1.1 socket 复用基础上只提供了某个指定目录下文件的 GET），算是简单的过了一下 proactor 和 reactor 模型下的 TCP 并发服务。</p>
-<p>功能做的很粗糙，并且没有封装类似 event-loop 的东西，连接管理也基本算是纸糊的，原因还是前面说过的，只是想过一下两种模型，并且，在不研究当前流行的 paradigm 的前提下，凭借自己的 first understanding / hunch 去实现；等对这块有一段时间的研究后，作为参照，来回对比以加深理解。</p>
-<p>我觉得这是一种不错的学习方式。</p>
-<p>代码可以看 <a href="https://github.com/kingsamchen/Eureka/tree/master/ConcurrentHttpServer" target="_blank" rel="noopener">这里</a></p>
 
         
       

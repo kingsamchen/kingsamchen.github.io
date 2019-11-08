@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-10-19T09:27:44.767Z</updated>
+  <updated>2019-11-04T14:09:43.877Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一个轮子：基于 token bucket 的 rate-limit</title>
+    <link href="http://kingsamchen.github.io/2019/11/04/token-bucket-based-rate-limit/"/>
+    <id>http://kingsamchen.github.io/2019/11/04/token-bucket-based-rate-limit/</id>
+    <published>2019-11-04T12:31:14.000Z</published>
+    <updated>2019-11-04T14:09:43.877Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;地址：&lt;a href=&quot;https://github.com/kingsamchen/Eureka/tree/master/token-bucket-rate-limit&quot; target=&quot;_blank&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="algorithm" scheme="http://kingsamchen.github.io/tags/algorithm/"/>
+    
+      <category term="token bucket" scheme="http://kingsamchen.github.io/tags/token-bucket/"/>
+    
+      <category term="rate-limit" scheme="http://kingsamchen.github.io/tags/rate-limit/"/>
+    
+  </entry>
   
   <entry>
     <title>Windows 上使用 Git Tips 两则</title>
@@ -631,40 +661,6 @@
       <category term="template" scheme="http://kingsamchen.github.io/tags/template/"/>
     
       <category term="ezio" scheme="http://kingsamchen.github.io/tags/ezio/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Mar 2019</title>
-    <link href="http://kingsamchen.github.io/2019/04/02/monthly-read-posts-in-mar-2019/"/>
-    <id>http://kingsamchen.github.io/2019/04/02/monthly-read-posts-in-mar-2019/</id>
-    <published>2019-04-02T15:18:21.000Z</published>
-    <updated>2019-04-07T12:38:33.510Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Networking&quot;&gt;&lt;a href=&quot;#Networking&quot; class=&quot;headerlink&quot; title=&quot;Networking&quot;&gt;&lt;/a&gt;Networking&lt;/h2&gt;&lt;p&gt;&lt;a
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="browser caching" scheme="http://kingsamchen.github.io/tags/browser-caching/"/>
-    
-      <category term="cors" scheme="http://kingsamchen.github.io/tags/cors/"/>
-    
-      <category term="docker" scheme="http://kingsamchen.github.io/tags/docker/"/>
-    
-      <category term="monorepo" scheme="http://kingsamchen.github.io/tags/monorepo/"/>
-    
-      <category term="spurious wakeup" scheme="http://kingsamchen.github.io/tags/spurious-wakeup/"/>
     
   </entry>
   

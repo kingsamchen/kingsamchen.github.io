@@ -182,6 +182,61 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/11/29/capture-network-packets-over-localhost-with-wireshark/">用 Wirshark 捕捉分析经过 localhost 的网络包</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-11-29
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>最近写 WinAntHttp 的时候需要用 Wireshark 捕捉并分析发往 mock server 的 http 请求。</p>
+<p>然而因为 mock server 是直接跑在本机 localhost 上的，而在 Windows 上，发往 localhost 的网络包都不会经过网卡，所以 wireshark 基本无法捕捉。</p>
+<p>研究了一会儿之后发现两个解决方案：</p>
+<p>第一个是安装 <a href="https://github.com/nmap/npcap/releases" target="_blank" rel="noopener">npcap</a>，这个是 wincap 的一个 alternative，但是支持本地请求。</p>
+<p>不过因为这个需要替换掉原来的 wincap，所以我并没有采用。</p>
+<p>第二个是使用 <a href="http://www.netresec.com/?page=RawCap" target="_blank" rel="noopener">RawCap</a>，这货能抓到本地网络包，并且输出的格式是 wireshark-compatible</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># administrator privilege is required!</span><br><span class="line">RawCap.exe 127.0.0.1 network_cap.pcap</span><br></pre></td></tr></table></figure>
+<p>考虑到使用频率和侵入性等因素，最终选择使用 RawCap</p>
+<p>抓到包之后 wireshark 不能马上直接看到 http 请求，因为普通的 http 请求是和 server 的 80 端口通信，mock server 的 Flask 默认使用 5000 作为通信端口。</p>
+<p>通过菜单 <code>Analyze - Decode As</code>，将 TCP 5000 端口按照 HTTP 协议解析，这样 wireshark 就可以正常的从 tcp packets 中拆出正确的 http message 了。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/11/26/eliminate-local-python-dependency-for-building-bililive-win/">使用项目自带的 python 编译 bililive-win</a>
         
       </h1>
@@ -632,71 +687,6 @@ InfixExpr&lt;T, BinaryFn&gt; <span class="hljs-keyword" style="color: rgb(252, 1
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/logging.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> BEGIN_BILILIVE_COMMAND_MAP(cmd_receiver, cmd_id, cmd_params)        \</span></span><br><span class="line">    &#123;                                                                       \</span><br><span class="line">        <span class="keyword">auto</span> __receiver = cmd_receiver;                                     \</span><br><span class="line">        <span class="keyword">auto</span> __id = cmd_id;                                                 \</span><br><span class="line">        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; __params = cmd_params;                                  \</span><br><span class="line">        <span class="keyword">switch</span> (cmd_id) &#123;                                                   \</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ON_BILILIVE_COMMAND(cmd_id, fn)                                     \</span></span><br><span class="line">    <span class="keyword">case</span> cmd_id: &#123;                                                          \</span><br><span class="line">        fn(__receiver, __params);                                           \</span><br><span class="line">    &#125;                                                                       \</span><br><span class="line">    <span class="keyword">break</span>;                                                                  \</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ON_BILILIVE_COMMAND_UNHANDLED_ERROR()                               \</span></span><br><span class="line">    <span class="keyword">default</span>: &#123;                                                              \</span><br><span class="line">        NOTREACHED() &lt;&lt; <span class="string">"Unhandled command "</span> &lt;&lt; __id;                       \</span><br><span class="line">    &#125;                                                                       \</span><br><span class="line">    <span class="keyword">break</span>;                                                                  \</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> END_BILILIVE_COMMAND_MAP()                                          \</span></span><br><span class="line">        &#125;                                                                   \</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
 <p>于是处理相关的代码就变成</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnAlpha</span><span class="params">(Bililive* receiver, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnBravo</span><span class="params">(Bililive* receiver, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnCharlie</span><span class="params">(Bililive* receiver, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">ExecuteCommandWithParams</span><span class="params">(Bililive* receiver, <span class="keyword">int</span> command, <span class="keyword">const</span> CommandParamsDetails&amp; params)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    BEGIN_BILILIVE_COMMAND_MAP(receiver, command, params)</span><br><span class="line">        ON_BILILIVE_COMMAND(IDC_ALPHA, OnAlpha)</span><br><span class="line">        ON_BILILIVE_COMMAND(IDC_BRAVO, OnBravo)</span><br><span class="line">        ON_BILILIVE_COMMAND(IDC_CHARLIE, OnCharlie)</span><br><span class="line">        ON_BILILIVE_COMMAND_UNHANDLED_ERROR()</span><br><span class="line">    END_BILILIVE_COMMAND_MAP()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/10/01/monthly-read-posts-in-sep-2017/">Monthly Read Posts in Sep 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-10-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://www.zerotier.com/blog/2017-05-05-theleak.shtml" target="_blank" rel="noopener">The Horror of the Standard Library</a></p>
-<p>一个 allocator 引发的惨案…</p>
-<hr>
-<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD02V011" target="_blank" rel="noopener">CppCon2015: Extreme Type Safety with Opaque Typedefs</a></p>
-<p>类型自带语义，但是 <code>typedef/using</code> 只是类型别名，编译器无法区分。而 opaque typedefs 声称可以通过通过 wrapper 的方式生成具有单独类型语义 typedefs。</p>
-<hr>
-<p>HTTP Series</p>
-<p><a href="https://www.code-maze.com/http-series-part-1/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-1/</a><br><a href="https://www.code-maze.com/http-series-part-2/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-2/</a><br><a href="https://www.code-maze.com/http-series-part-3/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-3/</a><br><a href="https://www.code-maze.com/http-series-part-4/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-4/</a><br><a href="https://www.code-maze.com/http-series-part-5/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-5/</a></p>
-<p>可以作为不错的 HTTP 协议扫盲</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=f_D-wD1EmWk" target="_blank" rel="noopener">CppCon2015: C++ Requests - Curl for People</a></p>
-<p>受到 python requests 启发的 C++ counterpart implementation。</p>
-<p>基于 CURL，但是做了非常细致的封装。</p>
-<p>看了一下 demo，感觉是个非常不错 curl wrapper</p>
-<hr>
-<p><a href="https://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&amp;mid=400021278&amp;idx=1&amp;sn=0e971807eb0e9dcc1a81853189a092f3&amp;scene=1&amp;srcid=1019lhTQRdJKb9HCqUHPntbT&amp;from=groupmessage&amp;isappinstalled=0#rd" target="_blank" rel="noopener">Android GC 那点事儿</a></p>
-<p>行文杂乱，讲道理还不如看专业的 posts…</p>
-<hr>
-<p><a href="https://www.fluentcpp.com/2017/09/12/how-to-return-a-smart-pointer-and-use-covariance/" target="_blank" rel="noopener">How to Return a Smart Pointer AND Use Covariance</a></p>
-<p>为 C++ 中实现涉及 smart pointer 的 covariance 接口提供了一个非常不错而且可用的解决方案。</p>
 
         
       
