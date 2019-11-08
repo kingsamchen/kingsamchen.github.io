@@ -11,7 +11,7 @@ date: 2018-03-01 15:37:12
 [Vizee | 即将走上人生巅峰推萝莉的章总](http://vizee.org/)
 [TheCJW | 爱弹棉花的小伟](https://blog.thecjw.me/)
 [Newbie Coder | 萌萌哒的炉子](http://newbiecoder.0ginr.com/blog/)
-[裴草莓 | 愤怒的老司机](http://madstrawberry.me/)
+[裴草莓 | 愤怒的老司机](https://frankpie.github.io/)
 [陈老师 | Beanbee.Max](https://beanbee.me/)
 [Sunus | 李师傅食品厂CEO](http://sunus.me/)
 [Lower | 喊大木大哥的小弟](http://www.tolower.net/)
