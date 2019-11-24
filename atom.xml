@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-11-08T17:03:00.810Z</updated>
+  <updated>2019-11-24T09:20:54.150Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,38 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>auto-cfs-cores C++ 版 automaxprocs</title>
+    <link href="http://kingsamchen.github.io/2019/11/24/auto-cfs-cores-cpp-version-of-automaxprocs/"/>
+    <id>http://kingsamchen.github.io/2019/11/24/auto-cfs-cores-cpp-version-of-automaxprocs/</id>
+    <published>2019-11-24T09:10:41.000Z</published>
+    <updated>2019-11-24T09:20:54.150Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;之前写了一篇分析 uber 的 automaxprocs 的源码，后面抽个了时间写了一个 C++ 版本的。&lt;/p&gt;
+&lt;p&gt;其一是为了加深对原库的理解；其二是避免太长时间没写 C++ 手生，以及顺带体验一下 C++ 17 的感觉。&lt;/p&gt;
+&lt;p&gt;代码在：&lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="docker" scheme="http://kingsamchen.github.io/tags/docker/"/>
+    
+      <category term="cfs" scheme="http://kingsamchen.github.io/tags/cfs/"/>
+    
+  </entry>
   
   <entry>
     <title>uber automaxprocs 源码分析</title>
@@ -287,9 +319,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
-    
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
     
   </entry>
   
@@ -314,9 +346,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
       <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
   </entry>
   
@@ -570,9 +602,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
-    
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
     
       <category term="project management" scheme="http://kingsamchen.github.io/tags/project-management/"/>
     
@@ -612,41 +644,6 @@
       <category term="mutex" scheme="http://kingsamchen.github.io/tags/mutex/"/>
     
       <category term="syscall" scheme="http://kingsamchen.github.io/tags/syscall/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Write Your Own DNS Query</title>
-    <link href="http://kingsamchen.github.io/2019/04/13/write-your-own-dns-query/"/>
-    <id>http://kingsamchen.github.io/2019/04/13/write-your-own-dns-query/</id>
-    <published>2019-04-13T02:49:01.000Z</published>
-    <updated>2019-04-13T09:04:12.033Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;大部分人应该都知道 DNS 协议，以及它的用处。但是考虑过自己动手写 DNS message transmission 的应该不占多数。&lt;/p&gt;
-&lt;p&gt;我们不妨考虑如何自己实现一个简单的 DNS client，完成基本的 domain name query and response parsing。&lt;/p&gt;
-&lt;p&gt;因为 DNS 协议通常使用 UDP 作为其传输层协议，而且数据包是二进制包，所以实现一个这样简单的 demo 考虑用 golang 可能会省事儿不少。&lt;/p&gt;
-&lt;h3 id=&quot;DNS-Message-Format&quot;&gt;&lt;a href=&quot;#DNS-Message-Format&quot; class=&quot;headerlink&quot; title=&quot;DNS Message Format&quot;&gt;&lt;/a&gt;DNS Message Format&lt;/h3&gt;&lt;p&gt;大体上 DNS 不是一个复杂的协议（虽然各类坑实在不少），所有的消息，不管是 query 还是 reply，都共享一个消息格式：&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;+---------------------+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|        Header       |&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+---------------------+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|       Question      | the question for the name server&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+---------------------+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|        Answer       | Resource Records (RRs) answering the question&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+---------------------+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|      Authority      | RRs pointing toward an authority&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+---------------------+&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;|      Additional     | RRs holding additional information&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;+---------------------+&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;ul&gt;
-&lt;li&gt;Header：消息头，包含一些参数、标志位&lt;/li&gt;
-&lt;li&gt;Question：包含 query 的信息，例如需要查询的 domain&lt;/li&gt;
-&lt;li&gt;Answer：reply 的信息&lt;/li&gt;
-&lt;li&gt;Authority：如果有信息，则表明应答的服务器是 ultimate authority server。别忘了 DNS 服务器是树形结构，通常终端用户查询的 DNS 服务器都是 local DNS server。&lt;/li&gt;
-&lt;li&gt;Additional：服务器传回的一些额外数据，非用户显式需要的&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;对于一个 query message，&lt;code&gt;Answer&lt;/code&gt; section 是空的；而对于一个 reply message，&lt;code&gt;Question&lt;/code&gt; 保存着对应 query 的数据。&lt;/p&gt;
-&lt;p&gt;一般而言，终端设备收到的 reply 消息里，&lt;code&gt;Authority&lt;/code&gt; 和 &lt;code&gt;Additional&lt;/code&gt; 是空的。所以下面会跳过这两个 section 的描述。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-      <category term="dns" scheme="http://kingsamchen.github.io/tags/dns/"/>
     
   </entry>
   

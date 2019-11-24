@@ -182,6 +182,82 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/08/01/monthly-read-posts-in-july-2017/">Monthly Read Posts in June 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-08-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://medium.com/swlh/starting-a-tech-startup-with-c-6b5d5856e6de" target="_blank" rel="noopener">Starting a tech startup with C++</a></p>
+<p>又名，Facebook 开源项目宣传广告。</p>
+<p>不过实话说，以 Facebook 写 C++ 那部分代码的恣意姿态，如果团队的平均水平够不到中上的槛，弄不好项目还没发布自己就先挂了。</p>
+<p>Andrei Alexendrescu：我仿佛听见有人在背后黑我…</p>
+<hr>
+<p><a href="https://metricpanda.com/tips-for-productive-debugging-with-gdb" target="_blank" rel="noopener">Tips for Productive Debugging with GDB</a><br><a href="https://www.youtube.com/watch?v=PorfLSr3DDI&amp;t=24s" target="_blank" rel="noopener">CppCon 2015: Greg Law “ Give me 15 minutes &amp; I’ll change your view of GDB”</a></p>
+<p>GDB Tips…</p>
+<p>第二个是 CppCon 2015 的一个 talk，感觉还凑合吧。不过实话说，15分钟我都能撸一发了，何必浪费时间在这个上…上个靠谱的前端不才应该是正确的姿势么…</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=PorfLSr3DDI&amp;t=24s" target="_blank" rel="noopener">CppCOn 2015: Visualize Template Instantiation</a></p>
+<p>这个 talk 的团队基于 Eclipse 做了一个 Cevelop，杀手锏功能就是 able to visualize template instantiation</p>
+<p>不过比较蛋疼的是演示关键部分的时候，摄像机没有给对位置…</p>
+<p>（希望 JetBrains 早点吧这个功能抄过去…）</p>
+<p>PS：这个 speaker 神似我的初中语文老师….</p>
+<hr>
+<p><a href="http://mariusbancila.ro/blog/2016/10/31/a-better-date-and-time-c-library/" target="_blank" rel="noopener">A better date and time C++ library</a></p>
+<p>安利了 Howard Hinnant 写的一个 date lib。</p>
+<p>而且据说这个 lib 很有机会进入标准库；现在标准库的 chrono 只是针对 timing 设计而没有对 date 的有力支持确实太蛋疼了</p>
+<hr>
+<p><a href="http://www.jianshu.com/p/71cf3ce064b8" target="_blank" rel="noopener">理解基于 TCP 的应用层通信协议</a></p>
+<p>大水文一篇，基本没有一点营养。</p>
+<p>不客气地说，现在国内开发者刊物上，大部分内容都是这种没有什么营养、容易误导读者，而且还浪费时间的文章。</p>
+<p>挂出来批判一下</p>
+<p><a href="http://jm.taobao.org/2017/06/08/20170608/" target="_blank" rel="noopener">就是要你懂 TCP</a><br><a href="http://jm.taobao.org/2017/06/01/20170601/" target="_blank" rel="noopener">就是要你懂 TCP | 最经典的TCP性能问题</a><br><a href="http://jm.taobao.org/2017/05/25/525-1/" target="_blank" rel="noopener">关于TCP 半连接队列和全连接队列</a></p>
+<p>阿里中间件团队官方博客的三篇 TCP 相关分享。</p>
+<p>算是有水平的内容文。</p>
+<p>第一篇介绍了一下 TCP 的基础内容；第二篇介绍了 delayed ack 和 nagle’s algorithm；第三篇涉及 sync queue 和 accept queue 的处理问题</p>
+<p><a href="http://ithare.com/tcp-peculiarities-for-games-part-1/" target="_blank" rel="noopener">TCP Peculiarities for Games, part 1</a><br><a href="http://ithare.com/tcp-peculiarities-as-applied-to-games-part-ii/" target="_blank" rel="noopener">TCP Peculiarities as Applied to Games, Part II</a></p>
+<p>一个游戏服务端开发大牛的两篇关于游戏服务端 TCP 开发相关的文章。</p>
+<p>两篇文章内容不光已经涵盖了前面阿里中间件团队的前两篇内容，还谈到了一些容易被忽略的点，例如 Head-of-Line Blocking。</p>
+<p>第二篇还专门针对游戏服务端的业务特点，给了一些建议</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/07/24/terminate-child-processes-on-close-using-job-object/">利用 Job 内核对象实现父进程关闭时自动结束所有子进程</a>
         
       </h1>
@@ -541,77 +617,6 @@
 <p>这样有个额外的好处，主实例收到消息直接是在 UI 线程，省掉一次 post task。</p>
 <p>某直播姬最后采用的就是这个方案，为此我加了一个 class 起了个名字叫 <em>SingleInstanceGuarantor</em>，嗯，有点中二的感觉。</p>
 <p>最后要注意一点，如果框架封装了 window procedure，将几个活动窗口的 window procedure 聚合到一个 message handler 里的话，可能会收到多条消息，可以利用消息的 timestamp 过滤一下。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/06/03/monthly-read-posts-in-may-2017/">Monthly Read Posts in May 2017</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-06-03
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://cizixs.com/2015/10/06/http-resume-download" target="_blank" rel="noopener">http resumable download</a></p>
-<p>虽然之前写直播姬自动更新时实现过续传下载，但是功能规范上并没有太完备；而这篇文章很好的补充了几个断点续传中，严格实现会遇到的几个 key points。</p>
-<p>例如：不应当假设资源一定支持续传，要首先使用 request header <code>range</code> 检查目标资源是否支持续传，支持 <code>range</code> 的 http resonse code 是 206。</p>
-<p>另外，两次断点下载期间，资源可能发生变化，需要在请求时同时附带上 <code>Etag</code> 或 <code>Last-modified</code> 记录，由服务器确定资源是否变化。</p>
-<p><a href="http://mattwarren.org/2016/12/20/Why-Exceptions-should-be-Exceptional/" target="_blank" rel="noopener">Why Exceptions Should be Exceptional</a></p>
-<p>文章从性能角度阐述了为什么不能将 exception 机制作为 routine control flow。</p>
-<p>但是个人认为这个切入角度不好，因为很容易给人一种异常机制开销大的错觉，导致读者之后避开使用异常。</p>
-<p>异常处理一直都是一个大麻烦，相比 error code handling 不够直观，没有足够的经验很难控制好，加上某些语言自身特性导致固有复杂度暴涨（例如 C++）。</p>
-<p><a href="http://shaharmike.com/cpp/shared-ptr/" target="_blank" rel="noopener">shared-ptr</a></p>
-<p>文章大部分的内容（除了 aliasing）其实 <em>Effective Modern C++</em> 里都有…</p>
-<p><a href="https://adishavit.github.io/2016/magical-captureless-lambdas/" target="_blank" rel="noopener">Magical Captureless Lambdas</a></p>
-<p>核心总结出来就是一句话：Captureless lambdas 能够自动转换为对应的 C-Style 函数指针，而在 MSVC 里，implicit cast 能够自动处理不同的 calling convention</p>
-<p><a href="https://adishavit.github.io/2016/leaky-closures-captureless-lambdas/" target="_blank" rel="noopener">Leaky Closures Captureless Lambdas</a></p>
-<p>An entity that is mentioned or used but is not ODR-used within the lambda body, does not need to be captured in the capture list.</p>
-<p>Informally, an object is odr-used if its address is taken, or a reference is bound to it.</p>
-<p><a href="http://videocortex.io/2016/lambdas-callbacks/" target="_blank" rel="noopener">Lambdas Callbacks</a></p>
-<p>又名：如何用 capturing lambdas 作为 c-style callbacks</p>
-<p><a href="https://michael-afanasiev.github.io/2016/08/03/Combining-Static-and-Dynamic-Polymorphism-with-C++-Template-Mixins.html" target="_blank" rel="noopener">Combining Static and Dynamic Polymorphism with C++ Template Mixins</a><br><a href="http://www.thinkbottomup.com.au/site/blog/C%20%20_Mixins_-_Reuse_through_inheritance_is_good" target="_blank" rel="noopener">C++ Mixins - Reuse through inheritance is good when done the right way</a></p>
-<p>Mixins pattern in C++ 快速导读</p>
-<p><a href="https://mortoray.com/2016/08/10/the-very-real-mess-of-virtual-functions/" target="_blank" rel="noopener">The Very Real Mess of Virtual Functions</a></p>
-<p>十足标题党</p>
-<p>并且个人认为，作者试图解决一个前提错误的问题。</p>
-<p>文中以 <code>Init()</code> 和 <code>UnInit()</code> 为例阐述观点，然而，这正好说明了为什么如无必要不应该使用 two-phase initialization</p>
-<p>文中试图实现的机制不就是 ctor 和 dtor 所做的么……</p>
-<p>而对于其他可能需要子类调用父类虚函数的场景，我认为，non-vitual-interface idiom已经足够了。</p>
-<p>BTW：就工程领域而言，可能对 GUI 框架来说，文中的一些套路还是有用的；不过因为个人在这方面没有什么经验，因此持保留意见</p>
 
         
       
