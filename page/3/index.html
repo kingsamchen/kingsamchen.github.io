@@ -182,6 +182,72 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/07/21/monthly-read-posts-in-jun-2019/">Monthly Read Posts in June 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-07-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120710/memory-barriers-are-like-source-control-operations/" target="_blank" rel="noopener">Memory Barriers Are Like Source Control Operations</a></p>
+<p>用 VCS 来类比四种 memory fence</p>
+<hr>
+<p><a href="https://preshing.com/20120913/acquire-and-release-semantics/" target="_blank" rel="noopener">Acquire and Release Semantics</a></p>
+<p>C++ provides acquire and release semantics, which are in fact founded on barriers.</p>
+<p>acquire semantcis: <code>#LoadLoad</code> and <code>#LoadStore</code>; apply to read operations.</p>
+<p>Acquire semantics prevent memory reordering of the read-acquire with any read or write operation that follows it in program order.</p>
+<p>release sematncis: <code>#StoreStore</code> and <code>#LoadStore</code>; apply to write operations.</p>
+<p>Release semantics prevent memory reordering of the write-release with any read or write operation that precedes it in program order.</p>
+<hr>
+<p><a href="https://preshing.com/20120930/weak-vs-strong-memory-models/" target="_blank" rel="noopener">Weak vs. Strong Memory Models</a></p>
+<p>Categories of memory models.</p>
+<hr>
+<p><a href="https://preshing.com/20121019/this-is-why-they-call-it-a-weakly-ordered-cpu/" target="_blank" rel="noopener">This Is Why They Call It a Weakly-Ordered CPU</a></p>
+<p>Memory reordering in ARM cpus</p>
+<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://go101.org/article/nil.html" target="_blank" rel="noopener">golang nil 101</a></p>
+<p>屎坑子真多。</p>
+<hr>
+<p><a href="https://www.teamten.com/lawrence/writings/why-i-dont-like-go.html" target="_blank" rel="noopener">why-i-dont-like-go.html</a></p>
+<p>深有感触…</p>
+<p>而且居然还是2016年的文章</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/06/30/implementing-compressed-pair/">实现 compressed pair</a>
         
       </h1>
@@ -548,69 +614,6 @@
 <p>an exception leaves out from dtor (since c++ 11 with noexcept guarantee)<br>
           <div class="read-more">
             <a href="/2019/05/02/monthly-read-posts-in-apr-2019/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/04/13/write-your-own-dns-query/">Write Your Own DNS Query</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-04-13
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>大部分人应该都知道 DNS 协议，以及它的用处。但是考虑过自己动手写 DNS message transmission 的应该不占多数。</p>
-<p>我们不妨考虑如何自己实现一个简单的 DNS client，完成基本的 domain name query and response parsing。</p>
-<p>因为 DNS 协议通常使用 UDP 作为其传输层协议，而且数据包是二进制包，所以实现一个这样简单的 demo 考虑用 golang 可能会省事儿不少。</p>
-<h3 id="DNS-Message-Format"><a href="#DNS-Message-Format" class="headerlink" title="DNS Message Format"></a>DNS Message Format</h3><p>大体上 DNS 不是一个复杂的协议（虽然各类坑实在不少），所有的消息，不管是 query 还是 reply，都共享一个消息格式：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">+---------------------+</span><br><span class="line">|        Header       |</span><br><span class="line">+---------------------+</span><br><span class="line">|       Question      | the question for the name server</span><br><span class="line">+---------------------+</span><br><span class="line">|        Answer       | Resource Records (RRs) answering the question</span><br><span class="line">+---------------------+</span><br><span class="line">|      Authority      | RRs pointing toward an authority</span><br><span class="line">+---------------------+</span><br><span class="line">|      Additional     | RRs holding additional information</span><br><span class="line">+---------------------+</span><br></pre></td></tr></table></figure>
-<ul>
-<li>Header：消息头，包含一些参数、标志位</li>
-<li>Question：包含 query 的信息，例如需要查询的 domain</li>
-<li>Answer：reply 的信息</li>
-<li>Authority：如果有信息，则表明应答的服务器是 ultimate authority server。别忘了 DNS 服务器是树形结构，通常终端用户查询的 DNS 服务器都是 local DNS server。</li>
-<li>Additional：服务器传回的一些额外数据，非用户显式需要的</li>
-</ul>
-<p>对于一个 query message，<code>Answer</code> section 是空的；而对于一个 reply message，<code>Question</code> 保存着对应 query 的数据。</p>
-<p>一般而言，终端设备收到的 reply 消息里，<code>Authority</code> 和 <code>Additional</code> 是空的。所以下面会跳过这两个 section 的描述。<br>
-          <div class="read-more">
-            <a href="/2019/04/13/write-your-own-dns-query/" class="read-more-link">阅读更多</a>
           </div>
         
       

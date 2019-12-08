@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-11-24T09:20:54.150Z</updated>
+  <updated>2019-12-08T13:54:48.686Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Toml to Golang Struct</title>
+    <link href="http://kingsamchen.github.io/2019/12/08/toml-to-golang-struct/"/>
+    <id>http://kingsamchen.github.io/2019/12/08/toml-to-golang-struct/</id>
+    <published>2019-12-08T13:47:16.000Z</published>
+    <updated>2019-12-08T13:54:48.686Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;之前写某个东西的副产品，本质上和 &lt;a href=&quot;https://xuri.me/toml-to-go/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://xuri.me/toml-to-go/&lt;/a&gt; 一样。&lt;/p&gt;
+&lt;p&gt;解析 Toml
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="toml" scheme="http://kingsamchen.github.io/tags/toml/"/>
+    
+  </entry>
   
   <entry>
     <title>auto-cfs-cores C++ 版 automaxprocs</title>
@@ -607,43 +636,6 @@
       <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
     
       <category term="project management" scheme="http://kingsamchen.github.io/tags/project-management/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in Apr 2019</title>
-    <link href="http://kingsamchen.github.io/2019/05/02/monthly-read-posts-in-apr-2019/"/>
-    <id>http://kingsamchen.github.io/2019/05/02/monthly-read-posts-in-apr-2019/</id>
-    <published>2019-05-02T14:57:13.000Z</published>
-    <updated>2019-05-02T15:02:53.654Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming Languages&lt;/h2&gt;&lt;p&gt;&lt;a href=&quot;https://akrzemi1.wordpress.com/2011/09/21/destructors-that-throw/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Destructors that throw&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;C++ 11之后的 destructor 默认是 &lt;code&gt;noexcept&lt;/code&gt;，如果有 active exception 逃逸出 dtor 会直接触发 &lt;code&gt;std::terminate()&lt;/code&gt;，即使外部有 catch handler。可以用 &lt;code&gt;noexcept(false)&lt;/code&gt; 显式关闭。&lt;/p&gt;
-&lt;p&gt;因为 stack unwinding 是可以嵌套的，一个精心设计的场合下（见文中例子），可以做到多个 active exception 不在一个层次里，因此也不会触发 double-exception situation。&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;&lt;a href=&quot;https://akrzemi1.wordpress.com/2011/09/28/who-calls-stdterminate/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Who calls std::terminate?&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;an exception leaves out from main function&lt;/p&gt;
-&lt;p&gt;an exception leaves out from initial function of a thread&lt;/p&gt;
-&lt;p&gt;an exception leaves out from dtor (since c++ 11 with noexcept guarantee)&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-      <category term="noexcept" scheme="http://kingsamchen.github.io/tags/noexcept/"/>
-    
-      <category term="gc" scheme="http://kingsamchen.github.io/tags/gc/"/>
-    
-      <category term="mutex" scheme="http://kingsamchen.github.io/tags/mutex/"/>
-    
-      <category term="syscall" scheme="http://kingsamchen.github.io/tags/syscall/"/>
     
   </entry>
   
