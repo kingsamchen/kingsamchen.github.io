@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-12-08T13:54:48.686Z</updated>
+  <updated>2019-12-21T14:33:35.910Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,40 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>SYN Queue and Accept Queue</title>
+    <link href="http://kingsamchen.github.io/2019/12/21/syn-queue-and-accept-queue/"/>
+    <id>http://kingsamchen.github.io/2019/12/21/syn-queue-and-accept-queue/</id>
+    <published>2019-12-21T14:23:19.000Z</published>
+    <updated>2019-12-21T14:33:35.910Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;0x00-A-Single-Queue-or-Two-Queues&quot;&gt;&lt;a href=&quot;#0x00-A-Single-Queue-or-Two-Queues&quot; class=&quot;headerlink&quot; title=&quot;0x00 A Single Queue or Two Queues&quot;&gt;&lt;/a&gt;0x00 A Single Queue or Two Queues&lt;/h2&gt;&lt;p&gt;TCP/IP stack has two options to implement the backlog queue for a socket in the &lt;code&gt;LISTEN&lt;/code&gt; state.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Door #1: A Single Queue&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A single queue can contain connections in two different states:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SYN RECEIVED&lt;/li&gt;
+&lt;li&gt;ESTABLISHED&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;And only connections in &lt;code&gt;ESTABLISHED&lt;/code&gt; state can be returned to the application by calling the &lt;code&gt;accept()&lt;/code&gt; syscall.&lt;/p&gt;
+&lt;p&gt;Therefore, the length of this queue is determined by the &lt;code&gt;backlog&lt;/code&gt; argument of the &lt;code&gt;listen()&lt;/code&gt; syscall.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Door #2: A SYN Queue &amp;amp; An Accept Queue&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In this case, connections in state &lt;code&gt;SYN RECEIVED&lt;/code&gt; are added to the SYN queue, and later moved to the accept queue when their state changes to &lt;code&gt;ESTABLISHED&lt;/code&gt;.&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
+    
+      <category term="listen" scheme="http://kingsamchen.github.io/tags/listen/"/>
+    
+      <category term="backlog" scheme="http://kingsamchen.github.io/tags/backlog/"/>
+    
+  </entry>
   
   <entry>
     <title>Toml to Golang Struct</title>
@@ -598,44 +632,6 @@
       <category term="synchronization" scheme="http://kingsamchen.github.io/tags/synchronization/"/>
     
       <category term="semaphore" scheme="http://kingsamchen.github.io/tags/semaphore/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Anvil -- An Assistant For You CMake</title>
-    <link href="http://kingsamchen.github.io/2019/05/04/anvil-for-assisting-your-cmake/"/>
-    <id>http://kingsamchen.github.io/2019/05/04/anvil-for-assisting-your-cmake/</id>
-    <published>2019-05-04T13:12:05.000Z</published>
-    <updated>2019-05-11T03:07:31.694Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h3 id=&quot;0x00&quot;&gt;&lt;a href=&quot;#0x00&quot; class=&quot;headerlink&quot; title=&quot;0x00&quot;&gt;&lt;/a&gt;0x00&lt;/h3&gt;&lt;p&gt;前段时间专门抽空做了一个小工具，也就是这里要讲的主题：&lt;a href=&quot;https://github.com/kingsamchen/anvil&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;anvil&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;一开始做 anvil 的动力很简单：某次尝试体验一下 Linux SignalFD 功能时想直接使用 ezio 的 &lt;code&gt;EventLoop&lt;/code&gt; 作为基础事件循环，同时项目使用 cmake 管理。&lt;/p&gt;
-&lt;p&gt;为了省事，我直接从 ezio 的项目里抠出来 &lt;code&gt;CMakeLists.txt&lt;/code&gt; 和几个自己写的 &lt;code&gt;.cmake&lt;/code&gt; 文件，就地&lt;a href=&quot;https://github.com/kingsamchen/Eureka/tree/master/UsingSignalfd&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;修改&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;但事实证明哪怕这样，改动量也不小，原因大体是因为：cmake 里（非函数内定义的）变量作用域是全局的，通过 fetch-content 功能引入的依赖在 &lt;code&gt;add_subdirectory()&lt;/code&gt; 后的模块里也能看到上一层定义的变量，因此为了防止一些控制型变量发生冲突，我都在前面加上了对应的模块前缀。&lt;/p&gt;
-&lt;p&gt;所以我面对的就是一大坨变量名的更换，以及少部分声明/属性的调整。&lt;/p&gt;
-&lt;p&gt;考虑到大部分的文件内容都是可以模板化的，而手动“实例化”不仅费事还很容易出错，所以我就很自然地萌生了写一个工具自动化这个过程的想法。&lt;/p&gt;
-&lt;h3 id=&quot;0x01&quot;&gt;&lt;a href=&quot;#0x01&quot; class=&quot;headerlink&quot; title=&quot;0x01&quot;&gt;&lt;/a&gt;0x01&lt;/h3&gt;&lt;p&gt;在经过一两天的短暂思考后，我大致确定了这个工具的定位和需要实现的基本目标，总结起来有三个核心点：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;辅助 cmake 而不是试图替代它或深度封装&lt;/li&gt;
-&lt;li&gt;内建一个轻量型的依赖管理功能&lt;/li&gt;
-&lt;li&gt;配置化的生成 &amp;amp; 构建流程&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;首先，第一点是重中之重。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
-      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
-    
-      <category term="project management" scheme="http://kingsamchen.github.io/tags/project-management/"/>
     
   </entry>
   

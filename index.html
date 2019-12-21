@@ -182,6 +182,66 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/12/21/syn-queue-and-accept-queue/">SYN Queue and Accept Queue</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-12-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="0x00-A-Single-Queue-or-Two-Queues"><a href="#0x00-A-Single-Queue-or-Two-Queues" class="headerlink" title="0x00 A Single Queue or Two Queues"></a>0x00 A Single Queue or Two Queues</h2><p>TCP/IP stack has two options to implement the backlog queue for a socket in the <code>LISTEN</code> state.</p>
+<p><strong>Door #1: A Single Queue</strong></p>
+<p>A single queue can contain connections in two different states:</p>
+<ul>
+<li>SYN RECEIVED</li>
+<li>ESTABLISHED</li>
+</ul>
+<p>And only connections in <code>ESTABLISHED</code> state can be returned to the application by calling the <code>accept()</code> syscall.</p>
+<p>Therefore, the length of this queue is determined by the <code>backlog</code> argument of the <code>listen()</code> syscall.</p>
+<p><strong>Door #2: A SYN Queue &amp; An Accept Queue</strong></p>
+<p>In this case, connections in state <code>SYN RECEIVED</code> are added to the SYN queue, and later moved to the accept queue when their state changes to <code>ESTABLISHED</code>.<br>
+          <div class="read-more">
+            <a href="/2019/12/21/syn-queue-and-accept-queue/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/12/08/toml-to-golang-struct/">Toml to Golang Struct</a>
         
       </h1>
@@ -504,62 +564,6 @@
         
       
     </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/09/22/simple-notes-on-using-asio-buffer/">ASIO Buffer 使用简记</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-09-22
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>近段有相当一部分时间在<a href="https://github.com/kingsamchen/Eureka/tree/master/learn-asio" target="_blank" rel="noopener">熟悉和练习 ASIO</a>。</p>
-<p>练习过程中发现 ASIO 中如何使用&amp;管理 buffer 是新手大概率会遇到的问题。</p>
-<p>结合最近几个 practice demo，稍微简单总结了一下使用经验：</p>
-<p><strong>0x00</strong></p>
-<p><code>const_buffer</code> 和 <code>mutable_buffer</code> 是两个 fundamental buffer classes。二者的区别在语义上表达的很明显了。</p>
-<p>实现上二者提供的接口非常一致，除了一个面向 <code>const void*</code>，另一个面向 <code>void*</code>。这点可以从 ctor 和 <code>data()</code> 中看出。</p>
-<p>另外，为了和 C++ 现有的 const cast semantics 保持一致，一个 <code>mutable_buffer</code> 对象可以 implicitly converted to <code>const_buffer</code>。</p>
-          <div class="read-more">
-            <a href="/2019/09/22/simple-notes-on-using-asio-buffer/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </div>
 
     
 

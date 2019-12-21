@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="SYN Queue and Accept Queue">
+
+
+
+
+  <meta name="keywords" content="tcp, listen, backlog, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2019/12/21/syn-queue-and-accept-queue/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> SYN Queue and Accept Queue - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          SYN Queue and Accept Queue
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-12-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#0x00-A-Single-Queue-or-Two-Queues"><span class="toc-text">0x00 A Single Queue or Two Queues</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#BSD’s-Choice"><span class="toc-text">BSD’s Choice</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Modern-Linux’s-Choice"><span class="toc-text">Modern Linux’s Choice</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x01-When-SYN-Queue-is-Full"><span class="toc-text">0x01 When SYN Queue is Full</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x02-When-Accept-Queue-is-Full"><span class="toc-text">0x02 When Accept Queue is Full</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#0x03-Disadvantages-of-Using-a-Single-Queue"><span class="toc-text">0x03 Disadvantages of Using a Single Queue</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="0x00-A-Single-Queue-or-Two-Queues"><a href="#0x00-A-Single-Queue-or-Two-Queues" class="headerlink" title="0x00 A Single Queue or Two Queues"></a>0x00 A Single Queue or Two Queues</h2><p>TCP/IP stack has two options to implement the backlog queue for a socket in the <code>LISTEN</code> state.</p>
+<p><strong>Door #1: A Single Queue</strong></p>
+<p>A single queue can contain connections in two different states:</p>
+<ul>
+<li>SYN RECEIVED</li>
+<li>ESTABLISHED</li>
+</ul>
+<p>And only connections in <code>ESTABLISHED</code> state can be returned to the application by calling the <code>accept()</code> syscall.</p>
+<p>Therefore, the length of this queue is determined by the <code>backlog</code> argument of the <code>listen()</code> syscall.</p>
+<p><strong>Door #2: A SYN Queue &amp; An Accept Queue</strong></p>
+<p>In this case, connections in state <code>SYN RECEIVED</code> are added to the SYN queue, and later moved to the accept queue when their state changes to <code>ESTABLISHED</code>.<br><a id="more"></a><br>So, the accept queue stores only connections ready for the <code>accept()</code> syscall.</p>
+<p>Unlike the previous case, the backlog argument of the <code>listen()</code> syscall determines the size of the accept queue.</p>
+<h3 id="BSD’s-Choice"><a href="#BSD’s-Choice" class="headerlink" title="BSD’s Choice"></a>BSD’s Choice</h3><p>BSD chooses the option 1 as its behavior implementation (though it internally indeed uses two queues).</p>
+<p>When the queue is full, instead of sending back a SYN/ACK packet in response to received SYN packet, it simply drops the SYN packet, and let the client to retry.</p>
+<h3 id="Modern-Linux’s-Choice"><a href="#Modern-Linux’s-Choice" class="headerlink" title="Modern Linux’s Choice"></a>Modern Linux’s Choice</h3><p>Since Linux 2.2, Linux uses the 2nd option and make</p>
+<ul>
+<li><code>backlog</code> argument for the maximum length of the accept queue</li>
+<li><code>/proc/sys/net/ipv4/tcp_max_syn_backlog</code> for the maximum length of SYN queue; and newer kernel uses <code>/proc/sys/net/core/somaxconn</code> (identified via <code>net.core.somaxconn</code>)</li>
+</ul>
+<p><img src="/img/syn-and-accept-queues.png" alt></p>
+<p>By the way, from the point of the view of the client, a connection will be in state <code>ESTABLISHED</code> after reception of the SYN/ACK packet.</p>
+<h2 id="0x01-When-SYN-Queue-is-Full"><a href="#0x01-When-SYN-Queue-is-Full" class="headerlink" title="0x01 When SYN Queue is Full"></a>0x01 When SYN Queue is Full</h2><p>When received a SYN packet but SYN queue is full, then:</p>
+<ul>
+<li>If <code>net.ipv4.tcp_syncookies=0</code>, then the SYN packet is simply discarded</li>
+<li>If <code>net.ipv4.tcp_syncookies=1</code>, then<br>  a. if the accept queue is full AND req_young_len &gt; 1, then the SYN packet is discarded<br>  <code>req_young_len</code> is the number of connections that haven’t been retransmitted SYN/ACK packet in SYN queue<br>  b. otherwise, generate syncookies for this SYN packet; This packet is presumed a malicous packet.</li>
+</ul>
+<h2 id="0x02-When-Accept-Queue-is-Full"><a href="#0x02-When-Accept-Queue-is-Full" class="headerlink" title="0x02 When Accept Queue is Full"></a>0x02 When Accept Queue is Full</h2><p>When received an ACK packet, but the accept queue is full:</p>
+<ul>
+<li>If <code>tcp_abort_on_overflow=1</code>, then the TCP/IP stack replies back a RST packet, then the connection is removed from the SYN queue.</li>
+<li>If <code>tcp_abort_on_overflow=0</code>, then the stack marks the connection as ACKED (i.e. ignores this ACK packet) and leaves the connection in SYN queue; soon, the timer would then go off and resend a SYN/ACK packet back, the client can resend an ACK packet again.<br>  Or if the maximum retry limit is reached, a RST packet is still replied and the connection is removed from the SYN queue</li>
+</ul>
+<p>The maximum retry number is configured by <code>net.ipv4.tcp_synack_retries</code>.</p>
+<p>However, if the accept queue is full, the kernel will also impose a limit on the rate at which SYN packets are accepted: If too many SYN packets are received, some of them will be dropped.</p>
+<p>In this case, it is up to the client to retry sending the SYN packet.</p>
+<h2 id="0x03-Disadvantages-of-Using-a-Single-Queue"><a href="#0x03-Disadvantages-of-Using-a-Single-Queue" class="headerlink" title="0x03 Disadvantages of Using a Single Queue"></a>0x03 Disadvantages of Using a Single Queue</h2><p>There are two major causes of the single queue that might be full.</p>
+<p>(1) Application calling <code>accept()</code> is not fast enough, making completed (<code>ESTABLISHED</code>) connections fill the queue<br>(2) RTT between the server and the client is so big, that incomplete connections (in state <code>SYN RECEIVED</code>) fill the queue.</p>
+<p>By using one queue, it assumes that an application is expected to tune the backlog</p>
+<ul>
+<li>not only taking into account how it intents to process newly established incoming connections,</li>
+<li>but also in function of traffic characteristics such as the round-trip time.</li>
+</ul>
+<p>If we use two dedicated queues, the SYN queue then effectively implies ACK packets in flight; and the accept queue implies how application level handles the completed connections.</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2019/12/21/syn-queue-and-accept-queue/">http://kingsamchen.github.io/2019/12/21/syn-queue-and-accept-queue/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/tcp/">tcp</a>
+            
+              <a href="/tags/listen/">listen</a>
+            
+              <a href="/tags/backlog/">backlog</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2019/12/08/toml-to-golang-struct/">
+        <span class="next-text nav-default">Toml to Golang Struct</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2019
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2019/12/21/syn-queue-and-accept-queue/';
+        this.page.identifier = '2019/12/21/syn-queue-and-accept-queue/';
+        this.page.title = 'SYN Queue and Accept Queue';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>
