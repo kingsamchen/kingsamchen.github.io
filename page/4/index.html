@@ -182,6 +182,68 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/05/04/anvil-for-assisting-your-cmake/">Anvil -- An Assistant For You CMake</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-05-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p>前段时间专门抽空做了一个小工具，也就是这里要讲的主题：<a href="https://github.com/kingsamchen/anvil" target="_blank" rel="noopener">anvil</a></p>
+<p>一开始做 anvil 的动力很简单：某次尝试体验一下 Linux SignalFD 功能时想直接使用 ezio 的 <code>EventLoop</code> 作为基础事件循环，同时项目使用 cmake 管理。</p>
+<p>为了省事，我直接从 ezio 的项目里抠出来 <code>CMakeLists.txt</code> 和几个自己写的 <code>.cmake</code> 文件，就地<a href="https://github.com/kingsamchen/Eureka/tree/master/UsingSignalfd" target="_blank" rel="noopener">修改</a>。</p>
+<p>但事实证明哪怕这样，改动量也不小，原因大体是因为：cmake 里（非函数内定义的）变量作用域是全局的，通过 fetch-content 功能引入的依赖在 <code>add_subdirectory()</code> 后的模块里也能看到上一层定义的变量，因此为了防止一些控制型变量发生冲突，我都在前面加上了对应的模块前缀。</p>
+<p>所以我面对的就是一大坨变量名的更换，以及少部分声明/属性的调整。</p>
+<p>考虑到大部分的文件内容都是可以模板化的，而手动“实例化”不仅费事还很容易出错，所以我就很自然地萌生了写一个工具自动化这个过程的想法。</p>
+<h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>在经过一两天的短暂思考后，我大致确定了这个工具的定位和需要实现的基本目标，总结起来有三个核心点：</p>
+<ol>
+<li>辅助 cmake 而不是试图替代它或深度封装</li>
+<li>内建一个轻量型的依赖管理功能</li>
+<li>配置化的生成 &amp; 构建流程</li>
+</ol>
+<p>首先，第一点是重中之重。<br>
+          <div class="read-more">
+            <a href="/2019/05/04/anvil-for-assisting-your-cmake/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/05/02/monthly-read-posts-in-apr-2019/">Monthly Read Posts in Apr 2019</a>
         
       </h1>
@@ -545,66 +607,6 @@
   </article>
 
     
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/03/02/monthly-read-posts-in-feb-2019/">Monthly Read Posts in Feb 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-03-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Network"><a href="#Network" class="headerlink" title="Network"></a>Network</h2><p><a href="https://www.mnot.net/blog/2018/11/27/header_compression" target="_blank" rel="noopener">Designing Headers for HTTP Compression</a></p>
-<p>看起来是 HTTP/2 的 header compression 使用建议</p>
-<hr>
-<p><a href="https://www.mnot.net/blog/2017/05/11/status_codes" target="_blank" rel="noopener">How to Think About HTTP Status Codes</a></p>
-<p>HTTP status codes 使用建议。</p>
-<p>适合结合 Rest API design 相关文章一起食用。</p>
-<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://tonybai.com/2016/12/21/how-to-use-timer-reset-in-golang-correctly/" target="_blank" rel="noopener">论golang Timer Reset方法使用的正确姿势</a></p>
-<p>golang 这破 timer 坑真多</p>
-<hr>
-<p><a href="https://jonasdevlieghere.com/guaranteed-copy-elision/" target="_blank" rel="noopener">Guaranteed Copy Elision</a></p>
-<p>C++ 17 Guaranteed copy elision explained.<br>
-          <div class="read-more">
-            <a href="/2019/03/02/monthly-read-posts-in-feb-2019/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
   </section>
 
   
@@ -687,7 +689,7 @@
      
       2015 - 
     
-    2019
+    2020
 
     <span class="heart">
       <i class="iconfont icon-heart"></i>

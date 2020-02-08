@@ -182,6 +182,67 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/08/31/new-toy-ezio/">开了个新坑 ezio</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-08-31
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>前段时间分别在 Linux 和 Windows 下实现了一个简单的 TCP 网络框架之后，感觉一些必要的坑都踩的差不多了，可以开始动手写一个真正的跨平台的 TCP 网络框架了。</p>
+<p>于是就有了这个新坑：ezio。</p>
+<p>ezio 这个名字是某天跑步的时候突然想到的，有几重含义：</p>
+<ul>
+<li>致敬刺客信条里的 Ezio Auditore，寓意希望这个库能够和刺客一样，虽轻量，但需要时恰到好处，不含糊</li>
+<li>致敬（碰瓷）Boost.ASIO，因为两个名字发音非常接近</li>
+<li>第三个是朋友发现的，他把 ezio 念成了 e-z-io（easy io），于是赋予了一个新的含义</li>
+</ul>
+<p>ezio 的目标是：<strong>提供同时支持 Linux 和 Windows 的轻量型非阻塞且具备扩展性（non-blocking and scalable）的 TCP 网络框架；针对 Linux 做性能侧优化，针对 Windows 做一致性开发体验的优化。</strong></p>
+<p>这个目标初看起来有点怪异，但是确实非常实际的做法。</p>
+<p>因为 Linux 和 Windows 在网络编程上存在根本的范式差异性，所以为了提供一致的对外接口，必须要有所侧重和牺牲。Linux 目前占据了绝大多数互联网产品服务器系统的份额，而 Windows 则提供了可以说是当前最好的开发环境。</p>
+<p>ezio 这个设计目标可以使得绝大多数业务逻辑在 Windows 上开发，然后在 Linux 上进行最后的部署。</p>
+          <div class="read-more">
+            <a href="/2018/08/31/new-toy-ezio/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/08/15/dealing-with-multiple-types-as-a-category/">Dealing With Multiple Types As a Category</a>
         
       </h1>
@@ -526,77 +587,6 @@
   </article>
 
     
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/06/01/monthly-read-posts-in-may-2018/">Monthly Read Posts in May 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-06-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h3 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h3><p><a href="http://mindhacks.cn/2011/11/04/how-to-interview-a-person-for-two-years/" target="_blank" rel="noopener">怎样花两年时间去面试一个人</a></p>
-<p>当前行业招聘的不靠谱，招揽优秀人员的难度大。</p>
-<p>脱颖而出的核心：良好的阅读习惯 + Github 项目</p>
-<p>这里说的两年是针对应届生来说的，对于已经工作的人来说，可以当作是虚指。</p>
-<p>不过文中提到的，拥抱变化的三个核心点：</p>
-<ol>
-<li>触动内心的大象</li>
-<li>建立清晰明确的目标</li>
-<li>扫清前进道路的障碍</li>
-</ol>
-<p>颇有道理。</p>
-<hr>
-<p><a href="http://gulu-dev.com/post/2014-07-28-tech-evaluation" target="_blank" rel="noopener">何判断一个技术(中间件/库/工具)的靠谱程度？</a></p>
-<p>如何做技术选型</p>
-<h3 id="System-amp-Architecture"><a href="#System-amp-Architecture" class="headerlink" title="System &amp; Architecture"></a>System &amp; Architecture</h3><p><a href="https://0xffffff.org/2017/05/01/41-linux-io/" target="_blank" rel="noopener">聊聊Linux IO</a></p>
-<p>A brief introduction to Linux I/O stack.</p>
-<p>这篇 post 的质量在国内技术博客里算是少有的干货。</p>
-<p>另，关于 page cache 和 buffer cache 的最新的内容，可以参考 Robert Love 在 quora 上的一个<a href="http://qr.ae/TUTNCz" target="_blank" rel="noopener">回答</a></p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=k12BJGSc2Nc" target="_blank" rel="noopener">CppCon 2015: John Farrier “Demystifying Floating Point”</a></p>
-<p>工程实践上使用浮点数（IEEE-754）需要注意的一些坑。</p>
-<p>看之前最好翻一下 CSAPP 中关于浮点数 IEEE-754 模型的基础知识<br>
-          <div class="read-more">
-            <a href="/2018/06/01/monthly-read-posts-in-may-2018/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
   </section>
 
   
@@ -679,7 +669,7 @@
      
       2015 - 
     
-    2019
+    2020
 
     <span class="heart">
       <i class="iconfont icon-heart"></i>

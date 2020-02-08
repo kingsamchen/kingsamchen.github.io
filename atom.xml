@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2019-12-21T14:33:35.910Z</updated>
+  <updated>2020-02-08T13:33:45.038Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>CMake 入门指南</title>
+    <link href="http://kingsamchen.github.io/2020/02/08/how-to-learn-cmake-as-the-beginner/"/>
+    <id>http://kingsamchen.github.io/2020/02/08/how-to-learn-cmake-as-the-beginner/</id>
+    <published>2020-02-08T13:11:51.000Z</published>
+    <updated>2020-02-08T13:33:45.038Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;这篇文章来自于我在知乎上的这个&lt;a href=&quot;https://www.zhihu.com/question/58949190/answer/999701073&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;回答&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;天知道为什么当初会花时间写一个这么严肃的答案，考虑到国内社区的审查力度保不准哪天我的帐号就GG了，这里特意做一个备份。&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;作为一个从2018年下半年开始到现在断断续续折腾了一年半 CMake 的人，刚好经历了 CMake 从懵逼到入门阶段。&lt;/p&gt;
+&lt;p&gt;注：虽然问题是17年提的，但是考虑到 CMake 的频繁迭代和最佳实践的变化，希望以下内容仍有帮助。&lt;/p&gt;
+&lt;h3 id=&quot;Why-CMake-？&quot;&gt;&lt;a href=&quot;#Why-CMake-？&quot; class=&quot;headerlink&quot; title=&quot;Why CMake ？&quot;&gt;&lt;/a&gt;Why CMake ？&lt;/h3&gt;&lt;p&gt;先回答括号中的问题：&lt;strong&gt;被逼的&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;这三个字是认真的。&lt;/p&gt;
+&lt;p&gt;不管 CMake 是否是一个优秀的构建工具，不管你是否认同 CMake，都无法否认 CMake 目前是 C++ 的 de facto build system[^1]。&lt;/p&gt;
+&lt;p&gt;所以在社区以及生态的影响下，使用 CMake 作为构建工具的项目会越来越多。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+  </entry>
   
   <entry>
     <title>SYN Queue and Accept Queue</title>
@@ -598,40 +626,6 @@
       <category term="memory reordering" scheme="http://kingsamchen.github.io/tags/memory-reordering/"/>
     
       <category term="circuit breaker" scheme="http://kingsamchen.github.io/tags/circuit-breaker/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>基于 semaphore 实现轻量级 mutex</title>
-    <link href="http://kingsamchen.github.io/2019/05/12/roll-your-own-light-weight-mutex/"/>
-    <id>http://kingsamchen.github.io/2019/05/12/roll-your-own-light-weight-mutex/</id>
-    <published>2019-05-12T12:10:37.000Z</published>
-    <updated>2019-05-12T12:45:05.158Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;核心是 Jeff Preshing 大牛的两篇文章&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&quot;https://preshing.com/20120226/roll-your-own-lightweight-mutex/&quot; target=&quot;_blank&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="mutex" scheme="http://kingsamchen.github.io/tags/mutex/"/>
-    
-      <category term="multithreading" scheme="http://kingsamchen.github.io/tags/multithreading/"/>
-    
-      <category term="synchronization" scheme="http://kingsamchen.github.io/tags/synchronization/"/>
-    
-      <category term="semaphore" scheme="http://kingsamchen.github.io/tags/semaphore/"/>
     
   </entry>
   

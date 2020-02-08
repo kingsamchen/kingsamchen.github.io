@@ -182,6 +182,89 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/07/02/monthly-read-posts-in-jun-2017/">Monthly Read Posts in June 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-07-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://github.com/nixzhu/dev-blog/blob/master/2015-10-08-navi.md" target="_blank" rel="noopener">一种头像缓存策略</a></p>
+<p>本来还以为有什么惊天地的策略…这不是很普通的策略嘛…</p>
+<p><a href="http://foonathan.net/blog/2016/07/23/move-safety.html" target="_blank" rel="noopener">Move Safety</a></p>
+<p>这篇 post 引入了一个 move-safety 的概念；和 exception safety 类似，move safety 描述了一个实例被移动之后的 post-condition invariant.</p>
+<p>Why do we need move safety? Because <code>std::move()</code> creates artificial temporaries, and we might want to use them again after the move operation.</p>
+<p>4-Level Move Safety</p>
+<ul>
+<li>No move guarantee: copy only</li>
+<li>Strong move safety: moved object is valid and well-defined; like std::unique_ptr</li>
+<li>Basic move safety: moved object is valid, but its state is unspecified; like std::string, due to possible SSO.It is what the standard library guarantees for all types unless otherwise specified.</li>
+<li>No move safety: the state is invalid, and you can only call its destructor, or assign it a new value.</li>
+</ul>
+<p><a href="https://blog.tartanllama.xyz/c++/2016/07/18/stack-and-heap/" target="_blank" rel="noopener">Stack and Heap</a></p>
+<p>这篇 post 挺有意思。</p>
+<p>作者观点是，无论 <em>heap</em> 还是 <em>stack</em> 来描述一个 C++ object 的 storage location 都是不准确的，因为标准并未规定 storage location 具体是什么，而规定了所谓的 storage duration：<strong>Storage duration defines the minimum potential lifetime of the storage that contains the object</strong>.</p>
+<p>4 standard-defined storage duration:</p>
+<ul>
+<li>Static storage duration</li>
+<li>Automatic storage duration</li>
+<li>Thread storage duration</li>
+<li>Dynamic storage duration</li>
+</ul>
+<p><a href="http://www.drdobbs.com/cpp/mixin-based-programming-in-c/184404445" target="_blank" rel="noopener">Mix-in Based Programming in C++</a><br><a href="https://yanniss.github.io/practical-fmtd.pdf" target="_blank" rel="noopener">Paper: Mixed based programming in C++</a></p>
+<p>第一篇是介绍 mix-in 的 post，第二篇是在 mix-in 基础上提出一种 mix-in layer 的 paper。</p>
+<p>mix-in 是一个挺有意思的 patter，但是因为没有自身语言支持，在 C++ 里的实现有时候会遇到比较 tricky 的问题。</p>
+<p>第一篇 post 就提到了一个核心问题：如何有效地解决 mix-in classes 的 construction problem。但是讲真，post 里给出的 solution 有点诡异过头了；如果现实中的工程问题需要这样的一个解决方案，弃用 mix-in 弄不好是一个更靠谱的做法。</p>
+<p>至于第二篇 paper，其实核心所谓的 mix-in layer，概括起来就是</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="class"><span class="keyword">class</span> <span class="title">Next</span> &gt;</span></span><br><span class="line"><span class="class"><span class="title">class</span> <span class="title">NUMBER</span> :</span> <span class="keyword">public</span> Next &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Workspace</span> :</span> <span class="keyword">public</span> Next::Workspace &#123;</span><br><span class="line">        <span class="comment">// Workspace role members</span></span><br><span class="line">    &#125;；</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Vertex</span> :</span> <span class="keyword">public</span> Next::Vertex &#123;</span><br><span class="line">        <span class="comment">// Vertex role members</span></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>paper 中还提到了对工程中使用 mix-in 的一些建议和 recommended practice，看看也还不错。</p>
+<p><a href="https://insouciant.org/tech/connection-management-in-chromium/" target="_blank" rel="noopener">Connection Management in Chromium</a></p>
+<p>Chromium 官方研发写的 post。</p>
+<p>提到了他们试图解决 connection latency &amp; parallelism 的问题。</p>
+<p>于是就有这么几个点：</p>
+<p>Handshakes (including TCP handshake &amp; SSL handshake) are costly. Therefore, a better connection management is on demand.</p>
+<p>Optimizations on transport layer (TCP or SPDY)</p>
+<p>.etc</p>
+<p><a href="https://www.preney.ca/paul/archives/486" target="_blank" rel="noopener">Apply tuple to function efficiently</a></p>
+<p>Yet another implementation of apply-on-tuple</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/06/15/use-base-bind-with-std-function/">Use base::Bind With std::function</a>
         
       </h1>
@@ -526,66 +609,6 @@
   </article>
 
     
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/04/12/use-ffmpeg-to-reencode-videos/">使用 ffmpeg 压制视频</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-04-12
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>帮主站重写完投稿工具的上传模块后，Neo 和我说，我们这期版本还是得带上视频压制功能…</p>
-<p>这是我第一次知道原来 ffmpeg 还可以压制视频。因为重构的缘故，老版本的代码完全不能用（就算不考虑换上层 UI 框架的事儿，老版本那个代码质量…），所以只能抄一下他们的压制相关的驱动参数，自己从头把功能实现一遍。</p>
-<p>花了差不多刚好一周的时间提供了一个底层压制模块后，我发现，因为产品需求的因素，实现这部分功能居然可以很好的做为熟悉一个语言涉及操作层面的 roadmap，整理一下 feature list，算算差不多至少要能够提供：</p>
-<ul>
-<li>运行子进程，并且能够通过 IPC 读取并解析子进程的 stdout 和 stderr 数据；通常情况下，这意味着需要熟悉 Windows 的 Pipe</li>
-<li>压制首先涉及到利用 <code>ffprobe.exe</code> 检测视频的 meta-info，符合压制条件并且用户确认后利用 meta-info 作为压制的部分输入信息；中间涉及到几个线程间的交互</li>
-<li>因为压制功能和视频上传在逻辑上具有先后顺序，并且都需要有专门的 worker thread，因此他们可以共用一个线程池；而支持多任务并行操作，又要求线程池的调度策略要足够“及时”（事实上，这个要求有一部分锅来自 chromium net 的 <code>URLFetcher</code>，which requires 网络操作运行的线程在 URLFetcher context 生命周期内是唯一且固定的，因此会出现一个上传任务只要不结束，就会一直霸占一个线程的情况；另有一部分锅来自 chromium base 的 <code>scoped_reptr</code>，居然没有考虑对外暴露自己 ref-count 信息，无形中加大了实现线程池的困难）</li>
-</ul>
-<p>因此在项目提测结束，基本验收通过之后，我想籍由这个功能，重新回忆一下 C# 和 WPF （噫，怎么老是再回忆这个…），所以花了一个周末，就有了 <a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleVideoEncoder" target="_blank" rel="noopener">SimpleVideoEncoder</a></p>
-<p>但是在实现过程中我发现，纵使有 async/await，它也不是银弹，也有他覆盖不了的 case；而我对 C#/.NET 的多线程模型实在是完全不懂，导致某些细节完全没法下手（只能说某些case 下，CSP 真是好用到想哭，还好 WPF 的 UI-thread 提供了一个 <code>Dispatcher</code> 支持了对 UI 线程的 CSP；再将需求简化到 Demo 程度后，勉强实现了出来。</p>
-<p><img src="/img/ffmpeg-encode.png" alt></p>
-<p>上层界面基于 WPF，但是没有走 MVVM。</p>
-<p>实话说，经过一年半（距离上次写 EasyKeeper），自己主导过两个不大不小的项目后，对于为什么需要有 MVC/MVP/MVVM 有了一些更实际的想法，并且也能理解有时候过分追求这些反而是一种坑。</p>
-<p>考虑到目前应该是没法公开为投稿工具写的那部分代码（压制模块算起来大概有 1K+ lines of code），所以这个 <em>SimpleVideoEncoder</em> 的意义也大大折扣，基本只能作为一个 ffmpeg 压制功能的简单展示…</p>
-<p>不过最后还是要赞一下 C# 对 Pipe IPC 的封装，几行代码做了需要几十行 C++ 代码的事情；并且基于 event 的通知机制比起传统的 observer，更能准确的体现 OOP 中<strong>对象级别消息通信</strong>的内涵。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
   </section>
 
   
@@ -668,7 +691,7 @@
      
       2015 - 
     
-    2019
+    2020
 
     <span class="heart">
       <i class="iconfont icon-heart"></i>

@@ -182,6 +182,64 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2020/02/08/how-to-learn-cmake-as-the-beginner/">CMake 入门指南</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-02-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>这篇文章来自于我在知乎上的这个<a href="https://www.zhihu.com/question/58949190/answer/999701073" target="_blank" rel="noopener">回答</a>。</p>
+<p>天知道为什么当初会花时间写一个这么严肃的答案，考虑到国内社区的审查力度保不准哪天我的帐号就GG了，这里特意做一个备份。</p>
+<hr>
+<p>作为一个从2018年下半年开始到现在断断续续折腾了一年半 CMake 的人，刚好经历了 CMake 从懵逼到入门阶段。</p>
+<p>注：虽然问题是17年提的，但是考虑到 CMake 的频繁迭代和最佳实践的变化，希望以下内容仍有帮助。</p>
+<h3 id="Why-CMake-？"><a href="#Why-CMake-？" class="headerlink" title="Why CMake ？"></a>Why CMake ？</h3><p>先回答括号中的问题：<strong>被逼的</strong>。</p>
+<p>这三个字是认真的。</p>
+<p>不管 CMake 是否是一个优秀的构建工具，不管你是否认同 CMake，都无法否认 CMake 目前是 C++ 的 de facto build system[^1]。</p>
+<p>所以在社区以及生态的影响下，使用 CMake 作为构建工具的项目会越来越多。<br>
+          <div class="read-more">
+            <a href="/2020/02/08/how-to-learn-cmake-as-the-beginner/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/12/21/syn-queue-and-accept-queue/">SYN Queue and Accept Queue</a>
         
       </h1>
@@ -511,67 +569,6 @@
   </article>
 
     
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/10/01/review-dclp-and-memory-reordering/">复习：DCLP 和 Memory Reordering</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-10-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>本文是对 Jeff Preshing 的 <a href="https://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/" target="_blank" rel="noopener">Double Checked Locking Is Fixed in C++ 11</a> 笔记。</p>
-<h3 id="0x00-传统实现"><a href="#0x00-传统实现" class="headerlink" title="0x00 传统实现"></a>0x00 传统实现</h3><p>因为 synchronization 只需要在实例第一次创建时保证；此后（ <code>instance != nullptr</code> 时）都不需要锁来保证 synchronization。</p>
-<p>在第一次判断实例为空和上锁之间存在一个 potential race，因此上锁后需要再一次判断实例是否为空。</p>
-<p>这也是 double checked 的来由。</p>
-<p>所以一个传统但并不100%正确的 DCLP 实现如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lock(mtx);</span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> Singleton();				<span class="comment">// &lt;-- key point</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// omit explicit static field initialization.</span></span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::mutex mtx;</span><br><span class="line">    <span class="keyword">static</span> Singleton* instance;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>这基本是早起 C++ DCLP 的实现架子。</p>
-<h3 id="0x01-问题：内存乱序以及为什么锁帮不了忙"><a href="#0x01-问题：内存乱序以及为什么锁帮不了忙" class="headerlink" title="0x01 问题：内存乱序以及为什么锁帮不了忙"></a>0x01 问题：内存乱序以及为什么锁帮不了忙</h3><p>语句</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">instance = <span class="keyword">new</span> Singleton();</span><br></pre></td></tr></table></figure>
-<p>在 C++ 中实际上等效于</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tmp = <span class="keyword">operator</span> <span class="keyword">new</span>(<span class="keyword">sizeof</span>(Singleton));  <span class="comment">// step 1: allocate memory via operator new</span></span><br><span class="line"><span class="keyword">new</span>(tmp) Singleton;                     <span class="comment">// step 2: placement-new for construction</span></span><br><span class="line">instance = tmp;                         <span class="comment">// step 3: assign addr to instance</span></span><br></pre></td></tr></table></figure>
-<p>注意：其中除了分配内存是固定第一步之外，构造对象和赋值内存地址的<strong>生成代码顺序</strong>是由编译器自己决定。这里的顺序只是一种可能性。<br>
-          <div class="read-more">
-            <a href="/2019/10/01/review-dclp-and-memory-reordering/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
   </section>
 
   
@@ -649,7 +646,7 @@
      
       2015 - 
     
-    2019
+    2020
 
     <span class="heart">
       <i class="iconfont icon-heart"></i>
