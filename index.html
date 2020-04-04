@@ -182,6 +182,63 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2020/04/04/how-to-design-a-url-shortening-system/">How To Design a URL Shortening Service</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-04-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="1-Encoding-Actual-URL"><a href="#1-Encoding-Actual-URL" class="headerlink" title="1. Encoding Actual URL"></a>1. Encoding Actual URL</h2><p>The path part, which we would call it <em>key</em>, of an encoded URL can consist of 6 ~ 8 digits in base62, up to desired uniqueness rate.</p>
+<h3 id="Randomly-Generated"><a href="#Randomly-Generated" class="headerlink" title="Randomly Generated"></a>Randomly Generated</h3><p>We can randomly generate those digits each within the range [0, 61].</p>
+<p>Then we must check if the generated key is unique by consulting our key storage.</p>
+<blockquote>
+<p>Aside: this checking process can be optimized with data structures like bloom-filter, provided we have to deal hundres of million records.</p>
+</blockquote>
+<p>If we are unlucky, we may have a key collision; in this case, just re-generate another key until its unique.</p>
+<p>To make encoding more efficient, we can have a standalone <em>Key Generation Service(KGS)</em> that generates those random key beforehand, and store them.<br>
+          <div class="read-more">
+            <a href="/2020/04/04/how-to-design-a-url-shortening-system/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2020/02/08/how-to-learn-cmake-as-the-beginner/">CMake 入门指南</a>
         
       </h1>
@@ -504,59 +561,6 @@
 <p>另外一个需要注意的点是，桶的可用 token 数是否必须严格大于0。</p>
 <p>如果是，那么对于从桶取走 token 的接口语义需要仔细思考和设计（如果多个请求上下文共用一个桶，那么很可能会出现某个上下文一直拿不到 token 的情况）。</p>
 <p>FYI：这个 demo 是基于 CPP 实现的，因为工作中一直在用 golang，为了避免 CPP 生疏，还是有必要经常性的练习。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/10/19/two-git-tips-on-windows/">Windows 上使用 Git Tips 两则</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-10-19
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Windows-Terminal-中-git-log-显示-UTF-8-编码的中文"><a href="#Windows-Terminal-中-git-log-显示-UTF-8-编码的中文" class="headerlink" title="Windows Terminal 中 git log 显示 UTF-8 编码的中文"></a>Windows Terminal 中 git log 显示 UTF-8 编码的中文</h2><p>这个准确的说其实是 powershell 自己的问题。</p>
-<p>打开当前用户对应的 powershell 的 profile 文件，如果没有就创建一个，目录一般位于 <code>C:\Users\&lt;user&gt;\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1</code></p>
-<p>添加：</p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$env:LANG</span>=zh_CN.UTF8</span><br></pre></td></tr></table></figure>
-<p>然后重启 powershell 即可。</p>
-<h2 id="Filename-too-long-导致-checkout-失败"><a href="#Filename-too-long-导致-checkout-失败" class="headerlink" title="Filename too long 导致 checkout 失败"></a>Filename too long 导致 checkout 失败</h2><p>原因是 git 默认使用旧版的 Windows API，对于路径的支持最大为 <code>MAX_PATH</code>（多么熟悉的宏）。</p>
-<p>解决方法是直接开启 git 对 windows 的长文件名支持，执行</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.longpaths true</span><br></pre></td></tr></table></figure>
 
         
       

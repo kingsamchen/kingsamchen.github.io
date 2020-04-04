@@ -182,6 +182,59 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/10/19/two-git-tips-on-windows/">Windows 上使用 Git Tips 两则</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-10-19
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Windows-Terminal-中-git-log-显示-UTF-8-编码的中文"><a href="#Windows-Terminal-中-git-log-显示-UTF-8-编码的中文" class="headerlink" title="Windows Terminal 中 git log 显示 UTF-8 编码的中文"></a>Windows Terminal 中 git log 显示 UTF-8 编码的中文</h2><p>这个准确的说其实是 powershell 自己的问题。</p>
+<p>打开当前用户对应的 powershell 的 profile 文件，如果没有就创建一个，目录一般位于 <code>C:\Users\&lt;user&gt;\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1</code></p>
+<p>添加：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$env:LANG</span>=zh_CN.UTF8</span><br></pre></td></tr></table></figure>
+<p>然后重启 powershell 即可。</p>
+<h2 id="Filename-too-long-导致-checkout-失败"><a href="#Filename-too-long-导致-checkout-失败" class="headerlink" title="Filename too long 导致 checkout 失败"></a>Filename too long 导致 checkout 失败</h2><p>原因是 git 默认使用旧版的 Windows API，对于路径的支持最大为 <code>MAX_PATH</code>（多么熟悉的宏）。</p>
+<p>解决方法是直接开启 git 对 windows 的长文件名支持，执行</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global core.longpaths true</span><br></pre></td></tr></table></figure>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/10/01/review-dclp-and-memory-reordering/">复习：DCLP 和 Memory Reordering</a>
         
       </h1>
@@ -527,59 +580,6 @@
         
       
     </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/08/10/asio-cmake-package-wrapper/">安利 asio-cmake</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-08-10
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="0x00-Background"><a href="#0x00-Background" class="headerlink" title="0x00 Background"></a>0x00 Background</h2><p>考虑到 ASIO 的相当一部分组件（subset）已经进入了 C++ 20 Networking TS，未来再经过一些小调整之后成为标准库的一员基本板上钉钉。</p>
-<p>那么提前熟悉一下 ASIO 也不是什么坏事，毕竟没准等到 C++ 23 的时候，coroutine, networking, executor 啥的都已经很完备了，谁都可以用 C++ 实现一些性能不差的 server-end 代码了（比如 RPC 框架？）。</p>
-<p>不过和使用 Boost 类似，使用 ASIO 作为依赖库也不是一件容易的事情；毕竟自 modern C++ 元年至今都8年了，CMake 还在成为 de facto building system 的道路上挣扎，广泛接受的包管理依然不见踪影…</p>
-<h2 id="0x01-ASIO-CMake-Wrapper"><a href="#0x01-ASIO-CMake-Wrapper" class="headerlink" title="0x01 ASIO-CMake Wrapper"></a>0x01 ASIO-CMake Wrapper</h2><p>陈年老账就不再扯了，得益于 CMake 3.2 开始提倡的 taget-based properties 和 CMake 3.11 开始提供的 <code>FetchContent</code> module，我花了一些时间实现了一个基于 <code>FetchContent</code> 的 asio-cmake wrapper。<br>
-          <div class="read-more">
-            <a href="/2019/08/10/asio-cmake-package-wrapper/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
 
     
 
