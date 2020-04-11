@@ -182,6 +182,70 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/11/04/token-bucket-based-rate-limit/">一个轮子：基于 token bucket 的 rate-limit</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-11-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>地址：<a href="https://github.com/kingsamchen/Eureka/tree/master/token-bucket-rate-limit" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/tree/master/token-bucket-rate-limit</a></p>
+<p>基于 <a href="https://en.wikipedia.org/wiki/Token_bucket" target="_blank" rel="noopener">token bucket</a> 的限流实现相比于简单的“时间窗口计数”，更加“平滑”和稳定，不容易出现两个时间窗口衔接前后的 burst 请求。</p>
+<p>并且可以直接用到上传/下载的速率控制上。</p>
+<p>对于后端服务，可以用作实例的单机请求控制。</p>
+<p>这里不打算详细介绍这个机制算法，具体的 concept/idea 可以看 Wikipedia，只对一些实现细节做一点小小的 hint。</p>
+<p>虽然概念上，会以一定的速率 <code>rate</code> 往桶里填充 token，但是实际实现上，直接算出两次访问桶的时间差，然后乘以 <code>rate</code> 就能得到过去这段时间要往桶里填充多少 token 了。</p>
+<p>所以这里有一个核心的过程：调整桶在任意时刻 <code>t</code> 时桶里的可用 token 数。</p>
+<p>另外，考虑到扩展性，可以引入另外一个填充 token 的周期概念：tick。</p>
+<p>即：</p>
+<ul>
+<li>每个 tick 往桶里填充 N 个 token（quantum）</li>
+<li>一个物理时间间隔 d（单位可以是秒，分，毫秒 .etc）为一个 tick 周期</li>
+</ul>
+<p>这样填充速率就不受限为秒级速率了。</p>
+<p>注意：10 tokens per 100ms 和 100 tokens per 1s 是有区别的。前者填充桶的间隔更短，可以减少请求等待的时间间隔。</p>
+<p>桶的容量（capacity）如果<strong>明显大于</strong>填充速率 quantum，那么容量可以用来支持某段时间内的 burst 请求，这可能是期望的也可能不是期望的。</p>
+<p>另外一个需要注意的点是，桶的可用 token 数是否必须严格大于0。</p>
+<p>如果是，那么对于从桶取走 token 的接口语义需要仔细思考和设计（如果多个请求上下文共用一个桶，那么很可能会出现某个上下文一直拿不到 token 的情况）。</p>
+<p>FYI：这个 demo 是基于 CPP 实现的，因为工作中一直在用 golang，为了避免 CPP 生疏，还是有必要经常性的练习。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/10/19/two-git-tips-on-windows/">Windows 上使用 Git Tips 两则</a>
         
       </h1>
@@ -525,57 +589,6 @@
 <p>比如 Jeff Preshing 自己，以及 Herb Sutter。</p>
 <p>个人习惯，笔记一开始就是在 onenote 里，懒得重新做一遍 markdown 了，索性转成 PDF 直接内嵌。</p>
 <iframe src="https://onedrive.live.com/embed?cid=4496A33F126535A6&resid=4496A33F126535A6%2149246&authkey=AG4NakEdjaO2xII&em=2" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/08/18/resolve-clashed-cmake-function-call/">解决 CMake 依赖工程中同名 cmake 函数调用混乱</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-08-18
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>拿 learn-asio 这个项目练手时发现一个问题：learn-asio 依赖了 KBase，这两个项目都是我用 anvil 进行托管的，所以两个项目的 cmake 目录里各自有一份 <code>compiler_*.cmake</code>。</p>
-<p>因为 <code>compiler_*.cmake</code> 提供的函数 <code>apply_common_compiler_property_to_target()</code> 默认使用了非常严格的属性，导致构建 asio 练手工程出现很多 warning 和静态分析的错误，所以为了省事我把 learn-asio 的这个函数做了宽松化处理。</p>
-<p>但是重新构建的时候发现没有效果。</p>
-<p>检查了一圈之后发现这个函数的调用变成了 KBase 目录下的版本，猜想可能原因是我首先引入了当前工程目录下的这个 .cmake 模块文件；然后又通过加载依赖的方式引入了 KBase 的 .cmake 模块文件，导致同名函数直接被覆盖成了最后出现的依赖提供的版本。</p>
-<p>研究了一下没想到怎么解决，于是看了一下 folly 的处理方式，惊讶地发现 folly 是直接把项目名称 hardcode 进了函数里…</p>
-<p>最后仿照着给 anvil 做了一个 <a href="https://github.com/kingsamchen/anvil/commit/dca6eaf97bcba4b930bfc4c3dcc64312d6a70a35" target="_blank" rel="noopener">patch</a></p>
 
         
       

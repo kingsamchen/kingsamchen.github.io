@@ -182,6 +182,60 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/03/24/on-socks4a-proxy-implementation/">socks4a 协议代理</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-03-24
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>对于网络编程学习而言，尝试实现一个 proxy 是一个很好的途径。因为一个 proxy 对于 clients 来说是 server，对 remote servers 来说又是 client，一下就覆盖到了网络编程的两个大块。</p>
+<p>同时，需要管理/协调两侧的连接对如何正确的处理网络连接的关闭也是一个挑战。</p>
+<p>对比普通的 HTTP Proxy，socks4a proxy 作为 transport layer proxy 在协议自身上更加”干净“（不需要像 HTTP Proxy 那样解析厚重的各种 header 以及对 HTTPS 的特殊处理），也更贴近 TCP 网络编程的具体实践。</p>
+<p>对比更新的 socks5，socks4a 仅支持 TCP，对 TLS 信道加密没有协议上的要求，更容易实现。</p>
+<p>另，<a href="https://www.openssh.com/txt/socks4a.protocol" target="_blank" rel="noopener">socks4a</a> 协议是 <a href="https://www.openssh.com/txt/socks4.protocol" target="_blank" rel="noopener">socks4</a> 的一个补丁版，两个协议的 RFC 文本打印下来整体不超过两页 A4 纸，半个小时就能看完。</p>
+<p>上周的时候我为 ezio 增加了一个 socks4a 的<a href="https://github.com/kingsamchen/ezio/tree/master/examples/socks4a" target="_blank" rel="noopener">简单实现</a>，过程中发现了 <code>TCPClient</code> 在 teardown 时存在<a href="https://github.com/kingsamchen/ezio/commit/24c1dc4d6af91f03dd748d4a3713280e71eaceef" target="_blank" rel="noopener">缺陷</a>，有概率导致连接的断开和 <code>TCPClient</code> 的析构出现 race。</p>
+<p>同时还发现作为测试的 curl v7.46 （ubuntu 16.04 LTS apt 版本）在处理 HTTPS 请求时存在缺陷，会导致 client connection 过早断开，proxy 出现 RST 错误。</p>
+<p>这说明拿 socks4a proxy 作为熟悉具体的语言/网络库的编程范式的例子还是非常不错的。</p>
+<p>注：socks4a 协议有两个连接模式：常用的 <code>CONNECT</code> 和 <code>BIND</code>，后者是为了适应 FTP 的 <a href="https://stackoverflow.com/questions/1699145/what-is-the-difference-between-active-and-passive-ftp" target="_blank" rel="noopener">active mode</a> 而存在的，现在基本没有使用的必要，可以直接忽略。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/03/13/recommend-google-api-design-guide/">推荐 Google API Design Guide</a>
         
       </h1>
@@ -539,66 +593,6 @@
 <p>这个做法非常丑陋而且不可靠。<br>
           <div class="read-more">
             <a href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/01/08/bad-smells-in-golang/">来一口 golang 做的玻璃渣</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-01-08
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>转到后端差不多也快三个月了，拿 golang 糊代码的时间算上自己平时写的一些练手 demo 加起来差不多也有一个月。</p>
-<p>这将近一个月的时间过来差不多能体会到 golang 的设计精髓，那就是：<em>simple &amp; stupid, being convenient as the first class support</em>.</p>
-<p>换句话说就是：短平快糙猛，满口玻璃渣，怎么方便怎么来。</p>
-<p>所以接下来不免俗地是吐槽 golang 设计的内容。</p>
-<p>吐槽不考虑 PLT 上的设计，纯粹从日常堆业务逻辑出发。毕竟理论的东西我一个鶸也不懂，且 golang 的设计目的就是方便应届毕业生快速堆业务代码。</p>
-<p>以下吐槽点的顺序为自己在实际中遇到的顺序逆序。</p>
-<h3 id="Flaky-Goroutines"><a href="#Flaky-Goroutines" class="headerlink" title="Flaky Goroutines"></a>Flaky Goroutines</h3><p>golang 里起一个 goroutine 很方便，但是目前感觉 goroutine 太过于 flaky，有点飘。一旦没用 <code>chan struct{}</code> 或者 <code>sync.WaitGroup</code> ”固定好“，就总有一种这玩意儿是不是已经脱离自己手心的感觉。</p>
-<p>另外不知道是不是很多用 golang 的人之前都是 php / python 的背景，相当一部分人其实对 goroutine-safe 没有什么概念。不过严格来说这个不是 golang 自身的问题。</p>
-<h3 id="Cannot-assign-to-fields-within-short-declaration-notation"><a href="#Cannot-assign-to-fields-within-short-declaration-notation" class="headerlink" title="Cannot assign to fields within short declaration notation"></a>Cannot assign to fields within short declaration notation</h3><p>代码段</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foobar</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line">	ok, err := foobar()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"error"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(ok)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>是合法的，因为 <code>ok</code> 之前并没有被定义，所以这里 <code>err</code> 可以蹭着使用 <code>:=</code>。<br>
-          <div class="read-more">
-            <a href="/2019/01/08/bad-smells-in-golang/" class="read-more-link">阅读更多</a>
           </div>
         
       

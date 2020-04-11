@@ -182,6 +182,71 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/10/01/monthly-read-posts-in-sep-2017/">Monthly Read Posts in Sep 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-10-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://www.zerotier.com/blog/2017-05-05-theleak.shtml" target="_blank" rel="noopener">The Horror of the Standard Library</a></p>
+<p>一个 allocator 引发的惨案…</p>
+<hr>
+<p><a href="https://channel9.msdn.com/Events/CPP/CppCon-2015/CPPConD02V011" target="_blank" rel="noopener">CppCon2015: Extreme Type Safety with Opaque Typedefs</a></p>
+<p>类型自带语义，但是 <code>typedef/using</code> 只是类型别名，编译器无法区分。而 opaque typedefs 声称可以通过通过 wrapper 的方式生成具有单独类型语义 typedefs。</p>
+<hr>
+<p>HTTP Series</p>
+<p><a href="https://www.code-maze.com/http-series-part-1/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-1/</a><br><a href="https://www.code-maze.com/http-series-part-2/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-2/</a><br><a href="https://www.code-maze.com/http-series-part-3/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-3/</a><br><a href="https://www.code-maze.com/http-series-part-4/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-4/</a><br><a href="https://www.code-maze.com/http-series-part-5/" target="_blank" rel="noopener">https://www.code-maze.com/http-series-part-5/</a></p>
+<p>可以作为不错的 HTTP 协议扫盲</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=f_D-wD1EmWk" target="_blank" rel="noopener">CppCon2015: C++ Requests - Curl for People</a></p>
+<p>受到 python requests 启发的 C++ counterpart implementation。</p>
+<p>基于 CURL，但是做了非常细致的封装。</p>
+<p>看了一下 demo，感觉是个非常不错 curl wrapper</p>
+<hr>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzI1MTA1MzM2Nw==&amp;mid=400021278&amp;idx=1&amp;sn=0e971807eb0e9dcc1a81853189a092f3&amp;scene=1&amp;srcid=1019lhTQRdJKb9HCqUHPntbT&amp;from=groupmessage&amp;isappinstalled=0#rd" target="_blank" rel="noopener">Android GC 那点事儿</a></p>
+<p>行文杂乱，讲道理还不如看专业的 posts…</p>
+<hr>
+<p><a href="https://www.fluentcpp.com/2017/09/12/how-to-return-a-smart-pointer-and-use-covariance/" target="_blank" rel="noopener">How to Return a Smart Pointer AND Use Covariance</a></p>
+<p>为 C++ 中实现涉及 smart pointer 的 covariance 接口提供了一个非常不错而且可用的解决方案。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/09/03/fix-incomplete-type-when-using-gdb-with-clang/">Fix 使用 GDB 调试 Clang 编译的程序时标准库类型始终显示 incomplete type</a>
         
       </h1>
@@ -575,71 +640,6 @@
 <p>第二个坑特别隐蔽：我一开始的 test subject 是 calc.exe，在 Windows 10 上这是一个 UWP 程序，然而无论我怎么做，calc 进程都活得好好的，一点不像是被约束的样子。。。甚至所有 API 的调用都并没有返回错误。</p>
 <p>而当我将 test subject 换成 Win32 程序 notepad.exe 之后，功能就可以正常跑了….</p>
 <p>我猜想这大概和 UWP 程序的一些安全特性有关，不过因为本身对安全并没有偏执的热爱，所以在这个点上就没有继续深入了。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2017/07/23/send-specific-cookie-in-urlfetcher/">Send Specific Cookie in URLFetcher</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2017-07-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>使用 <code>URLFetcher</code> 作为网络请求的基础组件有一个优势：如果 server 的 response header 指明了 <code>set-cookie</code>，那么 <code>URLFetcher</code> 在发出下一个请求时会自动往 request header 中设置 cookie。</p>
-<p>这为使用某些需要在请求时附带 cookie 的 API 提供了便利；但是同时也在某一些场合下导致了一些问题。</p>
-<p>如果你需要为某个 API 请求的 request header 中携带自定义的 cookie 数据，例如 <code>cookie: buvid=xxxx</code>，那么，即使你在发送请求前通过 <code>AddExtraRequestHeader()</code> 添加了 cookie 头，你也会惊奇地发现，出去的请求并没有携带你设置的 cookie，而是只有 <code>URLFetcher</code> 自己设置的，服务端提供的 cookie 值。</p>
-<p>不要问为什么这个时候要用 cookie 传递这个信息，而不是某个独有的 request header，亦或者 query-string；你永远不知道和你对接的人是一个怎样的智障；毕竟，没有谁会真的去读 RFC。</p>
-<p>自定义 cookie 丢失的原因大概如下：</p>
-<ol>
-<li>你首先设置了 cookie，然后发出请求</li>
-<li><code>URLFetcher</code> 在内部实际进行网络请求前，会设置服务端的 cookie 值（因为之前的请求存在 <code>set-cookie</code>）</li>
-<li>因为 RFC 规定，一个 request header 中， cookie header line 有且仅有一个，也就是说</li>
-</ol>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cookie: buvid=xxx</span><br><span class="line">cookie: sig=xxx</span><br></pre></td></tr></table></figure>
-<p>是不合法的；虽然可以通过</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cookie: buvid=xxx; sig=xxx</span><br></pre></td></tr></table></figure>
-<p>来传递多个value，但是这要求 <code>URLFetcher</code> 在添加 cookie 时要能够 aware 到这点；很可惜，根据情况来看这点不成立</p>
-<ol>
-<li>于是 <code>URLFetcher</code> 粗暴的替换了你设置的 cookie 值</li>
-</ol>
-<p>扫了一遍代码之后，我想到一个 workaround，实践证明确实可以：</p>
-<p>发请求前设置 <code>URLFetcher</code> 的 load flag，加上 <code>LOAD_DO_NOT_SEND_COOKIE</code>，阻止 <code>URLFetcher</code> 自己设置 cookie 的行为，完全由自己控制请求的 cookie。</p>
-<p>话说用 <code>URLFetcher</code> 被坑了好多次（算上 chromium 其他的 lib，次数可以翻翻），还好每次都能够凭借“优秀工程师的第六感”蒙中问题的 root cause，进而化险为夷。我突然感觉自己理解了什么叫 <em>文章本天成，妙笔偶得之</em>。</p>
 
         
       

@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2020-04-04T09:36:44.280Z</updated>
+  <updated>2020-04-11T15:54:08.829Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Randomly Generate Base62 for URL Shortening</title>
+    <link href="http://kingsamchen.github.io/2020/04/11/randomly-generate-base62-for-url-shortening/"/>
+    <id>http://kingsamchen.github.io/2020/04/11/randomly-generate-base62-for-url-shortening/</id>
+    <published>2020-04-11T14:23:49.000Z</published>
+    <updated>2020-04-11T15:54:08.829Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Last week I wrote a post about how to design an URL shortening service, like TinyURL, and came up with 2 strategies to encode an URL,
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="url shortening" scheme="http://kingsamchen.github.io/tags/url-shortening/"/>
+    
+      <category term="base62" scheme="http://kingsamchen.github.io/tags/base62/"/>
+    
+  </entry>
   
   <entry>
     <title>How To Design a URL Shortening Service</title>
@@ -443,9 +471,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
       <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
   </entry>
   
@@ -470,9 +498,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
-    
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
     
   </entry>
   
@@ -597,36 +625,6 @@
       <category term="unique_ptr" scheme="http://kingsamchen.github.io/tags/unique-ptr/"/>
     
       <category term="optimization" scheme="http://kingsamchen.github.io/tags/optimization/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>为 CommandLine 加上值指定类型转换以及一些扯淡</title>
-    <link href="http://kingsamchen.github.io/2019/06/23/add-value-type-conversion-for-cmdline/"/>
-    <id>http://kingsamchen.github.io/2019/06/23/add-value-type-conversion-for-cmdline/</id>
-    <published>2019-06-23T06:56:22.000Z</published>
-    <updated>2019-06-23T07:42:04.604Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;过去两周抽了点时间给 &lt;code&gt;KBase::CommandLine&lt;/code&gt; 做了一个&lt;a
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="KBase" scheme="http://kingsamchen.github.io/tags/KBase/"/>
-    
-      <category term="command-line" scheme="http://kingsamchen.github.io/tags/command-line/"/>
-    
-      <category term="abstraction" scheme="http://kingsamchen.github.io/tags/abstraction/"/>
     
   </entry>
   

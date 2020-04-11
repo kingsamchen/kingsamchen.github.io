@@ -182,6 +182,84 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/06/02/monthly-read-posts-in-may-2019/">Monthly Read Posts in May 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120226/roll-your-own-lightweight-mutex/" target="_blank" rel="noopener">Roll Your Own Lightweight Mutex</a></p>
+<p>如何利用系统提供的 semaphore synchronization primitive 实现一个轻量级的 mutex</p>
+<hr>
+<p><a href="http://cbloomrants.blogspot.com/2011/07/07-15-11-review-of-many-mutex.html" target="_blank" rel="noopener">Review of many Mutex implementations</a></p>
+<p>和上面类似，但是使用了 event pritimive 作为基本设施。</p>
+<p>因为 event 不像 semaphore 自身能够控制 running count，一旦被 evnent 被 signal 则所有 waiter 会被唤醒。因此这个实现版本在一些 edge cases 上花了不少功夫。</p>
+<hr>
+<p><a href="https://preshing.com/20120305/implementing-a-recursive-mutex/" target="_blank" rel="noopener">Implementing a Recursive Mutex</a></p>
+<p>如何让 mutex 支持 recursive mode</p>
+<p>注：实际设计中，尽可能避免使用 recursive lock</p>
+<hr>
+<p><a href="https://docs.microsoft.com/en-us/windows/desktop/DxTechArts/lockless-programming" target="_blank" rel="noopener">Lockless Programming</a></p>
+<p>微软官方出品的无锁编程介绍文章。</p>
+<p>质量过硬，干货满满。</p>
+<hr>
+<p><a href="https://preshing.com/20120515/memory-reordering-caught-in-the-act/" target="_blank" rel="noopener">Memory Reordering Caught in the Act</a></p>
+<p>构造一个触发经典 memory reordering 的场景</p>
+<h2 id="System-Architect-Design"><a href="#System-Architect-Design" class="headerlink" title="System Architect Design"></a>System Architect Design</h2><p><a href="https://mp.weixin.qq.com/s/tiN6Z_VjTKZ5voFu4TFElg" target="_blank" rel="noopener">哥们，你们的系统架构中为什么要引入消息中间件？</a></p>
+<ul>
+<li>多个组件/服务之间的解耦</li>
+<li>剥离耗时调用异步化</li>
+<li>高峰流量作为 buffer 屏障进行流量削峰</li>
+</ul>
+<hr>
+<p><a href="https://medium.com/@trongdan_tran/circuit-breaker-and-retry-64830e71d0f6" target="_blank" rel="noopener">Circuit Breaker and Retry</a></p>
+<p>what is circuit breaker and why would we use it</p>
+<p>common design patterns of retry</p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://preshing.com/20120522/lightweight-in-memory-logging/" target="_blank" rel="noopener">Lightweight In-Memory Logging</a></p>
+<p>一个针对特殊场景涉及的 in-memory logging facility。</p>
+<p>尽量减少 logging 产生的指令级别开销（例如尽可能使用 intrinsic 获取相关信息）</p>
+<hr>
+<p><a href="https://preshing.com/20120625/memory-ordering-at-compile-time/" target="_blank" rel="noopener">Memory Ordering at Compile Time</a></p>
+<p>How once upon a time does compiler reorder instructions.</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/05/12/roll-your-own-light-weight-mutex/">基于 semaphore 实现轻量级 mutex</a>
         
       </h1>
@@ -555,60 +633,6 @@
 <p><a href="https://preshing.com/20111118/locks-arent-slow-lock-contention-is/" target="_blank" rel="noopener">Locks Aren’t Slow; Lock Contention Is</a></p>
 <p>频繁的锁竞争是使用锁慢的根本原因，剩下的就老论点：减少临界区大小，减少锁竞争发生概率 .etc</p>
 <p>文中用泊松分布模拟了实际使用 case 中锁竞争概率和性能的关系，50%的竞争下，两个线程也能由1.5x的提速</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/03/24/on-socks4a-proxy-implementation/">socks4a 协议代理</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-03-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>对于网络编程学习而言，尝试实现一个 proxy 是一个很好的途径。因为一个 proxy 对于 clients 来说是 server，对 remote servers 来说又是 client，一下就覆盖到了网络编程的两个大块。</p>
-<p>同时，需要管理/协调两侧的连接对如何正确的处理网络连接的关闭也是一个挑战。</p>
-<p>对比普通的 HTTP Proxy，socks4a proxy 作为 transport layer proxy 在协议自身上更加”干净“（不需要像 HTTP Proxy 那样解析厚重的各种 header 以及对 HTTPS 的特殊处理），也更贴近 TCP 网络编程的具体实践。</p>
-<p>对比更新的 socks5，socks4a 仅支持 TCP，对 TLS 信道加密没有协议上的要求，更容易实现。</p>
-<p>另，<a href="https://www.openssh.com/txt/socks4a.protocol" target="_blank" rel="noopener">socks4a</a> 协议是 <a href="https://www.openssh.com/txt/socks4.protocol" target="_blank" rel="noopener">socks4</a> 的一个补丁版，两个协议的 RFC 文本打印下来整体不超过两页 A4 纸，半个小时就能看完。</p>
-<p>上周的时候我为 ezio 增加了一个 socks4a 的<a href="https://github.com/kingsamchen/ezio/tree/master/examples/socks4a" target="_blank" rel="noopener">简单实现</a>，过程中发现了 <code>TCPClient</code> 在 teardown 时存在<a href="https://github.com/kingsamchen/ezio/commit/24c1dc4d6af91f03dd748d4a3713280e71eaceef" target="_blank" rel="noopener">缺陷</a>，有概率导致连接的断开和 <code>TCPClient</code> 的析构出现 race。</p>
-<p>同时还发现作为测试的 curl v7.46 （ubuntu 16.04 LTS apt 版本）在处理 HTTPS 请求时存在缺陷，会导致 client connection 过早断开，proxy 出现 RST 错误。</p>
-<p>这说明拿 socks4a proxy 作为熟悉具体的语言/网络库的编程范式的例子还是非常不错的。</p>
-<p>注：socks4a 协议有两个连接模式：常用的 <code>CONNECT</code> 和 <code>BIND</code>，后者是为了适应 FTP 的 <a href="https://stackoverflow.com/questions/1699145/what-is-the-difference-between-active-and-passive-ftp" target="_blank" rel="noopener">active mode</a> 而存在的，现在基本没有使用的必要，可以直接忽略。</p>
 
         
       
