@@ -182,6 +182,68 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2020/04/19/allow-connections-from-lan-for-trojan-qt5/">Allow Connections From LAN for Trojan-qt5</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-04-19
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>因为众所周知的原因，机场的服务商把协议从 SS 切换到了 Trojan。但是之前的 SS windows 客户端只支持 SS 协议，所以切换后只能换 Trojan-qt5 作为客户端。</p>
+<p>但是这个客户端做的实在不怎么样，作者似乎是在原来的 ss-qt5 的基础上做的修改，集成了 libtrojan；以至于之前 SS-Windows 用的好好的 <em>Allow Connections From LAN</em> 功能到这里没法用了。</p>
+<p>更改 socks5 监听地址为 <code>INETADDR_ANY</code> 确实能让局域网内的其他主机链接 socks5 代理，但是 HTTP 代理就神奇的不能用了…</p>
+<p>试验了一番结果发现要使 HTTP 代理能够正常工作，socks5 代理监听地址必须是 <code>localhost</code>… 🤪</p>
+<p>因为我的 Linux 开发环境是搭建在虚拟机里并通过 X11 转发到宿主机的，所以不能使用来自 LAN 的连接会严重影响开发效率。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>自己写一个 tcp socket 运行在宿主机上，并监听 <code>INETADDR_ANY</code>，Mint 把转发器作为代理</li>
+<li>用 netcat 实现</li>
+<li>找其他替代品</li>
+</ol>
+<p>先考虑 (1)，然而发现 netcat 可以实现单次连接转发，但是后续的同一个连接的通信会直接 hang 住，可能哪里姿势不对</p>
+<p>再考虑 (2)，发现可以用 socat。</p>
+<p>WSL 里通过 apt 安装，然后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat tcp<span class="_">-l</span>:10086,fork,reuseaddr tcp:127.0.0.1:10081</span><br></pre></td></tr></table></figure>
+<p>Mint 把宿主机的 10086 端口作为代理端口</p>
+<p>嗯，发现工作非常顺畅…</p>
+<p>这样就不用考虑 (3) 了，不然哪怕用 ASIO 也差不多要百来行代码。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2020/04/11/randomly-generate-base62-for-url-shortening/">Randomly Generate Base62 for URL Shortening</a>
         
       </h1>
@@ -503,62 +565,6 @@
         
       
     </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/11/09/src-study-uber-automaxprocs/">uber automaxprocs 源码分析</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-11-09
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>最近直播内部的 golang 服务都使用了 uber 出品的 automaxprocs 这个库。</p>
-<p>据伟大的 @ice 马总说，这个库解决了一个困扰B站整个golang（container）技术栈一年多的问题。</p>
-<p>出于好奇这个库到底做了什么 magic，能够解决这个持续了一年多的 pain in the ass，抽了一点时间，稍微翻了一下库的源代码，记录如下。</p>
-<h1 id="automaxprocs-解决了什么问题"><a href="#automaxprocs-解决了什么问题" class="headerlink" title="automaxprocs 解决了什么问题"></a>automaxprocs 解决了什么问题</h1><p>线上容器里的服务通常都对 CPU 资源做了限制，例如默认的 4C。</p>
-<p>但是在容器里通过 <code>lscpu</code> 仍然能看到宿主机的所有 CPU 核心：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">rchitecture:          x86_64</span><br><span class="line">CPU op-mode(s):        32-bit, 64-bit</span><br><span class="line">Byte Order:            Little Endian</span><br><span class="line">CPU(s):                48</span><br><span class="line">On-line CPU(s) list:   0-47</span><br><span class="line">Thread(s) per core:    2</span><br><span class="line">Core(s) per socket:    12</span><br><span class="line">Socket(s):             2</span><br><span class="line">NUMA node(s):          2</span><br><span class="line">Vendor ID:             GenuineIntel</span><br><span class="line">CPU family:            6</span><br><span class="line">Model:                 79</span><br><span class="line">Model name:            Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz</span><br><span class="line">Stepping:              1</span><br></pre></td></tr></table></figure>
-<p>这就导致 golang 服务默认会拿宿主机的 CPU 核心数来调用 <code>runtime.GOMAXPROCS()</code>，导致 P 数量远远大于可用的 CPU 核心，引起频繁上下文切换，影响高负载情况下的服务性能。<br>
-          <div class="read-more">
-            <a href="/2019/11/09/src-study-uber-automaxprocs/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
 
     
 

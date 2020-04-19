@@ -17,12 +17,12 @@
 
 
 
-  <meta name="description" content="Monthly Read Posts in Jan 2019">
+  <meta name="description" content="Allow Connections From LAN for Trojan-qt5">
 
 
 
 
-  <meta name="keywords" content="c++, linux, performance, allocator, spinlock, ptrace, KC的废墟堆">
+  <meta name="keywords" content="梯子, shadowsocks, trojan, socat, KC的废墟堆">
 
 
 
@@ -42,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/2019/02/06/monthly-read-posts-in-jan-2019/">
+<link rel="canonical" href="http://kingsamchen.github.io/2020/04/19/allow-connections-from-lan-for-trojan-qt5/">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
@@ -66,7 +66,7 @@
 
 
 
-    <title> Monthly Read Posts in Jan 2019 - KC的废墟堆 </title>
+    <title> Allow Connections From LAN for Trojan-qt5 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -182,18 +182,18 @@
     <header class="post-header">
       <h1 class="post-title">
         
-          Monthly Read Posts in Jan 2019
+          Allow Connections From LAN for Trojan-qt5
         
       </h1>
 
       <div class="post-meta">
         <span class="post-time">
-          2019-02-06
+          2020-04-19
         </span>
         
           <div class="post-category">
             
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
             
           </div>
         
@@ -206,50 +206,30 @@
   <div class="post-toc" id="post-toc">
     <h2 class="post-toc-title">文章目录</h2>
     <div class="post-toc-content">
-      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Programming-Languages"><span class="toc-text">Programming Languages</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Engineering"><span class="toc-text">Engineering</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Concurrency"><span class="toc-text">Concurrency</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#解决方案"><span class="toc-text">解决方案</span></a></li></ol>
     </div>
   </div>
 
 
     <div class="post-content">
       
-        <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://arne-mertz.de/2015/03/fun-without-keyword-explicit/" target="_blank" rel="noopener">Fun with(out) keyword explicit</a></p>
-<p>The old saying goes: <em>When writing a conversion operator or a constructor that can be called with one argument, make it explicit by default.</em></p>
-<p>By the way, according to comments from the author, the buggy compiler he used was C++ Builder, from Embarcadero, sigh.</p>
-<h2 id="Engineering"><a href="#Engineering" class="headerlink" title="Engineering"></a>Engineering</h2><p><a href="https://arne-mertz.de/2015/03/simple-and-clean-code-vs-performance/" target="_blank" rel="noopener">Simple and Clean Code vs. Performance</a></p>
-<ul>
-<li>Performance is not efficiency. // ?? I still can’t get this clear in a programming context.</li>
-<li>Improve performance after having profiled your system.</li>
-<li>Make sure use of correct data structures and algorithms</li>
-<li>By default write code for maintainability.</li>
-<li>Know and use your libraries, unless your profiler showed them to have bad performance.</li>
-</ul>
-<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://idea.popcount.org/2012-09-12-reinventing-spinlocks/" target="_blank" rel="noopener">Reinventing spinlocks</a></p>
-<p>when implementing spinlock unlock: a simple atomic store is enough. no need for using  a heavy CAS operation.</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="http://ithare.com/testing-memory-allocators-ptmalloc2-tcmalloc-hoard-jemalloc-while-trying-to-simulate-real-world-loads/" target="_blank" rel="noopener">Testing Memory Allocators: ptmalloc2 vs tcmalloc vs hoard vs jemalloc While Trying to Simulate Real-World Loads</a></p>
-<p>Three pre-requisites:</p>
-<ul>
-<li>test only new/delete (or malloc/free)</li>
-<li>use realistic statistic distributions; both for allocated sizes and for lifetime of allocated items</li>
-<li>access all memory at least once</li>
-</ul>
-<p>all for emulating real-world uses.</p>
-<p>conclusion:</p>
-<ul>
-<li>for cpu cycle test, every allocator is not too far from each other. each of them can outperform another one under certain conditions. benchmark is highly recommended when you decide to change your allocator.</li>
-<li>some allocators behave not so good in memory overhead, like Hoard.</li>
-</ul>
-<hr>
-<p><a href="https://idea.popcount.org/2012-12-09-lsof-cant-identify-protocol/" target="_blank" rel="noopener">lsof: can’t identify protocol</a></p>
-<ul>
-<li><code>lsof</code> for listing open files; while</li>
-<li><code>netstat</code> for displaying network related information, like connections .etc</li>
-</ul>
-<p><code>lsof</code> has issues on locating half-closed sockets.</p>
-<hr>
-<p><a href="https://idea.popcount.org/2012-12-11-linux-process-states/" target="_blank" rel="noopener">Linux process states ptrace tutorial part #1</a></p>
-<p>How <code>ptrace</code> relates with linux process states.</p>
-<p>using <code>SIGSTOP</code> and <code>SIGCONT</code> to control a process’s state and parent process receives <code>SIGCHLD</code> when child process state changes.</p>
+        <p>因为众所周知的原因，机场的服务商把协议从 SS 切换到了 Trojan。但是之前的 SS windows 客户端只支持 SS 协议，所以切换后只能换 Trojan-qt5 作为客户端。</p>
+<p>但是这个客户端做的实在不怎么样，作者似乎是在原来的 ss-qt5 的基础上做的修改，集成了 libtrojan；以至于之前 SS-Windows 用的好好的 <em>Allow Connections From LAN</em> 功能到这里没法用了。</p>
+<p>更改 socks5 监听地址为 <code>INETADDR_ANY</code> 确实能让局域网内的其他主机链接 socks5 代理，但是 HTTP 代理就神奇的不能用了…</p>
+<p>试验了一番结果发现要使 HTTP 代理能够正常工作，socks5 代理监听地址必须是 <code>localhost</code>… 🤪</p>
+<p>因为我的 Linux 开发环境是搭建在虚拟机里并通过 X11 转发到宿主机的，所以不能使用来自 LAN 的连接会严重影响开发效率。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>自己写一个 tcp socket 运行在宿主机上，并监听 <code>INETADDR_ANY</code>，Mint 把转发器作为代理</li>
+<li>用 netcat 实现</li>
+<li>找其他替代品</li>
+</ol>
+<p>先考虑 (1)，然而发现 netcat 可以实现单次连接转发，但是后续的同一个连接的通信会直接 hang 住，可能哪里姿势不对</p>
+<p>再考虑 (2)，发现可以用 socat。</p>
+<p>WSL 里通过 apt 安装，然后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat tcp<span class="_">-l</span>:10086,fork,reuseaddr tcp:127.0.0.1:10081</span><br></pre></td></tr></table></figure>
+<p>Mint 把宿主机的 10086 端口作为代理端口</p>
+<p>嗯，发现工作非常顺畅…</p>
+<p>这样就不用考虑 (3) 了，不然哪怕用 ASIO 也差不多要百来行代码。</p>
 
       
     </div>
@@ -265,7 +245,7 @@
     </p>
     <p class="copyright-item">
       <span>原文链接: </span>
-      <a href="http://kingsamchen.github.io/2019/02/06/monthly-read-posts-in-jan-2019/">http://kingsamchen.github.io/2019/02/06/monthly-read-posts-in-jan-2019/</a>
+      <a href="http://kingsamchen.github.io/2020/04/19/allow-connections-from-lan-for-trojan-qt5/">http://kingsamchen.github.io/2020/04/19/allow-connections-from-lan-for-trojan-qt5/</a>
     </p>
     <p class="copyright-item">
       <span>许可协议: </span>
@@ -285,17 +265,13 @@
         
           <div class="post-tags">
             
-              <a href="/tags/c/">c++</a>
+              <a href="/tags/梯子/">梯子</a>
             
-              <a href="/tags/linux/">linux</a>
+              <a href="/tags/shadowsocks/">shadowsocks</a>
             
-              <a href="/tags/performance/">performance</a>
+              <a href="/tags/trojan/">trojan</a>
             
-              <a href="/tags/allocator/">allocator</a>
-            
-              <a href="/tags/spinlock/">spinlock</a>
-            
-              <a href="/tags/ptrace/">ptrace</a>
+              <a href="/tags/socat/">socat</a>
             
           </div>
         
@@ -303,15 +279,9 @@
         
   <nav class="post-nav">
     
-      <a class="prev" href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text nav-default">C++ 工程依赖管理新方向：CMake & Git</span>
-        <span class="prev-text nav-mobile">上一篇</span>
-      </a>
     
-    
-      <a class="next" href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/">
-        <span class="next-text nav-default">调整 ezio 的 TCPConnection 状态事件</span>
+      <a class="next" href="/2020/04/11/randomly-generate-base62-for-url-shortening/">
+        <span class="next-text nav-default">Randomly Generate Base62 for URL Shortening</span>
         <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
@@ -418,9 +388,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = 'http://kingsamchen.github.io/2019/02/06/monthly-read-posts-in-jan-2019/';
-        this.page.identifier = '2019/02/06/monthly-read-posts-in-jan-2019/';
-        this.page.title = 'Monthly Read Posts in Jan 2019';
+        this.page.url = 'http://kingsamchen.github.io/2020/04/19/allow-connections-from-lan-for-trojan-qt5/';
+        this.page.identifier = '2020/04/19/allow-connections-from-lan-for-trojan-qt5/';
+        this.page.title = 'Allow Connections From LAN for Trojan-qt5';
     };
     (function() {
     var d = document, s = d.createElement('script');

@@ -182,6 +182,80 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/04/02/monthly-read-posts-in-mar-2019/">Monthly Read Posts in Mar 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Networking"><a href="#Networking" class="headerlink" title="Networking"></a>Networking</h2><p><a href="https://www.mnot.net/blog/2017/03/16/browser-caching" target="_blank" rel="noopener">The State of Browser Caching, Revisited</a></p>
+<p>各家浏览器对 HTTP caching 的支持概况</p>
+<hr>
+<p><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS" target="_blank" rel="noopener">Cross-Origin Resource Sharing (CORS)</a></p>
+<p><a href="http://fengxu.ink/2018/02/15/ajax%E8%B7%A8%E5%9F%9F%E8%AF%B7%E6%B1%82%E5%8F%8A%E7%9B%B8%E5%85%B3/" target="_blank" rel="noopener">ajax跨域请求及相关</a></p>
+<p>和 CORS 有关的两篇 posts。第一篇是 MDN 的官方教程。</p>
+<p>需要注意的是，CORS在服务端的表现<strong>不是限制</strong>某些 URL 只能被某些 domain 的请求访问，而是允许这些 URL 可以在满足要求的条件下（origin 是某个匹配 domain），允许接收跨域请求。</p>
+<p>跨域禁止的同源策略是由 browser 实施的，当收到服务端许可的情况下才会继续。</p>
+<h2 id="SRE"><a href="#SRE" class="headerlink" title="SRE"></a>SRE</h2><p><a href="https://draveness.me/docker" target="_blank" rel="noopener">Docker 核心技术与实现原理</a></p>
+<p>科普型，内容深度并不深，适合作为了解</p>
+<h2 id="Software-Engineering"><a href="#Software-Engineering" class="headerlink" title="Software Engineering"></a>Software Engineering</h2><p><a href="https://dev.to/luminousmen/what-are-the-best-software-engineering-principles--3p8n" target="_blank" rel="noopener">What Are The Best Software Engineering Principles?</a></p>
+<p>列举了一些软件工程的基本原则。</p>
+<hr>
+<p><a href="https://medium.com/@mattklein123/monorepos-please-dont-e9a279be011b" target="_blank" rel="noopener">Monorepos: Please don’t!</a></p>
+<p>这篇文章算是很标准的檄文：首先点出几个 monorepo 的理论优点然后逐一分析，得出这些优点并没没有看上去那么好；接着列举缺点。</p>
+<p>最后总结得出核心是工程师文化。</p>
+<hr>
+<p><a href="https://medium.com/@adamhjk/monorepo-please-do-3657e08a4b70" target="_blank" rel="noopener">Monorepo: please do!</a></p>
+<p>这篇文章是上面那篇的 argue，但是相比起来写的就太一般了。</p>
+<p>全片的核心论点就一个： monorepo 解决的是大团队里各个子团队的沟通提问题。</p>
+<hr>
+<p><a href="https://www.joelonsoftware.com/2000/04/06/things-you-should-never-do-part-i/" target="_blank" rel="noopener">Things You Should Never Do, Part I</a></p>
+<p>KEY: Do not rewrite your code.</p>
+<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://blogs.msdn.microsoft.com/oldnewthing/20180201-00/?p=97946" target="_blank" rel="noopener">Spurious wake-ups in Win32 condition variables</a></p>
+<p>简要解释了 Windows 上 condition variables 会出现 spurious wakeups 的两个原因</p>
+<hr>
+<p><a href="https://preshing.com/20111118/locks-arent-slow-lock-contention-is/" target="_blank" rel="noopener">Locks Aren’t Slow; Lock Contention Is</a></p>
+<p>频繁的锁竞争是使用锁慢的根本原因，剩下的就老论点：减少临界区大小，减少锁竞争发生概率 .etc</p>
+<p>文中用泊松分布模拟了实际使用 case 中锁竞争概率和性能的关系，50%的竞争下，两个线程也能由1.5x的提速</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/03/24/on-socks4a-proxy-implementation/">socks4a 协议代理</a>
         
       </h1>
@@ -538,65 +612,6 @@
         
       
     </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/">调整 ezio 的 TCPConnection 状态事件</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-01-27
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>上上周的时候给 ezio 做了一个<a href="https://github.com/kingsamchen/ezio/commit/d9e7bde28155b5bb2f144dd4c42083d95ef7b674" target="_blank" rel="noopener">调整</a>，稍微修改了一下 <code>TCPConnection</code> 对外暴露的几个状态变化的事件。</p>
-<p>起因是在写 <a href="https://github.com/kingsamchen/ezio/blob/9a2ea3ffa43578555e8dfcfe769db10bb45e0087/examples/chat/chat_client.cpp#L62" target="_blank" rel="noopener">example/chat-client</a> 的时候，因为主线程单独跑了一个事件循环从 <code>stdin</code> 中读取用户输入，所以 <code>ChatClient</code> 以及内部的 <code>TCPClient</code> 是跑在另外的工作线程上。</p>
-<p>因为那个时候 <code>TCPClient</code> 之对外暴露了 connection 和 disconnection 的事件回调（这两个事件还统一成了一个 <code>on_connection()</code>），所以自然选择在 disconnection 的时候进行退出主循环的操作。</p>
-<p>但是这个时候会出现：</p>
-<ul>
-<li>主循环结束后立马析构 <code>ChatClient</code>，连同内部的 <code>TCPClient</code> 一起销毁。因为这部分代码跑在主线程上，所以不会和工作线程有任何 coordination。</li>
-<li><code>TCPClient</code> 会在触发 <code>on_connection()</code> 来表明连接断开后会继续做一些内部清理工作；然而因为前面已经将 <code>TCPClient</code> 析构了，导致 UAF</li>
-</ul>
-<p>而当时为了解决这个问题，采用的 workaround 时，<code>ChatClient::OnConnection()</code> 在发现连接断开后，通过 <code>RunTaskAfter()</code> 的方式延后执行 <code>EventLoop::Quit()</code>。</p>
-<p>这个做法非常丑陋而且不可靠。<br>
-          <div class="read-more">
-            <a href="/2019/01/27/made-changes-on-tcp-connection-events-for-ezio/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
 
     
 
