@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="atoi With Overflow Handled">
+
+
+
+
+  <meta name="keywords" content="atoi, golang, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2020/05/04/atoi-with-overflow-handled/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> atoi With Overflow Handled - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          atoi With Overflow Handled
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-05-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        <p>leetcode 上有一题是让你实现一个 <code>atoi()</code>，但是因为函数类型是 32-bit int，所以可以直接内部转换到 64-bit int，避免需要直接处理溢出的情况。</p>
+<p>如果要针对 <code>int64</code> 实现一个 <code>atoi()</code> 又该如何做？</p>
+<p>我翻了一下 golang 的标准库源码，大致梳理了一下</p>
+<p>(1) 如果对象是 <code>int32</code>，并且输入字符串有效数据长度小于10位，则一定不会溢出，所以可以直接处理</p>
+<p>(2) 否则统一走 <code>int64</code> 处理；<code>int64</code> 内部会先处理掉符号位 <code>neg</code>，然后转成 <code>uint64</code></p>
+<p>(3) 溢出处理的核心部分：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Cutoff is the smallest number such that cutoff*base &gt; maxUint64.</span></span><br><span class="line"><span class="comment">// Use compile-time constants for common cases.</span></span><br><span class="line"><span class="keyword">var</span> cutoff <span class="keyword">uint64</span></span><br><span class="line"><span class="keyword">switch</span> base &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">10</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="number">10</span> + <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="number">16</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="number">16</span> + <span class="number">1</span></span><br><span class="line"><span class="keyword">default</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="keyword">uint64</span>(base) + <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> n &gt;= cutoff &#123;</span><br><span class="line">	<span class="comment">// n*base overflows</span></span><br><span class="line">	<span class="keyword">return</span> maxVal, rangeError(fnParseUint, s0)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">maxVal := <span class="keyword">uint64</span>(<span class="number">1</span>)&lt;&lt;<span class="keyword">uint</span>(bitSize) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">n *= <span class="keyword">uint64</span>(base)</span><br><span class="line"></span><br><span class="line">n1 := n + <span class="keyword">uint64</span>(d)</span><br><span class="line"><span class="keyword">if</span> n1 &lt; n || n1 &gt; maxVal &#123;</span><br><span class="line">	<span class="comment">// n+v overflows</span></span><br><span class="line">	<span class="keyword">return</span> maxVal, rangeError(fnParseUint, s0)</span><br><span class="line">&#125;</span><br><span class="line">n = n1</span><br></pre></td></tr></table></figure>
+<p>(4) <code>cutoff</code> 是防止溢出的第一重栅栏</p>
+<p>对于 <code>uint64</code> 来说</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cutoff     = 1844674407370955162</span><br><span class="line">UINT64_MAX = 18446744073709551615</span><br></pre></td></tr></table></figure>
+<p>parse 的时候如果当前数已经 &gt;= cutoff 那么后面的数字不管是几都绝对溢出。</p>
+<p>但是即使 cutoff 这里满足，加上后一位数字之后仍然可能会溢出，所以这里要做溢出处理。</p>
+<p>因为类型是 uint64，所以只可能发生上溢出，数值会 wrap-around，所以用 <code>n + uint64(d) &lt; n</code> 来判断</p>
+<p><code>n1 &gt; maxVal</code> 是用来处理 int32 的时候的情况（函数的输入类型已经被转成了 64-bit）</p>
+<p>(5) 如果输入类型本身就是无符号，那么到这里就结束了。</p>
+<p>如果是有符号，需要判断最终结果是否落在范围里，另外要注意补码体系下两端的值是不对称的。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2020/05/04/atoi-with-overflow-handled/">http://kingsamchen.github.io/2020/05/04/atoi-with-overflow-handled/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/atoi/">atoi</a>
+            
+              <a href="/tags/golang/">golang</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2020/04/19/allow-connections-from-lan-for-trojan-qt5/">
+        <span class="next-text nav-default">Allow Connections From LAN for Trojan-qt5</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2020
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2020/05/04/atoi-with-overflow-handled/';
+        this.page.identifier = '2020/05/04/atoi-with-overflow-handled/';
+        this.page.title = 'atoi With Overflow Handled';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

@@ -182,6 +182,72 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/">统一 ezio Buffer 的算术类型读写接口</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-04-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>ezio Buffer 一开始的时候只为 read, write 和 peek 提供了从 <code>int8_t</code> 到 <code>int64_t</code> 的函数重载，如果需要处理 unsigned integers，那么就需要自己额外做 <code>static_cast</code>。</p>
+<p>ezio 的主要客户<a href="https://github.com/oceancx" target="_blank" rel="noopener">藏心</a>同学早前抱怨过这个问题，并且同时建议我加上对 <code>float/double</code> 的浮点数支持。</p>
+<p>对于这个建议我一开始是抵触的：</p>
+<ul>
+<li>自己 cast 又不是不能用，额外加重载支持三个操作工作量都要翻一番呢</li>
+<li>浮点数的 binary serialization 本来就是很难跨平台的，不是每个环境都（虽然大部分）要求使用 IEEE 754 spec。如果真的需要直接把浮点数存到网络包里，自己直接操作 underlying binary layout 不就好了…</li>
+</ul>
+<p>于是藏心同学一开始开的 issue 我一直没理他，于是最后他自己关掉了…</p>
+<p>等到我自己动手写一个 socks4a proxy 的时候我发现，自己 cast 真的是…太蛋疼了…而且代码看上去还非常丑，大面积的 <code>static_cast</code> 制造了相当一部分内容噪音。那会儿我大概有点理解藏心同学的内心感受。</p>
+<p>于是我思考良久，打算改造 Buffer 的这部分接口，以支持绝大多数 integer types，顺带也增加入 floating piont types 的支持，这样 read, write, peek 就基本支持了绝大多数 arithmetic types。</p>
+<p>通过直接增加重载是我极力避免的，因为除了接口签名外，大部分实现几乎是一样的，不外乎：</p>
+<ul>
+<li>如果是单字节，直接写/读操作</li>
+<li>如果是多字节，首先字节序转换，然后做写/读操作</li>
+<li>如果是浮点数，首先按照对应字节大小的整数类型<strong>解释</strong>内存，然后参考普通整数的处理</li>
+</ul>
+<p>于是自然而然的想到直接将函数做成 function templates 来增强语义。<br>
+          <div class="read-more">
+            <a href="/2019/04/07/unify-ezio-buffer-read-and-write-functions-for-arithmetic-types/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/04/02/monthly-read-posts-in-mar-2019/">Monthly Read Posts in Mar 2019</a>
         
       </h1>
@@ -530,88 +596,6 @@
         
       
     </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/02/06/monthly-read-posts-in-jan-2019/">Monthly Read Posts in Jan 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-02-06
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://arne-mertz.de/2015/03/fun-without-keyword-explicit/" target="_blank" rel="noopener">Fun with(out) keyword explicit</a></p>
-<p>The old saying goes: <em>When writing a conversion operator or a constructor that can be called with one argument, make it explicit by default.</em></p>
-<p>By the way, according to comments from the author, the buggy compiler he used was C++ Builder, from Embarcadero, sigh.</p>
-<h2 id="Engineering"><a href="#Engineering" class="headerlink" title="Engineering"></a>Engineering</h2><p><a href="https://arne-mertz.de/2015/03/simple-and-clean-code-vs-performance/" target="_blank" rel="noopener">Simple and Clean Code vs. Performance</a></p>
-<ul>
-<li>Performance is not efficiency. // ?? I still can’t get this clear in a programming context.</li>
-<li>Improve performance after having profiled your system.</li>
-<li>Make sure use of correct data structures and algorithms</li>
-<li>By default write code for maintainability.</li>
-<li>Know and use your libraries, unless your profiler showed them to have bad performance.</li>
-</ul>
-<h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://idea.popcount.org/2012-09-12-reinventing-spinlocks/" target="_blank" rel="noopener">Reinventing spinlocks</a></p>
-<p>when implementing spinlock unlock: a simple atomic store is enough. no need for using  a heavy CAS operation.</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="http://ithare.com/testing-memory-allocators-ptmalloc2-tcmalloc-hoard-jemalloc-while-trying-to-simulate-real-world-loads/" target="_blank" rel="noopener">Testing Memory Allocators: ptmalloc2 vs tcmalloc vs hoard vs jemalloc While Trying to Simulate Real-World Loads</a></p>
-<p>Three pre-requisites:</p>
-<ul>
-<li>test only new/delete (or malloc/free)</li>
-<li>use realistic statistic distributions; both for allocated sizes and for lifetime of allocated items</li>
-<li>access all memory at least once</li>
-</ul>
-<p>all for emulating real-world uses.</p>
-<p>conclusion:</p>
-<ul>
-<li>for cpu cycle test, every allocator is not too far from each other. each of them can outperform another one under certain conditions. benchmark is highly recommended when you decide to change your allocator.</li>
-<li>some allocators behave not so good in memory overhead, like Hoard.</li>
-</ul>
-<hr>
-<p><a href="https://idea.popcount.org/2012-12-09-lsof-cant-identify-protocol/" target="_blank" rel="noopener">lsof: can’t identify protocol</a></p>
-<ul>
-<li><code>lsof</code> for listing open files; while</li>
-<li><code>netstat</code> for displaying network related information, like connections .etc</li>
-</ul>
-<p><code>lsof</code> has issues on locating half-closed sockets.</p>
-<hr>
-<p><a href="https://idea.popcount.org/2012-12-11-linux-process-states/" target="_blank" rel="noopener">Linux process states ptrace tutorial part #1</a></p>
-<p>How <code>ptrace</code> relates with linux process states.</p>
-<p>using <code>SIGSTOP</code> and <code>SIGCONT</code> to control a process’s state and parent process receives <code>SIGCHLD</code> when child process state changes.</p>
-
-        
-      
-    </div>
 
     
 

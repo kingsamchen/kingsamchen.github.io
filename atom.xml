@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2020-04-19T05:02:37.488Z</updated>
+  <updated>2020-05-04T07:53:16.256Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>atoi With Overflow Handled</title>
+    <link href="http://kingsamchen.github.io/2020/05/04/atoi-with-overflow-handled/"/>
+    <id>http://kingsamchen.github.io/2020/05/04/atoi-with-overflow-handled/</id>
+    <published>2020-05-04T07:03:26.000Z</published>
+    <updated>2020-05-04T07:53:16.256Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;leetcode 上有一题是让你实现一个 &lt;code&gt;atoi()&lt;/code&gt;，但是因为函数类型是 32-bit int，所以可以直接内部转换到 64-bit int，避免需要直接处理溢出的情况。&lt;/p&gt;
+&lt;p&gt;如果要针对 &lt;code&gt;int64&lt;/code&gt; 实现一个
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="atoi" scheme="http://kingsamchen.github.io/tags/atoi/"/>
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+  </entry>
   
   <entry>
     <title>Allow Connections From LAN for Trojan-qt5</title>
@@ -443,9 +472,9 @@
     
       <category term="mysql" scheme="http://kingsamchen.github.io/tags/mysql/"/>
     
-      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
-    
       <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
+    
+      <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
     
       <category term="systemd" scheme="http://kingsamchen.github.io/tags/systemd/"/>
     
@@ -504,9 +533,9 @@
       <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
-    
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
+    
+      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
     
   </entry>
   
@@ -531,9 +560,9 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
       <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
+    
+      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
     
   </entry>
   
@@ -597,34 +626,6 @@
       <category term="mysql" scheme="http://kingsamchen.github.io/tags/mysql/"/>
     
       <category term="吐槽" scheme="http://kingsamchen.github.io/tags/%E5%90%90%E6%A7%BD/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in June 2019</title>
-    <link href="http://kingsamchen.github.io/2019/07/21/monthly-read-posts-in-jun-2019/"/>
-    <id>http://kingsamchen.github.io/2019/07/21/monthly-read-posts-in-jun-2019/</id>
-    <published>2019-07-21T06:09:48.000Z</published>
-    <updated>2019-07-21T06:11:06.142Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Concurrency&quot;&gt;&lt;a href=&quot;#Concurrency&quot; class=&quot;headerlink&quot; title=&quot;Concurrency&quot;&gt;&lt;/a&gt;Concurrency&lt;/h2&gt;&lt;p&gt;&lt;a
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-      <category term="memory model" scheme="http://kingsamchen.github.io/tags/memory-model/"/>
     
   </entry>
   

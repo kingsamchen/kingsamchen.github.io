@@ -182,6 +182,57 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/11/24/auto-cfs-cores-cpp-version-of-automaxprocs/">auto-cfs-cores C++ 版 automaxprocs</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-11-24
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>之前写了一篇分析 uber 的 automaxprocs 的源码，后面抽个了时间写了一个 C++ 版本的。</p>
+<p>其一是为了加深对原库的理解；其二是避免太长时间没写 C++ 手生，以及顺带体验一下 C++ 17 的感觉。</p>
+<p>代码在：<a href="https://github.com/kingsamchen/Eureka/tree/master/auto-cfs-cores" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/tree/master/auto-cfs-cores</a></p>
+<p>PS：一开始用 filesystem 的时候发现 libstdc++-8 需要专门连接一个 <code>lstdc++fs</code>，否则会因为符号不在同一个 lib 里直接 coredump。。。</p>
+<p>最后折腾了一圈还是直接用了以前自己写的 <code>Path</code></p>
+<p>PPS：<code>std::optional</code> 还挺好用</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/11/09/src-study-uber-automaxprocs/">uber automaxprocs 源码分析</a>
         
       </h1>
@@ -514,91 +565,6 @@
         
       
     </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/09/01/monthly-read-posts-in-aug-2019/">Monthly Read Posts in Aug 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-09-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20130529/a-lock-free-linear-search/" target="_blank" rel="noopener">A Lock-Free… Linear Search?</a></p>
-<p>实现一个 lock-free array list。</p>
-<p>可以作为更复杂的 lockess hashtable 的一个基底实现</p>
-<hr>
-<p><a href="https://preshing.com/20130605/the-worlds-simplest-lock-free-hash-table/" target="_blank" rel="noopener">The World’s Simplest Lock-Free Hash Table</a></p>
-<p>上一篇的应用。</p>
-<p>因为核心是 lockless linear search，所以这里的 hashtable 自然是用 open-addressing 来解决冲突了。</p>
-<p>另外两个核心点分别是：</p>
-<ol>
-<li>利用 murmurhash3 finalizer 做 hash function</li>
-<li>利用 <code>idx &amp;= len - 1</code> 其中 <code>len</code> 为二次幂来做 wrap around。</li>
-</ol>
-<hr>
-<p><a href="https://preshing.com/20130618/atomic-vs-non-atomic-operations/" target="_blank" rel="noopener">Atomic vs. Non-Atomic Operations</a></p>
-<p>这次考虑的是 non-atomic load/store operations</p>
-<hr>
-<p><a href="https://preshing.com/20130702/the-happens-before-relation/" target="_blank" rel="noopener">The Happens-Before Relation</a></p>
-<p>happens-before: If operation A happens-before operation B, then the memory effects of A effectively become visible to the thread performing B before B performs.</p>
-<ol>
-<li>Happens-before doesn’t imply happening before: no violation if memory effects visibility preserved</li>
-<li>Happening before doesn’t imply happens-before: the happens-before relationship only exists where the language standard says it exists.</li>
-</ol>
-<hr>
-<p><a href="https://preshing.com/20130823/the-synchronizes-with-relation/" target="_blank" rel="noopener">The Synchronizes-With Relation</a></p>
-<p>guard-variable &amp; payload metaphore</p>
-<p>payload: set of data being propagated between threads<br>guard variable: protects access to the payload.</p>
-<p>a write-release can synchronizes-with a read-acquire.</p>
-<hr>
-<p><a href="https://preshing.com/20130922/acquire-and-release-fences/" target="_blank" rel="noopener">Acquire and Release Fences</a></p>
-<p>An acquire fence prevents the memory reordering of any read which precedes it in program order with any read or write which follows it in program order.</p>
-<p>A release fence prevents the memory reordering of any read or write which precedes it in program order with any write which follows it in program order.</p>
-<p>acquire and release fences is that they can establish a synchronizes-with relationship</p>
-<hr>
-<p><a href="https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/" target="_blank" rel="noopener">Acquire and Release Fences Don’t Work the Way You’d Expect</a></p>
-<p>How acquire/release fences differ from acquire/release operations.</p>
-<h2 id="Database"><a href="#Database" class="headerlink" title="Database"></a>Database</h2><p><a href="http://seanlook.com/2017/03/11/mysql-index_merge-deadlock/" target="_blank" rel="noopener">index merge 引起的死锁分析</a></p>
-<p>学到了原来还有 index merge 这种操作。</p>
-<p>所以说索引不加好，破事一堆。</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6" target="_blank" rel="noopener">Creating a Linux service with systemd</a></p>
-<p>看起来比使用 supervisor 靠谱</p>
-
-        
-      
-    </div>
 
     
 

@@ -182,6 +182,67 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2020/05/04/atoi-with-overflow-handled/">atoi With Overflow Handled</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-05-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>leetcode 上有一题是让你实现一个 <code>atoi()</code>，但是因为函数类型是 32-bit int，所以可以直接内部转换到 64-bit int，避免需要直接处理溢出的情况。</p>
+<p>如果要针对 <code>int64</code> 实现一个 <code>atoi()</code> 又该如何做？</p>
+<p>我翻了一下 golang 的标准库源码，大致梳理了一下</p>
+<p>(1) 如果对象是 <code>int32</code>，并且输入字符串有效数据长度小于10位，则一定不会溢出，所以可以直接处理</p>
+<p>(2) 否则统一走 <code>int64</code> 处理；<code>int64</code> 内部会先处理掉符号位 <code>neg</code>，然后转成 <code>uint64</code></p>
+<p>(3) 溢出处理的核心部分：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Cutoff is the smallest number such that cutoff*base &gt; maxUint64.</span></span><br><span class="line"><span class="comment">// Use compile-time constants for common cases.</span></span><br><span class="line"><span class="keyword">var</span> cutoff <span class="keyword">uint64</span></span><br><span class="line"><span class="keyword">switch</span> base &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">10</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="number">10</span> + <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="number">16</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="number">16</span> + <span class="number">1</span></span><br><span class="line"><span class="keyword">default</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="keyword">uint64</span>(base) + <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> n &gt;= cutoff &#123;</span><br><span class="line">	<span class="comment">// n*base overflows</span></span><br><span class="line">	<span class="keyword">return</span> maxVal, rangeError(fnParseUint, s0)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">maxVal := <span class="keyword">uint64</span>(<span class="number">1</span>)&lt;&lt;<span class="keyword">uint</span>(bitSize) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">n *= <span class="keyword">uint64</span>(base)</span><br><span class="line"></span><br><span class="line">n1 := n + <span class="keyword">uint64</span>(d)</span><br><span class="line"><span class="keyword">if</span> n1 &lt; n || n1 &gt; maxVal &#123;</span><br><span class="line">	<span class="comment">// n+v overflows</span></span><br><span class="line">	<span class="keyword">return</span> maxVal, rangeError(fnParseUint, s0)</span><br><span class="line">&#125;</span><br><span class="line">n = n1</span><br></pre></td></tr></table></figure>
+<p>(4) <code>cutoff</code> 是防止溢出的第一重栅栏</p>
+<p>对于 <code>uint64</code> 来说</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cutoff     = 1844674407370955162</span><br><span class="line">UINT64_MAX = 18446744073709551615</span><br></pre></td></tr></table></figure>
+<p>parse 的时候如果当前数已经 &gt;= cutoff 那么后面的数字不管是几都绝对溢出。</p>
+<p>但是即使 cutoff 这里满足，加上后一位数字之后仍然可能会溢出，所以这里要做溢出处理。</p>
+<p>因为类型是 uint64，所以只可能发生上溢出，数值会 wrap-around，所以用 <code>n + uint64(d) &lt; n</code> 来判断</p>
+<p><code>n1 &gt; maxVal</code> 是用来处理 int32 的时候的情况（函数的输入类型已经被转成了 64-bit）</p>
+<p>(5) 如果输入类型本身就是无符号，那么到这里就结束了。</p>
+<p>如果是有符号，需要判断最终结果是否落在范围里，另外要注意补码体系下两端的值是不对称的。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2020/04/19/allow-connections-from-lan-for-trojan-qt5/">Allow Connections From LAN for Trojan-qt5</a>
         
       </h1>
@@ -510,57 +571,6 @@
 <figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Eliminates _ and capitalizes the key. The key needs to be exported.</span></span><br><span class="line"><span class="comment">// e.g hello_world -&gt; HelloWorld</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">normalizeStructKey</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	str := strings.ReplaceAll(key, <span class="string">"_"</span>, <span class="string">" "</span>)</span><br><span class="line">	str = strings.Title(str)</span><br><span class="line">	str = strings.ReplaceAll(str, <span class="string">" "</span>, <span class="string">""</span>)</span><br><span class="line">	<span class="keyword">return</span> str</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generates golang strcut from a given toml file.</span></span><br><span class="line"><span class="comment">// Result needs re-format.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">translate</span><span class="params">(data <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	def := <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> key, value := <span class="keyword">range</span> data &#123;</span><br><span class="line">		key = normalizeStructKey(key)</span><br><span class="line">		vt := reflect.ValueOf(value)</span><br><span class="line">		<span class="keyword">if</span> vt.Kind() == reflect.Map &#123;</span><br><span class="line">			def += key + <span class="string">" struct &#123;\n"</span> + translate(value.(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)) + <span class="string">"\n&#125;\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> vt.Kind() == reflect.Slice &#123;</span><br><span class="line">			s := <span class="string">"[]interface&#123;&#125;"</span></span><br><span class="line">			<span class="keyword">if</span> vt.Len() &gt; <span class="number">0</span> &#123;</span><br><span class="line">				s = reflect.ValueOf(vt.Index(<span class="number">0</span>).Interface()).Type().String()</span><br><span class="line">			&#125;</span><br><span class="line">			def += key + <span class="string">" []"</span> + s + <span class="string">"\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			def += key + <span class="string">" "</span> + vt.Type().String() + <span class="string">"\n"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> def</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> _, err := toml.DecodeFile(tomlPath, &amp;data); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">inner := translate(data)</span><br></pre></td></tr></table></figure>
 <p>支持结构嵌套。</p>
 <p>不过生成的文本大概需要 gofmt 一下才符合格式规范。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/11/24/auto-cfs-cores-cpp-version-of-automaxprocs/">auto-cfs-cores C++ 版 automaxprocs</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-11-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>之前写了一篇分析 uber 的 automaxprocs 的源码，后面抽个了时间写了一个 C++ 版本的。</p>
-<p>其一是为了加深对原库的理解；其二是避免太长时间没写 C++ 手生，以及顺带体验一下 C++ 17 的感觉。</p>
-<p>代码在：<a href="https://github.com/kingsamchen/Eureka/tree/master/auto-cfs-cores" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/tree/master/auto-cfs-cores</a></p>
-<p>PS：一开始用 filesystem 的时候发现 libstdc++-8 需要专门连接一个 <code>lstdc++fs</code>，否则会因为符号不在同一个 lib 里直接 coredump。。。</p>
-<p>最后折腾了一圈还是直接用了以前自己写的 <code>Path</code></p>
-<p>PPS：<code>std::optional</code> 还挺好用</p>
 
         
       
