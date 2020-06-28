@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2020-05-04T07:53:16.256Z</updated>
+  <updated>2020-06-28T15:17:24.037Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,36 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>保持 ASIO io_context 无任务时运行</title>
+    <link href="http://kingsamchen.github.io/2020/06/28/keep-asio-io-context-running/"/>
+    <id>http://kingsamchen.github.io/2020/06/28/keep-asio-io-context-running/</id>
+    <published>2020-06-28T15:03:22.000Z</published>
+    <updated>2020-06-28T15:17:24.037Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;ASIO 的 &lt;code&gt;io_context::run()&lt;/code&gt; 如果发现没有 pending 的任务就会返回，对于 server 的监听线程来说这是符合常理的，因为无论如何至少有个 &lt;code&gt;acceptor::async_accept()&lt;/code&gt; 在
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
+    
+      <category term="io_context" scheme="http://kingsamchen.github.io/tags/io-context/"/>
+    
+      <category term="work_guard" scheme="http://kingsamchen.github.io/tags/work-guard/"/>
+    
+  </entry>
   
   <entry>
     <title>atoi With Overflow Handled</title>
@@ -472,9 +502,9 @@
     
       <category term="mysql" scheme="http://kingsamchen.github.io/tags/mysql/"/>
     
-      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
-    
       <category term="lock-free" scheme="http://kingsamchen.github.io/tags/lock-free/"/>
+    
+      <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
     
       <category term="systemd" scheme="http://kingsamchen.github.io/tags/systemd/"/>
     
@@ -593,39 +623,6 @@
       <category term="quadratic residues" scheme="http://kingsamchen.github.io/tags/quadratic-residues/"/>
     
       <category term="reader-writer lock" scheme="http://kingsamchen.github.io/tags/reader-writer-lock/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>学习 MySQL 的一些吐槽</title>
-    <link href="http://kingsamchen.github.io/2019/07/29/learning-mysql-rants/"/>
-    <id>http://kingsamchen.github.io/2019/07/29/learning-mysql-rants/</id>
-    <published>2019-07-29T11:56:44.000Z</published>
-    <updated>2019-07-29T12:48:58.378Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;最近学习 MySQL 的过程中发现一些很坑的点，总结记录如下：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;RDBMS 虽然理论很早就有了，但是近些年的实际应用进化已经导致各家独立。不同引擎实现不同，甚至连 spec 都不同。&lt;/li&gt;
-&lt;li&gt;不考虑 Oracl, SQL Server
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="rant" scheme="http://kingsamchen.github.io/tags/rant/"/>
-    
-      <category term="mysql" scheme="http://kingsamchen.github.io/tags/mysql/"/>
-    
-      <category term="吐槽" scheme="http://kingsamchen.github.io/tags/%E5%90%90%E6%A7%BD/"/>
     
   </entry>
   

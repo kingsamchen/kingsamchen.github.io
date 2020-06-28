@@ -17,10 +17,12 @@
 
 
 
-  <meta name="description" content="Gone with the ruins">
+  <meta name="description" content="保持 ASIO io_context 无任务时运行">
 
 
 
+
+  <meta name="keywords" content="asio, io_context, work_guard, KC的废墟堆">
 
 
 
@@ -40,7 +42,7 @@
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/categories/PROGRAMMING/page/12/">
+<link rel="canonical" href="http://kingsamchen.github.io/2020/06/28/keep-asio-io-context-running/">
 
 
 <link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
@@ -64,11 +66,7 @@
 
 
 
-    <title>
-  
-    PROGRAMMING · KC的废墟堆
-  
-</title>
+    <title> 保持 ASIO io_context 无任务时运行 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -180,182 +178,128 @@
           <div id="content" class="content">
             
   
-  <section id="archive" class="archive">
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          保持 ASIO io_context 无任务时运行
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-06-28
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
     
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Ref"><span class="toc-text">Ref</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>ASIO 的 <code>io_context::run()</code> 如果发现没有 pending 的任务就会返回，对于 server 的监听线程来说这是符合常理的，因为无论如何至少有个 <code>acceptor::async_accept()</code> 在 pending。</p>
+<p>但是如果想利用多核能力，那么一个常用的设计是：master 线程只负责 accept 进来的请求；将接受的 conn_sock 传递到 worker pool 里由其中一个 worker thread 处理。</p>
+<p>每个 worker thread 其实也跑了一个 <code>io_context</code>，但是因为我们无法保证每个 worker 都有 pending task，所以如果不做特殊处理，<code>io_context::run()</code> 会直接返回，导致 worker thread 也退出，这和我们希望的背道而驰。</p>
+<p>ASIO 中的 work guard 就是用了该解决这个问题：一个 work guard 能防止其关联的 io_context 在没有任务时退出。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[[maybe_unused]] <span class="keyword">auto</span> work_guard = asio::make_work_guard(io_ctx_);</span><br><span class="line">io_ctx_.run();</span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>work_guard</code> 不影响 <code>io_context::stop()</code> 的功能和语义；如果需要结束 io_context loop，推荐的依然是使用这个方法</li>
+<li>如果向去掉 <code>work_guard</code> 的影响，使用 <code>work_guard::reset()</code> 即可；调用后 <code>io_context::run()</code> 会在没有 pending task 时返回</li>
+</ol>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><ol>
+<li><a href="https://dens.website/tutorials/cpp-asio/work" target="_blank" rel="noopener">Prevent io_context::run from returning</a></li>
+</ol>
+
+      
+    </div>
 
     
       
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2017-01-11
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/" class="archive-post-link">
-            自动将 non-capturing lambda 转换为函数指针
-          </a>
-        </span>
-      </div>
-    
       
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2017-01-04
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2017/01/04/monthly-read-posts-in-dec-2016/" class="archive-post-link">
-            Monthly Read Posts in Dec 2016
-          </a>
-        </span>
-      </div>
-    
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2020/06/28/keep-asio-io-context-running/">http://kingsamchen.github.io/2020/06/28/keep-asio-io-context-running/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
       
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-12-18
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/" class="archive-post-link">
-            利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader
-          </a>
-        </span>
-      </div>
-    
+
+
       
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-12-04
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/12/04/monthly-read-posts-in-nov-2016/" class="archive-post-link">
-            Monthly Read Posts in Nov 2016
-          </a>
-        </span>
-      </div>
-    
       
+    
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-11-20
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/" class="archive-post-link">
-            避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理
-          </a>
-        </span>
-      </div>
     
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-11-19
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/11/19/recommend-csapp-3e-course-video-and-bomb-lab/" class="archive-post-link">
-            推荐 CSAPP:3e 课程视频以及 Bomb Lab
-          </a>
-        </span>
-      </div>
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-10-03
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/10/03/install-ycm-plugin-on-WSL/" class="archive-post-link">
-            在 WSL 的 VIM 里安装 YCM
-          </a>
-        </span>
-      </div>
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-09-24
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/09/24/build-and-integrate-the-newest-version-of-breakpad-on-windows/" class="archive-post-link">
-            在 Windows 上构建并接入最新发布分支的 breakpad
-          </a>
-        </span>
-      </div>
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-09-03
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/09/03/cpp-is-fine-it-is-you-that-suck/" class="archive-post-link">
-            C++ is fine, it's you that suck
-          </a>
-        </span>
-      </div>
-    
-      
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-07-30
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/07/30/get-correct-system-version-on-windows-10/" class="archive-post-link">
-            在 Windows 10 上获取正确的系统版本
-          </a>
-        </span>
-      </div>
-    
-  </section>
-
-  
-  <nav class="pagination">
-    
-      <a class="prev" href="/categories/PROGRAMMING/page/11/">
-        <i class="iconfont icon-left"></i>
-        <span class="prev-text">上一页</span>
-      </a>
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/asio/">asio</a>
+            
+              <a href="/tags/io-context/">io_context</a>
+            
+              <a href="/tags/work-guard/">work_guard</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
     
     
-      <a class="next" href="/categories/PROGRAMMING/page/13/">
-        <span class="next-text">下一页</span>
+      <a class="next" href="/2020/05/04/atoi-with-overflow-handled/">
+        <span class="next-text nav-default">atoi With Overflow Handled</span>
+        <span class="prev-text nav-mobile">下一篇</span>
         <i class="iconfont icon-right"></i>
       </a>
     
   </nav>
 
+      </footer>
+    
+
+  </article>
 
 
           </div>
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
       </main>
@@ -437,9 +381,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = '';
-        this.page.identifier = 'categories/PROGRAMMING/page/12/index.html';
-        this.page.title = '';
+        this.page.url = 'http://kingsamchen.github.io/2020/06/28/keep-asio-io-context-running/';
+        this.page.identifier = '2020/06/28/keep-asio-io-context-running/';
+        this.page.title = '保持 ASIO io_context 无任务时运行';
     };
     (function() {
     var d = document, s = d.createElement('script');

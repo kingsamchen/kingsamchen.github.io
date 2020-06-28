@@ -182,6 +182,63 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2020/06/28/keep-asio-io-context-running/">保持 ASIO io_context 无任务时运行</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-06-28
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>ASIO 的 <code>io_context::run()</code> 如果发现没有 pending 的任务就会返回，对于 server 的监听线程来说这是符合常理的，因为无论如何至少有个 <code>acceptor::async_accept()</code> 在 pending。</p>
+<p>但是如果想利用多核能力，那么一个常用的设计是：master 线程只负责 accept 进来的请求；将接受的 conn_sock 传递到 worker pool 里由其中一个 worker thread 处理。</p>
+<p>每个 worker thread 其实也跑了一个 <code>io_context</code>，但是因为我们无法保证每个 worker 都有 pending task，所以如果不做特殊处理，<code>io_context::run()</code> 会直接返回，导致 worker thread 也退出，这和我们希望的背道而驰。</p>
+<p>ASIO 中的 work guard 就是用了该解决这个问题：一个 work guard 能防止其关联的 io_context 在没有任务时退出。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[[maybe_unused]] <span class="keyword">auto</span> work_guard = asio::make_work_guard(io_ctx_);</span><br><span class="line">io_ctx_.run();</span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>work_guard</code> 不影响 <code>io_context::stop()</code> 的功能和语义；如果需要结束 io_context loop，推荐的依然是使用这个方法</li>
+<li>如果向去掉 <code>work_guard</code> 的影响，使用 <code>work_guard::reset()</code> 即可；调用后 <code>io_context::run()</code> 会在没有 pending task 时返回</li>
+</ol>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><ol>
+<li><a href="https://dens.website/tutorials/cpp-asio/work" target="_blank" rel="noopener">Prevent io_context::run from returning</a></li>
+</ol>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2020/05/04/atoi-with-overflow-handled/">atoi With Overflow Handled</a>
         
       </h1>
@@ -525,56 +582,6 @@
         
       
     </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/12/08/toml-to-golang-struct/">Toml to Golang Struct</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-12-08
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>之前写某个东西的副产品，本质上和 <a href="https://xuri.me/toml-to-go/" target="_blank" rel="noopener">https://xuri.me/toml-to-go/</a> 一样。</p>
-<p>解析 Toml 仍然依赖 github.com/BurntSushi/toml 这个库。</p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Eliminates _ and capitalizes the key. The key needs to be exported.</span></span><br><span class="line"><span class="comment">// e.g hello_world -&gt; HelloWorld</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">normalizeStructKey</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	str := strings.ReplaceAll(key, <span class="string">"_"</span>, <span class="string">" "</span>)</span><br><span class="line">	str = strings.Title(str)</span><br><span class="line">	str = strings.ReplaceAll(str, <span class="string">" "</span>, <span class="string">""</span>)</span><br><span class="line">	<span class="keyword">return</span> str</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generates golang strcut from a given toml file.</span></span><br><span class="line"><span class="comment">// Result needs re-format.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">translate</span><span class="params">(data <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	def := <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> key, value := <span class="keyword">range</span> data &#123;</span><br><span class="line">		key = normalizeStructKey(key)</span><br><span class="line">		vt := reflect.ValueOf(value)</span><br><span class="line">		<span class="keyword">if</span> vt.Kind() == reflect.Map &#123;</span><br><span class="line">			def += key + <span class="string">" struct &#123;\n"</span> + translate(value.(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)) + <span class="string">"\n&#125;\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> vt.Kind() == reflect.Slice &#123;</span><br><span class="line">			s := <span class="string">"[]interface&#123;&#125;"</span></span><br><span class="line">			<span class="keyword">if</span> vt.Len() &gt; <span class="number">0</span> &#123;</span><br><span class="line">				s = reflect.ValueOf(vt.Index(<span class="number">0</span>).Interface()).Type().String()</span><br><span class="line">			&#125;</span><br><span class="line">			def += key + <span class="string">" []"</span> + s + <span class="string">"\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			def += key + <span class="string">" "</span> + vt.Type().String() + <span class="string">"\n"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> def</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> _, err := toml.DecodeFile(tomlPath, &amp;data); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">inner := translate(data)</span><br></pre></td></tr></table></figure>
-<p>支持结构嵌套。</p>
-<p>不过生成的文本大概需要 gofmt 一下才符合格式规范。</p>
-
-        
-      
-    </div>
 
     
 

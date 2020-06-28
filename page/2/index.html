@@ -182,6 +182,56 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/12/08/toml-to-golang-struct/">Toml to Golang Struct</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-12-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>之前写某个东西的副产品，本质上和 <a href="https://xuri.me/toml-to-go/" target="_blank" rel="noopener">https://xuri.me/toml-to-go/</a> 一样。</p>
+<p>解析 Toml 仍然依赖 github.com/BurntSushi/toml 这个库。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Eliminates _ and capitalizes the key. The key needs to be exported.</span></span><br><span class="line"><span class="comment">// e.g hello_world -&gt; HelloWorld</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">normalizeStructKey</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	str := strings.ReplaceAll(key, <span class="string">"_"</span>, <span class="string">" "</span>)</span><br><span class="line">	str = strings.Title(str)</span><br><span class="line">	str = strings.ReplaceAll(str, <span class="string">" "</span>, <span class="string">""</span>)</span><br><span class="line">	<span class="keyword">return</span> str</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generates golang strcut from a given toml file.</span></span><br><span class="line"><span class="comment">// Result needs re-format.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">translate</span><span class="params">(data <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	def := <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> key, value := <span class="keyword">range</span> data &#123;</span><br><span class="line">		key = normalizeStructKey(key)</span><br><span class="line">		vt := reflect.ValueOf(value)</span><br><span class="line">		<span class="keyword">if</span> vt.Kind() == reflect.Map &#123;</span><br><span class="line">			def += key + <span class="string">" struct &#123;\n"</span> + translate(value.(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)) + <span class="string">"\n&#125;\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> vt.Kind() == reflect.Slice &#123;</span><br><span class="line">			s := <span class="string">"[]interface&#123;&#125;"</span></span><br><span class="line">			<span class="keyword">if</span> vt.Len() &gt; <span class="number">0</span> &#123;</span><br><span class="line">				s = reflect.ValueOf(vt.Index(<span class="number">0</span>).Interface()).Type().String()</span><br><span class="line">			&#125;</span><br><span class="line">			def += key + <span class="string">" []"</span> + s + <span class="string">"\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			def += key + <span class="string">" "</span> + vt.Type().String() + <span class="string">"\n"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> def</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> _, err := toml.DecodeFile(tomlPath, &amp;data); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">inner := translate(data)</span><br></pre></td></tr></table></figure>
+<p>支持结构嵌套。</p>
+<p>不过生成的文本大概需要 gofmt 一下才符合格式规范。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/11/24/auto-cfs-cores-cpp-version-of-automaxprocs/">auto-cfs-cores C++ 版 automaxprocs</a>
         
       </h1>
@@ -510,61 +560,6 @@
         
       
     </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/09/09/avoid-using-signals-on-linux/">避免在 Linux 上使用 signals</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-09-09
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>首先承认这个标题乍看之下很像 troll，但真的不是 troll；“避免使用”总的来说更接近 <em>whenever possible</em> 的意思。</p>
-<p>另外，这篇 post 面向的主要是偏底层的、直接使用 system calls 或其 runtime wrapper（glibc）的开发者，最典型的比如 C/C++ 开发者。</p>
-<p>其他语言的开发者通常因为要么 runtime “屏蔽”了这部分内容（如 Java）；要么 runtime 自身对这部分做了较大的抽象/改造（如 Golang），因此很难对此 post 提到的各种观点/做法产生共鸣。</p>
-<p>FYI：自从工作后中文写作能力一直在退化，因此这篇文章如果存在语句不通顺或者用词不当的地方，烦请见谅。</p>
-<h2 id="0x00-背景回顾：什么是-signal？"><a href="#0x00-背景回顾：什么是-signal？" class="headerlink" title="0x00 背景回顾：什么是 signal？"></a>0x00 背景回顾：什么是 signal？</h2><p>signal 源自 Unix，后来成为 POSIX 标准的一部分，现在则被几乎所有的 *nix 系统支持。</p>
-<p>signal 本质上是一种通讯机制，用于系统在某个事件（event）发生时通知某个进程（或线程）。<br>
-          <div class="read-more">
-            <a href="/2019/09/09/avoid-using-signals-on-linux/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
 
     
 
