@@ -182,6 +182,359 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/04/23/std-funcion-must-be-copyable/">std::function Must be Copyable</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-23
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>前几天在写一个 <a href="https://github.com/kingsamchen/Eureka/tree/master/TinyThreadPool" target="_blank" rel="noopener">ThreadPool 的轮子</a>的时候，碰到一个问题：无论我用什么办法，都不能将 <code>std::packaged_task</code> 传递到 <code>std::function</code> 中，编译器始终提示访问了 <code>std::packaged_task</code> 被删除的拷贝构造函数。</p>
+<p>在这个点卡了许久，未果，翻了一下 cpp reference，突然发现一个细节：<code>std::function</code> 必须是支持复制的，顿时茅塞顿开。</p>
+<p><code>std::function</code> 包裹的函数对象必须足够轻量，使得 pass-by-value 的 context 下不会出现明显的大量开销，因此这个类型要求指语义是符合逻辑的。</p>
+<p>而 <code>std::packaged_task</code> 不是值语义，仅支持移动语义，因此无法作为 <code>std::function</code> 的一部分。</p>
+<p>最后的解决方案是引入一个 <code>std::shared_ptr</code> 作为中间层，通过 lambda 保存这个 <code>std::shared_ptr</code>。</p>
+<p>附注：本来打算开一个 post 来简单讲解一下如何从头实现一个简单可用的 thread-pool，但是因为懒癌发作，代码写完了也就不想动手写文字了。后面看看是不是有机会可以补上。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/04/11/use-lambda-with-post-task/">Use Lambda With PostTask</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-11
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>曾经为了能在 <code>PostTask()</code> 里使用 lambda，实现了一个自动将 non-capturing lambda decay 到对应函数指针，在利用 <code>base::Bind()</code> 的方案<a href="https://kingsamchen.github.io/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/">[1]</a>。</p>
+<p>但是在使用过程中发现这个方案有几个弊端：</p>
+<ol>
+<li>因为只能使用 non-capture lambda，因此如果需要上下文，只能通过参数传入，这样代码写起来会很蛋疼</li>
+<li>VS 2013 + Resharper 的环境下，使用 <code>lambda_decay()</code> 的代码经常会出现静态分析的错误提示（不清楚是 VS2013 还是 Resharper 的问题），导致每段代码下面都会出现红色的曲线，非常惹眼</li>
+</ol>
+<p>这两天因为需要重构某个模块，又顺便思考了这个问题，后来发现之前一开始思路不太对。</p>
+<p>没有必要做一个兼容 <code>base::Bind()</code> 的解决方案，因为需要的只是在 message-loop 的 PostTask 里使用，这样只要能够将 lambda 包裹到一个 <code>base::Callback&lt;R()&gt;</code> 里就可以了，至于是不是利用 <code>base::Bind()</code> 完成，并不重要！</p>
+<p>结合之前做的 <code>base::Callback</code> 到 <code>std::function</code> 的<a href="https://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/">转换</a>，很自然的想到一个最终解决方案。</p>
+<p>代码其实非常简单：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> R&gt;</span><br><span class="line">auto InvokeLambda(const std::function&lt;R()&gt;&amp; fn) -&gt; R</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> fn();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">auto BindLambda(F&amp;&amp; lambda) -&gt; base::Callback&lt;typename std::result_of&lt;F()&gt;::type()&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> return_type = <span class="keyword">typename</span> <span class="built_in">std</span>::result_of&lt;F()&gt;::type;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> base::Bind(InvokeLambda&lt;return_type&gt;, <span class="built_in">std</span>::function&lt;return_type()&gt;(<span class="built_in">std</span>::forward&lt;F&gt;(lambda)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>判断返回类型是因为 <code>PostTaskAndReplyWithResult()</code> 会要求第一个 closure 有指定的返回值，以便第二个 clsoure 使用。</p>
+<p>使用的时候就</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> s = <span class="string">"hello, world"</span>;</span><br><span class="line">base::Closure closure = BindLambda([&amp;s] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"value of s: "</span> &lt;&lt; s &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">closure.Run();</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> cb = BindLambda([] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"with int result\n"</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1024</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; cb.Run();</span><br></pre></td></tr></table></figure>
+<p>为了使用方便，我直接往 chromium base 开了一个 ext，作为以后的扩展。</p>
+<p>因为现在 lambda 可以直接捕捉了，所以重构之后的代码看起来更具可读性；当然前提是要小心被捕捉对象的生命周期，通常这个上下文都应该使用 capture-by-value。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/">利用 vcpkg 编译带汇编优化的 libx264</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-03
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>使用 vcpkg 编译 libx264 有一个很重要的原因：可以获得 PDB，而且构建流程被大大精简了。</p>
+<p>但是这里有一个坑：vcpkg 上的 libx264 模块编译默认是开启了 <code>--disable-asm</code>，意味着构建之后的二进制不会使用 SIMD 指令集，所以性能上会有很大的问题。</p>
+<p>研究了一番之后找到了开启汇编优化的方案。</p>
+<ol>
+<li><p>从官网下载并安装 nasm-2.13</p>
+<p> vcpkg 上通过 acquire-program 提供的 nasm 只有 2.12；而编译 vcpkg 上提供的 libx264-152 需要 nasm-2.13</p>
+</li>
+<li><p>编辑 libx264 的 portfile.cmake 文件</p>
+<p> 在 set bash 的后面加一行</p>
+ <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(ENV&#123;PATH&#125; <span class="string">"c:/Programs/NASM/;$ENV&#123;PATH&#125;"</span>)</span><br></pre></td></tr></table></figure>
+<p> 这里注意替换你的真实安装目录</p>
+<p> 然后去掉构建参数中的 <code>--disable-asm</code></p>
+</li>
+</ol>
+<p>如果还有地方出错，记得根据提示查日志！</p>
+<p>开启汇编优化后生成的二进制会略大，大概 900 多 KB</p>
+<p>最后赞扬一下微软出品的 vcpkg，真是解决了 Windows 下编译一众开源软件的痛点。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/04/01/monthly-read-posts-in-mar-2018/">Monthly Read Posts in Mar 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-04-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="http://akumuli.org/akumuli/2015/03/19/sequencer/" target="_blank" rel="noopener">Sorting, caching and concurrency</a></p>
+<p>通过引入基于时间的 sliding window 来标记并剔除（大概率）由错误产生的数据；并且可以利用 SW 来 schedule 数据什么时候从内存持久化到磁盘。</p>
+<p>Patience sort 是 merge-sort 的一种变体，适合对 slightly unordered data 进行排序，最坏情况下退化为 merge-sort。</p>
+<p>实现 optimistic locking 来避免使用 reader-writer locks，进而防止写饥饿。</p>
+<blockquote>
+<p>引入一个原子的 sequence-number，初始状态为0；并且</p>
+<ul>
+<li>merge 操作开始时，sequence-number 自增</li>
+<li>merge 操作结束时，sequence-number 同样自增<br>于是利用 sequence-number 的奇偶性来区分某个操作是否结束</li>
+</ul>
+<p>如果写操作开始但是未完成，则读操作进行退避&amp;重试。</p>
+</blockquote>
+<p>感觉作者这么做应该是结合了业务的上下文；这个 optimistic locking 的策略至少有这么几个前提：</p>
+<ol>
+<li>写操作很重要，不能有明显的延迟</li>
+<li>写操作不会太慢，至少不会导致读操作的延迟超过无法承受的范围</li>
+<li>平台提供的 reader-writer locks 对 writer starvation 的防治策略做的不够好</li>
+</ol>
+<hr>
+<p><a href="http://preshing.com/20120612/an-introduction-to-lock-free-programming/" target="_blank" rel="noopener">An Introduction to Lock-Free Programming</a></p>
+<p>非常赞的 Lock-free 入门文章。</p>
+<p>覆盖了 concepts, CAS operations, memory ordering &amp; memory models</p>
+<p>注：作者 preshing 是个 concurrency programming 领域的大触</p>
+<hr>
+<p><a href="https://getpocket.com/a/read/994738352" target="_blank" rel="noopener">Gentle Introduction to Lockless Concurrency</a></p>
+<p>同样也是一篇 lock-free 的入门文章，但是这这篇文章比起上一篇就差太多了，明显不是一个层次的。</p>
+<p>这篇是基于 Java 来谈 lockless，涉及的点明显局限在了语言自身，没有 preshing 那种站在 bare-metal 角度的犀利。</p>
+<p>注：原文找不到了，大概率被作者自己删了，因此只有 pocket 的备份</p>
+<hr>
+<p><a href="https://www.brianstorti.com/the-actor-model/" target="_blank" rel="noopener">The actor model in 10 minutes</a></p>
+<p>一篇非常赞的 actor model 的介绍文章。</p>
+<p>直接开篇就把模型的本质是 actor，以及 actor 的核心（primitive unit for computation &amp; message passing）讲明了。</p>
+<p>然后延伸到 fault tolerance 和 distribution 上的优势。</p>
+<p>内容比 <em>7 Concurrency Models in 7 Weeks</em> 要好多了，讽刺的是这本书还是这篇文章的 reference 之一。</p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=_fu0gx-xseY" target="_blank" rel="noopener">CppCon 2015: Gor Nishanov “C++ Coroutines - a negative overhead abstraction”</a></p>
+<p>总结起来就是：</p>
+<ul>
+<li>我们其实很早就开始应用 coroutines 了</li>
+<li>Concurrency TS 里提供的 CPS 也不是万能药</li>
+<li>Coroutine is good, and We want coroutines!</li>
+</ul>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=mPxIegd9J3w" target="_blank" rel="noopener">CppCon 2015: Artur Laksberg “Concurrency TS Editor’s Report”</a></p>
+<p>Brief introduction to concurrency ts.</p>
+<p>涵盖了三点：</p>
+<ul>
+<li>better std::future (with continutation &amp; async/await)</li>
+<li>latch &amp; barrier</li>
+<li>atomic shared_ptr</li>
+</ul>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=fZjYCQ8dzTc" target="_blank" rel="noopener">CppCon 2015: Scott Schurr “constexpr: Introduction”</a><br><a href="https://www.youtube.com/watch?v=qO-9yiAOQqc" target="_blank" rel="noopener">CppCon 2015: Scott Schurr “constexpr: Applications”</a></p>
+<p>第一篇是 <code>constexpr</code> 入门介绍。</p>
+<p>演讲者挺有意思。另外最后面利用 unresolved symbol 来 force as compile time error 有点意思</p>
+<p>第二篇，重点来了，干货十足，compile-time containers 可以研究好一会儿。</p>
+<p>这下基本能明白为什么这哥们要开两个 talk 了，因为一个 talk 这么多内容说不玩啊。</p>
+<hr>
+<p><a href="http://www.thinkingparallel.com/2007/02/19/please-dont-rely-on-memory-barriers-for-synchronization/" target="_blank" rel="noopener">Please Don’t Rely on Memory Barriers for Synchronization!</a></p>
+<p>文章实际上是一片批判文，但是被批判的文章被作者删除了（估计是被喷得太惨了），所以不能拿来做交叉对比。。</p>
+<p>文章核心是在强调原则性的做法，但是因为主要是为了批评，所以没有太多的干活，总结一下就是：</p>
+<ul>
+<li>多看书，不要当民科，自己<strong>发明</strong>轮子</li>
+<li>如无必要，不要使用 memory barrier 这种过于底层且没有移植性的东西</li>
+<li>锁不慢，这篇文章很容易给人错的观念</li>
+<li>先写对，再写快（老生常谈）</li>
+</ul>
+<hr>
+<p><a href="https://www.gnu.org/software/libc/manual/html_node/Overview-of-Syslog.html" target="_blank" rel="noopener">Overview of syslog</a></p>
+<p>（Unix/Linux）系统提供的日志存储仓，对应的 daemon 叫 syslogd，使用的 Unix Domain Socket 名是 <code>/dev/log</code>。</p>
+<p>程序可以使用 syslog.h 文件中的 <code>syslog()</code> 或 <code>vsyslog()</code> 函数往 syslog 写消息，一条消息最重要的有两部分：</p>
+<ul>
+<li>facility，表明谁发的消息</li>
+<li>priority，消息的重要程度</li>
+</ul>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=CZi6QqZSbFg" target="_blank" rel="noopener">C++ Metaprogramming - Fedor Pikus - CppCon 2015</a></p>
+<p><a href="https://www.youtube.com/watch?v=cg1wOINjV9U" target="_blank" rel="noopener">C++ metaprogramming- a paradigm shift - Louis Dionne - CppCon 2015</a></p>
+<p>两个和 C++ TMP 有关的 talk。</p>
+<p>前者是 introduction 性质的，后者嘛。。。其实就是 Boost.Hana 的宣传广告</p>
+<hr>
+<p><a href="http://blog.csdn.net/myan/article/details/1482614" target="_blank" rel="noopener">Java替代C语言的可能性</a></p>
+<p>作者（当时）认为这不存在可能性，总结了三个原因</p>
+<ol>
+<li>Java 程序员的平局水平比起 C 程序员的平均水平还有明显差距，尤其对底层、结构体系的理解</li>
+<li>内存占用过高，带来一系列的性能问题，导致目前（当时）且一段时间内只能做上层应用</li>
+<li>思维方式的问题，Java 程序员被厚重的框架束缚思维</li>
+</ol>
+<p>虽然这是一篇10年前的文章，但是不得不说作者眼光独到。</p>
+<p>现在这三个问题依旧，而且目前 Java 在互联网公司的主战场主要是 Android 开发（受到 Kotlin 挑战）和服务端（中间件，上层 web 服务，受到 Go 冲击），确实还未侵入 C 的核心领域。</p>
+<p>不过个人感觉，未来编程面对的抽象层次会越来越高。</p>
+<hr>
+<p><a href="https://blog.csdn.net/myan/article/details/1906" target="_blank" rel="noopener">垃圾收集机制(Garbage Collection)批判</a></p>
+<p>作者（当时）吐槽主要来自于：繁忙时刻且内存没有明显压力时不会触发 GC，而当内存有明显压力感知的时候，一次 GC 会导致极大的开销。</p>
+<hr>
+<p><a href="https://coelhorjc.wordpress.com/2014/12/18/using-non-blocking-and-asynchronous-io-ck10-problem-in-linux-and-windows-with-epool-iocp-aiolibaio-libeventlibevlibuv-boost-asio/" target="_blank" rel="noopener">USING NON-BLOCKING AND ASYNCHRONOUS I/O (CK10 PROBLEM) IN LINUX AND WINDOWS (WITH EPOOL, IOCP, LIBEVENT/LIBEV/LIBUV/BOOST.ASIO AND LIBRT/LIBAIO)</a></p>
+<p>C10K 问题下的各种解决方案。</p>
+<p>从基础的 reactor（epoll / kqueue）到 proactor （IOCP）</p>
+<p>同时涉及当前流行的网络框架：libev, libeio .etc</p>
+<p>适合技术选型或者了解各平台下实现高性能并发处理的方式</p>
+<hr>
+<p><a href="http://www.sean-bollin.com/2017/05/01/reactor-vs-proactor-part-1-the-reactor/" target="_blank" rel="noopener">Reactor vs. Proactor: Part 1 – The Reactor</a></p>
+<p>PART 1 简单给予 epoll 做了几个例子。</p>
+<p>例子代码写得不好，甚至还出现了利用异常做控制流…</p>
+<p>还好作者太监了没有后续。</p>
+<hr>
+<p><a href="http://insanecoding.blogspot.co.uk/2013/04/designing-c-functions-to-writesave-to.html" target="_blank" rel="noopener">Designing C++ functions to write/save to any storage mechanism</a></p>
+<p>这篇文章写于 2011 年，这个背景很重要。</p>
+<p>在进入 C++ 11 的时代前，相当一部分 C++ 程序员还是<strong>只适应</strong>通过 OO 去构造抽象；而本身就是设计反面教科书的 ostream 体系让相当一部分人在错误的道路上越走越远。</p>
+<p>作者吐槽的就是这点。</p>
+<p>后文给出的 solution 说穿了其实就是，利用 template 进行依赖注入。</p>
+<p>所有写操作，无论是写文件还是写 DB 还是写网络，核心都基于一个具体的 function object，而这个 function object 可以通过 template parameter 进行依赖解耦。</p>
+<p>C++ 11 引入的 <code>std::bind()</code>、 lambda、甚至 <code>std::function</code> 都更加明确了条路子。</p>
+<p>这篇文章有点类似孟岩曾经写的利用 bind + function 去避免继承（运行时多态）的滥用。</p>
+<hr>
+<p><a href="https://computing.llnl.gov/tutorials/pthreads/" target="_blank" rel="noopener">POSIX Threads Programming</a></p>
+<p>Pthreads 简明教程。</p>
+<p>覆盖</p>
+<ul>
+<li>threads VS process (Why using threads)</li>
+<li>pthreads 介绍</li>
+<li>pthreads 创建/销毁</li>
+<li>mutex</li>
+<li>condition variable</li>
+</ul>
+<p>可以作为入门级读物。</p>
+<hr>
+<p><a href="http://insanecoding.blogspot.co.uk/2014/05/copying-code-copying-implementation.html" target="_blank" rel="noopener">Copying code != Copying implementation</a></p>
+<p>一开始我还以为是作者专门写文章解释他为什么会 copy code，看完才发现不是这样。</p>
+<p>作者的观点是：（遵守 license）从开源项目里抄代码直接用是不靠谱的，一定要注意，代码所处的上下文，搞清楚是不是有什么 prerequisites 或者 hidden requirements。</p>
+<p>中间还专门举了几个例子。</p>
+<hr>
+<p><a href="https://medium.com/@AikoPath/visualising-and-prioritizing-technical-debt-afc82e542681" target="_blank" rel="noopener">Visualising and Prioritizing Technical Debt</a></p>
+<p>核心：将技术债具象化，无论是采用四象限法还是技术债树。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/03/30/demystify-shared-ptr-and-weak-ptr-in-libstdcpp/">浅析 shared_ptr：Libstdc++ 篇</a>
         
       </h1>
@@ -350,215 +703,6 @@
 <li>Chromium Base：严格来说 Chromium Base 的实现和标准库的完全不同，放在这里只是因为我对 chromium 这个项目有一种特殊的情感/好感。这个团队是真的知道工程化团队的重要性以及能够推进团队工程化，代码一致性极高，很少出现炫技的情况（望向 Facebook 和 Microsoft）。即使部分代码的架构和实现不能算是 C++ Best Practices，也不能掩盖他们整体的工程能力。</li>
 </ul>
 <p>后面会为每个实现版本写一篇单独的 post，至于最后有没有一篇 summing up，就看后面有没有时间，或者这个必要了 :-)</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/">Tiny Concurrent Http Server on Windows and Linux</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-08
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>前段时间趁着春节，分别基于 IOCP 和 epoll 实现了 demo 级别的 http server（在遵守 http 1.1 socket 复用基础上只提供了某个指定目录下文件的 GET），算是简单的过了一下 proactor 和 reactor 模型下的 TCP 并发服务。</p>
-<p>功能做的很粗糙，并且没有封装类似 event-loop 的东西，连接管理也基本算是纸糊的，原因还是前面说过的，只是想过一下两种模型，并且，在不研究当前流行的 paradigm 的前提下，凭借自己的 first understanding / hunch 去实现；等对这块有一段时间的研究后，作为参照，来回对比以加深理解。</p>
-<p>我觉得这是一种不错的学习方式。</p>
-<p>代码可以看 <a href="https://github.com/kingsamchen/Eureka/tree/master/ConcurrentHttpServer" target="_blank" rel="noopener">这里</a></p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/">被 FFmpeg 的日志模块撞了一下腰</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-07
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>周末的时候客服同学反馈有个用户出现了崩溃，并且要来了崩溃 dmp 文件。</p>
-<p>挂上 windbg 后发现崩溃原因是 CRT 的 <code>invalid-parameter</code> 异常，第一现场是输出 ffmpeg 的 avcodec 模块的日志。</p>
-<p>省略中间若干分析过程，直击结论：FFmpeg 的 Windows 构建并不是用 MSVC 编译的，因此在类似 <code>printf()</code> 函数的 format specifier 使用上出现了偏差。</p>
-<p>代码使用 <code>%td</code> 输出 <code>ptrdiff_t</code> 类型，而 VS2017 之前的版本并不支持这个 format specifier，因此函数调用 <code>_vsnprintf_p()</code> 出现了参数异常，导致程序挂掉。</p>
-<p>虽然 VS 2017 很厚道的支持了这个格式，但是某直播姬的工具链是 VS 2013，且短时间不可能调整，因此最后的解决方案是，上层安装的 logging hook 在输出日志时，首先修正一遍 format 里的 specifier，替换为 VS 2013 支持的 <code>%Id</code>。</p>
-<p>注意，类似的还有 <code>size_t</code> 的 format specifier。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/04/display-utf-8-string-in-vs-debugger/">在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>众所周知，UTF-8 在 Windows 上一直都不是一等公民，在 MSVC 的调试器里，<code>std::string</code> 默认按照本地编码解释，在中文系统上是 GBK 或 GB2312。</p>
-<p>于是，如果一个 <code>std::string</code> 或者 <code>char[]</code> 里存储的是 UTF-8 编码的字符串，那么非 ASCII 部分就会乱码。这在调试中是一个非常不好的体验。</p>
-<p>研究了一下发现早在 VS 2005，调试器实际上就已经支持了对 UTF-8 字符串的显示，只是不作为默认的编码。</p>
-<p>按照 UTF-8 进行解释的方式很简单，在 watch 中添加<strong>字符串起始地址</strong>，后接 <code>, s8</code> 即可。</p>
-<p>注意的是，对于 <code>std::string</code>，要用 <code>std::string::c_str()</code> 或者 <code>std::string::data()</code> 获取字符串起始地址。</p>
-<p>更简单的做法是在 intermedaite window 中，使用 <code>? str.c_str(), s8</code></p>
-<p>注：如果变量被优化后提示 <code>c_str()</code> 或 <code>data()</code> 无法访问到有效数据，则可以使用 <code>&amp;str[0]</code>。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/03/02/monthly-read-posts-in-feb-2018/">Monthly Read Posts in Feb 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-03-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://baptiste-wicht.com/posts/2012/07/c11-concurrency-tutorial-part-4-atomic-type.html" target="_blank" rel="noopener">C++11 Concurrency Tutorial - Part 4: Atomic Types</a></p>
-<p>WTF ??</p>
-<hr>
-<p><a href="https://www.zhihu.com/question/24301047" target="_blank" rel="noopener">如何理解 C++11 的六种 memory order？</a></p>
-<p>参考意义不大，还是老老实实是看官方 reference 或者 <em>C++ Concurrency in Action</em> 形式化的描述吧。</p>
-<hr>
-<p><a href="http://cbloomrants.blogspot.hk/2012/05/05-30-12-on-c-atomic-fences.html" target="_blank" rel="noopener">05-30-12 - On C++ Atomic Fences</a></p>
-<p>可配合书阅读，稍作了解即可。</p>
-<p>C++ 中 atomic 附带的 ordering operations 和直接的 fences 还是有明显差别的。</p>
-<hr>
-<p><a href="http://www.cl.cam.ac.uk/~pes20/cpp/cpp0xmappings.html" target="_blank" rel="noopener">C/C++11 mappings to processors</a></p>
-<p>仅供参考，实际意义不大，除非要做非 x86 的 lock-free</p>
 
         
       

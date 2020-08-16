@@ -182,6 +182,243 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/06/19/modern-cmake/">Modern CMake</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-06-19
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>但凡有点历史的东西，在演进到一个新的阶段时，总会总结一套新的 practices 然后冠之以 modern，例如 modern C++，还有今天的主题 —— modern CMake。</p>
+<p>上周花了一点时间稍微研究了一下所谓的 modern cmake，然后将 KBase 在 POSIX 上的 cmake 文件都按照 modern cmake 的做法做了修改，结果可见<a href="https://github.com/kingsamchen/KBase/commit/da601fe5afaa54b151e64b3ae86faf515b1cae87" target="_blank" rel="noopener">此</a></p>
+<p>Modern cmake 有什么好处就不说了，有很多文献可以查，而且我觉得按照目前官方文档的尿性，modern cmake无非是换一种方式踩坑，虽然坑的数量少了不少。</p>
+<p>只说几个最核心的点。</p>
+<p>首先 modern cmake 推荐按照 module 的方式拆分一个大工程，一个 module 对应一个 CMakeLists.txt，可以是一个 lib，也可以是一个 executable。</p>
+<p>每个 module 抽象成一个 target，然后使用新的 <code>target_*</code> 属性去定义这个 target。并且每个 target 之间的属性是可以互相独立的。</p>
+<p>工程最顶端是一个 CMakeLists.txt，定义一些全局的属性，然后通过 <code>add_subdirectory()</code> 来关联所有的 module。</p>
+<p>几个自己研究过程中看过的一些资料：</p>
+<p><a href="https://gist.github.com/mbinna/c61dbb39bca0e4fb7d1f73b0d66a4fd1" target="_blank" rel="noopener">Effective Modern CMake</a></p>
+<p><a href="https://github.com/CppCon/CppCon2017/blob/master/Tutorials/Using%20Modern%20CMake%20Patterns%20to%20Enforce%20a%20Good%20Modular%20Design/Using%20Modern%20CMake%20Patterns%20to%20Enforce%20a%20Good%20Modular%20Design%20-%20Mathieu%20Ropert%20-%20CppCon%202017.pdf" target="_blank" rel="noopener">Using Modern CMake Patterns to Enforce a Good Modular Design - Mathieu Ropert - CppCon 2017</a></p>
+<p><a href="https://www.slideshare.net/DanielPfeifer1/cmake-48475415" target="_blank" rel="noopener">CMake - Introduction and best practices</a></p>
+<p><a href="https://www.slideshare.net/DanielPfeifer1/effective-cmake" target="_blank" rel="noopener">Effective CMake</a></p>
+<p>最后，虽然 CMake 看起来已经要成为 C++ 的 de facto build system，但是靠谱的资料却没多少，也缺少像 C++ Core Guideline 这种有影响力的半官方指南。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/06/10/build-your-own-http-proxy-using-go/">Build Your Own HTTP Proxy Server Using Go</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-06-10
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>Go is a quite awesome programming language for building network applications. So I built my own HTTP proxy server using go last week.</p>
+<p>To grasp the essence of how HTTP proxy server works, I choosed to implement it on TCP transport layer, forwarding TCP traffic directly.</p>
+<p>Essentially, it runs a server, accepting incoming TCP connections and from which the server extracts target host of a request by parsing HTTP protocol messages. The server then establishes a connection to the target host, and finally operates as an intermedia, forwarding traffic from one host to another.</p>
+<p>Implementing a TCP server which is able to handle concurrent requests uing go is easier than you thought: just runs a loop to accept requests, launching a new goroutine for each new connection:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Server <span class="keyword">struct</span> &#123;</span><br><span class="line">	addr     <span class="keyword">string</span></span><br><span class="line">	listener net.Listener</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">Start</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line">	srv.listener, err = net.Listen(<span class="string">"tcp"</span>, srv.addr)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatalf(<span class="string">"Failed to listen at %s : %v"</span>, srv.addr, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	log.Printf(<span class="string">"Proxy is listening at %s"</span>, srv.addr)</span><br><span class="line"></span><br><span class="line">	srv.runLoop()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">runLoop</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		conn, err := srv.listener.Accept()</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			log.Printf(<span class="string">"Failed to accept an incoming connection : %v"</span>, err)</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="keyword">go</span> srv.handleConnection(conn)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span> <span class="title">handleConnection</span><span class="params">(conn net.Conn)</span></span> &#123;</span><br><span class="line">	c := newConnection(conn)</span><br><span class="line">	c.serve()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+          <div class="read-more">
+            <a href="/2018/06/10/build-your-own-http-proxy-using-go/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/06/01/monthly-read-posts-in-may-2018/">Monthly Read Posts in May 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-06-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h3 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h3><p><a href="http://mindhacks.cn/2011/11/04/how-to-interview-a-person-for-two-years/" target="_blank" rel="noopener">怎样花两年时间去面试一个人</a></p>
+<p>当前行业招聘的不靠谱，招揽优秀人员的难度大。</p>
+<p>脱颖而出的核心：良好的阅读习惯 + Github 项目</p>
+<p>这里说的两年是针对应届生来说的，对于已经工作的人来说，可以当作是虚指。</p>
+<p>不过文中提到的，拥抱变化的三个核心点：</p>
+<ol>
+<li>触动内心的大象</li>
+<li>建立清晰明确的目标</li>
+<li>扫清前进道路的障碍</li>
+</ol>
+<p>颇有道理。</p>
+<hr>
+<p><a href="http://gulu-dev.com/post/2014-07-28-tech-evaluation" target="_blank" rel="noopener">何判断一个技术(中间件/库/工具)的靠谱程度？</a></p>
+<p>如何做技术选型</p>
+<h3 id="System-amp-Architecture"><a href="#System-amp-Architecture" class="headerlink" title="System &amp; Architecture"></a>System &amp; Architecture</h3><p><a href="https://0xffffff.org/2017/05/01/41-linux-io/" target="_blank" rel="noopener">聊聊Linux IO</a></p>
+<p>A brief introduction to Linux I/O stack.</p>
+<p>这篇 post 的质量在国内技术博客里算是少有的干货。</p>
+<p>另，关于 page cache 和 buffer cache 的最新的内容，可以参考 Robert Love 在 quora 上的一个<a href="http://qr.ae/TUTNCz" target="_blank" rel="noopener">回答</a></p>
+<hr>
+<p><a href="https://www.youtube.com/watch?v=k12BJGSc2Nc" target="_blank" rel="noopener">CppCon 2015: John Farrier “Demystifying Floating Point”</a></p>
+<p>工程实践上使用浮点数（IEEE-754）需要注意的一些坑。</p>
+<p>看之前最好翻一下 CSAPP 中关于浮点数 IEEE-754 模型的基础知识<br>
+          <div class="read-more">
+            <a href="/2018/06/01/monthly-read-posts-in-may-2018/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/05/30/build-your-own-thread-pool-with-cpp/">Build Your Own Threadpool With C++</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-05-30
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Why-Threadpool-Matters"><a href="#Why-Threadpool-Matters" class="headerlink" title="Why Threadpool Matters"></a>Why Threadpool Matters</h2><p>Why on the earth do we need thread-pool? The answer is obvious: for doing jobs behind the scenes.</p>
+<p>That is, saying, you have a constant stream of incoming tasks to complete, and most of which either incur heavy computation or invovle device I/O, you definitely don’t want to execute them on your main thread, because it will block your main thread until the job is done, making your application less responsive.</p>
+<p>However, with thread-pool, you can simply submit a task to the pool, then continue what was doing; the task will eventually be completed on a thread of the thread-pool.</p>
+<p>If your processor has multiple cores, the task is possibly performed concurrently with your jobs on the main thread.</p>
+<h2 id="What-Should-a-Threadpool-Provide"><a href="#What-Should-a-Threadpool-Provide" class="headerlink" title="What Should a Threadpool Provide"></a>What Should a Threadpool Provide</h2><p>Before we switch our focus to editor, we are better to think twice about what we can do with the thread-pool we will build.<br>
+          <div class="read-more">
+            <a href="/2018/05/30/build-your-own-thread-pool-with-cpp/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/05/14/demystify-ref-counted-and-weak-ptr-in-chromium-base/">浅析 RefCounted 和 WeakPtr：Chromium Base 篇</a>
         
       </h1>
@@ -412,359 +649,6 @@
 <p><a href="https://www.youtube.com/watch?v=sAJGoHN6Xx8" target="_blank" rel="noopener">CppCon 2015: Detlef Vollmann “Executors for C++ - A Long Story …”</a></p>
 <p>Executor proposal for C++.</p>
 <p>实话说这个 Talk 我感觉效果不好。主题不明确，听起来有点云里雾里莫名其妙；演讲者口音也是捉急…</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/04/23/std-funcion-must-be-copyable/">std::function Must be Copyable</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-04-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>前几天在写一个 <a href="https://github.com/kingsamchen/Eureka/tree/master/TinyThreadPool" target="_blank" rel="noopener">ThreadPool 的轮子</a>的时候，碰到一个问题：无论我用什么办法，都不能将 <code>std::packaged_task</code> 传递到 <code>std::function</code> 中，编译器始终提示访问了 <code>std::packaged_task</code> 被删除的拷贝构造函数。</p>
-<p>在这个点卡了许久，未果，翻了一下 cpp reference，突然发现一个细节：<code>std::function</code> 必须是支持复制的，顿时茅塞顿开。</p>
-<p><code>std::function</code> 包裹的函数对象必须足够轻量，使得 pass-by-value 的 context 下不会出现明显的大量开销，因此这个类型要求指语义是符合逻辑的。</p>
-<p>而 <code>std::packaged_task</code> 不是值语义，仅支持移动语义，因此无法作为 <code>std::function</code> 的一部分。</p>
-<p>最后的解决方案是引入一个 <code>std::shared_ptr</code> 作为中间层，通过 lambda 保存这个 <code>std::shared_ptr</code>。</p>
-<p>附注：本来打算开一个 post 来简单讲解一下如何从头实现一个简单可用的 thread-pool，但是因为懒癌发作，代码写完了也就不想动手写文字了。后面看看是不是有机会可以补上。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/04/11/use-lambda-with-post-task/">Use Lambda With PostTask</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-04-11
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>曾经为了能在 <code>PostTask()</code> 里使用 lambda，实现了一个自动将 non-capturing lambda decay 到对应函数指针，在利用 <code>base::Bind()</code> 的方案<a href="https://kingsamchen.github.io/2017/01/11/automatically-convert-non-capturing-lambdas-to-normal-function-pointers/">[1]</a>。</p>
-<p>但是在使用过程中发现这个方案有几个弊端：</p>
-<ol>
-<li>因为只能使用 non-capture lambda，因此如果需要上下文，只能通过参数传入，这样代码写起来会很蛋疼</li>
-<li>VS 2013 + Resharper 的环境下，使用 <code>lambda_decay()</code> 的代码经常会出现静态分析的错误提示（不清楚是 VS2013 还是 Resharper 的问题），导致每段代码下面都会出现红色的曲线，非常惹眼</li>
-</ol>
-<p>这两天因为需要重构某个模块，又顺便思考了这个问题，后来发现之前一开始思路不太对。</p>
-<p>没有必要做一个兼容 <code>base::Bind()</code> 的解决方案，因为需要的只是在 message-loop 的 PostTask 里使用，这样只要能够将 lambda 包裹到一个 <code>base::Callback&lt;R()&gt;</code> 里就可以了，至于是不是利用 <code>base::Bind()</code> 完成，并不重要！</p>
-<p>结合之前做的 <code>base::Callback</code> 到 <code>std::function</code> 的<a href="https://kingsamchen.github.io/2017/06/15/use-base-bind-with-std-function/">转换</a>，很自然的想到一个最终解决方案。</p>
-<p>代码其实非常简单：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> R&gt;</span><br><span class="line">auto InvokeLambda(const std::function&lt;R()&gt;&amp; fn) -&gt; R</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> fn();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">auto BindLambda(F&amp;&amp; lambda) -&gt; base::Callback&lt;typename std::result_of&lt;F()&gt;::type()&gt;</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">using</span> return_type = <span class="keyword">typename</span> <span class="built_in">std</span>::result_of&lt;F()&gt;::type;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> base::Bind(InvokeLambda&lt;return_type&gt;, <span class="built_in">std</span>::function&lt;return_type()&gt;(<span class="built_in">std</span>::forward&lt;F&gt;(lambda)));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>判断返回类型是因为 <code>PostTaskAndReplyWithResult()</code> 会要求第一个 closure 有指定的返回值，以便第二个 clsoure 使用。</p>
-<p>使用的时候就</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> s = <span class="string">"hello, world"</span>;</span><br><span class="line">base::Closure closure = BindLambda([&amp;s] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"value of s: "</span> &lt;&lt; s &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">closure.Run();</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> cb = BindLambda([] &#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"with int result\n"</span>;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">1024</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; cb.Run();</span><br></pre></td></tr></table></figure>
-<p>为了使用方便，我直接往 chromium base 开了一个 ext，作为以后的扩展。</p>
-<p>因为现在 lambda 可以直接捕捉了，所以重构之后的代码看起来更具可读性；当然前提是要小心被捕捉对象的生命周期，通常这个上下文都应该使用 capture-by-value。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/04/03/compile-libx264-with-asm-optimization-with-vcpkg/">利用 vcpkg 编译带汇编优化的 libx264</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-04-03
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>使用 vcpkg 编译 libx264 有一个很重要的原因：可以获得 PDB，而且构建流程被大大精简了。</p>
-<p>但是这里有一个坑：vcpkg 上的 libx264 模块编译默认是开启了 <code>--disable-asm</code>，意味着构建之后的二进制不会使用 SIMD 指令集，所以性能上会有很大的问题。</p>
-<p>研究了一番之后找到了开启汇编优化的方案。</p>
-<ol>
-<li><p>从官网下载并安装 nasm-2.13</p>
-<p> vcpkg 上通过 acquire-program 提供的 nasm 只有 2.12；而编译 vcpkg 上提供的 libx264-152 需要 nasm-2.13</p>
-</li>
-<li><p>编辑 libx264 的 portfile.cmake 文件</p>
-<p> 在 set bash 的后面加一行</p>
- <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">set</span>(ENV&#123;PATH&#125; <span class="string">"c:/Programs/NASM/;$ENV&#123;PATH&#125;"</span>)</span><br></pre></td></tr></table></figure>
-<p> 这里注意替换你的真实安装目录</p>
-<p> 然后去掉构建参数中的 <code>--disable-asm</code></p>
-</li>
-</ol>
-<p>如果还有地方出错，记得根据提示查日志！</p>
-<p>开启汇编优化后生成的二进制会略大，大概 900 多 KB</p>
-<p>最后赞扬一下微软出品的 vcpkg，真是解决了 Windows 下编译一众开源软件的痛点。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/04/01/monthly-read-posts-in-mar-2018/">Monthly Read Posts in Mar 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-04-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://akumuli.org/akumuli/2015/03/19/sequencer/" target="_blank" rel="noopener">Sorting, caching and concurrency</a></p>
-<p>通过引入基于时间的 sliding window 来标记并剔除（大概率）由错误产生的数据；并且可以利用 SW 来 schedule 数据什么时候从内存持久化到磁盘。</p>
-<p>Patience sort 是 merge-sort 的一种变体，适合对 slightly unordered data 进行排序，最坏情况下退化为 merge-sort。</p>
-<p>实现 optimistic locking 来避免使用 reader-writer locks，进而防止写饥饿。</p>
-<blockquote>
-<p>引入一个原子的 sequence-number，初始状态为0；并且</p>
-<ul>
-<li>merge 操作开始时，sequence-number 自增</li>
-<li>merge 操作结束时，sequence-number 同样自增<br>于是利用 sequence-number 的奇偶性来区分某个操作是否结束</li>
-</ul>
-<p>如果写操作开始但是未完成，则读操作进行退避&amp;重试。</p>
-</blockquote>
-<p>感觉作者这么做应该是结合了业务的上下文；这个 optimistic locking 的策略至少有这么几个前提：</p>
-<ol>
-<li>写操作很重要，不能有明显的延迟</li>
-<li>写操作不会太慢，至少不会导致读操作的延迟超过无法承受的范围</li>
-<li>平台提供的 reader-writer locks 对 writer starvation 的防治策略做的不够好</li>
-</ol>
-<hr>
-<p><a href="http://preshing.com/20120612/an-introduction-to-lock-free-programming/" target="_blank" rel="noopener">An Introduction to Lock-Free Programming</a></p>
-<p>非常赞的 Lock-free 入门文章。</p>
-<p>覆盖了 concepts, CAS operations, memory ordering &amp; memory models</p>
-<p>注：作者 preshing 是个 concurrency programming 领域的大触</p>
-<hr>
-<p><a href="https://getpocket.com/a/read/994738352" target="_blank" rel="noopener">Gentle Introduction to Lockless Concurrency</a></p>
-<p>同样也是一篇 lock-free 的入门文章，但是这这篇文章比起上一篇就差太多了，明显不是一个层次的。</p>
-<p>这篇是基于 Java 来谈 lockless，涉及的点明显局限在了语言自身，没有 preshing 那种站在 bare-metal 角度的犀利。</p>
-<p>注：原文找不到了，大概率被作者自己删了，因此只有 pocket 的备份</p>
-<hr>
-<p><a href="https://www.brianstorti.com/the-actor-model/" target="_blank" rel="noopener">The actor model in 10 minutes</a></p>
-<p>一篇非常赞的 actor model 的介绍文章。</p>
-<p>直接开篇就把模型的本质是 actor，以及 actor 的核心（primitive unit for computation &amp; message passing）讲明了。</p>
-<p>然后延伸到 fault tolerance 和 distribution 上的优势。</p>
-<p>内容比 <em>7 Concurrency Models in 7 Weeks</em> 要好多了，讽刺的是这本书还是这篇文章的 reference 之一。</p>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=_fu0gx-xseY" target="_blank" rel="noopener">CppCon 2015: Gor Nishanov “C++ Coroutines - a negative overhead abstraction”</a></p>
-<p>总结起来就是：</p>
-<ul>
-<li>我们其实很早就开始应用 coroutines 了</li>
-<li>Concurrency TS 里提供的 CPS 也不是万能药</li>
-<li>Coroutine is good, and We want coroutines!</li>
-</ul>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=mPxIegd9J3w" target="_blank" rel="noopener">CppCon 2015: Artur Laksberg “Concurrency TS Editor’s Report”</a></p>
-<p>Brief introduction to concurrency ts.</p>
-<p>涵盖了三点：</p>
-<ul>
-<li>better std::future (with continutation &amp; async/await)</li>
-<li>latch &amp; barrier</li>
-<li>atomic shared_ptr</li>
-</ul>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=fZjYCQ8dzTc" target="_blank" rel="noopener">CppCon 2015: Scott Schurr “constexpr: Introduction”</a><br><a href="https://www.youtube.com/watch?v=qO-9yiAOQqc" target="_blank" rel="noopener">CppCon 2015: Scott Schurr “constexpr: Applications”</a></p>
-<p>第一篇是 <code>constexpr</code> 入门介绍。</p>
-<p>演讲者挺有意思。另外最后面利用 unresolved symbol 来 force as compile time error 有点意思</p>
-<p>第二篇，重点来了，干货十足，compile-time containers 可以研究好一会儿。</p>
-<p>这下基本能明白为什么这哥们要开两个 talk 了，因为一个 talk 这么多内容说不玩啊。</p>
-<hr>
-<p><a href="http://www.thinkingparallel.com/2007/02/19/please-dont-rely-on-memory-barriers-for-synchronization/" target="_blank" rel="noopener">Please Don’t Rely on Memory Barriers for Synchronization!</a></p>
-<p>文章实际上是一片批判文，但是被批判的文章被作者删除了（估计是被喷得太惨了），所以不能拿来做交叉对比。。</p>
-<p>文章核心是在强调原则性的做法，但是因为主要是为了批评，所以没有太多的干活，总结一下就是：</p>
-<ul>
-<li>多看书，不要当民科，自己<strong>发明</strong>轮子</li>
-<li>如无必要，不要使用 memory barrier 这种过于底层且没有移植性的东西</li>
-<li>锁不慢，这篇文章很容易给人错的观念</li>
-<li>先写对，再写快（老生常谈）</li>
-</ul>
-<hr>
-<p><a href="https://www.gnu.org/software/libc/manual/html_node/Overview-of-Syslog.html" target="_blank" rel="noopener">Overview of syslog</a></p>
-<p>（Unix/Linux）系统提供的日志存储仓，对应的 daemon 叫 syslogd，使用的 Unix Domain Socket 名是 <code>/dev/log</code>。</p>
-<p>程序可以使用 syslog.h 文件中的 <code>syslog()</code> 或 <code>vsyslog()</code> 函数往 syslog 写消息，一条消息最重要的有两部分：</p>
-<ul>
-<li>facility，表明谁发的消息</li>
-<li>priority，消息的重要程度</li>
-</ul>
-<hr>
-<p><a href="https://www.youtube.com/watch?v=CZi6QqZSbFg" target="_blank" rel="noopener">C++ Metaprogramming - Fedor Pikus - CppCon 2015</a></p>
-<p><a href="https://www.youtube.com/watch?v=cg1wOINjV9U" target="_blank" rel="noopener">C++ metaprogramming- a paradigm shift - Louis Dionne - CppCon 2015</a></p>
-<p>两个和 C++ TMP 有关的 talk。</p>
-<p>前者是 introduction 性质的，后者嘛。。。其实就是 Boost.Hana 的宣传广告</p>
-<hr>
-<p><a href="http://blog.csdn.net/myan/article/details/1482614" target="_blank" rel="noopener">Java替代C语言的可能性</a></p>
-<p>作者（当时）认为这不存在可能性，总结了三个原因</p>
-<ol>
-<li>Java 程序员的平局水平比起 C 程序员的平均水平还有明显差距，尤其对底层、结构体系的理解</li>
-<li>内存占用过高，带来一系列的性能问题，导致目前（当时）且一段时间内只能做上层应用</li>
-<li>思维方式的问题，Java 程序员被厚重的框架束缚思维</li>
-</ol>
-<p>虽然这是一篇10年前的文章，但是不得不说作者眼光独到。</p>
-<p>现在这三个问题依旧，而且目前 Java 在互联网公司的主战场主要是 Android 开发（受到 Kotlin 挑战）和服务端（中间件，上层 web 服务，受到 Go 冲击），确实还未侵入 C 的核心领域。</p>
-<p>不过个人感觉，未来编程面对的抽象层次会越来越高。</p>
-<hr>
-<p><a href="https://blog.csdn.net/myan/article/details/1906" target="_blank" rel="noopener">垃圾收集机制(Garbage Collection)批判</a></p>
-<p>作者（当时）吐槽主要来自于：繁忙时刻且内存没有明显压力时不会触发 GC，而当内存有明显压力感知的时候，一次 GC 会导致极大的开销。</p>
-<hr>
-<p><a href="https://coelhorjc.wordpress.com/2014/12/18/using-non-blocking-and-asynchronous-io-ck10-problem-in-linux-and-windows-with-epool-iocp-aiolibaio-libeventlibevlibuv-boost-asio/" target="_blank" rel="noopener">USING NON-BLOCKING AND ASYNCHRONOUS I/O (CK10 PROBLEM) IN LINUX AND WINDOWS (WITH EPOOL, IOCP, LIBEVENT/LIBEV/LIBUV/BOOST.ASIO AND LIBRT/LIBAIO)</a></p>
-<p>C10K 问题下的各种解决方案。</p>
-<p>从基础的 reactor（epoll / kqueue）到 proactor （IOCP）</p>
-<p>同时涉及当前流行的网络框架：libev, libeio .etc</p>
-<p>适合技术选型或者了解各平台下实现高性能并发处理的方式</p>
-<hr>
-<p><a href="http://www.sean-bollin.com/2017/05/01/reactor-vs-proactor-part-1-the-reactor/" target="_blank" rel="noopener">Reactor vs. Proactor: Part 1 – The Reactor</a></p>
-<p>PART 1 简单给予 epoll 做了几个例子。</p>
-<p>例子代码写得不好，甚至还出现了利用异常做控制流…</p>
-<p>还好作者太监了没有后续。</p>
-<hr>
-<p><a href="http://insanecoding.blogspot.co.uk/2013/04/designing-c-functions-to-writesave-to.html" target="_blank" rel="noopener">Designing C++ functions to write/save to any storage mechanism</a></p>
-<p>这篇文章写于 2011 年，这个背景很重要。</p>
-<p>在进入 C++ 11 的时代前，相当一部分 C++ 程序员还是<strong>只适应</strong>通过 OO 去构造抽象；而本身就是设计反面教科书的 ostream 体系让相当一部分人在错误的道路上越走越远。</p>
-<p>作者吐槽的就是这点。</p>
-<p>后文给出的 solution 说穿了其实就是，利用 template 进行依赖注入。</p>
-<p>所有写操作，无论是写文件还是写 DB 还是写网络，核心都基于一个具体的 function object，而这个 function object 可以通过 template parameter 进行依赖解耦。</p>
-<p>C++ 11 引入的 <code>std::bind()</code>、 lambda、甚至 <code>std::function</code> 都更加明确了条路子。</p>
-<p>这篇文章有点类似孟岩曾经写的利用 bind + function 去避免继承（运行时多态）的滥用。</p>
-<hr>
-<p><a href="https://computing.llnl.gov/tutorials/pthreads/" target="_blank" rel="noopener">POSIX Threads Programming</a></p>
-<p>Pthreads 简明教程。</p>
-<p>覆盖</p>
-<ul>
-<li>threads VS process (Why using threads)</li>
-<li>pthreads 介绍</li>
-<li>pthreads 创建/销毁</li>
-<li>mutex</li>
-<li>condition variable</li>
-</ul>
-<p>可以作为入门级读物。</p>
-<hr>
-<p><a href="http://insanecoding.blogspot.co.uk/2014/05/copying-code-copying-implementation.html" target="_blank" rel="noopener">Copying code != Copying implementation</a></p>
-<p>一开始我还以为是作者专门写文章解释他为什么会 copy code，看完才发现不是这样。</p>
-<p>作者的观点是：（遵守 license）从开源项目里抄代码直接用是不靠谱的，一定要注意，代码所处的上下文，搞清楚是不是有什么 prerequisites 或者 hidden requirements。</p>
-<p>中间还专门举了几个例子。</p>
-<hr>
-<p><a href="https://medium.com/@AikoPath/visualising-and-prioritizing-technical-debt-afc82e542681" target="_blank" rel="noopener">Visualising and Prioritizing Technical Debt</a></p>
-<p>核心：将技术债具象化，无论是采用四象限法还是技术债树。</p>
 
         
       

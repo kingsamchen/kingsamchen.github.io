@@ -182,6 +182,232 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/03/24/on-socks4a-proxy-implementation/">socks4a 协议代理</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-03-24
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>对于网络编程学习而言，尝试实现一个 proxy 是一个很好的途径。因为一个 proxy 对于 clients 来说是 server，对 remote servers 来说又是 client，一下就覆盖到了网络编程的两个大块。</p>
+<p>同时，需要管理/协调两侧的连接对如何正确的处理网络连接的关闭也是一个挑战。</p>
+<p>对比普通的 HTTP Proxy，socks4a proxy 作为 transport layer proxy 在协议自身上更加”干净“（不需要像 HTTP Proxy 那样解析厚重的各种 header 以及对 HTTPS 的特殊处理），也更贴近 TCP 网络编程的具体实践。</p>
+<p>对比更新的 socks5，socks4a 仅支持 TCP，对 TLS 信道加密没有协议上的要求，更容易实现。</p>
+<p>另，<a href="https://www.openssh.com/txt/socks4a.protocol" target="_blank" rel="noopener">socks4a</a> 协议是 <a href="https://www.openssh.com/txt/socks4.protocol" target="_blank" rel="noopener">socks4</a> 的一个补丁版，两个协议的 RFC 文本打印下来整体不超过两页 A4 纸，半个小时就能看完。</p>
+<p>上周的时候我为 ezio 增加了一个 socks4a 的<a href="https://github.com/kingsamchen/ezio/tree/master/examples/socks4a" target="_blank" rel="noopener">简单实现</a>，过程中发现了 <code>TCPClient</code> 在 teardown 时存在<a href="https://github.com/kingsamchen/ezio/commit/24c1dc4d6af91f03dd748d4a3713280e71eaceef" target="_blank" rel="noopener">缺陷</a>，有概率导致连接的断开和 <code>TCPClient</code> 的析构出现 race。</p>
+<p>同时还发现作为测试的 curl v7.46 （ubuntu 16.04 LTS apt 版本）在处理 HTTPS 请求时存在缺陷，会导致 client connection 过早断开，proxy 出现 RST 错误。</p>
+<p>这说明拿 socks4a proxy 作为熟悉具体的语言/网络库的编程范式的例子还是非常不错的。</p>
+<p>注：socks4a 协议有两个连接模式：常用的 <code>CONNECT</code> 和 <code>BIND</code>，后者是为了适应 FTP 的 <a href="https://stackoverflow.com/questions/1699145/what-is-the-difference-between-active-and-passive-ftp" target="_blank" rel="noopener">active mode</a> 而存在的，现在基本没有使用的必要，可以直接忽略。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/03/13/recommend-google-api-design-guide/">推荐 Google API Design Guide</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-03-13
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://cloud.google.com/apis/design/" target="_blank" rel="noopener">Google API Design Guide</a></p>
+<p>基本上 可以看作是 Google 开放的 API 设计指南。</p>
+<p>大体上，Google 对外公开的 API 设计有如下几个特点：</p>
+<ol>
+<li>resource oriented design</li>
+<li>support both gRPC API and REST API</li>
+<li>use protobuf for transcoding</li>
+</ol>
+<p>看到第一点的时候还是相当震惊的。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/03/02/monthly-read-posts-in-feb-2019/">Monthly Read Posts in Feb 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-03-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Network"><a href="#Network" class="headerlink" title="Network"></a>Network</h2><p><a href="https://www.mnot.net/blog/2018/11/27/header_compression" target="_blank" rel="noopener">Designing Headers for HTTP Compression</a></p>
+<p>看起来是 HTTP/2 的 header compression 使用建议</p>
+<hr>
+<p><a href="https://www.mnot.net/blog/2017/05/11/status_codes" target="_blank" rel="noopener">How to Think About HTTP Status Codes</a></p>
+<p>HTTP status codes 使用建议。</p>
+<p>适合结合 Rest API design 相关文章一起食用。</p>
+<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://tonybai.com/2016/12/21/how-to-use-timer-reset-in-golang-correctly/" target="_blank" rel="noopener">论golang Timer Reset方法使用的正确姿势</a></p>
+<p>golang 这破 timer 坑真多</p>
+<hr>
+<p><a href="https://jonasdevlieghere.com/guaranteed-copy-elision/" target="_blank" rel="noopener">Guaranteed Copy Elision</a></p>
+<p>C++ 17 Guaranteed copy elision explained.<br>
+          <div class="read-more">
+            <a href="/2019/03/02/monthly-read-posts-in-feb-2019/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/02/23/using-sangfor-vpn-on-linux/">在 Linux 上使用深信服 VPN</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-02-23
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>因为公司使用 Windows 和 MacOS 的人最多，因此导致两个后果：</p>
+<ol>
+<li>连接公司内网需要使用的深信服 VPN 基本只支持 Windows 和 MacOS</li>
+<li>后端 golang 大仓代码基本只能在 MacOS 或者 Linux 上提交和调试</li>
+</ol>
+<p>求一下交集可以发现，在贵司使用 Linux 作为开发平台的同学应该很难过。很不幸的是，我刚好属于那种在 Linux (虚拟机里跑 Mint) 上写后端服务的人。</p>
+<p>公司买的深信服的 VPN 服务，那个客户端虽然官方宣称支持 ubuntu，但是事实是压根不能用，连接成功后一旦有数据包就自动断开。</p>
+<p>官方论坛有人反映过类似的问题，得到的回答千篇一律都是推荐使用 Windows 和 MacOS。</p>
+<p>然而让我使用屎一样的 MacOS 是不可能的；让我在自己的主力台式机的 Windows 上装深信服的客户端也是不可能的。<br>
+          <div class="read-more">
+            <a href="/2019/02/23/using-sangfor-vpn-on-linux/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/02/10/use-cmake-and-git-as-your-cpp-dependency-manager/">C++ 工程依赖管理新方向：CMake & Git</a>
         
       </h1>
@@ -371,250 +597,6 @@
         
       
     </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/01/08/bad-smells-in-golang/">来一口 golang 做的玻璃渣</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-01-08
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>转到后端差不多也快三个月了，拿 golang 糊代码的时间算上自己平时写的一些练手 demo 加起来差不多也有一个月。</p>
-<p>这将近一个月的时间过来差不多能体会到 golang 的设计精髓，那就是：<em>simple &amp; stupid, being convenient as the first class support</em>.</p>
-<p>换句话说就是：短平快糙猛，满口玻璃渣，怎么方便怎么来。</p>
-<p>所以接下来不免俗地是吐槽 golang 设计的内容。</p>
-<p>吐槽不考虑 PLT 上的设计，纯粹从日常堆业务逻辑出发。毕竟理论的东西我一个鶸也不懂，且 golang 的设计目的就是方便应届毕业生快速堆业务代码。</p>
-<p>以下吐槽点的顺序为自己在实际中遇到的顺序逆序。</p>
-<h3 id="Flaky-Goroutines"><a href="#Flaky-Goroutines" class="headerlink" title="Flaky Goroutines"></a>Flaky Goroutines</h3><p>golang 里起一个 goroutine 很方便，但是目前感觉 goroutine 太过于 flaky，有点飘。一旦没用 <code>chan struct{}</code> 或者 <code>sync.WaitGroup</code> ”固定好“，就总有一种这玩意儿是不是已经脱离自己手心的感觉。</p>
-<p>另外不知道是不是很多用 golang 的人之前都是 php / python 的背景，相当一部分人其实对 goroutine-safe 没有什么概念。不过严格来说这个不是 golang 自身的问题。</p>
-<h3 id="Cannot-assign-to-fields-within-short-declaration-notation"><a href="#Cannot-assign-to-fields-within-short-declaration-notation" class="headerlink" title="Cannot assign to fields within short declaration notation"></a>Cannot assign to fields within short declaration notation</h3><p>代码段</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">foobar</span><span class="params">()</span> <span class="params">(<span class="keyword">bool</span>, error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> err error</span><br><span class="line">	ok, err := foobar()</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(<span class="string">"error"</span>)</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		fmt.Println(ok)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>是合法的，因为 <code>ok</code> 之前并没有被定义，所以这里 <code>err</code> 可以蹭着使用 <code>:=</code>。<br>
-          <div class="read-more">
-            <a href="/2019/01/08/bad-smells-in-golang/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/01/01/monthly-read-posts-in-dec-2018/">Monthly Read Posts in Dec 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-01-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://medium.com/golangspec/init-functions-in-go-eac191b3860a" target="_blank" rel="noopener">init functions in Go</a></p>
-<p>这篇 post 总结起来就是深入浅出。</p>
-<hr>
-<p><a href="https://www.fluentcpp.com/2017/01/05/the-importance-of-knowing-stl-algorithms/" target="_blank" rel="noopener">The importance of knowing STL algorithms</a></p>
-<p>能熟练运用 STL algorithms 是一个 experienced c++ programmer 的基本要求。</p>
-<p>另外里面提到了使用 algorithms 的两个 pitfalls，其中一个是滥用 <code>for_each()</code>，这个确实有点意思。<br>
-          <div class="read-more">
-            <a href="/2019/01/01/monthly-read-posts-in-dec-2018/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/12/16/expand-linux-vm-disk-size/">虚拟机 Linux Mint 磁盘扩容</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-12-16
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>之前在虚拟机里创建 mint 时磁盘就给了 20G 的 SSD，最近发现可用容量捉襟见肘，必须要扩容一波。</p>
-<p>摸索了一下发现给虚拟机里的 linux 磁盘扩容并不是那么简单直白，至少有几个坑，所以稍微做了一些记录，以备日后不时之需。</p>
-<h3 id="Step-0：通过虚拟机给系统增加磁盘容量"><a href="#Step-0：通过虚拟机给系统增加磁盘容量" class="headerlink" title="Step 0：通过虚拟机给系统增加磁盘容量"></a>Step 0：通过虚拟机给系统增加磁盘容量</h3><p>这一步比较简单，VMWare 的话直接在虚拟机属性里可以进行 expand；VirtualBox 应该类似。</p>
-<h3 id="Step-1-装配增加的磁盘容量"><a href="#Step-1-装配增加的磁盘容量" class="headerlink" title="Step 1: 装配增加的磁盘容量"></a>Step 1: 装配增加的磁盘容量</h3><p>这一步比较麻烦的原因是，如果你的 linux 和我一样一开的时候使用默认安装，那么一般主分区后面会跟着一个 swap 分区，导致我们新增加的磁盘容量不和主分区连续。</p>
-<p>所以我们要做的是把 swap 分区挪到最后。</p>
-<p>首先安装 gparted，这玩意儿带 GUI，用起来也很直观。</p>
-<p>Mint 下直接利用</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install gparted</span><br></pre></td></tr></table></figure>
-<p>装完后记的用管理员权限运行。</p>
-<p>然后，首先将 linux-swap 分区停掉，操作是：右键，然后选择 swapoff</p>
-<p>注：下面的操作在 gparted 中会是一个模拟操作，所有操作完之后再进行 apply。尽量别中途 apply！</p>
-<p>接着删除这个 linux-swap 分区，然后选择 linux-swap 的父分区，进行 Move / Resize。</p>
-<p>通过调整示意图中的容量条，将这整个分区挪到最后，保证我们新分配的容量分区和主分区连续。</p>
-<p>再接着选择主分区，一样是利用 Move / Resize，进行容量扩增。</p>
-<p>接着别忘了重新创建回我们的 linux-swap。</p>
-<p>最后选择 apply changes 即可</p>
-<h3 id="Step-2：重新启用-swap"><a href="#Step-2：重新启用-swap" class="headerlink" title="Step 2：重新启用 swap"></a>Step 2：重新启用 swap</h3><p>首先记录现在的 linux-swap 的 UUID。</p>
-<p>然后用管理员权限打开 <code>/etc/fstab</code>，找到记录 swap 的项，更新 UUID。</p>
-<p>最后重启系统。</p>
-<p>重启后检查 swap 分区是否已经真的 active 了。这一步很重要，不然你会发现扩容后系统启动非常慢（因为 <code>/etc/fstab</code> 里的记录有问题）</p>
-<p>检查可以通过系统自带的磁盘工具，看看 linux-swap 是否是 active 状态就行。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/12/09/give-up-adding-sigint-handler-for-ezio/">放弃给 ezio 加 SIGINT Handler</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-12-09
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>原本的计划是今天给 <a href="https://github.com/kingsamchen/ezio" target="_blank" rel="noopener">ezio</a> 加上 SIGINT 的处理：自动退出运行的 <code>EventLoop</code>，让程序自主正常退出；但是在实现 Windows 版本的过程中发现了一些问题，最后思考再三，决定放弃整个特性。</p>
-<p>在 Linux 上，这个实现很简单：添加一个 class <code>SigIntHandler</code>，在构造函数中利用 <code>signal(SIGINT, handler)</code> 安装自定义的处理函数，然后将这个类作为 <code>IOServiceContext</code> 的一个成员就行。</p>
-<p>而 Windows 下可以用 <code>SetConsoleCtrlEvent()</code> 安装 handler，然后处理对应的 Ctrl+C 事件。</p>
-<p>但是在 Windows 下实现是遇到了一点问题：测试过程中我发现退出一直没效果。</p>
-<p>退出的代码如下：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">QuitEventLoop</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// Acquire from TLS</span></span><br><span class="line">    <span class="keyword">auto</span> loop = EventLoop::current();</span><br><span class="line">    <span class="keyword">if</span> (loop) &#123;</span><br><span class="line">        loop-&gt;Quit();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>挂上调试器后我发现两个事实：</p>
-<ul>
-<li>loop 是 <code>nullptr</code></li>
-<li>执行这个函数的线程是一个<strong>新线程</strong></li>
-</ul>
-<p>第二点可以解释第一点。</p>
-<p>查了一下 MSDN 发现这是 by-design：<code>SetConsoleCtrlEvent()</code> 永远是运行在一个独立线程。</p>
-<p>Linux 下因为 signal-handler 的调用都是在主线程，所以可以拿到主线程 TLS 里的 event-loop。</p>
-<p>Windows 这么设计是因为他们觉得 Unix / Linux 的 signal 机制太危险，容易出问题（多线程不友好不说，还独立引入了 async signal-safety 的概念）。详情可以参考 Raymond Chen 写的<a href="https://blogs.msdn.microsoft.com/oldnewthing/20080728-00/?p=21453" target="_blank" rel="noopener">这篇</a>。</p>
-<p>那么，要在 Windows 上实现类似的效果，必须要能够拿到主线程的 <code>EvenetLoop</code>，我思前想后，除了引入一个 main event-loop 的概念之外，很难保持当前抽象框架上解决这个问题。</p>
-<p>同时为可考虑到两个平台的基本行为的一致性，最终我放弃了这个特性。</p>
-<p>毕竟，在服务器上跑着的服务，一般都是由类似 <code>supervisor</code> 驱动并且长期运行在后台的 XD。</p>
-
-        
-      
-    </div>
 
     
 

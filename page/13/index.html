@@ -182,6 +182,215 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2018/03/08/tiny-concurrent-http-server-on-windows-and-linux/">Tiny Concurrent Http Server on Windows and Linux</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>前段时间趁着春节，分别基于 IOCP 和 epoll 实现了 demo 级别的 http server（在遵守 http 1.1 socket 复用基础上只提供了某个指定目录下文件的 GET），算是简单的过了一下 proactor 和 reactor 模型下的 TCP 并发服务。</p>
+<p>功能做的很粗糙，并且没有封装类似 event-loop 的东西，连接管理也基本算是纸糊的，原因还是前面说过的，只是想过一下两种模型，并且，在不研究当前流行的 paradigm 的前提下，凭借自己的 first understanding / hunch 去实现；等对这块有一段时间的研究后，作为参照，来回对比以加深理解。</p>
+<p>我觉得这是一种不错的学习方式。</p>
+<p>代码可以看 <a href="https://github.com/kingsamchen/Eureka/tree/master/ConcurrentHttpServer" target="_blank" rel="noopener">这里</a></p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/03/07/ffmpeg-logging-utils-use-erroneous-format-specifiers/">被 FFmpeg 的日志模块撞了一下腰</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-07
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>周末的时候客服同学反馈有个用户出现了崩溃，并且要来了崩溃 dmp 文件。</p>
+<p>挂上 windbg 后发现崩溃原因是 CRT 的 <code>invalid-parameter</code> 异常，第一现场是输出 ffmpeg 的 avcodec 模块的日志。</p>
+<p>省略中间若干分析过程，直击结论：FFmpeg 的 Windows 构建并不是用 MSVC 编译的，因此在类似 <code>printf()</code> 函数的 format specifier 使用上出现了偏差。</p>
+<p>代码使用 <code>%td</code> 输出 <code>ptrdiff_t</code> 类型，而 VS2017 之前的版本并不支持这个 format specifier，因此函数调用 <code>_vsnprintf_p()</code> 出现了参数异常，导致程序挂掉。</p>
+<p>虽然 VS 2017 很厚道的支持了这个格式，但是某直播姬的工具链是 VS 2013，且短时间不可能调整，因此最后的解决方案是，上层安装的 logging hook 在输出日志时，首先修正一遍 format 里的 specifier，替换为 VS 2013 支持的 <code>%Id</code>。</p>
+<p>注意，类似的还有 <code>size_t</code> 的 format specifier。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/03/04/display-utf-8-string-in-vs-debugger/">在 VS C++ 的调试器中正确显示 UTF-8 字符串内容</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>众所周知，UTF-8 在 Windows 上一直都不是一等公民，在 MSVC 的调试器里，<code>std::string</code> 默认按照本地编码解释，在中文系统上是 GBK 或 GB2312。</p>
+<p>于是，如果一个 <code>std::string</code> 或者 <code>char[]</code> 里存储的是 UTF-8 编码的字符串，那么非 ASCII 部分就会乱码。这在调试中是一个非常不好的体验。</p>
+<p>研究了一下发现早在 VS 2005，调试器实际上就已经支持了对 UTF-8 字符串的显示，只是不作为默认的编码。</p>
+<p>按照 UTF-8 进行解释的方式很简单，在 watch 中添加<strong>字符串起始地址</strong>，后接 <code>, s8</code> 即可。</p>
+<p>注意的是，对于 <code>std::string</code>，要用 <code>std::string::c_str()</code> 或者 <code>std::string::data()</code> 获取字符串起始地址。</p>
+<p>更简单的做法是在 intermedaite window 中，使用 <code>? str.c_str(), s8</code></p>
+<p>注：如果变量被优化后提示 <code>c_str()</code> 或 <code>data()</code> 无法访问到有效数据，则可以使用 <code>&amp;str[0]</code>。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2018/03/02/monthly-read-posts-in-feb-2018/">Monthly Read Posts in Feb 2018</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2018-03-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="https://baptiste-wicht.com/posts/2012/07/c11-concurrency-tutorial-part-4-atomic-type.html" target="_blank" rel="noopener">C++11 Concurrency Tutorial - Part 4: Atomic Types</a></p>
+<p>WTF ??</p>
+<hr>
+<p><a href="https://www.zhihu.com/question/24301047" target="_blank" rel="noopener">如何理解 C++11 的六种 memory order？</a></p>
+<p>参考意义不大，还是老老实实是看官方 reference 或者 <em>C++ Concurrency in Action</em> 形式化的描述吧。</p>
+<hr>
+<p><a href="http://cbloomrants.blogspot.hk/2012/05/05-30-12-on-c-atomic-fences.html" target="_blank" rel="noopener">05-30-12 - On C++ Atomic Fences</a></p>
+<p>可配合书阅读，稍作了解即可。</p>
+<p>C++ 中 atomic 附带的 ordering operations 和直接的 fences 还是有明显差别的。</p>
+<hr>
+<p><a href="http://www.cl.cam.ac.uk/~pes20/cpp/cpp0xmappings.html" target="_blank" rel="noopener">C/C++11 mappings to processors</a></p>
+<p>仅供参考，实际意义不大，除非要做非 x86 的 lock-free</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2018/02/26/the-new-dark-age/">靴子落地</a>
         
       </h1>
@@ -395,260 +604,6 @@ LPFN_DISCONNECTEX DisconnectEx = <span class="hljs-literal" style="color: rgb(25
 </pre>
 
 <p>完整的 sample 可以看<a href="https://github.com/kingsamchen/Eureka/blob/master/ConcurrentHttpServer/ConcurrentHttpServerWin/src/winsock_ctx.h" target="_blank" rel="noopener">这里</a></p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/02/10/acquire-crashed-module-name-and-address-offset/">在 Windows 上获取崩溃的模块名和模块内地址偏移</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-02-10
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>如果应用程序存在多个模块，那么有很大的可能通过 <code>SetUnhandledException()</code> 安装的崩溃处理函数和发生崩溃的地址不在一个模块内，因此直接在 crash handler 里使用当前模块地址是错误的做法。</p>
-<p>一个可行的方法是，利用崩溃时的上下文信息 <code>EXCEPTION_POINTERS</code>，拿到触发崩溃的地址 EIP/RIP，然后利用 Windows 7 新增的 <code>GetMappedFileNameW()</code> 拿到某个地址所在的模块的完整设备路径。</p>
-<p>接下来通过简单的字符串处理就可以获得模块名。</p>
-<p>剩下的就是模块内地址偏移。</p>
-<p>因为 Windows 程序的 DLL 在加载时很有可能因为 <em>preferred base address</em> 被占用了导致 DLL 的符号地址需要先经过一次 rebase；再考虑 ASLR 的影响，崩溃时的 EIP/RIP 基本上是不能拿来作为崩溃标识的，因为同一处崩溃的地址可能每次运行都会变。</p>
-<p>解决方案是通过 <code>GetModuleHandleW()</code> 拿到模块实际的加载地址，然后再和前面的崩溃地址做一次 distance 运算就可以拿到了模块内地址偏移。</p>
-<p>这样，name+offset 基本上可以作为 key 用来做崩溃信息的聚合。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/02/02/monthly-read-posts-in-jan-2018/">Monthly Read Posts in Jan 2018</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-02-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://solarianprogrammer.com/2017/12/27/cpp-17-constexpr-everything-as-much-as-the-compiler-can/" target="_blank" rel="noopener">C++17 constexpr everything (or as much as the compiler can)</a></p>
-<p>名字不明觉厉结果是入门级读物，有点水…</p>
-<hr>
-<p><a href="https://blogs.msdn.microsoft.com/satyem/2012/08/13/threads-stack/" target="_blank" rel="noopener">Thread’s Stack</a></p>
-<p>Windows 线程栈内存的布局，包括 guard page 来提示栈溢出的一些细节</p>
-<hr>
-<p><strong>下面是一些 Talk</strong></p>
-<p><a href="https://www.youtube.com/watch?v=LIb3L4vKZ7U" target="_blank" rel="noopener">allocator Is to Allocation what vector Is to Vexation - Andrei Alexandrescu - CppCon 2015</a></p>
-<p>只能说不明觉厉，因为学不到什么有用的东西…</p>
-<p><a href="https://www.youtube.com/watch?v=TRgWJuQhkQo" target="_blank" rel="noopener">CLANG C2 for Windows - Jim Radigan - CppCon 2015</a></p>
-<p>演讲者似乎是这个项目的主导，并且实现了 MSVC 的 coroutine。</p>
-<p>期待什么时候 clang/c2 可以作为 MSVC 的默认配置…</p>
-<p>另：演讲者长得有点像 house of cards S4 里的 Mark Usher，很 charming</p>
-<p><a href="https://www.youtube.com/watch?v=-ROXIG4raiA" target="_blank" rel="noopener">Applying functional programming in code design - Michał Dominiak - CppCon 2015</a></p>
-<p>很糟糕的一个 talk，难以想象这么有意思的 topic，talk 全程居然没有一行代码的展示….</p>
-<p>不过里面提到的 node-based data structures 适合用来实现 functional programming 的一些基础设施，我一开始完全是懵逼的，直到看了 Seven Concurrency in Seven Weeks 里的第一章还是第二章，才意识到核心是什么。可见这个 talk 是多么的不友好。</p>
-<p><a href="https://www.youtube.com/watch?v=DS2m7T6NKZQ" target="_blank" rel="noopener">C++11, 14, 17 Atomics - the Deep Dive - Michael Wong - CppCon 2015</a></p>
-<p>作者是 IBM compiler team 的 director，说话有点意思。</p>
-<p>另外这个 talk 的 PPT 值得研究一下，尤其是涉及到 happens-before / synchronized-with .etc 这类同步语义的内容</p>
-<hr>
-<p>因为一月份快接近年底了，事情比较多，也很杂，所以自己的学习进度明显被拖慢了，希望从2月份开始能够迅速回到正常节奏。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/23/initialize-atom-flag-the-right-way/">正确地初始化 std::atomic_flag</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>根据标准文档的要求，<code>std::atomic_flag</code> 只有利用 <code>ATOMIC_FLAG_INIT</code> 初始化之后，才获得一个确定的初始状态。</p>
-<p>现在假设我们要自己实现一个 spin-lock，那么只需要利用 <code>std::atomic_flag</code> 实现一个 spin-mutex：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    SpinMutex()</span><br><span class="line">        : flag_(ATOMIC_FLAG_INIT)</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>事实上，知名著作 <em>C++ Concurrency in Action 1st Edition</em> 中介绍 <code>std::atomic_flag</code> 时用的也是一模一样的代码。</p>
-<p>然而，这段代码在比较新的 C++ 编译器上会编译失败。</p>
-<p>VS2017 直接提示失败，Clang 3.9 出现一个警告。</p>
-<p>问题的根源是，标准委员会对：如何时用 <code>ATOMIC_FLAG_INIT</code> 初始化 <code>std::atomic_flag</code> 存在分歧和反复，导致 C++ 11 和 C++ 14 在这个点上存在不一致。</p>
-<p>万能的 StackOverflow 刚好有一个<a href="https://stackoverflow.com/questions/24437396/stdatomic-flag-as-member-variable" target="_blank" rel="noopener">相关的问题</a></p>
-<h3 id="正确的做法"><a href="#正确的做法" class="headerlink" title="正确的做法"></a>正确的做法</h3><p>正确的做法仍然是遵循标准要求的 <em>used in the copy-initialized context</em>，即：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SpinMutex</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">lock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (flag_.test_and_set(<span class="built_in">std</span>::memory_order_acquire)) &#123;&#125;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">unlock</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        flag_.clear(<span class="built_in">std</span>::memory_order_release);</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// Initialize to clear state.</span></span><br><span class="line">    <span class="comment">// Don't use initialization list for `flag_`.</span></span><br><span class="line">    <span class="built_in">std</span>::atomic_flag flag_ = ATOMIC_FLAG_INIT;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<h3 id="MISC"><a href="#MISC" class="headerlink" title="MISC"></a>MISC</h3><p>在 VS2017 中，可以在 member initialization list 中用 <code>{}</code> 而不是 <code>()</code> 初始化，能正常编译通过。但是同一做法在其他编译器上没有效果。</p>
-<p>因此，在这种涉及 unspecified 的点上，尽量使用标准的做法，避免之后更换编译器踩坑。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2018/01/15/the-issue-binding-to-privately-inherited-member-function/">Binding to Privately Inherited Member Functions</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2018-01-15
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>考虑代码</p>
-<pre class="hljs" style="display: block; overflow-x: auto; padding: 0.5em; background: rgb(51, 51, 51); color: rgb(255, 255, 255);"><span class="hljs-meta" style="color: rgb(252, 155, 155);">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;functional&gt;</span></span>
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Base {
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
-    <span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">void</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">Foo</span><span class="hljs-params">(<span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> n)</span>
-    </span>{
-        <span class="hljs-built_in" style="color: rgb(255, 255, 170);">printf</span>(<span class="hljs-string" style="color: rgb(162, 252, 162);">"the value is %d"</span>, n);
-    }
-};
-
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">class</span> Derived : Base {
-<span class="hljs-keyword" style="color: rgb(252, 194, 140);">public</span>:
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">using</span> Base::Foo;
-};
-
-<span class="hljs-function"><span class="hljs-keyword" style="color: rgb(252, 194, 140);">int</span> <span class="hljs-title" style="color: rgb(255, 255, 170);">main</span><span class="hljs-params">()</span>
-</span>{
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">auto</span> f = <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::bind(&amp;Derived::Foo, <span class="hljs-built_in" style="color: rgb(255, 255, 170);">std</span>::placeholders::_1, <span class="hljs-number" style="color: rgb(211, 99, 99);">10</span>);
-    Derived o;
-    f(&amp;o);
-    <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
-}</pre>
-
-<p>编译会提示出错，错误信息类似：_Failed to specialize function template ‘unknown-type std::_Binder&lt;std::_Unforced,void (__cdecl Base::* )(int),const std::_Ph<1> &amp;,int&gt;::operator ()(<em>Unbound &amp;&amp;…) const’</em></1></p>
-<p>根本原因是，即使前面使用了 <code>using Base::Foo;</code>, 也只是改变了这个函数在子类中的可见性，影响名字查找；并没有真的在子类中添加了这个函数，因此 <code>&amp;Derived::Foo</code> 实际上获取的类型是 <code>void (Base::*)(int)</code>，而正是这个类型影响了 <code>std::bind()</code> 的实例化。</p>
-<p>因此当后面用 <code>Derived</code> 的实例去调用 function object 时会失败。</p>
-<p>Stackoverflow 上有一个<a href="https://stackoverflow.com/questions/36263159/binding-to-privately-inherited-member-function" target="_blank" rel="noopener">类似的问题</a>，可以参考。</p>
-<h2 id="Workaround"><a href="#Workaround" class="headerlink" title="Workaround"></a>Workaround</h2><p><strong>(1) 子类增加一个 call-wrapper</strong></p>
-<p>然而大多数采用 private-inheritance 而不是 composition 的情况下，都是避免添加各种 call-wrapper</p>
-<p><strong>(2) 绑定 lambda 而不是函数指针</strong></p>
-<p>这是一个推荐的做法</p>
-<p><strong>(3) 强行用 reinterpret_cast&lt;&gt;</strong></p>
-<p>呃… let’s don’t be evil</p>
 
         
       

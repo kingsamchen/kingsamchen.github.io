@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2020-06-28T15:17:24.037Z</updated>
+  <updated>2020-08-16T08:39:01.043Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,125 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>再谈 passkey idiom</title>
+    <link href="http://kingsamchen.github.io/2020/08/16/passkey-idiom-part-2/"/>
+    <id>http://kingsamchen.github.io/2020/08/16/passkey-idiom-part-2/</id>
+    <published>2020-08-16T08:18:35.000Z</published>
+    <updated>2020-08-16T08:39:01.043Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;我在 &lt;a href=&quot;/2020/07/02/passkey-idiom-for-make-functions/&quot; title=&quot;Passkey Idiom&quot;&gt;Passkey Idiom&lt;/a&gt; 这篇文章中介绍了如何使用 passkey idiom
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
+    
+      <category term="explicit" scheme="http://kingsamchen.github.io/tags/explicit/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>The std::byte For Byte Addressing</title>
+    <link href="http://kingsamchen.github.io/2020/07/14/the-std-byte/"/>
+    <id>http://kingsamchen.github.io/2020/07/14/the-std-byte/</id>
+    <published>2020-07-13T16:55:59.000Z</published>
+    <updated>2020-08-16T08:16:19.270Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;时隔多年，C++ 17 终于迎来了专门用于 byte-oriented access 的数据类型 &lt;code&gt;std::byte&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;之所以引入一个新的类型是因为之前不管是 &lt;code&gt;char&lt;/code&gt; 还是 &lt;code&gt;unsigned
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Passkey Idiom</title>
+    <link href="http://kingsamchen.github.io/2020/07/02/passkey-idiom-for-make-functions/"/>
+    <id>http://kingsamchen.github.io/2020/07/02/passkey-idiom-for-make-functions/</id>
+    <published>2020-07-01T16:28:19.000Z</published>
+    <updated>2020-07-04T08:55:14.196Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;如果出于某些目的希望将某个类的构造函数设置为 private，并提供工厂函数 &lt;code&gt;Make()&lt;/code&gt; 创建最终对象；工厂函数中通常会使用 &lt;code&gt;std::make_unique()&lt;/code&gt; 或者
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="make_unique" scheme="http://kingsamchen.github.io/tags/make-unique/"/>
+    
+      <category term="make_shared" scheme="http://kingsamchen.github.io/tags/make-shared/"/>
+    
+      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Golang&#39;s Options Pattern</title>
+    <link href="http://kingsamchen.github.io/2020/06/30/golang-options-pattern/"/>
+    <id>http://kingsamchen.github.io/2020/06/30/golang-options-pattern/</id>
+    <published>2020-06-30T01:29:23.000Z</published>
+    <updated>2020-07-04T08:55:14.196Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;可以将 Golang 的 &lt;em&gt;Options Pattern&lt;/em&gt; 视作（有副作用）函数式版的 &lt;em&gt;Builder Pattern&lt;/em&gt;，其核心是：特定的 option-function 调用会生成对应的类型为 Option 的闭包，执行闭包会修改内部的
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="options" scheme="http://kingsamchen.github.io/tags/options/"/>
+    
+      <category term="design patterns" scheme="http://kingsamchen.github.io/tags/design-patterns/"/>
+    
+  </entry>
   
   <entry>
     <title>保持 ASIO io_context 无任务时运行</title>
@@ -507,122 +626,6 @@
       <category term="atomic" scheme="http://kingsamchen.github.io/tags/atomic/"/>
     
       <category term="systemd" scheme="http://kingsamchen.github.io/tags/systemd/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Acquire/Release Operation 和 Acquire/Release Fence</title>
-    <link href="http://kingsamchen.github.io/2019/08/31/acquire-release-operations-and-fences/"/>
-    <id>http://kingsamchen.github.io/2019/08/31/acquire-release-operations-and-fences/</id>
-    <published>2019-08-31T15:26:19.000Z</published>
-    <updated>2019-08-31T16:20:19.661Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;其实是 Jeff Preshing 的 &lt;a href=&quot;https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/&quot; target=&quot;_blank&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="memory fence" scheme="http://kingsamchen.github.io/tags/memory-fence/"/>
-    
-      <category term="memory ordering" scheme="http://kingsamchen.github.io/tags/memory-ordering/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>解决 CMake 依赖工程中同名 cmake 函数调用混乱</title>
-    <link href="http://kingsamchen.github.io/2019/08/18/resolve-clashed-cmake-function-call/"/>
-    <id>http://kingsamchen.github.io/2019/08/18/resolve-clashed-cmake-function-call/</id>
-    <published>2019-08-18T12:52:04.000Z</published>
-    <updated>2019-08-18T13:18:12.754Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;拿 learn-asio 这个项目练手时发现一个问题：learn-asio 依赖了 KBase，这两个项目都是我用 anvil 进行托管的，所以两个项目的 cmake 目录里各自有一份 &lt;code&gt;compiler_*.cmake&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;因为
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
-      <category term="anvil" scheme="http://kingsamchen.github.io/tags/anvil/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>安利 asio-cmake</title>
-    <link href="http://kingsamchen.github.io/2019/08/10/asio-cmake-package-wrapper/"/>
-    <id>http://kingsamchen.github.io/2019/08/10/asio-cmake-package-wrapper/</id>
-    <published>2019-08-10T08:33:28.000Z</published>
-    <updated>2019-08-10T10:13:53.871Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;0x00-Background&quot;&gt;&lt;a href=&quot;#0x00-Background&quot; class=&quot;headerlink&quot; title=&quot;0x00 Background&quot;&gt;&lt;/a&gt;0x00 Background&lt;/h2&gt;&lt;p&gt;考虑到 ASIO 的相当一部分组件（subset）已经进入了 C++ 20 Networking TS，未来再经过一些小调整之后成为标准库的一员基本板上钉钉。&lt;/p&gt;
-&lt;p&gt;那么提前熟悉一下 ASIO 也不是什么坏事，毕竟没准等到 C++ 23 的时候，coroutine, networking, executor 啥的都已经很完备了，谁都可以用 C++ 实现一些性能不差的 server-end 代码了（比如 RPC 框架？）。&lt;/p&gt;
-&lt;p&gt;不过和使用 Boost 类似，使用 ASIO 作为依赖库也不是一件容易的事情；毕竟自 modern C++ 元年至今都8年了，CMake 还在成为 de facto building system 的道路上挣扎，广泛接受的包管理依然不见踪影…&lt;/p&gt;
-&lt;h2 id=&quot;0x01-ASIO-CMake-Wrapper&quot;&gt;&lt;a href=&quot;#0x01-ASIO-CMake-Wrapper&quot; class=&quot;headerlink&quot; title=&quot;0x01 ASIO-CMake Wrapper&quot;&gt;&lt;/a&gt;0x01 ASIO-CMake Wrapper&lt;/h2&gt;&lt;p&gt;陈年老账就不再扯了，得益于 CMake 3.2 开始提倡的 taget-based properties 和 CMake 3.11 开始提供的 &lt;code&gt;FetchContent&lt;/code&gt; module，我花了一些时间实现了一个基于 &lt;code&gt;FetchContent&lt;/code&gt; 的 asio-cmake wrapper。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
-    
-      <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Monthly Read Posts in July 2019</title>
-    <link href="http://kingsamchen.github.io/2019/08/04/monthly-read-posts-in-july-2019/"/>
-    <id>http://kingsamchen.github.io/2019/08/04/monthly-read-posts-in-july-2019/</id>
-    <published>2019-08-04T02:55:30.000Z</published>
-    <updated>2019-08-04T03:11:52.310Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Programming-Languages&quot;&gt;&lt;a href=&quot;#Programming-Languages&quot; class=&quot;headerlink&quot; title=&quot;Programming Languages&quot;&gt;&lt;/a&gt;Programming
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="sync.pool" scheme="http://kingsamchen.github.io/tags/sync-pool/"/>
-    
-      <category term="quadratic residues" scheme="http://kingsamchen.github.io/tags/quadratic-residues/"/>
-    
-      <category term="reader-writer lock" scheme="http://kingsamchen.github.io/tags/reader-writer-lock/"/>
     
   </entry>
   

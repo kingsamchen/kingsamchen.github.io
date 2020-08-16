@@ -182,6 +182,271 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/06/02/monthly-read-posts-in-may-2019/">Monthly Read Posts in May 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-06-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120226/roll-your-own-lightweight-mutex/" target="_blank" rel="noopener">Roll Your Own Lightweight Mutex</a></p>
+<p>如何利用系统提供的 semaphore synchronization primitive 实现一个轻量级的 mutex</p>
+<hr>
+<p><a href="http://cbloomrants.blogspot.com/2011/07/07-15-11-review-of-many-mutex.html" target="_blank" rel="noopener">Review of many Mutex implementations</a></p>
+<p>和上面类似，但是使用了 event pritimive 作为基本设施。</p>
+<p>因为 event 不像 semaphore 自身能够控制 running count，一旦被 evnent 被 signal 则所有 waiter 会被唤醒。因此这个实现版本在一些 edge cases 上花了不少功夫。</p>
+<hr>
+<p><a href="https://preshing.com/20120305/implementing-a-recursive-mutex/" target="_blank" rel="noopener">Implementing a Recursive Mutex</a></p>
+<p>如何让 mutex 支持 recursive mode</p>
+<p>注：实际设计中，尽可能避免使用 recursive lock</p>
+<hr>
+<p><a href="https://docs.microsoft.com/en-us/windows/desktop/DxTechArts/lockless-programming" target="_blank" rel="noopener">Lockless Programming</a></p>
+<p>微软官方出品的无锁编程介绍文章。</p>
+<p>质量过硬，干货满满。</p>
+<hr>
+<p><a href="https://preshing.com/20120515/memory-reordering-caught-in-the-act/" target="_blank" rel="noopener">Memory Reordering Caught in the Act</a></p>
+<p>构造一个触发经典 memory reordering 的场景</p>
+<h2 id="System-Architect-Design"><a href="#System-Architect-Design" class="headerlink" title="System Architect Design"></a>System Architect Design</h2><p><a href="https://mp.weixin.qq.com/s/tiN6Z_VjTKZ5voFu4TFElg" target="_blank" rel="noopener">哥们，你们的系统架构中为什么要引入消息中间件？</a></p>
+<ul>
+<li>多个组件/服务之间的解耦</li>
+<li>剥离耗时调用异步化</li>
+<li>高峰流量作为 buffer 屏障进行流量削峰</li>
+</ul>
+<hr>
+<p><a href="https://medium.com/@trongdan_tran/circuit-breaker-and-retry-64830e71d0f6" target="_blank" rel="noopener">Circuit Breaker and Retry</a></p>
+<p>what is circuit breaker and why would we use it</p>
+<p>common design patterns of retry</p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://preshing.com/20120522/lightweight-in-memory-logging/" target="_blank" rel="noopener">Lightweight In-Memory Logging</a></p>
+<p>一个针对特殊场景涉及的 in-memory logging facility。</p>
+<p>尽量减少 logging 产生的指令级别开销（例如尽可能使用 intrinsic 获取相关信息）</p>
+<hr>
+<p><a href="https://preshing.com/20120625/memory-ordering-at-compile-time/" target="_blank" rel="noopener">Memory Ordering at Compile Time</a></p>
+<p>How once upon a time does compiler reorder instructions.</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/05/12/roll-your-own-light-weight-mutex/">基于 semaphore 实现轻量级 mutex</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-05-12
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>核心是 Jeff Preshing 大牛的两篇文章</p>
+<ul>
+<li><a href="https://preshing.com/20120226/roll-your-own-lightweight-mutex/" target="_blank" rel="noopener">Roll Your Own Lightweight Mutex</a></li>
+<li><a href="https://preshing.com/20120305/implementing-a-recursive-mutex/" target="_blank" rel="noopener">Implementing a Recursive Mutex</a></li>
+</ul>
+<p>讲述如何利用操作系统（Windows）提供的基础同步原语，例如 semaphore，实现一个轻量级的 mutex 同步原语。</p>
+<p>这个 home-made mutex 有如下特点：</p>
+<ul>
+<li>支持常规的 <code>lock()</code>, <code>unkock()</code> 和 <code>try_lock()</code></li>
+<li>在没有 race 的情况下 lock/unlock 操作都是简单的 atomic operations，开销小</li>
+<li>支持 recursive mode（第二篇文章里阐述）</li>
+</ul>
+<p>之所以说是轻量级，是因为这个实现缺少一些高级功能，例如 <code>CRITICAL_SECTION</code> 提供的多核环境下阻塞线程前会进入 spinning state；同时在 Linux 等系统下，缺少应对 thread priority inversion 的能力 .etc</p>
+<p>在功能够用的情况下，根据 Jeff Preshing 给出的 benchmark，这个 Lightweight mutex 性能不俗。</p>
+<h2 id="前方大量评注（吐槽）"><a href="#前方大量评注（吐槽）" class="headerlink" title="前方大量评注（吐槽）"></a>前方大量评注（吐槽）</h2><p>如果你看完了这两篇文章并且也大致上弄明白了文章里给出的实现代码，可以继续往下看。</p>
+<p><strong>0x00</strong> 事实上，Windows 的 <code>CRITICAL_SECTION</code> 也是类似的实现。当然附属功能多了不少就是。</p>
+<p><strong>0x01</strong> 第二篇文章里为了实现 recursive mode，给每个 mutex 增加了一个 owner-thread 的成员。实际上，哪怕是非 recursive 的实现都应该有这个成员：因为 mutex 区别于单纯的 semaphore 的一个核心特点是，它具有 ownership 的概念。</p>
+<p>因此第一篇文章里的实现是有欠缺的，会导致线程 A 上的 lock 能被线程 B unlock。</p>
+<p>这个行为直接暴露了底层 semaphore 的语义，但不是 mutex 自身的语义。</p>
+<p><strong>0x02</strong> Golang 的 <code>Mutex</code> 实现上没有 ownership 的概念，选择了直接暴露了底层的 semaphore 语义。这是一个很迷的设计，GitHub 上有人提了 issue，但是官方给的回复非常的 interesting。</p>
+<p><strong>0x03</strong> 示例代码里，原子的增/减用的是 <code>_InterlockedIncrement()</code> 和 <code>_InterlockedDecrement()</code>；这两个 intrinsics 会返回更新后的值。所以相比下，使用 <code>_InterlockedExchangeAdd()</code> 会更加高效。</p>
+<p>因为这三个 intrinsic 函数编译后同样生成 <code>lock xadd</code> 指令，但是后者返回的是 original value 指令相比下少一条。</p>
+<p><strong>0x04</strong> <code>try_lock()</code> 的实现需要用到 CAS 指令，开销更大，因此在 recursive mode 的实现中，仅当当前线程不是 owning thread 时再去尝试改变 mutex 状态是一个更好的实现。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/05/04/anvil-for-assisting-your-cmake/">Anvil -- An Assistant For You CMake</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-05-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h3 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h3><p>前段时间专门抽空做了一个小工具，也就是这里要讲的主题：<a href="https://github.com/kingsamchen/anvil" target="_blank" rel="noopener">anvil</a></p>
+<p>一开始做 anvil 的动力很简单：某次尝试体验一下 Linux SignalFD 功能时想直接使用 ezio 的 <code>EventLoop</code> 作为基础事件循环，同时项目使用 cmake 管理。</p>
+<p>为了省事，我直接从 ezio 的项目里抠出来 <code>CMakeLists.txt</code> 和几个自己写的 <code>.cmake</code> 文件，就地<a href="https://github.com/kingsamchen/Eureka/tree/master/UsingSignalfd" target="_blank" rel="noopener">修改</a>。</p>
+<p>但事实证明哪怕这样，改动量也不小，原因大体是因为：cmake 里（非函数内定义的）变量作用域是全局的，通过 fetch-content 功能引入的依赖在 <code>add_subdirectory()</code> 后的模块里也能看到上一层定义的变量，因此为了防止一些控制型变量发生冲突，我都在前面加上了对应的模块前缀。</p>
+<p>所以我面对的就是一大坨变量名的更换，以及少部分声明/属性的调整。</p>
+<p>考虑到大部分的文件内容都是可以模板化的，而手动“实例化”不仅费事还很容易出错，所以我就很自然地萌生了写一个工具自动化这个过程的想法。</p>
+<h3 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h3><p>在经过一两天的短暂思考后，我大致确定了这个工具的定位和需要实现的基本目标，总结起来有三个核心点：</p>
+<ol>
+<li>辅助 cmake 而不是试图替代它或深度封装</li>
+<li>内建一个轻量型的依赖管理功能</li>
+<li>配置化的生成 &amp; 构建流程</li>
+</ol>
+<p>首先，第一点是重中之重。<br>
+          <div class="read-more">
+            <a href="/2019/05/04/anvil-for-assisting-your-cmake/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/05/02/monthly-read-posts-in-apr-2019/">Monthly Read Posts in Apr 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-05-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://akrzemi1.wordpress.com/2011/09/21/destructors-that-throw/" target="_blank" rel="noopener">Destructors that throw</a></p>
+<p>C++ 11之后的 destructor 默认是 <code>noexcept</code>，如果有 active exception 逃逸出 dtor 会直接触发 <code>std::terminate()</code>，即使外部有 catch handler。可以用 <code>noexcept(false)</code> 显式关闭。</p>
+<p>因为 stack unwinding 是可以嵌套的，一个精心设计的场合下（见文中例子），可以做到多个 active exception 不在一个层次里，因此也不会触发 double-exception situation。</p>
+<hr>
+<p><a href="https://akrzemi1.wordpress.com/2011/09/28/who-calls-stdterminate/" target="_blank" rel="noopener">Who calls std::terminate?</a></p>
+<p>an exception leaves out from main function</p>
+<p>an exception leaves out from initial function of a thread</p>
+<p>an exception leaves out from dtor (since c++ 11 with noexcept guarantee)<br>
+          <div class="read-more">
+            <a href="/2019/05/02/monthly-read-posts-in-apr-2019/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/04/13/write-your-own-dns-query/">Write Your Own DNS Query</a>
         
       </h1>
@@ -372,232 +637,6 @@
         
       
     </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/03/24/on-socks4a-proxy-implementation/">socks4a 协议代理</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-03-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>对于网络编程学习而言，尝试实现一个 proxy 是一个很好的途径。因为一个 proxy 对于 clients 来说是 server，对 remote servers 来说又是 client，一下就覆盖到了网络编程的两个大块。</p>
-<p>同时，需要管理/协调两侧的连接对如何正确的处理网络连接的关闭也是一个挑战。</p>
-<p>对比普通的 HTTP Proxy，socks4a proxy 作为 transport layer proxy 在协议自身上更加”干净“（不需要像 HTTP Proxy 那样解析厚重的各种 header 以及对 HTTPS 的特殊处理），也更贴近 TCP 网络编程的具体实践。</p>
-<p>对比更新的 socks5，socks4a 仅支持 TCP，对 TLS 信道加密没有协议上的要求，更容易实现。</p>
-<p>另，<a href="https://www.openssh.com/txt/socks4a.protocol" target="_blank" rel="noopener">socks4a</a> 协议是 <a href="https://www.openssh.com/txt/socks4.protocol" target="_blank" rel="noopener">socks4</a> 的一个补丁版，两个协议的 RFC 文本打印下来整体不超过两页 A4 纸，半个小时就能看完。</p>
-<p>上周的时候我为 ezio 增加了一个 socks4a 的<a href="https://github.com/kingsamchen/ezio/tree/master/examples/socks4a" target="_blank" rel="noopener">简单实现</a>，过程中发现了 <code>TCPClient</code> 在 teardown 时存在<a href="https://github.com/kingsamchen/ezio/commit/24c1dc4d6af91f03dd748d4a3713280e71eaceef" target="_blank" rel="noopener">缺陷</a>，有概率导致连接的断开和 <code>TCPClient</code> 的析构出现 race。</p>
-<p>同时还发现作为测试的 curl v7.46 （ubuntu 16.04 LTS apt 版本）在处理 HTTPS 请求时存在缺陷，会导致 client connection 过早断开，proxy 出现 RST 错误。</p>
-<p>这说明拿 socks4a proxy 作为熟悉具体的语言/网络库的编程范式的例子还是非常不错的。</p>
-<p>注：socks4a 协议有两个连接模式：常用的 <code>CONNECT</code> 和 <code>BIND</code>，后者是为了适应 FTP 的 <a href="https://stackoverflow.com/questions/1699145/what-is-the-difference-between-active-and-passive-ftp" target="_blank" rel="noopener">active mode</a> 而存在的，现在基本没有使用的必要，可以直接忽略。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/03/13/recommend-google-api-design-guide/">推荐 Google API Design Guide</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-03-13
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="https://cloud.google.com/apis/design/" target="_blank" rel="noopener">Google API Design Guide</a></p>
-<p>基本上 可以看作是 Google 开放的 API 设计指南。</p>
-<p>大体上，Google 对外公开的 API 设计有如下几个特点：</p>
-<ol>
-<li>resource oriented design</li>
-<li>support both gRPC API and REST API</li>
-<li>use protobuf for transcoding</li>
-</ol>
-<p>看到第一点的时候还是相当震惊的。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/03/02/monthly-read-posts-in-feb-2019/">Monthly Read Posts in Feb 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-03-02
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <h2 id="Network"><a href="#Network" class="headerlink" title="Network"></a>Network</h2><p><a href="https://www.mnot.net/blog/2018/11/27/header_compression" target="_blank" rel="noopener">Designing Headers for HTTP Compression</a></p>
-<p>看起来是 HTTP/2 的 header compression 使用建议</p>
-<hr>
-<p><a href="https://www.mnot.net/blog/2017/05/11/status_codes" target="_blank" rel="noopener">How to Think About HTTP Status Codes</a></p>
-<p>HTTP status codes 使用建议。</p>
-<p>适合结合 Rest API design 相关文章一起食用。</p>
-<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://tonybai.com/2016/12/21/how-to-use-timer-reset-in-golang-correctly/" target="_blank" rel="noopener">论golang Timer Reset方法使用的正确姿势</a></p>
-<p>golang 这破 timer 坑真多</p>
-<hr>
-<p><a href="https://jonasdevlieghere.com/guaranteed-copy-elision/" target="_blank" rel="noopener">Guaranteed Copy Elision</a></p>
-<p>C++ 17 Guaranteed copy elision explained.<br>
-          <div class="read-more">
-            <a href="/2019/03/02/monthly-read-posts-in-feb-2019/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/02/23/using-sangfor-vpn-on-linux/">在 Linux 上使用深信服 VPN</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-02-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>因为公司使用 Windows 和 MacOS 的人最多，因此导致两个后果：</p>
-<ol>
-<li>连接公司内网需要使用的深信服 VPN 基本只支持 Windows 和 MacOS</li>
-<li>后端 golang 大仓代码基本只能在 MacOS 或者 Linux 上提交和调试</li>
-</ol>
-<p>求一下交集可以发现，在贵司使用 Linux 作为开发平台的同学应该很难过。很不幸的是，我刚好属于那种在 Linux (虚拟机里跑 Mint) 上写后端服务的人。</p>
-<p>公司买的深信服的 VPN 服务，那个客户端虽然官方宣称支持 ubuntu，但是事实是压根不能用，连接成功后一旦有数据包就自动断开。</p>
-<p>官方论坛有人反映过类似的问题，得到的回答千篇一律都是推荐使用 Windows 和 MacOS。</p>
-<p>然而让我使用屎一样的 MacOS 是不可能的；让我在自己的主力台式机的 Windows 上装深信服的客户端也是不可能的。<br>
-          <div class="read-more">
-            <a href="/2019/02/23/using-sangfor-vpn-on-linux/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
 
     
 

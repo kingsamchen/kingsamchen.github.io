@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Passkey Idiom">
+
+
+
+
+  <meta name="keywords" content="cpp, make_unique, make_shared, passkey, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2020/07/02/passkey-idiom-for-make-functions/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> Passkey Idiom - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Passkey Idiom
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-07-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Misc"><span class="toc-text">Misc</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>如果出于某些目的希望将某个类的构造函数设置为 private，并提供工厂函数 <code>Make()</code> 创建最终对象；工厂函数中通常会使用 <code>std::make_unique()</code> 或者 <code>std::make_shared()</code> 来创建由对应智能指针托管的对象。</p>
+<p>但是因为构造函数被设置成了 private，因此这两个 make 函数<strong>内部</strong>创建对象会编译失败。</p>
+<p>如果我们实在不希望使用 <code>new</code> 去构造对象，可以使用 passkey 手法规避无法编译的问题。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Widget</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Token</span> &#123;</span></span><br><span class="line">   <span class="keyword">private</span>:</span><br><span class="line">    Token() &#123;&#125;</span><br><span class="line">    <span class="keyword">friend</span> Widget;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Widget&gt; Make() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;Widget&gt;(Token&#123;&#125;, GenerateId());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  Widget(Token, <span class="keyword">int</span> id) : id_(id) &#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">GenerateId</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> id_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>上面例子使用的是 <code>make_shared()</code>，<code>make_unique()</code> 也是类似。</p>
+<p>需要注意，不管 <code>Token</code> 类是否是 <code>Widget</code> 的 private 成员，<code>Token</code> 自身的构造函数必须满足</p>
+<ul>
+<li>private access level</li>
+<li>显式定义（即不能使用 <code>= default</code>）</li>
+</ul>
+<p>否则会存在一个漏洞，即下面的代码能够编译通过</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Widget</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Token</span> &#123;</span></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        Token() = <span class="keyword">default</span>;</span><br><span class="line">        <span class="keyword">friend</span> Widget;</span><br><span class="line">    &#125;;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">Widget <span class="title">w</span><span class="params">(&#123;&#125;, <span class="number">0</span>)</span></span>;    <span class="comment">// Compiled.</span></span><br></pre></td></tr></table></figure>
+<p>因为 <code>{}</code> 被认为是 aggregate initialization，进而无视 default constructor 的访问级别。</p>
+<p>显式定义构造函数可以避免 <code>{}</code> 被“理解”为 aggregate initialization。</p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p>使用 <code>make_unique</code> 的最大优点是可以做到异常安全；对于这样的代码</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">HeavyRender</span><span class="params">(<span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;Widget&gt; w, Foobar&amp;&amp; fb)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// If an exception is thrown from `AcquireFoobar()`, the newed memory would leak</span></span><br><span class="line">HeavyRender(<span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;Widget&gt;(<span class="keyword">new</span> Widget()), AcquireFoobar());</span><br></pre></td></tr></table></figure>
+<p>编译器无法保证函数 <code>AcquireFoobar()</code> 执行的时候 <code>new</code> 返回的地址已经被用于构造 <code>unique_ptr&lt;Widget&gt;</code>；因此如果此时前者抛出了一个异常，动态分配的对象就泄露了。</p>
+<p>不过通常来说，只要记住涉及 new 的语句只有一个 side-effect 就可以很大程度避免这个问题。</p>
+<p>对于 <code>make_shared()</code>，除了异常安全的优势之外，内部只做一次内存分配带来的性能提升可能是大多数人使用这个函数的初衷。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2020/07/02/passkey-idiom-for-make-functions/">http://kingsamchen.github.io/2020/07/02/passkey-idiom-for-make-functions/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/cpp/">cpp</a>
+            
+              <a href="/tags/make-unique/">make_unique</a>
+            
+              <a href="/tags/make-shared/">make_shared</a>
+            
+              <a href="/tags/passkey/">passkey</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2020/07/14/the-std-byte/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">The std::byte For Byte Addressing</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    
+    
+      <a class="next" href="/2020/06/30/golang-options-pattern/">
+        <span class="next-text nav-default">Golang's Options Pattern</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2020
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2020/07/02/passkey-idiom-for-make-functions/';
+        this.page.identifier = '2020/07/02/passkey-idiom-for-make-functions/';
+        this.page.title = 'Passkey Idiom';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>
