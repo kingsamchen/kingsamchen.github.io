@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Redigo 源码学习：连接池的设计">
+
+
+
+
+  <meta name="keywords" content="golang, redigo, pool, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2020/08/21/src-study-redigo-redis-pool/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> Redigo 源码学习：连接池的设计 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Redigo 源码学习：连接池的设计
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-08-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#主要数据结构"><span class="toc-text">主要数据结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Active-and-Idle-连接"><span class="toc-text">Active and Idle 连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#连接管理"><span class="toc-text">连接管理</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x0-请求分配连接"><span class="toc-text">0x0. 请求分配连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x1-回收连接"><span class="toc-text">0x1. 回收连接</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#设计原则"><span class="toc-text">设计原则</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <h2 id="主要数据结构"><a href="#主要数据结构" class="headerlink" title="主要数据结构"></a>主要数据结构</h2><p>暴露给外部用户的 <code>Pool</code> 对象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Pool <span class="keyword">struct</span> &#123;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Maximum number of idle connections in the pool.</span></span><br><span class="line">	MaxIdle <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Maximum number of connections allocated by the pool at a given time.</span></span><br><span class="line">	<span class="comment">// When zero, there is no limit on the number of connections in the pool.</span></span><br><span class="line">	MaxActive <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Close connections after remaining idle for this duration. If the value</span></span><br><span class="line">	<span class="comment">// is zero, then idle connections are not closed. Applications should set</span></span><br><span class="line">	<span class="comment">// the timeout to a value less than the server's timeout.</span></span><br><span class="line">	IdleTimeout time.Duration</span><br><span class="line"></span><br><span class="line">	mu           sync.Mutex    <span class="comment">// mu protects the following fields</span></span><br><span class="line">	active       <span class="keyword">int</span>           <span class="comment">// the number of open connections in the pool</span></span><br><span class="line">	idle         idleList      <span class="comment">// idle connections</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>内部维护空闲/待复用的列表数据结构 <code>idleList</code><br><a id="more"></a><br>数据结构层面的本质上是一个双向链表</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> idleList <span class="keyword">struct</span> &#123;</span><br><span class="line">	count       <span class="keyword">int</span></span><br><span class="line">	front, back *poolConn</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>表示某个属于连接池的连接对象 <code>poolConn</code></p>
+<p>数据结构上充当一个双向链表的节点。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> poolConn <span class="keyword">struct</span> &#123;</span><br><span class="line">	c          Conn</span><br><span class="line">	t          time.Time</span><br><span class="line">	created    time.Time</span><br><span class="line">	next, prev *poolConn</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实现外部连接接口 <code>Conn</code> 的池化连接封装 <code>activeConn</code></p>
+<p>这个连接对象是外部用户拿到的池化连接对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> activeConn <span class="keyword">struct</span> &#123;</span><br><span class="line">	p     *Pool</span><br><span class="line">	pc    *poolConn</span><br><span class="line">	state <span class="keyword">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><img src="/img/redigo-pool.png" alt></p>
+<h2 id="Active-and-Idle-连接"><a href="#Active-and-Idle-连接" class="headerlink" title="Active and Idle 连接"></a>Active and Idle 连接</h2><p>一个 active connection 代表拥有到 Redis Server 的网络通信连接的连接对象。</p>
+<p>一个 idle connection 代表拥有到 Redis Server 的网络通信连接，并且等待被应用侧复用的连接对象。</p>
+<p>因此，一个 idle connection 本质上也是一个 active connection，因为底层维护了一个到 Redis Server 的网络通信连接。</p>
+<p>这也解释了配置上要求必须满足 $max_idle \leqslant max_active$，因为 idle connections 实际上是 active connections 的子集。</p>
+<h2 id="连接管理"><a href="#连接管理" class="headerlink" title="连接管理"></a>连接管理</h2><p>一个最常见的使用 Redigo 的例子是：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">conn := pool.GetContext(ctx)</span><br><span class="line"><span class="keyword">defer</span> conn.Close()</span><br><span class="line"></span><br><span class="line"><span class="comment">// Use with conn</span></span><br><span class="line">conn.Do(...)</span><br></pre></td></tr></table></figure>
+<p><code>pool.GetContext()</code> 可以从连接池中请求一个连接；而 <code>conn.Close()</code> 则在使用完毕后将连接归还给连接池，支持复用。</p>
+<h3 id="0x0-请求分配连接"><a href="#0x0-请求分配连接" class="headerlink" title="0x0. 请求分配连接"></a>0x0. 请求分配连接</h3><p>因为 <code>pool.Get()</code> 内部也是调用的 <code>pool.GetContext()</code> 所以这里只需要看后者的实现即可。</p>
+<p>Redigo 允许配置当前 active connection 达到 MaxActive 时阻塞等待直到有空闲连接；但是这个特点和连接池管理无关，因此下面分析中会跳过</p>
+<p>大体流程如下：</p>
+<ol>
+<li>如果设置了 <code>pool.IdleTimeout</code> 即，空闲连接最大超时时间，则会先清理 <code>idleList</code> 中已经超时的空闲连接<br>这里的清理是从 <code>idleList</code> 的尾部开始清理</li>
+<li>尝试从 <code>idleList</code> 中复用一个连接；复用是先从列表的头部开始检查<br>如果某个空闲连接不能够被复用，则关闭连接，继续检查下一个</li>
+<li>如果 <code>idleList</code> 中没有可复用的连接，则说明可能需要新建一个 Active 连接来满足请求；所以这里会继续检查当前 active 连接数是否达到了配置的上限</li>
+<li>创建一个底层的 active 连接</li>
+</ol>
+<p>注：活动连接内部是以 <code>activeConn</code> 结构表示，同时这个结构实现了 <code>Conn</code> 接口</p>
+<hr>
+<p>对应流程 (1) 的实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Prune stale connections at the back of the idle list.</span></span><br><span class="line"><span class="keyword">if</span> p.IdleTimeout &gt; <span class="number">0</span> &#123;</span><br><span class="line">	n := p.idle.count</span><br><span class="line">	<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n &amp;&amp; p.idle.back != <span class="literal">nil</span> &amp;&amp; p.idle.back.t.Add(p.IdleTimeout).Before(nowFunc()); i++ &#123;</span><br><span class="line">		pc := p.idle.back</span><br><span class="line">		p.idle.popBack()</span><br><span class="line">		p.mu.Unlock()</span><br><span class="line">		pc.c.Close()</span><br><span class="line">		p.mu.Lock()</span><br><span class="line">		p.active--</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里要牢记 <code>p.idle</code> 对应一个链表；并且 <code>idle.popBack()</code> 仅仅移除链表节点，对应的连接关闭 <code>pc.c.Close()</code> 还是需要手动完成的。</p>
+<p>另外这里 <code>p.active--</code> 也可以看出一个 idle-conn 其实也是一个 active-conn。</p>
+<p>对应 (2) 的实现：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Get idle connection from the front of idle list.</span></span><br><span class="line"><span class="keyword">for</span> p.idle.front != <span class="literal">nil</span> &#123;</span><br><span class="line">	pc := p.idle.front</span><br><span class="line">	p.idle.popFront()</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	<span class="keyword">if</span> (p.TestOnBorrow == <span class="literal">nil</span> || p.TestOnBorrow(pc.c, pc.t) == <span class="literal">nil</span>) &amp;&amp;</span><br><span class="line">		(p.MaxConnLifetime == <span class="number">0</span> || nowFunc().Sub(pc.created) &lt; p.MaxConnLifetime) &#123;</span><br><span class="line">		<span class="keyword">return</span> &amp;activeConn&#123;p: p, pc: pc&#125;, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line">	pc.c.Close()</span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	p.active--</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果连接能够被复用，则底层状态不变，active 计数也不变，直接返回一个可用连接即可。</p>
+<p>这里的 <code>TestOnBorrow()</code> 是允许外部提供一个函数在复用一个 idle-conn 前检查这个 conn 是否可用；函数里可以直接使用简单的 ping/poing 检测。</p>
+<p>(3)(4) 两步实际上是合在一起的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Check for pool closed before dialing a new connection.</span></span><br><span class="line"><span class="keyword">if</span> p.closed &#123;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	err := errors.New(<span class="string">"redigo: get on closed pool"</span>)</span><br><span class="line">	<span class="keyword">return</span> errorConn&#123;err&#125;, err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Handle limit for p.Wait == false.</span></span><br><span class="line"><span class="keyword">if</span> !p.Wait &amp;&amp; p.MaxActive &gt; <span class="number">0</span> &amp;&amp; p.active &gt;= p.MaxActive &#123;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> errorConn&#123;ErrPoolExhausted&#125;, ErrPoolExhausted</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">p.active++</span><br><span class="line">p.mu.Unlock()</span><br><span class="line">c, err := p.dial(ctx)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	c = <span class="literal">nil</span></span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	p.active--</span><br><span class="line">	<span class="keyword">if</span> p.ch != <span class="literal">nil</span> &amp;&amp; !p.closed &#123;</span><br><span class="line">		p.ch &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> errorConn&#123;err&#125;, err</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> &amp;activeConn&#123;p: p, pc: &amp;poolConn&#123;c: c, created: nowFunc()&#125;&#125;, <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+<p>创建新连接前会首先检查当前连接池是否已被关闭。</p>
+<p>配置了非等待并且当前活跃连接已达到配置的最大活跃数 <code>p.MaxActive</code> 会返回连接池耗尽的错误。</p>
+<p>如果一切正常则会用 <code>p.dial()</code> 创建一个新的连接；如果这里创建失败，则需要走回退逻辑。</p>
+<h3 id="0x1-回收连接"><a href="#0x1-回收连接" class="headerlink" title="0x1. 回收连接"></a>0x1. 回收连接</h3><p>回收连接需要调用 <code>activeConn.Close()</code>，这个函数的涉及到连接池管理的只有一句</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ac *activeConn)</span> <span class="title">Close</span><span class="params">()</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	...	<span class="comment">// omitted</span></span><br><span class="line"></span><br><span class="line">	ac.p.put(pc, ac.state != <span class="number">0</span> || pc.c.Err() != <span class="literal">nil</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>实际上连接池的回收还是要依赖 <code>pool.put()</code> 这个函数，并且 <code>pc</code> 作为参数。</p>
+<p>这也是为什么 <code>activeConn</code> 实例要保存 <code>p</code> 和 <code>pc</code>。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">put</span><span class="params">(pc *poolConn, forceClose <span class="keyword">bool</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	<span class="keyword">if</span> !p.closed &amp;&amp; !forceClose &#123;</span><br><span class="line">		pc.t = nowFunc()</span><br><span class="line">		p.idle.pushFront(pc)</span><br><span class="line">		<span class="keyword">if</span> p.idle.count &gt; p.MaxIdle &#123;</span><br><span class="line">			pc = p.idle.back</span><br><span class="line">			p.idle.popBack()</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			pc = <span class="literal">nil</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> pc != <span class="literal">nil</span> &#123;</span><br><span class="line">		p.mu.Unlock()</span><br><span class="line">		pc.c.Close()</span><br><span class="line">		p.mu.Lock()</span><br><span class="line">		p.active--</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>连接能被复用的一个前提是没有出现硬性错误，即 <code>forceClose == false</code>，对应 <code>ac.state == 0 &amp;&amp; pc.c.Err() == nil</code>。</p>
+<p>等待被复用的的连接对象 <code>poolConn</code> 会被插入到 <code>idleList</code> 的头部；这意味着越靠近头部的连接回收的时间越近。</p>
+<p>复用连接的时候也是从 <code>idleList</code> 的头部开始，说明设计上是优先考虑最近放入池子的连接。</p>
+<p>放入连接后如果 <code>idle.count &gt; MaxIdle</code>，即达到配置的最大空闲连接上限，则会从链表的尾部移除一个连接节点；即，空闲连接中优先淘汰旧/老节点。</p>
+<p>连接回收如果不涉及超过上限的节点处理，<code>p.active</code> 数量保持不变。</p>
+<h2 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h2><ol>
+<li>底层连接的关闭属于耗时操作，调用 <code>poolConn.Conn.Close()</code> 时尽量避免处在加锁状态；同时涉及底层数据结构的操作时将元素生命周期和连接的关闭分离开</li>
+<li>只有保存待复用连接的 idle-list，没有维护正在被使用连接的 active-list</li>
+<li>idle-list 是一个双端（链）表，越靠近头的连接越“新鲜”；复用连接时选择最近被回收的</li>
+<li>idle-list 清理过时连接或者达到上限需要 prune 时从尾部开始，优先处理最旧的节点</li>
+</ol>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2020/08/21/src-study-redigo-redis-pool/">http://kingsamchen.github.io/2020/08/21/src-study-redigo-redis-pool/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/redigo/">redigo</a>
+            
+              <a href="/tags/pool/">pool</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2020/08/22/src-study-redigo-wait-on-avail-conn/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Redigo 源码学习：阻塞等待连接可用</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
+    
+    
+      <a class="next" href="/2020/08/21/src-study-redigo/">
+        <span class="next-text nav-default">Redigo 源码学习</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2020
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2020/08/21/src-study-redigo-redis-pool/';
+        this.page.identifier = '2020/08/21/src-study-redigo-redis-pool/';
+        this.page.title = 'Redigo 源码学习：连接池的设计';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

@@ -212,8 +212,8 @@
 <p>就可以在 <code>output_dir</code> 这个目录下为视频文件 <em>some_video.mp4</em> 从头开始生成最多不超过9张关键帧缩略图，文件名分别是 <code>thumb_1.jpg</code> ~ <code>thumb_9.jpg</code>。</p>
 <p>这个默认策略适合长度较短的视频（比如半分钟或一分钟内），对于长视频，很可能跑完9张关键帧缩略图，正片都还没开始…</p>
 <p>所以，这个时候的生成策略应该考虑能够尽可能的均匀分布于视频内容。</p>
-<p>首先利用这个 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">post</a> 里提到的做法，用 <code>ffprobe.exe</code> 获得视频的长度，记为 <strong><em>T</em></strong>（单位，秒）。</p>
-<p>将 <strong><em>T</em></strong> 均分为 10（9+1）个片段，取 $ t_i = \frac{T}{10} * i, i = 1, 2, \cdots 9 $，这么做的原因是避免取到开头和结尾。</p>
+<p>首先利用这个 <a href="https://kingsamchen.github.io/2017/04/12/use-ffmpeg-to-reencode-videos/">post</a> 里提到的做法，用 <code>ffprobe.exe</code> 获得视频的长度，记为 <strong>_T_</strong>（单位，秒）。</p>
+<p>将 <strong>_T_</strong> 均分为 10（9+1）个片段，取 $ t_i = \frac{T}{10} * i, i = 1, 2, \cdots 9 $，这么做的原因是避免取到开头和结尾。</p>
 <p>最后针对每个 $ t_i $，运行 ffmpeg</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ffmpeg.exe -ss t_i -skip_frame nokey -i &quot;some_video.mp4&quot; -vsync 0 -vframes 1 -c:v mjpeg &quot;output_dir\thumb_i.jpg&quot;</span><br></pre></td></tr></table></figure>
 <p>唯一麻烦的地方在于输出文件名序列需要我们自己指定。</p>

@@ -222,7 +222,7 @@
 <li>界面消息可能是从系统的 GUI 消息系统中获得。一个典型的例子是 Win32 GUI 程序所使用的 <code>GetMessage()</code></li>
 <li>网络活动事件通常从 native 系统提供的 I/O multiplexor 中获得。例子包括 POSIX 标准的 <code>select(2)</code>, <code>poll(2)</code>；Linux 独有的 <code>epoll</code>；以及 Windows 提供的真-异步I/O机制 IO Completion Port。</li>
 </ul>
-<p>注：GUI 系统中多使用 messages（消息）作为术语；而网络 I/O 等倾向于使用 events（事件）作为使用术语。因为此系列文章不涉及网络 I/O，因此以后均采用<em>消息</em>作为我们的使用术语。</p>
+<p>注：GUI 系统中多使用 messages（消息）作为术语；而网络 I/O 等倾向于使用 events（事件）作为使用术语。因为此系列文章不涉及网络 I/O，因此以后均采用_消息_作为我们的使用术语。</p>
 <p>注1：对于 Android 系统，他的 GUI 事件实质上是通过 <code>epoll</code> 监听关联到 device 抽象的 pipe fd 来完成的；Linux 的各类 X-Window 实现大多也是类似做法。</p>
 <p>所以为了解耦具体的消息来源，同时让我们的实现看上去更加有逼格，我们采取分离实现 message-pump 和 message-loop。</p>
 <p>前面说到可能有多种 pump，所以这里我们的 <code>MessagePump</code> 应该是一个 interface，规定了一个 message-pump 应该具有哪些基本的行为：</p>

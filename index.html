@@ -182,6 +182,191 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2020/08/22/src-study-redigo-wait-on-avail-conn/">Redigo 源码学习：阻塞等待连接可用</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-08-22
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>通过<a href="https://www.notion.so/400e99c27cf445d0ba9388b81dc8cc76" target="_blank" rel="noopener">连接池管理</a> 了解如何回收连接到连接池以及从连接池复用连接后，可以回过头来研究一下 Redigo 支持的阻塞等待可用连接的设计与实现。</p>
+<p>通过设置 <code>Pool.Wait == true</code> 之后如果当前连接池满了， <code>Pool.Get()</code> 不会返回连接池耗尽错误，而是阻塞在调用上，直到超时或者存在可用连接才会返回。</p>
+<p>这个属于经典的 resource counting 问题，并且最大的 resource count 由 <code>Pool.MaxActive</code> 决定。</p>
+<h2 id="获取连接"><a href="#获取连接" class="headerlink" title="获取连接"></a>获取连接</h2><p>现在看一下 <code>Pool.GetContext()</code> 如何处理这种情况。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">GetContext</span><span class="params">(ctx context.Context)</span> <span class="params">(Conn, error)</span></span> &#123;</span><br><span class="line">	<span class="comment">// Wait until there is a vacant connection in the pool.</span></span><br><span class="line">	waited, err := p.waitVacantConn(ctx)    <span class="comment">// &lt;-- wait at here</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errorConn&#123;err&#125;, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	p.mu.Lock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> waited &gt; <span class="number">0</span> &#123;</span><br><span class="line">		p.waitCount++</span><br><span class="line">		p.waitDuration += waited</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	p.active++</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每次获取连接都会调用 <code>Pool.waitVacantConn()</code> 确保：</p>
+<ul>
+<li>如果当前获取一个连接后仍未超过配置上限则理解从函数返回，执行获取连接逻辑</li>
+<li>阻塞等待直到有可用连接出现，或者等到超时</li>
+</ul>
+<p>即，只要 <code>waitVacantCount()</code> 函数正常返回则代表当前一定能获取一个可用连接。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// waitVacantConn waits for a vacant connection in pool if waiting</span></span><br><span class="line"><span class="comment">// is enabled and pool size is limited, otherwise returns instantly.</span></span><br><span class="line"><span class="comment">// If ctx expires before that, an error is returned.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If there were no vacant connection in the pool right away it returns the time spent waiting</span></span><br><span class="line"><span class="comment">// for that connection to appear in the pool.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">waitVacantConn</span><span class="params">(ctx context.Context)</span> <span class="params">(waited time.Duration, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> !p.Wait || p.MaxActive &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="comment">// No wait or no connection limit.</span></span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	p.lazyInit()</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ctx == <span class="literal">nil</span> &#123;</span><br><span class="line">		&lt;-p.ch</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> &lt;-p.ch:</span><br><span class="line">			<span class="comment">// Additionally check that context hasn't expired while we were waiting,</span></span><br><span class="line">			<span class="comment">// because `select` picks a random `case` if several of them are "ready".</span></span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">				<span class="keyword">return</span> <span class="number">0</span>, ctx.Err()</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>, ctx.Err()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整个函数的核心就是从 <code>p.ch</code> 这个 channel 中获取一个类型为 <code>struct{}</code> 的 token 对象;</p>
+<p>显然这里使用一个 <em>bounded channel</em> 作为限流器。</p>
+<p>猜想基于这个 channel 的整套限流机制应该是：</p>
+<ul>
+<li>channel 里 token 对象的个数代表还有多少连接可以分配</li>
+<li>消耗连接 quota 对应地直接从 channel 中拿出 token 对象；回收连接则往 channel 再寸一个 token 对象</li>
+</ul>
+<p>接下来我们考虑一下 channel 的初始化：因为 <code>p.ch</code> 只能被初始化一遍，并且要考虑到这个初始化必须满足 goroutine-safe。</p>
+<p>这个 channel 的初始化流程则是在 <code>p.lazyInit()</code> 中完成的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">lazyInit</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// Fast path.</span></span><br><span class="line">	<span class="keyword">if</span> atomic.LoadUint32(&amp;p.chInitialized) == <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Slow path.</span></span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	<span class="keyword">if</span> p.chInitialized == <span class="number">0</span> &#123;</span><br><span class="line">		p.ch = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;, p.MaxActive)</span><br><span class="line">		<span class="keyword">if</span> p.closed &#123;</span><br><span class="line">			<span class="built_in">close</span>(p.ch)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; p.MaxActive; i++ &#123;</span><br><span class="line">				p.ch &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		atomic.StoreUint32(&amp;p.chInitialized, <span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>p.chInitialized</code> 是一个 <code>uint32</code> 类型的 flag。</p>
+<p>这里很明显可以看出这是一个典型的 _double-checked locking pattern_，常用于 singleton 模式。</p>
+<p>这里是因为希望这个 channel 的初始化是 lazy 的。</p>
+<p>可以看到这个 channel 的 buffer-size 是 <code>p.MaxActive</code> 即配置的连接池大小；并且创建 buffer 后会直接往 channel 中塞满 <code>p.MaxActive</code> 个 token 对象。</p>
+<p>前面分析 <code>Pool.GetCountext()</code> 代码时我们忽略了一种case：拿到 token 后通过 <code>dial()</code> 创建一个底层连接失败；这个时候我们需要往 channel 中补偿一个 token 对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">c, err := p.dial(ctx)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	c = <span class="literal">nil</span></span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	p.active--</span><br><span class="line">	<span class="keyword">if</span> p.ch != <span class="literal">nil</span> &amp;&amp; !p.closed &#123;</span><br><span class="line">		p.ch &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;    <span class="comment">// &lt;-- 补偿</span></span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> errorConn&#123;err&#125;, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="回收连接"><a href="#回收连接" class="headerlink" title="回收连接"></a>回收连接</h2><p>回收连接部份的逻辑仍然是在 <code>Pool.put()</code> 中：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">put</span><span class="params">(pc *poolConn, forceClose <span class="keyword">bool</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> pc != <span class="literal">nil</span> &#123;</span><br><span class="line">		p.mu.Unlock()</span><br><span class="line">		pc.c.Close()</span><br><span class="line">		p.mu.Lock()</span><br><span class="line">		p.active--</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> p.ch != <span class="literal">nil</span> &amp;&amp; !p.closed &#123;</span><br><span class="line">		p.ch &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>回收连接中对应的逻辑比较简单：只要 <code>idleList</code> 中某个连接被清理了，就往 channel 中塞一个 token 对象进行补偿。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Redigo 使用 bounded channel 实现了 resource counting 机制；并且满足</p>
+<script type="math/tex; mode=display">p.active + \text{len}(p.ch)=p.MaxActive</script><p>对于其他语言来说，可以使用 condition_variable 甚至 Semaphore 来实现 resource counting。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2020/08/21/src-study-redigo-redis-pool/">Redigo 源码学习：连接池的设计</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-08-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <h2 id="主要数据结构"><a href="#主要数据结构" class="headerlink" title="主要数据结构"></a>主要数据结构</h2><p>暴露给外部用户的 <code>Pool</code> 对象</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Pool <span class="keyword">struct</span> &#123;</span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="comment">// Maximum number of idle connections in the pool.</span></span><br><span class="line">	MaxIdle <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Maximum number of connections allocated by the pool at a given time.</span></span><br><span class="line">	<span class="comment">// When zero, there is no limit on the number of connections in the pool.</span></span><br><span class="line">	MaxActive <span class="keyword">int</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// Close connections after remaining idle for this duration. If the value</span></span><br><span class="line">	<span class="comment">// is zero, then idle connections are not closed. Applications should set</span></span><br><span class="line">	<span class="comment">// the timeout to a value less than the server's timeout.</span></span><br><span class="line">	IdleTimeout time.Duration</span><br><span class="line"></span><br><span class="line">	mu           sync.Mutex    <span class="comment">// mu protects the following fields</span></span><br><span class="line">	active       <span class="keyword">int</span>           <span class="comment">// the number of open connections in the pool</span></span><br><span class="line">	idle         idleList      <span class="comment">// idle connections</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>内部维护空闲/待复用的列表数据结构 <code>idleList</code><br>
+          <div class="read-more">
+            <a href="/2020/08/21/src-study-redigo-redis-pool/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2020/08/21/src-study-redigo/">Redigo 源码学习</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-08-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>Redigo 是目前比较流行的一个 Redis Client。</p>
+<p>虽然我个人不太喜欢它的 API 设计，奈何这个库简单易用，连公司的 redis 基础库都是在 Redigo 上做的的一个魔改。</p>
+<p>注：原生的 Redigo 并不支持 Redis Cluster，某B站的做法是通过 side-car 的方式启动一个 redis proxy 伴生容器，屏蔽 Redis Cluster 的通信细节。</p>
+<p>既然用都用了，不如抽个时间研究一下这个库，看看其中是否有些设计值得借鉴。想想如此流行的一个基础组件库，如果代码质量过不去的话大概 issue 已经被愤怒的用户挤爆了…</p>
+<p>因为我比较懒，所以只会挑一些个人感兴趣的部分研究。</p>
+<p>本篇为总起大纲，具体分析学习的内容请自行跳转至指定页面。</p>
+<ul>
+<li><a href="/2020/08/21/src-study-redigo-redis-pool/" title="连接池的设计">连接池的设计</a>
+</li>
+</ul>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2020/08/16/passkey-idiom-part-2/">再谈 passkey idiom</a>
         
       </h1>
@@ -216,7 +401,7 @@
 <p>绕过。</p>
 <p>其实这里我们还可以将 <code>Token</code> 的默认构造函数标记为 <code>explicit</code> 来解决；即</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Widget</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Token</span> &#123;</span></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="function"><span class="keyword">explicit</span> <span class="title">Token</span><span class="params">()</span> </span>= <span class="keyword">default</span>;</span><br><span class="line">        <span class="keyword">friend</span> Widget;</span><br><span class="line">    &#125;;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">Widget <span class="title">w</span><span class="params">(&#123;&#125;, <span class="number">0</span>)</span></span>;    <span class="comment">// error: cannot convert argument 1 from 'initializer list' to 'Token'</span></span><br></pre></td></tr></table></figure>
-<p>因为前面通过 <code>{}</code> 构造一个 <code>Token</code> 对象实际上使用了 <a href="https://en.cppreference.com/w/cpp/language/list_initialization" target="_blank" rel="noopener"><em>copy-list-initialization</em></a></p>
+<p>因为前面通过 <code>{}</code> 构造一个 <code>Token</code> 对象实际上使用了 <a href="https://en.cppreference.com/w/cpp/language/list_initialization" target="_blank" rel="noopener">_copy-list-initialization_</a></p>
 <p>注：根据 reference 文档，如果 <code>class T</code> 是一个 aggregate，那么 list initilization 的 effect 就是 perform aggregate initialization；所以这里和前面说的 aggregation initialization 并不矛盾。</p>
 <p>将构造函数标记为 <code>explicit</code> 可以屏蔽/阻止使用 copy-list-initialization，即这里的使用场景。</p>
 <p>为了便于记忆可以认为 <code>explicit default constructor</code> 会阻止 <code>{} -&gt; class T</code> 的创建。</p>
@@ -274,13 +459,13 @@
 </ol>
 <p>这样很容易引发混乱和错误。</p>
 <p>另外即使是 <code>uint8_t</code>，也至少承担了算术操作类型；因此标准委员会觉得需要一个<strong>仅用于字节寻址</strong>的 byte 类型。</p>
-<p>官方口径叫：<em>to distinguish byte-oriented access to memory from accessing memory as a character or integral value</em>.</p>
+<p>官方口径叫：_to distinguish byte-oriented access to memory from accessing memory as a character or integral value_.</p>
 <p>实现上你会发现 <code>std::byte</code> 其实是基于底层类型为 <code>unsigned char</code> 的 enum class：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">enum</span> <span class="class"><span class="keyword">class</span> <span class="title">byte</span> :</span> <span class="keyword">unsigned</span> <span class="keyword">char</span> &#123;&#125; ;</span><br></pre></td></tr></table></figure>
 <p>这似乎有意而为之。</p>
 <p>第一是限制 <code>std::byte</code> 的算数操作能力；同时因为字节通常会涉及到位运算，因此额外提供了位运算的操作符重载。</p>
 <p>这避免意外运算导致的错误：</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::<span class="function">byte <span class="title">read_mistake</span><span class="params">(<span class="built_in">std</span>::byte* b, <span class="keyword">int</span> offset)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// should be *(b + offset)</span></span><br><span class="line">    <span class="keyword">return</span> *b + offset;     <span class="comment">// &lt;- compile error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">std</span>::byte <span class="title">read_mistake</span><span class="params">(<span class="built_in">std</span>::byte* b, <span class="keyword">int</span> offset)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// should be *(b + offset)</span></span><br><span class="line">    <span class="keyword">return</span> *b + offset;     <span class="comment">// &lt;- compile error</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>另外 enum class 的出身导致了 implicit conversion 都不被允许，到 integer 的转换必须使用 <code>to_integer()</code> 以及强制类型转换。</p>
 <p>同时初始化如果不借助强制类型转换就必须使用 braced-initialization，即</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">std</span>::byte b &#123;<span class="number">42</span>&#125;;</span><br></pre></td></tr></table></figure>
@@ -334,7 +519,7 @@
           <p>如果出于某些目的希望将某个类的构造函数设置为 private，并提供工厂函数 <code>Make()</code> 创建最终对象；工厂函数中通常会使用 <code>std::make_unique()</code> 或者 <code>std::make_shared()</code> 来创建由对应智能指针托管的对象。</p>
 <p>但是因为构造函数被设置成了 private，因此这两个 make 函数<strong>内部</strong>创建对象会编译失败。</p>
 <p>如果我们实在不希望使用 <code>new</code> 去构造对象，可以使用 passkey 手法规避无法编译的问题。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Widget</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Token</span> &#123;</span></span><br><span class="line">   <span class="keyword">private</span>:</span><br><span class="line">    Token() &#123;&#125;</span><br><span class="line">    <span class="keyword">friend</span> Widget;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="keyword">static</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Widget&gt; Make() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;Widget&gt;(Token&#123;&#125;, GenerateId());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  Widget(Token, <span class="keyword">int</span> id) : id_(id) &#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">GenerateId</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> id_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Widget</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">class</span> <span class="title">Token</span> &#123;</span></span><br><span class="line">   <span class="keyword">private</span>:</span><br><span class="line">    Token() &#123;&#125;</span><br><span class="line">    <span class="keyword">friend</span> Widget;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">public</span>:</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="built_in">std</span>::<span class="built_in">shared_ptr</span>&lt;Widget&gt; <span class="title">Make</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">std</span>::make_shared&lt;Widget&gt;(Token&#123;&#125;, GenerateId());</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  Widget(Token, <span class="keyword">int</span> id) : id_(id) &#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span>:</span><br><span class="line">  <span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">GenerateId</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">int</span> id_;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>上面例子使用的是 <code>make_shared()</code>，<code>make_unique()</code> 也是类似。</p>
 <p>需要注意，不管 <code>Token</code> 类是否是 <code>Widget</code> 的 private 成员，<code>Token</code> 自身的构造函数必须满足</p>
 <ul>
@@ -395,7 +580,7 @@
         
 
         
-          <p>可以将 Golang 的 <em>Options Pattern</em> 视作（有副作用）函数式版的 <em>Builder Pattern</em>，其核心是：特定的 option-function 调用会生成对应的类型为 Option 的闭包，执行闭包会修改内部的 Options 结构。</p>
+          <p>可以将 Golang 的 _Options Pattern_ 视作（有副作用）函数式版的 _Builder Pattern_，其核心是：特定的 option-function 调用会生成对应的类型为 Option 的闭包，执行闭包会修改内部的 Options 结构。</p>
 <p>Golang 的函数支持同一类型的不定参数，因此上面的闭包类型一致。</p>
 <p>区别传统 Builder Pattern：</p>
 <ul>
@@ -404,192 +589,12 @@
 <li><p>options pattern 是通过函数调用生成闭包，内部通过执行闭包来修改对应成员</p>
 </li>
 </ul>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// ClientOptions defines options of a client instance</span></span><br><span class="line"><span class="keyword">type</span> ClientOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">    Timeout time.Duration</span><br><span class="line">    Retry   <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ClientOption <span class="function"><span class="keyword">func</span><span class="params">(*ClientOptions)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="title">func</span> <span class="title">WithTimeout</span><span class="params">(dur time.Duration)</span> <span class="title">ClientOption</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(opts *ClientOptions)</span></span> &#123;</span><br><span class="line">        opts.Timeout = dur</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithRetry</span><span class="params">(cnt <span class="keyword">int</span>)</span> <span class="title">ClientOption</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(opts *ClientOptions)</span></span> &#123;</span><br><span class="line">        opts.Retry = cnt</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Client <span class="keyword">struct</span> &#123;</span><br><span class="line">    opts *ClientOptions</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewClient</span><span class="params">(opts ...ClientOption)</span> *<span class="title">Client</span></span> &#123;</span><br><span class="line">    <span class="comment">// can use some default values for options</span></span><br><span class="line">    cli := &amp;Client&#123;</span><br><span class="line">        opts: &amp;ClientOptions&#123;&#125;,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// apply options</span></span><br><span class="line">    <span class="keyword">for</span> _, opt := <span class="keyword">range</span> opts &#123;</span><br><span class="line">        opt(cli.opts)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cli</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    cli := NewClient(WithTimeout(time.Second * <span class="number">3</span>))</span><br><span class="line">    fmt.Println(cli.opts.Timeout)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">"fmt"</span></span><br><span class="line">    <span class="string">"time"</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// ClientOptions defines options of a client instance</span></span><br><span class="line"><span class="keyword">type</span> ClientOptions <span class="keyword">struct</span> &#123;</span><br><span class="line">    Timeout time.Duration</span><br><span class="line">    Retry   <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> ClientOption <span class="function"><span class="keyword">func</span><span class="params">(*ClientOptions)</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithTimeout</span><span class="params">(dur time.Duration)</span> <span class="title">ClientOption</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(opts *ClientOptions)</span></span> &#123;</span><br><span class="line">        opts.Timeout = dur</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">WithRetry</span><span class="params">(cnt <span class="keyword">int</span>)</span> <span class="title">ClientOption</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="function"><span class="keyword">func</span><span class="params">(opts *ClientOptions)</span></span> &#123;</span><br><span class="line">        opts.Retry = cnt</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Client <span class="keyword">struct</span> &#123;</span><br><span class="line">    opts *ClientOptions</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewClient</span><span class="params">(opts ...ClientOption)</span> *<span class="title">Client</span></span> &#123;</span><br><span class="line">    <span class="comment">// can use some default values for options</span></span><br><span class="line">    cli := &amp;Client&#123;</span><br><span class="line">        opts: &amp;ClientOptions&#123;&#125;,</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// apply options</span></span><br><span class="line">    <span class="keyword">for</span> _, opt := <span class="keyword">range</span> opts &#123;</span><br><span class="line">        opt(cli.opts)</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> cli</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    cli := NewClient(WithTimeout(time.Second * <span class="number">3</span>))</span><br><span class="line">    fmt.Println(cli.opts.Timeout)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="基于-interface-的扩展"><a href="#基于-interface-的扩展" class="headerlink" title="基于 interface 的扩展"></a>基于 interface 的扩展</h2><p>除了生成闭包，option 函数也可以生成实现了对应接口的结构：</p>
 <figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Options <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Option <span class="keyword">interface</span> &#123;</span><br><span class="line">    apply(*Options)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>参考 uber-golang-style 里的 <a href="https://github.com/uber-go/guide/blob/master/style.md#functional-options" target="_blank" rel="noopener">functional options</a></p>
 <h2 id="Rant"><a href="#Rant" class="headerlink" title="Rant"></a>Rant</h2><p>根据 @vizze 的说法，golang 创建闭包的开销比直接函数调用高不少。默认 golang 行尾自动添加分号的策略导致多个函数调用换行写法难看。</p>
 <p>另，对于 C++ 来说也可以使用 golang 这种风格。不定模板参数解决不定参数问题，同时这里需要的是一个 callable concept，lambda 或者 <code>std::function&lt;&gt;</code> 都可以做到，前者应该可以做到 zero-cost abstraction，后者会有一些额外开销。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2020/06/28/keep-asio-io-context-running/">保持 ASIO io_context 无任务时运行</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2020-06-28
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>ASIO 的 <code>io_context::run()</code> 如果发现没有 pending 的任务就会返回，对于 server 的监听线程来说这是符合常理的，因为无论如何至少有个 <code>acceptor::async_accept()</code> 在 pending。</p>
-<p>但是如果想利用多核能力，那么一个常用的设计是：master 线程只负责 accept 进来的请求；将接受的 conn_sock 传递到 worker pool 里由其中一个 worker thread 处理。</p>
-<p>每个 worker thread 其实也跑了一个 <code>io_context</code>，但是因为我们无法保证每个 worker 都有 pending task，所以如果不做特殊处理，<code>io_context::run()</code> 会直接返回，导致 worker thread 也退出，这和我们希望的背道而驰。</p>
-<p>ASIO 中的 work guard 就是用了该解决这个问题：一个 work guard 能防止其关联的 io_context 在没有任务时退出。</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[[maybe_unused]] <span class="keyword">auto</span> work_guard = asio::make_work_guard(io_ctx_);</span><br><span class="line">io_ctx_.run();</span><br></pre></td></tr></table></figure>
-<ol>
-<li><code>work_guard</code> 不影响 <code>io_context::stop()</code> 的功能和语义；如果需要结束 io_context loop，推荐的依然是使用这个方法</li>
-<li>如果向去掉 <code>work_guard</code> 的影响，使用 <code>work_guard::reset()</code> 即可；调用后 <code>io_context::run()</code> 会在没有 pending task 时返回</li>
-</ol>
-<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><ol>
-<li><a href="https://dens.website/tutorials/cpp-asio/work" target="_blank" rel="noopener">Prevent io_context::run from returning</a></li>
-</ol>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2020/05/04/atoi-with-overflow-handled/">atoi With Overflow Handled</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2020-05-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>leetcode 上有一题是让你实现一个 <code>atoi()</code>，但是因为函数类型是 32-bit int，所以可以直接内部转换到 64-bit int，避免需要直接处理溢出的情况。</p>
-<p>如果要针对 <code>int64</code> 实现一个 <code>atoi()</code> 又该如何做？</p>
-<p>我翻了一下 golang 的标准库源码，大致梳理了一下</p>
-<p>(1) 如果对象是 <code>int32</code>，并且输入字符串有效数据长度小于10位，则一定不会溢出，所以可以直接处理</p>
-<p>(2) 否则统一走 <code>int64</code> 处理；<code>int64</code> 内部会先处理掉符号位 <code>neg</code>，然后转成 <code>uint64</code></p>
-<p>(3) 溢出处理的核心部分：</p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Cutoff is the smallest number such that cutoff*base &gt; maxUint64.</span></span><br><span class="line"><span class="comment">// Use compile-time constants for common cases.</span></span><br><span class="line"><span class="keyword">var</span> cutoff <span class="keyword">uint64</span></span><br><span class="line"><span class="keyword">switch</span> base &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">10</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="number">10</span> + <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="number">16</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="number">16</span> + <span class="number">1</span></span><br><span class="line"><span class="keyword">default</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="keyword">uint64</span>(base) + <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> n &gt;= cutoff &#123;</span><br><span class="line">	<span class="comment">// n*base overflows</span></span><br><span class="line">	<span class="keyword">return</span> maxVal, rangeError(fnParseUint, s0)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">maxVal := <span class="keyword">uint64</span>(<span class="number">1</span>)&lt;&lt;<span class="keyword">uint</span>(bitSize) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">n *= <span class="keyword">uint64</span>(base)</span><br><span class="line"></span><br><span class="line">n1 := n + <span class="keyword">uint64</span>(d)</span><br><span class="line"><span class="keyword">if</span> n1 &lt; n || n1 &gt; maxVal &#123;</span><br><span class="line">	<span class="comment">// n+v overflows</span></span><br><span class="line">	<span class="keyword">return</span> maxVal, rangeError(fnParseUint, s0)</span><br><span class="line">&#125;</span><br><span class="line">n = n1</span><br></pre></td></tr></table></figure>
-<p>(4) <code>cutoff</code> 是防止溢出的第一重栅栏</p>
-<p>对于 <code>uint64</code> 来说</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cutoff     = 1844674407370955162</span><br><span class="line">UINT64_MAX = 18446744073709551615</span><br></pre></td></tr></table></figure>
-<p>parse 的时候如果当前数已经 &gt;= cutoff 那么后面的数字不管是几都绝对溢出。</p>
-<p>但是即使 cutoff 这里满足，加上后一位数字之后仍然可能会溢出，所以这里要做溢出处理。</p>
-<p>因为类型是 uint64，所以只可能发生上溢出，数值会 wrap-around，所以用 <code>n + uint64(d) &lt; n</code> 来判断</p>
-<p><code>n1 &gt; maxVal</code> 是用来处理 int32 的时候的情况（函数的输入类型已经被转成了 64-bit）</p>
-<p>(5) 如果输入类型本身就是无符号，那么到这里就结束了。</p>
-<p>如果是有符号，需要判断最终结果是否落在范围里，另外要注意补码体系下两端的值是不对称的。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2020/04/19/allow-connections-from-lan-for-trojan-qt5/">Allow Connections From LAN for Trojan-qt5</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2020-04-19
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>因为众所周知的原因，机场的服务商把协议从 SS 切换到了 Trojan。但是之前的 SS windows 客户端只支持 SS 协议，所以切换后只能换 Trojan-qt5 作为客户端。</p>
-<p>但是这个客户端做的实在不怎么样，作者似乎是在原来的 ss-qt5 的基础上做的修改，集成了 libtrojan；以至于之前 SS-Windows 用的好好的 <em>Allow Connections From LAN</em> 功能到这里没法用了。</p>
-<p>更改 socks5 监听地址为 <code>INETADDR_ANY</code> 确实能让局域网内的其他主机链接 socks5 代理，但是 HTTP 代理就神奇的不能用了…</p>
-<p>试验了一番结果发现要使 HTTP 代理能够正常工作，socks5 代理监听地址必须是 <code>localhost</code>… 🤪</p>
-<p>因为我的 Linux 开发环境是搭建在虚拟机里并通过 X11 转发到宿主机的，所以不能使用来自 LAN 的连接会严重影响开发效率。</p>
-<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
-<li>自己写一个 tcp socket 运行在宿主机上，并监听 <code>INETADDR_ANY</code>，Mint 把转发器作为代理</li>
-<li>用 netcat 实现</li>
-<li>找其他替代品</li>
-</ol>
-<p>先考虑 (1)，然而发现 netcat 可以实现单次连接转发，但是后续的同一个连接的通信会直接 hang 住，可能哪里姿势不对</p>
-<p>再考虑 (2)，发现可以用 socat。</p>
-<p>WSL 里通过 apt 安装，然后</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat tcp<span class="_">-l</span>:10086,fork,reuseaddr tcp:127.0.0.1:10081</span><br></pre></td></tr></table></figure>
-<p>Mint 把宿主机的 10086 端口作为代理端口</p>
-<p>嗯，发现工作非常顺畅…</p>
-<p>这样就不用考虑 (3) 了，不然哪怕用 ASIO 也差不多要百来行代码。</p>
 
         
       

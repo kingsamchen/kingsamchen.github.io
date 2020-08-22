@@ -1,26 +1,28 @@
 <!DOCTYPE html>
 <html lang="default">
-  <head>
+  <head><meta name="generator" content="Hexo 3.9.0">
     
-<meta charset="UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 
 
-<meta http-equiv="Cache-Control" content="no-transform" />
-<meta http-equiv="Cache-Control" content="no-siteapp" />
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
 
-<meta name="theme-color" content="#f8f5ec" />
+<meta name="theme-color" content="#f8f5ec">
 <meta name="msapplication-navbutton-color" content="#f8f5ec">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
 
 
 
-  <meta name="description" content="Gone with the ruins"/>
+  <meta name="description" content="Redigo 源码学习">
 
 
 
+
+  <meta name="keywords" content="golang, redigo, KC的废墟堆">
 
 
 
@@ -36,14 +38,14 @@
 
 
 
-  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0" />
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
 
 
 
-<link rel="canonical" href="http://kingsamchen.github.io/tags/c/page/7/"/>
+<link rel="canonical" href="http://kingsamchen.github.io/2020/08/21/src-study-redigo/">
 
 
-<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0" />
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
 
 
 
@@ -64,11 +66,7 @@
 
 
 
-    <title>
-  
-    c++ · KC的废墟堆
-  
-</title>
+    <title> Redigo 源码学习 - KC的废墟堆 </title>
   </head>
 
   <body><div id="mobile-navbar" class="mobile-navbar">
@@ -180,57 +178,123 @@
           <div id="content" class="content">
             
   
-  <section id="archive" class="archive">
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Redigo 源码学习
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-08-21
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
     
+    
+
+    <div class="post-content">
+      
+        <p>Redigo 是目前比较流行的一个 Redis Client。</p>
+<p>虽然我个人不太喜欢它的 API 设计，奈何这个库简单易用，连公司的 redis 基础库都是在 Redigo 上做的的一个魔改。</p>
+<p>注：原生的 Redigo 并不支持 Redis Cluster，某B站的做法是通过 side-car 的方式启动一个 redis proxy 伴生容器，屏蔽 Redis Cluster 的通信细节。</p>
+<p>既然用都用了，不如抽个时间研究一下这个库，看看其中是否有些设计值得借鉴。想想如此流行的一个基础组件库，如果代码质量过不去的话大概 issue 已经被愤怒的用户挤爆了…</p>
+<p>因为我比较懒，所以只会挑一些个人感兴趣的部分研究。</p>
+<p>本篇为总起大纲，具体分析学习的内容请自行跳转至指定页面。</p>
+<ul>
+<li><a href="/2020/08/21/src-study-redigo-redis-pool/" title="连接池的设计">连接池的设计</a>
+</li>
+</ul>
+
+      
+    </div>
 
     
       
-
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-06-14
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/06/14/template-type-constraints-and-type-traits/" class="archive-post-link">
-            Template Type Constraints And Type Traits
-          </a>
-        </span>
-      </div>
-    
       
 
-      <div class="archive-post">
-        <span class="archive-post-time">
-          
-            2016-04-19
-          
-        </span>
-        <span class="archive-post-title">
-          <a href="/2016/04/19/make-our-path-class-more-natural/" class="archive-post-link">
-            让 Path 更自然
-          </a>
-        </span>
-      </div>
-    
-  </section>
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2020/08/21/src-study-redigo/">http://kingsamchen.github.io/2020/08/21/src-study-redigo/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
 
-  
-  <nav class="pagination">
+
+
+      
+      
     
-      <a class="prev" href="/tags/c/page/6/">
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/redigo/">redigo</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+      <a class="prev" href="/2020/08/21/src-study-redigo-redis-pool/">
         <i class="iconfont icon-left"></i>
-        <span class="prev-text">上一页</span>
+        <span class="prev-text nav-default">Redigo 源码学习：连接池的设计</span>
+        <span class="prev-text nav-mobile">上一篇</span>
       </a>
     
     
+      <a class="next" href="/2020/08/16/passkey-idiom-part-2/">
+        <span class="next-text nav-default">再谈 passkey idiom</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
   </nav>
 
+      </footer>
+    
+
+  </article>
 
 
           </div>
           
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
 
         </div>
       </main>
@@ -292,7 +356,7 @@
      
       2015 - 
     
-    2019
+    2020
 
     <span class="heart">
       <i class="iconfont icon-heart"></i>
@@ -312,9 +376,9 @@
   
   <script type="text/javascript">
     var disqus_config = function () {
-        this.page.url = '';
-        this.page.identifier = 'tags/c/page/7/index.html';
-        this.page.title = '';
+        this.page.url = 'http://kingsamchen.github.io/2020/08/21/src-study-redigo/';
+        this.page.identifier = '2020/08/21/src-study-redigo/';
+        this.page.title = 'Redigo 源码学习';
     };
     (function() {
     var d = document, s = d.createElement('script');

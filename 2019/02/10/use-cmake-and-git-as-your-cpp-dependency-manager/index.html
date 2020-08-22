@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="cmake, c++, git, dependency management, KC的废墟堆">
+  <meta name="keywords" content="c++, cmake, git, dependency management, KC的废墟堆">
 
 
 
@@ -276,7 +276,7 @@
 <ol>
 <li>默认模式下 src 和 build 两个目录是在同一个父目录中；而我调整后所有依赖的 src 在一个目录下，build 目录归属当前构建目录</li>
 <li>一个依赖 ID 由：名字 + tag 唯一构成</li>
-<li>FetchContent 在进行 populate 前会首先通过代码检测目标文件是否已经存在，如果存在则提示 <em>kbase-v0.1.3 source dir is already ready; skip downloading</em> 然后设置已存在的目录为目标依赖</li>
+<li>FetchContent 在进行 populate 前会首先通过代码检测目标文件是否已经存在，如果存在则提示 _kbase-v0.1.3 source dir is already ready; skip downloading_ 然后设置已存在的目录为目标依赖</li>
 </ol>
 <p>上面三个点相辅相成。</p>
 <p>原因：</p>
@@ -337,9 +337,9 @@
         
           <div class="post-tags">
             
-              <a href="/tags/cmake/">cmake</a>
-            
               <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/cmake/">cmake</a>
             
               <a href="/tags/git/">git</a>
             

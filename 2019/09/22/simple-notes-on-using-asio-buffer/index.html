@@ -227,7 +227,7 @@
 <p><strong>0x03</strong></p>
 <p>对于 <code>asio::async_read_until()</code>，配套的 buffer 是 <a href="http://think-async.com/Asio/asio-1.12.2/doc/asio/reference/DynamicBuffer.html" target="_blank" rel="noopener">dynamic buffer</a>。</p>
 <p>因为这个函数需要读到某个 <code>delim</code> 或者 <code>pred</code> 满足才会返回，因此 buffer 大小无法实现确定。</p>
-<p><em>dynamic buffer</em> 的要求之一就是支持 <em><strong>memory storage can be automatically resized as required</strong></em></p>
+<p>_dynamic buffer_ 的要求之一就是支持 _<strong>memory storage can be automatically resized as required</strong>_</p>
 <p>另，满足 dynamic buffer 的前提条件是：需要是一个 const buffer 或者 mutable buffer。</p>
 <p>使用上，<code>std::string</code> 和 <code>std::vector&lt;char&gt;</code> 可以直接作为底层存储使用。</p>
 <p><code>asio::dyanmic_buffer()</code> 可以直接创建 dynamic buffer class。</p>

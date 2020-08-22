@@ -237,7 +237,7 @@
     <span class="hljs-keyword" style="color: rgb(252, 194, 140);">return</span> <span class="hljs-number" style="color: rgb(211, 99, 99);">0</span>;
 }</pre>
 
-<p>编译会提示出错，错误信息类似：_Failed to specialize function template ‘unknown-type std::_Binder&lt;std::_Unforced,void (__cdecl Base::* )(int),const std::_Ph<1> &amp;,int&gt;::operator ()(<em>Unbound &amp;&amp;…) const’</em></1></p>
+<p>编译会提示出错，错误信息类似：_Failed to specialize function template ‘unknown-type std::_Binder<std::_unforced,void (__cdecl base::* )(int),const std::_ph<1> &amp;,int&gt;::operator ()(_Unbound &amp;&amp;…) const’_</std::_unforced,void></p>
 <p>根本原因是，即使前面使用了 <code>using Base::Foo;</code>, 也只是改变了这个函数在子类中的可见性，影响名字查找；并没有真的在子类中添加了这个函数，因此 <code>&amp;Derived::Foo</code> 实际上获取的类型是 <code>void (Base::*)(int)</code>，而正是这个类型影响了 <code>std::bind()</code> 的实例化。</p>
 <p>因此当后面用 <code>Derived</code> 的实例去调用 function object 时会失败。</p>
 <p>Stackoverflow 上有一个<a href="https://stackoverflow.com/questions/36263159/binding-to-privately-inherited-member-function" target="_blank" rel="noopener">类似的问题</a>，可以参考。</p>

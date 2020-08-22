@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="default">
+  <head><meta name="generator" content="Hexo 3.9.0">
+    
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+<meta name="theme-color" content="#f8f5ec">
+<meta name="msapplication-navbutton-color" content="#f8f5ec">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="#f8f5ec">
+
+
+
+  <meta name="description" content="Redigo 源码学习：阻塞等待连接可用">
+
+
+
+
+  <meta name="keywords" content="golang, redigo, KC的废墟堆">
+
+
+
+
+
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="KC的废墟堆">
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2.6.0">
+
+
+
+<link rel="canonical" href="http://kingsamchen.github.io/2020/08/22/src-study-redigo-wait-on-avail-conn/">
+
+
+<link rel="stylesheet" type="text/css" href="/css/style.css?v=2.6.0">
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+
+
+    <title> Redigo 源码学习：阻塞等待连接可用 - KC的废墟堆 </title>
+  </head>
+
+  <body><div id="mobile-navbar" class="mobile-navbar">
+  <div class="mobile-header-logo">
+    <a href="/." class="logo">KC的废墟堆</a>
+  </div>
+  <div class="mobile-navbar-icon">
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+</div>
+
+<nav id="mobile-menu" class="mobile-menu slideout-menu">
+  <ul class="mobile-menu-list">
+    
+      <a href="/">
+        <li class="mobile-menu-item">
+          
+          
+            首页
+          
+        </li>
+      </a>
+    
+      <a href="/archives/">
+        <li class="mobile-menu-item">
+          
+          
+            归档
+          
+        </li>
+      </a>
+    
+      <a href="/friends/">
+        <li class="mobile-menu-item">
+          
+          
+            Friends
+          
+        </li>
+      </a>
+    
+      <a href="/about">
+        <li class="mobile-menu-item">
+          
+          
+            关于
+          
+        </li>
+      </a>
+    
+  </ul>
+</nav>
+
+    <div class="container" id="mobile-panel">
+      <header id="header" class="header"><div class="logo-wrapper">
+  <a href="/." class="logo">KC的废墟堆</a>
+</div>
+
+<nav class="site-navbar">
+  
+    <ul id="menu" class="menu">
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/">
+            
+            
+              首页
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/archives/">
+            
+            
+              归档
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/friends/">
+            
+            
+              Friends
+            
+          </a>
+        </li>
+      
+        <li class="menu-item">
+          <a class="menu-item-link" href="/about">
+            
+            
+              关于
+            
+          </a>
+        </li>
+      
+    </ul>
+  
+</nav>
+
+      </header>
+
+      <main id="main" class="main">
+        <div class="content-wrapper">
+          <div id="content" class="content">
+            
+  
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          Redigo 源码学习：阻塞等待连接可用
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-08-22
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+  <div class="post-toc" id="post-toc">
+    <h2 class="post-toc-title">文章目录</h2>
+    <div class="post-toc-content">
+      <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#获取连接"><span class="toc-text">获取连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#回收连接"><span class="toc-text">回收连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结"><span class="toc-text">总结</span></a></li></ol>
+    </div>
+  </div>
+
+
+    <div class="post-content">
+      
+        <p>通过<a href="https://www.notion.so/400e99c27cf445d0ba9388b81dc8cc76" target="_blank" rel="noopener">连接池管理</a> 了解如何回收连接到连接池以及从连接池复用连接后，可以回过头来研究一下 Redigo 支持的阻塞等待可用连接的设计与实现。</p>
+<p>通过设置 <code>Pool.Wait == true</code> 之后如果当前连接池满了， <code>Pool.Get()</code> 不会返回连接池耗尽错误，而是阻塞在调用上，直到超时或者存在可用连接才会返回。</p>
+<p>这个属于经典的 resource counting 问题，并且最大的 resource count 由 <code>Pool.MaxActive</code> 决定。</p>
+<h2 id="获取连接"><a href="#获取连接" class="headerlink" title="获取连接"></a>获取连接</h2><p>现在看一下 <code>Pool.GetContext()</code> 如何处理这种情况。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">GetContext</span><span class="params">(ctx context.Context)</span> <span class="params">(Conn, error)</span></span> &#123;</span><br><span class="line">	<span class="comment">// Wait until there is a vacant connection in the pool.</span></span><br><span class="line">	waited, err := p.waitVacantConn(ctx)    <span class="comment">// &lt;-- wait at here</span></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> errorConn&#123;err&#125;, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	p.mu.Lock()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> waited &gt; <span class="number">0</span> &#123;</span><br><span class="line">		p.waitCount++</span><br><span class="line">		p.waitDuration += waited</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	p.active++</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每次获取连接都会调用 <code>Pool.waitVacantConn()</code> 确保：</p>
+<ul>
+<li>如果当前获取一个连接后仍未超过配置上限则理解从函数返回，执行获取连接逻辑</li>
+<li>阻塞等待直到有可用连接出现，或者等到超时</li>
+</ul>
+<p>即，只要 <code>waitVacantCount()</code> 函数正常返回则代表当前一定能获取一个可用连接。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// waitVacantConn waits for a vacant connection in pool if waiting</span></span><br><span class="line"><span class="comment">// is enabled and pool size is limited, otherwise returns instantly.</span></span><br><span class="line"><span class="comment">// If ctx expires before that, an error is returned.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// If there were no vacant connection in the pool right away it returns the time spent waiting</span></span><br><span class="line"><span class="comment">// for that connection to appear in the pool.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">waitVacantConn</span><span class="params">(ctx context.Context)</span> <span class="params">(waited time.Duration, err error)</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> !p.Wait || p.MaxActive &lt;= <span class="number">0</span> &#123;</span><br><span class="line">		<span class="comment">// No wait or no connection limit.</span></span><br><span class="line">		<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	p.lazyInit()</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> ctx == <span class="literal">nil</span> &#123;</span><br><span class="line">		&lt;-p.ch</span><br><span class="line">	&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">		<span class="keyword">select</span> &#123;</span><br><span class="line">		<span class="keyword">case</span> &lt;-p.ch:</span><br><span class="line">			<span class="comment">// Additionally check that context hasn't expired while we were waiting,</span></span><br><span class="line">			<span class="comment">// because `select` picks a random `case` if several of them are "ready".</span></span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">				<span class="keyword">return</span> <span class="number">0</span>, ctx.Err()</span><br><span class="line">			<span class="keyword">default</span>:</span><br><span class="line">			&#125;</span><br><span class="line">		<span class="keyword">case</span> &lt;-ctx.Done():</span><br><span class="line">			<span class="keyword">return</span> <span class="number">0</span>, ctx.Err()</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	...</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="number">0</span>, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>整个函数的核心就是从 <code>p.ch</code> 这个 channel 中获取一个类型为 <code>struct{}</code> 的 token 对象;</p>
+<p>显然这里使用一个 <em>bounded channel</em> 作为限流器。</p>
+<p>猜想基于这个 channel 的整套限流机制应该是：</p>
+<ul>
+<li>channel 里 token 对象的个数代表还有多少连接可以分配</li>
+<li>消耗连接 quota 对应地直接从 channel 中拿出 token 对象；回收连接则往 channel 再寸一个 token 对象</li>
+</ul>
+<p>接下来我们考虑一下 channel 的初始化：因为 <code>p.ch</code> 只能被初始化一遍，并且要考虑到这个初始化必须满足 goroutine-safe。</p>
+<p>这个 channel 的初始化流程则是在 <code>p.lazyInit()</code> 中完成的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">lazyInit</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// Fast path.</span></span><br><span class="line">	<span class="keyword">if</span> atomic.LoadUint32(&amp;p.chInitialized) == <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Slow path.</span></span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	<span class="keyword">if</span> p.chInitialized == <span class="number">0</span> &#123;</span><br><span class="line">		p.ch = <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="keyword">struct</span>&#123;&#125;, p.MaxActive)</span><br><span class="line">		<span class="keyword">if</span> p.closed &#123;</span><br><span class="line">			<span class="built_in">close</span>(p.ch)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">for</span> i := <span class="number">0</span>; i &lt; p.MaxActive; i++ &#123;</span><br><span class="line">				p.ch &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		atomic.StoreUint32(&amp;p.chInitialized, <span class="number">1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>p.chInitialized</code> 是一个 <code>uint32</code> 类型的 flag。</p>
+<p>这里很明显可以看出这是一个典型的 _double-checked locking pattern_，常用于 singleton 模式。</p>
+<p>这里是因为希望这个 channel 的初始化是 lazy 的。</p>
+<p>可以看到这个 channel 的 buffer-size 是 <code>p.MaxActive</code> 即配置的连接池大小；并且创建 buffer 后会直接往 channel 中塞满 <code>p.MaxActive</code> 个 token 对象。</p>
+<p>前面分析 <code>Pool.GetCountext()</code> 代码时我们忽略了一种case：拿到 token 后通过 <code>dial()</code> 创建一个底层连接失败；这个时候我们需要往 channel 中补偿一个 token 对象。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">c, err := p.dial(ctx)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	c = <span class="literal">nil</span></span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	p.active--</span><br><span class="line">	<span class="keyword">if</span> p.ch != <span class="literal">nil</span> &amp;&amp; !p.closed &#123;</span><br><span class="line">		p.ch &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;    <span class="comment">// &lt;-- 补偿</span></span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> errorConn&#123;err&#125;, err</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="回收连接"><a href="#回收连接" class="headerlink" title="回收连接"></a>回收连接</h2><p>回收连接部份的逻辑仍然是在 <code>Pool.put()</code> 中：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p *Pool)</span> <span class="title">put</span><span class="params">(pc *poolConn, forceClose <span class="keyword">bool</span>)</span> <span class="title">error</span></span> &#123;</span><br><span class="line">	p.mu.Lock()</span><br><span class="line">	...</span><br><span class="line">	<span class="keyword">if</span> pc != <span class="literal">nil</span> &#123;</span><br><span class="line">		p.mu.Unlock()</span><br><span class="line">		pc.c.Close()</span><br><span class="line">		p.mu.Lock()</span><br><span class="line">		p.active--</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> p.ch != <span class="literal">nil</span> &amp;&amp; !p.closed &#123;</span><br><span class="line">		p.ch &lt;- <span class="keyword">struct</span>&#123;&#125;&#123;&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	p.mu.Unlock()</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>回收连接中对应的逻辑比较简单：只要 <code>idleList</code> 中某个连接被清理了，就往 channel 中塞一个 token 对象进行补偿。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Redigo 使用 bounded channel 实现了 resource counting 机制；并且满足</p>
+<script type="math/tex; mode=display">p.active + \text{len}(p.ch)=p.MaxActive</script><p>对于其他语言来说，可以使用 condition_variable 甚至 Semaphore 来实现 resource counting。</p>
+
+      
+    </div>
+
+    
+      
+      
+
+  <div class="post-copyright">
+    <p class="copyright-item">
+      <span>原文作者: </span>
+      <a href="http://kingsamchen.github.io">Kingsley Chen</a>
+    </p>
+    <p class="copyright-item">
+      <span>原文链接: </span>
+      <a href="http://kingsamchen.github.io/2020/08/22/src-study-redigo-wait-on-avail-conn/">http://kingsamchen.github.io/2020/08/22/src-study-redigo-wait-on-avail-conn/</a>
+    </p>
+    <p class="copyright-item">
+      <span>许可协议: </span>
+      
+      <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank">知识共享署名-非商业性使用 4.0 国际许可协议</a>
+    </p>
+  </div>
+
+
+
+      
+      
+    
+
+    
+      <footer class="post-footer">
+        
+          <div class="post-tags">
+            
+              <a href="/tags/golang/">golang</a>
+            
+              <a href="/tags/redigo/">redigo</a>
+            
+          </div>
+        
+        
+        
+  <nav class="post-nav">
+    
+    
+      <a class="next" href="/2020/08/21/src-study-redigo-redis-pool/">
+        <span class="next-text nav-default">Redigo 源码学习：连接池的设计</span>
+        <span class="prev-text nav-mobile">下一篇</span>
+        <i class="iconfont icon-right"></i>
+      </a>
+    
+  </nav>
+
+      </footer>
+    
+
+  </article>
+
+
+          </div>
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="//disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+      </main>
+
+      <footer id="footer" class="footer">
+
+  <div class="social-links">
+    
+      
+        
+          <a href="mailto:your@email.com" class="iconfont icon-email" title="email"></a>
+        
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    
+      <a href="/atom.xml" class="iconfont icon-rss" title="rss"></a>
+    
+  </div>
+
+
+<div class="copyright">
+  <span class="power-by">
+    由 <a class="hexo-link" href="https://hexo.io/">Hexo</a> 强力驱动
+  </span>
+  <span class="division">|</span>
+  <span class="theme-info">
+    主题 - 
+    <a class="theme-link" href="https://github.com/ahonn/hexo-theme-even">Even</a>
+  </span>
+
+  <span class="copyright-year">
+    
+    &copy; 
+     
+      2015 - 
+    
+    2020
+
+    <span class="heart">
+      <i class="iconfont icon-heart"></i>
+    </span>
+    <span class="author">Kingsley Chen</span>
+  </span>
+</div>
+
+      </footer>
+
+      <div class="back-to-top" id="back-to-top">
+        <i class="iconfont icon-up"></i>
+      </div>
+    </div>
+
+    
+  
+  <script type="text/javascript">
+    var disqus_config = function () {
+        this.page.url = 'http://kingsamchen.github.io/2020/08/22/src-study-redigo-wait-on-avail-conn/';
+        this.page.identifier = '2020/08/22/src-study-redigo-wait-on-avail-conn/';
+        this.page.title = 'Redigo 源码学习：阻塞等待连接可用';
+    };
+    (function() {
+    var d = document, s = d.createElement('script');
+
+    s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+
+    s.setAttribute('data-timestamp', +new Date());
+    (d.head || d.body).appendChild(s);
+    })();  
+  </script>
+
+  
+
+  
+
+
+
+    
+
+
+
+
+  
+    <script type="text/javascript" src="/lib/jquery/jquery-3.1.1.min.js"></script>
+  
+
+  
+    <script type="text/javascript" src="/lib/slideout/slideout.js"></script>
+  
+
+  
+
+
+    <script type="text/javascript" src="/js/src/even.js?v=2.6.0"></script>
+<script type="text/javascript" src="/js/src/bootstrap.js?v=2.6.0"></script>
+
+  </body>
+</html>

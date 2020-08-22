@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="signal, Linux, Unix, signalfd, self-pipe trick, KC的废墟堆">
+  <meta name="keywords" content="Linux, Unix, signal, signalfd, self-pipe trick, KC的废墟堆">
 
 
 
@@ -213,7 +213,7 @@
 
     <div class="post-content">
       
-        <p>首先承认这个标题乍看之下很像 troll，但真的不是 troll；“避免使用”总的来说更接近 <em>whenever possible</em> 的意思。</p>
+        <p>首先承认这个标题乍看之下很像 troll，但真的不是 troll；“避免使用”总的来说更接近 _whenever possible_ 的意思。</p>
 <p>另外，这篇 post 面向的主要是偏底层的、直接使用 system calls 或其 runtime wrapper（glibc）的开发者，最典型的比如 C/C++ 开发者。</p>
 <p>其他语言的开发者通常因为要么 runtime “屏蔽”了这部分内容（如 Java）；要么 runtime 自身对这部分做了较大的抽象/改造（如 Golang），因此很难对此 post 提到的各种观点/做法产生共鸣。</p>
 <p>FYI：自从工作后中文写作能力一直在退化，因此这篇文章如果存在语句不通顺或者用词不当的地方，烦请见谅。</p>
@@ -225,7 +225,7 @@
 <li><code>SIGCHLD</code> 某个子进程结束</li>
 <li>…</li>
 </ul>
-<p>注：较完整的 signal 列表可以参见 <a href="http://man7.org/linux/man-pages/man7/signal.7.html" target="_blank" rel="noopener">signal.7</a> 中的 <em>Signal numbering for standard signals</em> 一节。</p>
+<p>注：较完整的 signal 列表可以参见 <a href="http://man7.org/linux/man-pages/man7/signal.7.html" target="_blank" rel="noopener">signal.7</a> 中的 _Signal numbering for standard signals_ 一节。</p>
 <p>signal 的信息传递涉及两个步骤：</p>
 <ol>
 <li><p>发送 signal：如果某个 signal 要被发往进程 P，则操作系统会更新进程 P 的执行上下文数据以标识 P 将要接收 signal</p>
@@ -239,7 +239,7 @@
 <li>强制忽略</li>
 <li>执行先前安装的 signal handler；这是一个由用户提供的自定义函数</li>
 </ul>
-<h2 id="0x01-signal-的奇妙特性（天坑）"><a href="#0x01-signal-的奇妙特性（天坑）" class="headerlink" title="0x01 signal 的奇妙特性（天坑）"></a>0x01 signal 的奇妙特性（天坑）</h2><p>signal 因为其各种神奇的特性，在业界常被冠之以 <em>“probably one of the worst parts of UNIX APIs”</em>。</p>
+<h2 id="0x01-signal-的奇妙特性（天坑）"><a href="#0x01-signal-的奇妙特性（天坑）" class="headerlink" title="0x01 signal 的奇妙特性（天坑）"></a>0x01 signal 的奇妙特性（天坑）</h2><p>signal 因为其各种神奇的特性，在业界常被冠之以 _”probably one of the worst parts of UNIX APIs”_。</p>
 <h3 id="Signal-Handling-and-Reentrant-functions"><a href="#Signal-Handling-and-Reentrant-functions" class="headerlink" title="Signal Handling and Reentrant functions"></a>Signal Handling and Reentrant functions</h3><p>当一个进程要通过 signal handler 处理某个 signal 时，原有的执行流程会被操作系统打断（interrupted），紧接着执行 signal handler，结束后恢复执行先前被打断的流程。</p>
 <p>所以存在一个可能：</p>
 <ol>
@@ -249,7 +249,7 @@
 </ol>
 <p>如果A函数存在非局部的副作用，例如使用了某个全局变量或者静态变量，则两次执行后可能导致这个变量处于一个不一致的状态，例如 <code>printf()</code>。</p>
 <p>更糟糕的是，如果 A 函数会分配内存，并且在分配内存过程中被打断，那么由于内存分配（如 <code>malloc()</code>）的实现可能底层使用了锁，导致 signal handler 中调用 A 函数分配内存时出现死锁。</p>
-<p>因此能在 signal handler 内调用的函数必须要具备 <strong>reentrant（可重入）</strong> 这一特性。这一类函数的学名叫 <em>async signal safe functions</em>。</p>
+<p>因此能在 signal handler 内调用的函数必须要具备 <strong>reentrant（可重入）</strong> 这一特性。这一类函数的学名叫 _async signal safe functions_。</p>
 <p>Linux 上 signal-safe 的函数列表可见<a href="http://man7.org/linux/man-pages/man7/signal-safety.7.html" target="_blank" rel="noopener">这里</a>；把作用类似的函数合并同类项之后发现其实符合要求的函数并不是很多。</p>
 <h3 id="Pending-Signals-and-Signal-Coalescence"><a href="#Pending-Signals-and-Signal-Coalescence" class="headerlink" title="Pending Signals and Signal Coalescence"></a>Pending Signals and Signal Coalescence</h3><p>当类型为 S 的 signal handler 被执行时，系统会 block 此类型后续的 signal，导致后续的这个类型的 signal 进入 pending 状态，一直等到 signal handler 结束执行才会触发接收。</p>
 <p>同时，如果有一个类型为 S 的 signal 处于 pending 状态，那么后续 S 类型的 signal 都会被丢弃，仿佛被合并一般。</p>
@@ -303,7 +303,7 @@
 <li>创建一个匿名管道 <code>pipe(2)</code>，将读端和写段都设置为 non-blocking</li>
 <li>程序在 signal handler 里利用 <code>write(2)</code> 往 pipe 的写端写一个字节；读端绑定到某个 IO multiplexor 上，通过可读事件触发。</li>
 </ol>
-<p>实际例子可参见 <em>The Linux Programming Interface</em> 这本书中的这个 <a href="https://github.com/posborne/linux-programming-interface-exercises/blob/master/tlpi-dist/altio/self_pipe.c" target="_blank" rel="noopener">sample</a>。</p>
+<p>实际例子可参见 _The Linux Programming Interface_ 这本书中的这个 <a href="https://github.com/posborne/linux-programming-interface-exercises/blob/master/tlpi-dist/altio/self_pipe.c" target="_blank" rel="noopener">sample</a>。</p>
 <p>使用这个方法的好处是，不需要额外屏蔽 signal，而是直接利用了原来的 signal disposition &amp; handling；同时几乎所有 POSIX 平台都支持这种做法。</p>
 <p>如果需要管理多个 signal，那么可以：</p>
 <ol>
@@ -361,11 +361,11 @@
         
           <div class="post-tags">
             
-              <a href="/tags/signal/">signal</a>
-            
               <a href="/tags/Linux/">Linux</a>
             
               <a href="/tags/Unix/">Unix</a>
+            
+              <a href="/tags/signal/">signal</a>
             
               <a href="/tags/signalfd/">signalfd</a>
             

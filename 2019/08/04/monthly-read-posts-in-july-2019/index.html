@@ -218,7 +218,7 @@
 <ol>
 <li><p>package 的 <code>init()</code> 函数中注册 runtime GC 的回调，以清理池子中的数据</p>
 </li>
-<li><p>会为每个 P 创建一个 <code>pool</code> 实例；每个实例包含 <em>private</em> 和 <em>shared</em> 两部分。</p>
+<li><p>会为每个 P 创建一个 <code>pool</code> 实例；每个实例包含 _private_ 和 _shared_ 两部分。</p>
 <p> 其中 private 只能由 P 自己访问，因此无需考虑并发安全；shared 能被其他的 P 访问，需要考虑并发安全。</p>
 </li>
 <li><p><code>Get()</code> 的操作顺序：private area -&gt; shared area -&gt; create via New()</p>

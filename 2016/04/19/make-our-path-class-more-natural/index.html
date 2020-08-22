@@ -22,7 +22,7 @@
 
 
 
-  <meta name="keywords" content="windows, c++, path, KC的废墟堆">
+  <meta name="keywords" content="c++, windows, path, KC的废墟堆">
 
 
 
@@ -217,7 +217,7 @@
 <p>对，说的就是 <code>filesystem::path</code>。</p>
 <p>对于一个 path class 而言，最常用的操作不外乎：<code>parent_path</code> <code>filename</code> <code>append/join</code>。</p>
 <p>首先，对于函数 <code>parent_path()</code>，文档是这么描述的：</p>
-<p><em>Returns the path to the parent directory.<br>Returns empty path if empty() or there’s only a single element in the path (begin() == –end().</em></p>
+<p><em>Returns the path to the parent directory.<br>Returns empty path if empty() or there’s only a single element in the path (begin() == —end().</em></p>
 <p>但是对于路径形如 <code>C:\</code> 的 <code>path</code> 对象，Visual Stuido 2015 update 2 提供的实现的调用 <code>parent_path()</code> 的结果居然是 <code>C:</code>。</p>
 <p>好吧，看来这个实现版本认为 <code>C:</code> 是 <code>C:\</code> 的 parent path。</p>
 <p>然而这个认为却是极大错误的。</p>
@@ -274,9 +274,9 @@
         
           <div class="post-tags">
             
-              <a href="/tags/windows/">windows</a>
-            
               <a href="/tags/c/">c++</a>
+            
+              <a href="/tags/windows/">windows</a>
             
               <a href="/tags/path/">path</a>
             

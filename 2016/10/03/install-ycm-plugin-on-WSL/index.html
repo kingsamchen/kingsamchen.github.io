@@ -220,7 +220,7 @@
 <p>对当前用户设置代理。</p>
 <p>如果需要使用 apt-get 操作，那么需要首先 <code>su</code> 进入 root 账户，在 root 下设置代理。</p>
 <p>此处设置的环境变量在某个 terminal 退出后自动销毁，下次进入 terminal 需要重复设置。如果你的代理非常稳定非常快，那么可以考虑改写 profile，避免每次手输。</p>
-<p><em><strong>Special thanks to @xqq here</strong></em></p>
+<p>_<strong>Special thanks to @xqq here</strong>_</p>
 <h3 id="更新自带的-VIM"><a href="#更新自带的-VIM" class="headerlink" title="更新自带的 VIM"></a>更新自带的 VIM</h3><p>因为 WSL 里的 ubuntu 是 14.04 LTS，因此里面附带的 vim 并不满足<strong>最新</strong>的 YCM 的最低版本要求，如果不升级会出现 ycm 工作异常。</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo add-apt-repository ppa:pkg-vim/vim-daily</span><br><span class="line">sudo apt-get update &amp;&amp; sudo apt-get upgrade</span><br></pre></td></tr></table></figure>
 <h3 id="安装构建基础依赖"><a href="#安装构建基础依赖" class="headerlink" title="安装构建基础依赖"></a>安装构建基础依赖</h3><p>主要包括：CMake 和 python-dev packages</p>

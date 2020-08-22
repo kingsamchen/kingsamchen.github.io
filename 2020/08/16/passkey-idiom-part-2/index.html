@@ -212,7 +212,7 @@
 <p>绕过。</p>
 <p>其实这里我们还可以将 <code>Token</code> 的默认构造函数标记为 <code>explicit</code> 来解决；即</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Widget</span> &#123;</span></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">Token</span> &#123;</span></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="function"><span class="keyword">explicit</span> <span class="title">Token</span><span class="params">()</span> </span>= <span class="keyword">default</span>;</span><br><span class="line">        <span class="keyword">friend</span> Widget;</span><br><span class="line">    &#125;;</span><br><span class="line">    ...</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function">Widget <span class="title">w</span><span class="params">(&#123;&#125;, <span class="number">0</span>)</span></span>;    <span class="comment">// error: cannot convert argument 1 from 'initializer list' to 'Token'</span></span><br></pre></td></tr></table></figure>
-<p>因为前面通过 <code>{}</code> 构造一个 <code>Token</code> 对象实际上使用了 <a href="https://en.cppreference.com/w/cpp/language/list_initialization" target="_blank" rel="noopener"><em>copy-list-initialization</em></a></p>
+<p>因为前面通过 <code>{}</code> 构造一个 <code>Token</code> 对象实际上使用了 <a href="https://en.cppreference.com/w/cpp/language/list_initialization" target="_blank" rel="noopener">_copy-list-initialization_</a></p>
 <p>注：根据 reference 文档，如果 <code>class T</code> 是一个 aggregate，那么 list initilization 的 effect 就是 perform aggregate initialization；所以这里和前面说的 aggregation initialization 并不矛盾。</p>
 <p>将构造函数标记为 <code>explicit</code> 可以屏蔽/阻止使用 copy-list-initialization，即这里的使用场景。</p>
 <p>为了便于记忆可以认为 <code>explicit default constructor</code> 会阻止 <code>{} -&gt; class T</code> 的创建。</p>
@@ -262,6 +262,12 @@
         
         
   <nav class="post-nav">
+    
+      <a class="prev" href="/2020/08/21/src-study-redigo/">
+        <i class="iconfont icon-left"></i>
+        <span class="prev-text nav-default">Redigo 源码学习</span>
+        <span class="prev-text nav-mobile">上一篇</span>
+      </a>
     
     
       <a class="next" href="/2020/07/14/the-std-byte/">

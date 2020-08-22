@@ -182,6 +182,229 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2017/03/04/implement-apply-in-cpp-11/">在 C++ 11 中实现 apply</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-03-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Why-apply-matters"><a href="#Why-apply-matters" class="headerlink" title="Why apply matters"></a>Why apply matters</h2><p>假设我们要实现一个和具体业务无关的 HTTP(S) 网络 (Restful)API 请求设施 <code>RequestConnection</code>，我们至少要提供两个实现：</p>
+<ul>
+<li>客户代码的请求结束时的回调 callback/handler</li>
+<li>针对具体业务的 response parser；因为 HTTP 是文本协议，无论 response data 基于何种格式（例如 JSON），我们都要针对具体的业务逻辑场景进行解析</li>
+</ul>
+<p>假设我们希望请求的 callback 足够友好，直接将 client 需要的数据通过函数原型暴露出来，例如</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">OnCheckUpdateComplete</span><span class="params">(<span class="keyword">bool</span> succeeded, <span class="keyword">int</span> last_build_no)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>那么我们的 reponse parser 也要相应的能够返回符合 callback signature 的数据，在 C++ 中，我们可以用 <code>std::tuple</code> 来保存 parsed result：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::tuple&lt;bool, int&gt; ParseCheckUpdateResponse(const std::string&amp; data);</span><br></pre></td></tr></table></figure>
+<p>但是很不巧的，<code>RequestConnection</code> 是业务无关的，而业务相关的 callback/response-parser 则是通过依赖注入的方式（例如通过模板参数）进入 <code>RequestConnection</code>；这意味着我们需要一个通用的方法能够在编译期完成如下事情：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Presume magic function Apply</span></span><br><span class="line"><span class="built_in">std</span>::<span class="built_in">string</span> response_data;</span><br><span class="line">Apply(ResponseHandler, ResponseParser(response_data));</span><br></pre></td></tr></table></figure>
+<p>神奇函数 <code>Apply()</code> 能够调用一个函数，并且将一个 <code>std::tuple</code> 里的元素按照顺序转换为对应的实参。</p>
+<p>简言之，这就是 C++ 17 要引入的 <a href="http://en.cppreference.com/w/cpp/utility/apply" target="_blank" rel="noopener">std::apply</a> 所做的事情。</p>
+<p>但是如果我们的 codebase 是 C++ 11的，那又如何呢？</p>
+<h2 id="How-to-implement-apply-in-C-11"><a href="#How-to-implement-apply-in-C-11" class="headerlink" title="How to implement apply in C++ 11"></a>How to implement apply in C++ 11</h2><p>在 C++ 11 里实现 <code>apply()</code>，我们要做两步：</p>
+<ol>
+<li>实现 index-sequence （C++ 14 开始标准库附带了这个实现）</li>
+<li>实现 apply</li>
+</ol>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;tuple&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;type_traits&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span>... Ints&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">index_sequence</span> &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = index_sequence;</span><br><span class="line">    <span class="keyword">using</span> value_type = <span class="keyword">size_t</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">static</span> <span class="built_in">std</span>::<span class="keyword">size_t</span> <span class="title">size</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">sizeof</span>...(Ints);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="class"><span class="keyword">class</span> <span class="title">Sequence1</span>, <span class="title">class</span> <span class="title">Sequence2</span>&gt;</span></span><br><span class="line"><span class="class"><span class="title">struct</span> <span class="title">merge_and_renumber</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span>... I1, <span class="keyword">size_t</span>... I2&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">merge_and_renumber</span>&lt;index_sequence&lt;I1...&gt;, index_sequence&lt;I2...&gt;&gt;</span></span><br><span class="line"><span class="class">    :</span> index_sequence&lt;I1..., (<span class="keyword">sizeof</span>...(I1) + I2)...&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">size_t</span> N&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span></span></span><br><span class="line"><span class="class">    :</span> merge_and_renumber&lt;<span class="keyword">typename</span> make_index_sequence&lt;N / <span class="number">2</span>&gt;::type,</span><br><span class="line">                         <span class="keyword">typename</span> make_index_sequence&lt;N - N / <span class="number">2</span>&gt;::type&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span>&lt;0&gt; :</span> index_sequence&lt;&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">make_index_sequence</span>&lt;1&gt; :</span> index_sequence&lt;<span class="number">0</span>&gt;</span><br><span class="line">&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Tuple, <span class="built_in">std</span>::<span class="keyword">size_t</span>... index&gt;</span><br><span class="line">auto apply_helper(Func&amp;&amp; func, Tuple&amp;&amp; tuple, index_sequence&lt;index...&gt;) -&gt;</span><br><span class="line">    <span class="keyword">decltype</span>(func(<span class="built_in">std</span>::get&lt;index&gt;(<span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple))...))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> func(<span class="built_in">std</span>::get&lt;index&gt;(<span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple))...);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Func, <span class="keyword">typename</span> Tuple&gt;</span><br><span class="line">auto apply(Func&amp;&amp; func, Tuple&amp;&amp; tuple) -&gt;</span><br><span class="line">    <span class="keyword">decltype</span>(apply_helper(<span class="built_in">std</span>::forward&lt;Func&gt;(func),</span><br><span class="line">                          <span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple),</span><br><span class="line">                          make_index_sequence&lt;<span class="built_in">std</span>::tuple_size&lt;<span class="keyword">typename</span> <span class="built_in">std</span>::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> apply_helper(<span class="built_in">std</span>::forward&lt;Func&gt;(func),</span><br><span class="line">                        <span class="built_in">std</span>::forward&lt;Tuple&gt;(tuple),</span><br><span class="line">                        make_index_sequence&lt;<span class="built_in">std</span>::tuple_size&lt;<span class="keyword">typename</span> <span class="built_in">std</span>::decay&lt;Tuple&gt;::type&gt;::value&gt;&#123;&#125;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上代码就是我在某直播姬的网络框架里所用的实现；根据实际是用来看，quite awesome</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/03/02/monthly-read-posts-in-feb-2017/">Monthly Read Posts in Feb 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-03-02
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="http://insights.thoughtworkers.org/security-issues-in-restful/" target="_blank" rel="noopener">RESTful架构风格下的4大常见安全问题</a></p>
+<ul>
+<li>Don’t forget to check correlations between resources in request URL</li>
+<li>Some rare used HTTP headers might be helpful</li>
+<li>Restrict API request frequency</li>
+</ul>
+<p>这篇略水，某些常见的问题反而都没有提到，例如大木老师遇到的<a href="http://www.daozhihun.com/p/2119" target="_blank" rel="noopener">这个问题</a></p>
+<hr>
+<p><a href="http://preshing.com/20150324/safe-bitfields-in-cpp/" target="_blank" rel="noopener">Safe Bitfields in C++</a></p>
+<p>Main observation: Use union to implement/simulate bitfields.</p>
+<p>Each bitfield is implemented by using a single union member with mask and bit-length being set up initially.</p>
+<p>非常 stunning 的一个实现，但是很可惜，根据 comments 这个实现仍然是 undefined behavior，because <em>it call member functions on inactive union members</em>.</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2017/02/01/monthly-read-posts-in-jan-2017/">Monthly Read Posts in Jan 2017</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2017-02-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p><a href="http://eli.thegreenplace.net/2013/07/09/library-order-in-static-linking/" target="_blank" rel="noopener">Library order in static linking</a></p>
+<p>An object file both provides (exports) external symbols to other objects and libraries, and expects (imports) symbols from other objects and libraries.</p>
+<p>During linking, the linker maintains a symbol table, which keeps two important lists:</p>
+<ul>
+<li>a list of symbols exported by all the objects and libraries encountered so far</li>
+<li>a list of undefined symbols that objects and libraries demanded to import and were not found yet.</li>
+</ul>
+<p><strong>Case 1: the linker encouters a new object file</strong></p>
+<p>linker first checks symbols the object file exports, and:</p>
+<ol>
+<li>add them to the list of exported symbols</li>
+<li>remove them from undefined symbols, if necessary.</li>
+</ol>
+<p>Note that, if any symbol has already been in the exported list, then we get a multiple definition error.</p>
+<p>Linker then checks symbols the file imports, and added them to the list of undefined symbols, unless they can be found in the exported symbol list.</p>
+<p>we can see that for linking pure object files, link order doesn’t matter.</p>
+<p><strong>Case 2: the linker encounters a new library</strong></p>
+<p>Linker goes over all the object files in the library, and for each one, it first looks at the exported symbols:</p>
+<ol>
+<li>If any of the exported symbols are on the undefined list, then this object file is chosen, being added to the link, and is treated as normal object file as above(its exported symbols and imported symbols are processed as normal object file).</li>
+<li>If any of the object files in the library has been included in the link, the library is rescanned again(because a lately added object file may require symbols exported from one early examined-but-skipped object file).</li>
+</ol>
+<p>when linking is done, if any symbols remain in the undefined list, the linker will throw an undefined reference error.</p>
+<p>Note that after the linker has looked at a library, it won’t look at it again. Even if it exports symbols that may be needed by some later library.</p>
+<p>An very important corollary: If object or library AA needs a symbol from library BB, then AA should come before library BB in the command-line invocation of the linker.</p>
+<p><strong>Use Flags to Solve Circular Library Dependency</strong></p>
+<p>Use flags such as <code>--start-group</code> and <code>--end-group</code> to repeatedly scan libraries, until no new import symbol was found.</p>
+<p>But may take significant time to finish linking.</p>
+<hr>
+<p><a href="http://www.lurklurk.org/linkers/linkers.html" target="_blank" rel="noopener">Beginners’ guide to linkers</a></p>
+<p>和前一篇着重分析链接顺序不同，这篇（其实更像是一个短 paper）介绍了整个链接的基础知识，适合扫盲。</p>
+<p>但是如果有一定基础的话，这篇反而没有什么让人觉得惊奇的点。</p>
+<hr>
+<p><a href="http://shaharmike.com/cpp/unique-ptr/" target="_blank" rel="noopener">Exploring std::unique_ptr</a></p>
+<p>同样是一篇基础扫盲 posts，适用于检查自己是否对 <code>std::unique_ptr</code> 的必备知识存在缺漏的情况。</p>
+<p>如果认真阅读过 Scott Meyers 的 <a href="https://book.douban.com/subject/25923597/" target="_blank" rel="noopener">Effective Modern C++</a>，那么 post 里提到的，诸如“为什么使用 <code>std::make_unique()</code> 可以带来异常安全” 这种高级议题就变得显而易见了。</p>
+<p>另外 post 对 custom deleter 的叙述的反而不够详细。</p>
+<hr>
+<p><a href="http://www.jmarshall.com/easy/http/" target="_blank" rel="noopener">HTTP Made Easy</a></p>
+<p>非常赞的 HTTP 协议扫盲文章</p>
+<p>这篇 post 从 HTTP 1.0 开始讲起，然后过渡到 HTTP 1.1，所以对于 HTTP 1.1 为什么要求 request header 一定要带 <code>Host</code> header 提供了一个非常直观的解释。</p>
+<p>此外 post 还增加了 chunked transfer encoding 部分，印象中 Top-down approach 那本 computer networking 是没有提及这部分内容的。</p>
+<hr>
+<p><a href="http://www.csdn.net/article/2015-12-03/2826381" target="_blank" rel="noopener">C++ 11 之美</a></p>
+<p>这篇 post 主要有三个点</p>
+<ul>
+<li>编译期的类成员存在性检查 &amp; 利用 SFINAE 做静态的分支选择（我的<a href="https://kingsamchen.github.io/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">这篇 post</a> 里的实现就是从这篇 post 改进而来）</li>
+<li>利用 <code>std::function&lt;&gt;</code> 实现 lazy-computation</li>
+<li>演示了如何将字符串 <code>&quot;hello/test/20&quot;</code> 转换为函数调用 <code>hello(&quot;test&quot;, 20)</code></li>
+</ul>
+<hr>
+<p><a href="http://www.trinea.cn/android/android-image-cache-compare/" target="_blank" rel="noopener">Android 三大图片缓存原理、特性对比</a></p>
+<p>讲道理这篇文章很水….</p>
+<p>一开始 mark 这篇文章是因为当时还在做安卓直播姬，转眼9个月过去了….</p>
+<p>现在为了借鉴文中几个库的架构设计从 pocket 的回收站里挖出来看了一遍，不过想想也就那么回事了….</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2017/01/30/check-if-has-member-at-compile-time-in-cpp/">编译期判断是否存在某个成员函数</a>
         
       </h1>
@@ -215,13 +438,13 @@
 <p>（简而言之就是如何拙劣的模拟一下 duck typing）</p>
 <p>假设我们要检查某个类 <code>class Foo</code> 是否存在成员数 <code>bar(int)</code></p>
 <p>实现辅助设施</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">has_member_bar</span> &#123;</span></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">    constexpr static auto check(const void*)-&gt;</span><br><span class="line">        <span class="keyword">decltype</span>(<span class="built_in">std</span>::declval&lt;U&gt;().bar(<span class="built_in">std</span>::declval&lt;Args&gt;()...), <span class="built_in">std</span>::true_type());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">false_type <span class="title">check</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(check&lt;T&gt;(<span class="literal">nullptr</span>))::value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">has_member_bar</span> &#123;</span></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">    constexpr static auto check(const void*)-&gt;</span><br><span class="line">        <span class="keyword">decltype</span>(<span class="built_in">std</span>::declval&lt;U&gt;().bar(<span class="built_in">std</span>::declval&lt;Args&gt;()...), <span class="built_in">std</span>::true_type());</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;</span><br><span class="line">    <span class="function"><span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="built_in">std</span>::false_type <span class="title">check</span><span class="params">(...)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(check&lt;T&gt;(<span class="literal">nullptr</span>))::value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>检查的方法是尝试生成函数 <code>T::bar</code> 的返回类型，如果不存在相应函数，则 <code>check()</code> 的重载决议会匹配到第二个函数上。</p>
 <p>这里引入 variadic template 的原因是我们希望能够检查时同时确定函数的 signature（注意 signature 是不包含返回类型的）。</p>
 <p>使用方法：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">constexpr</span> <span class="keyword">bool</span> has_bar = has_member_bar&lt;Foo, <span class="keyword">int</span>&gt;::value;</span><br></pre></td></tr></table></figure>
 <p>如果想把这部分做成通用的设施，那只能引入宏，根据需要生成辅助结构的代码；因为一个辅助结构只能检查一个函数成员。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_HAS_CLASS_MEMBER(NAME)                                                  \</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;                                                  \</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">has_member_</span>##<span class="title">NAME</span> &#123;</span>                                                              \</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;                                                                \</span><br><span class="line">    constexpr static auto check(const void*)-&gt;                                          \</span><br><span class="line">        <span class="keyword">decltype</span>(<span class="built_in">std</span>::declval&lt;U&gt;().NAME(<span class="built_in">std</span>::declval&lt;Args&gt;()...), <span class="built_in">std</span>::true_type());    \</span><br><span class="line">                                                                                        \</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;                                                                \</span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="built_in">std</span>::<span class="function">false_type <span class="title">check</span><span class="params">(...)</span></span>;                                        \</span><br><span class="line">                                                                                        \</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(check&lt;T&gt;(<span class="literal">nullptr</span>))::value;                   \</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HAS_CLASS_MEMBER(CLASS, MEMBER, ...) \</span></span><br><span class="line">    has_member_##MEMBER&lt;CLASS, __VA_ARGS__&gt;::value</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DECLARE_HAS_CLASS_MEMBER(NAME)                                                  \</span></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span>... Args&gt;                                                  \</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">has_member_</span>##<span class="title">NAME</span> &#123;</span>                                                              \</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;                                                                \</span><br><span class="line">    constexpr static auto check(const void*)-&gt;                                          \</span><br><span class="line">        <span class="keyword">decltype</span>(<span class="built_in">std</span>::declval&lt;U&gt;().NAME(<span class="built_in">std</span>::declval&lt;Args&gt;()...), <span class="built_in">std</span>::true_type());    \</span><br><span class="line">                                                                                        \</span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> U&gt;                                                                \</span><br><span class="line">    <span class="function"><span class="keyword">constexpr</span> <span class="keyword">static</span> <span class="built_in">std</span>::false_type <span class="title">check</span><span class="params">(...)</span></span>;                                        \</span><br><span class="line">                                                                                        \</span><br><span class="line">    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keyword">bool</span> value = <span class="keyword">decltype</span>(check&lt;T&gt;(<span class="literal">nullptr</span>))::value;                   \</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> HAS_CLASS_MEMBER(CLASS, MEMBER, ...) \</span></span><br><span class="line">    has_member_##MEMBER&lt;CLASS, __VA_ARGS__&gt;::value</span><br></pre></td></tr></table></figure>
 <p>使用前需要先用 <code>DECLARE_HAS_CLASS_MEMBER(class_name)</code> 来创建一个辅助结构，再利用 <code>HAS_CLASS_MEMBER(Foo, bar, int)</code> 来判断是否存在 <code>Foo::bar(int)</code>。</p>
 <p>如果希望能利用上面的设施在编译期做到根据函数是否存在执行不同的操作，那么则可以借助 SFINAE 来实现：</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">DECLARE_HAS_CLASS_MEMBER(foo);</span><br><span class="line">DECLARE_HAS_CLASS_MEMBER(bar);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Foo</span> &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">()</span> </span>&#123;&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Bar</span> &#123;</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">bar</span><span class="params">()</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Bar::bar()\n"</span>; &#125;</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">foo</span><span class="params">(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)</span> </span>&#123; <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"Bar::foo(const std::string&amp;, int)\n"</span>; &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">typename</span> <span class="built_in">std</span>::enable_if&lt;HAS_CLASS_MEMBER(T, foo, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)&gt;::<span class="function">type <span class="title">RunFoo</span><span class="params">(T&amp; obj)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    obj.foo(<span class="string">"hello world"</span>, <span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">typename</span> <span class="built_in">std</span>::enable_if&lt;!HAS_CLASS_MEMBER(T, foo, <span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span>&amp;, <span class="keyword">int</span>)&gt;::<span class="function">type <span class="title">RunFoo</span><span class="params">(T&amp; obj)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    obj.bar();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    Bar bar;</span><br><span class="line">    RunFoo(bar);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -361,7 +584,7 @@
 <li>不能使用在 generic lambdas 上。generic lambdas 很好很有用，但是它不是银弹，尤其在配合 <code>base::Bind()</code> 使用的情况下。</li>
 </ol>
 <p>接下来是实现方法</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dememberize</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> R, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dememberize</span>&lt;R(C::*)(Args...) const&gt; &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = R(*)(Args...);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">lambda_pointerize_impl</span> &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = <span class="keyword">typename</span> dememberize&lt;<span class="keyword">decltype</span>(&amp;T::<span class="keyword">operator</span>())&gt;::type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">using</span> lambda_pointerize = <span class="keyword">typename</span> lambda_pointerize_impl&lt;T&gt;::type;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line">lambda_pointerize&lt;F&gt; lambda_decay(F lambda)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">return</span> lambda_pointerize&lt;F&gt;(lambda);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dememberize</span>;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> C, <span class="keyword">typename</span> R, <span class="keyword">typename</span>... Args&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dememberize</span>&lt;R(C::*)(Args...) const&gt; &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = R(*)(Args...);</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">lambda_pointerize_impl</span> &#123;</span></span><br><span class="line">    <span class="keyword">using</span> type = <span class="keyword">typename</span> dememberize&lt;<span class="keyword">decltype</span>(&amp;T::<span class="keyword">operator</span>())&gt;::type;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="keyword">using</span> lambda_pointerize = <span class="keyword">typename</span> lambda_pointerize_impl&lt;T&gt;::type;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> F&gt;</span><br><span class="line"><span class="function">lambda_pointerize&lt;F&gt; <span class="title">lambda_decay</span><span class="params">(F lambda)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">return</span> lambda_pointerize&lt;F&gt;(lambda);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>其实如果 VS 2013 支持 <code>constexpr</code> 的话，其实用起来会更优雅。</p>
 <p>另：我发现英文在自创单词上简直太有感觉了。。。。</p>
 
@@ -467,214 +690,6 @@
 <li>Take care of class template function, one instantiation may turn into a competing function.</li>
 <li>Use tag with overload function can benefit from more clearer semantics</li>
 </ul>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/12/18/using-urlrequest-from-chromium-net-lib-to-implement-a-resumable-urldownloader/">利用 chromium net 库的 URLRequest 实现支持断点续传的 URLDownloader</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-12-18
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>最近因为要实现某直播姬的自动更新功能，于是就要求客户端能够自动下载安装包，所以就要实现一个简单的支持续传的下载功能。</p>
-<p>因为用了 chromium 的框架，所以自然是基于 chromium net lib 去实现；稍微翻了一下源码目录，最后决定在 <code>net::URLRequest</code> 的基础上自己封装一个 <code>URLDownloader</code>。</p>
-<p>虽然之前某豹浏览器也有恶意魔改过的下载，但是相关功能一直和我没关系，所以这次基本算是 from scratch，期间也因为资料文档基本没有，绕了一些弯路，全靠一边看源码一遍自己通过demo调试去学习…</p>
-<p>为了方便可能的后来人，这里稍作记录。</p>
-<p>完整的demo源码可以看这里：<a href="https://github.com/kingsamchen/Eureka/tree/master/SimpleDownloader" target="_blank" rel="noopener">SimpleDownloader</a></p>
-<p>把 <code>URLDownloader</code> 的头文件单独摘出来</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> DOWNLOADER_URL_DOWNLOADER_H_</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> DOWNLOADER_URL_DOWNLOADER_H_</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;memory&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/basictypes.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/files/file_path.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/memory/ref_counted.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"base/threading/thread_checker.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"net/base/io_buffer.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"net/url_request/url_request.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"net/url_request/url_request_context.h"</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"url/gurl.h"</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">namespace</span> downloader &#123;</span><br><span class="line"></span><br><span class="line"><span class="comment">// The user of URLDownloader must ensure that the construction and operations of an URLDownloader</span></span><br><span class="line"><span class="comment">// instance are performed on a same thread.</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">URLDownloader</span> :</span> <span class="keyword">public</span> net::URLRequest::Delegate &#123;</span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">CompleteCallback</span> &#123;</span></span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">        <span class="keyword">virtual</span> ~CompleteCallback() &#123;&#125;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnDownloadSuccess</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="keyword">virtual</span> <span class="keyword">void</span> <span class="title">OnDownloadFailure</span><span class="params">()</span> </span>= <span class="number">0</span>;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// The caller of this constructor must make sure:</span></span><br><span class="line">    <span class="comment">// - `save_path` is writable;</span></span><br><span class="line">    <span class="comment">// - the object `callback` refers to is alive during the entire lifecycle of URLDownloader, since</span></span><br><span class="line">    <span class="comment">//   the class itself doesn't acquire the ownership for the `callback`.</span></span><br><span class="line">    URLDownloader(<span class="keyword">const</span> GURL&amp; url, <span class="keyword">const</span> base::FilePath&amp; save_path, CompleteCallback* callback);</span><br><span class="line"></span><br><span class="line">    ~URLDownloader() = <span class="keyword">default</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Starts or resumes the download.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Start</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Stops the download.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">Stop</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnResponseStarted</span><span class="params">(net::URLRequest* request)</span> override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">OnReadCompleted</span><span class="params">(net::URLRequest* request, <span class="keyword">int</span> bytes_read)</span> override</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Saves received network data (stored in `buf_`) to disk write cache, and writes to disk</span></span><br><span class="line">    <span class="comment">// if necessary.</span></span><br><span class="line">    <span class="comment">// It is legal to call this function with 0 passed in as `bytes_received`, when you want to</span></span><br><span class="line">    <span class="comment">// force flushing cache to disk.</span></span><br><span class="line">    <span class="function"><span class="keyword">void</span> <span class="title">SaveReceivedChunk</span><span class="params">(<span class="keyword">int</span> bytes_received, <span class="keyword">bool</span> force_write_to_disk)</span></span>;</span><br><span class="line"></span><br><span class="line">    DISALLOW_COPY_AND_ASSIGN(URLDownloader);</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    GURL url_;</span><br><span class="line">    base::FilePath save_path_;</span><br><span class="line">    base::FilePath tmp_save_path_;</span><br><span class="line">    CompleteCallback* complete_callback_;</span><br><span class="line">    <span class="keyword">size_t</span> downloaded_bytes_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="keyword">char</span>&gt; disk_write_cache_;</span><br><span class="line">    scoped_refptr&lt;net::IOBuffer&gt; buf_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;net::URLRequestContext&gt; request_context_;</span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unique_ptr</span>&lt;net::URLRequest&gt; request_;</span><br><span class="line">    base::ThreadChecker thread_checker_;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">&#125;   <span class="comment">// namespace bililive</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span>  <span class="comment">// DOWNLOADER_URL_DOWNLOADER_H_</span></span></span><br></pre></td></tr></table></figure>
-<p>核心只有四个函数：<code>URLRequest::Start()</code>, <code>OnResponseStarted()</code>, <code>URLRequest::Read()</code>，和 <code>OnReadCompleted()</code>。</p>
-<p>这四个函数的 interactions 大概如下：</p>
-<ul>
-<li><code>Start()</code> 执行后内部会调用 <code>OnResponseStarted()</code></li>
-<li>在 <code>OnResponseStarted()</code> 中，如果 request 和 response 的通信都没有什么问题，则要用 <code>Read()</code> 读取接收到的网络 IO 数据，接着调用 <code>OnReadCompleted()</code> 切换状态；这个步骤称之为 initial reading</li>
-<li>在 <code>OnReadCompleted()</code> 中，反复利用 <code>Read()</code> 读取网络数据</li>
-</ul>
-<p><code>Read()</code> 和 <code>OnReadCompleted()</code> 之间有一个容易被忽略的细节： 利用 <code>Read()</code> 从读取网络 IO 数据时</p>
-<ol>
-<li>如果数据立即可用，则 <code>Read()</code> 会正常读取数据</li>
-<li>如果数据当前不可用，则会触发 asynchronous reading，但是 <code>Read()</code> 函数会马上返回；等到底层获取到 IO 数据后，内部自己会调用 <code>OnReadCompleted()</code></li>
-</ol>
-<p>除此之外，还要注意 <code>URLRequest</code> 对象的<strong>构造和操作</strong>必须在同一个线程。</p>
-<p>至于续传，本质就是利用了 HTTP request header 的 range，具体请参考代码。</p>
-<p>最后说一句，如果你的目的是实现一套和服务端 RESTFul API 通信的设施，那么直接使用 <code>net::URLFetcher</code> 是个更好的选择；因为后者是在 <code>net::URLRequest</code> 基础之上针对字符处理加的一个wrapper，屏蔽了具体的 IO data read 细节。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/12/04/monthly-read-posts-in-nov-2016/">Monthly Read Posts in Nov 2016</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-12-04
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p><a href="http://eli.thegreenplace.net/2011/09/06/stack-frame-layout-on-x86-64" target="_blank" rel="noopener">Stack Frame Layout on X86-64</a></p>
-<p><strong>Main observations</strong></p>
-<p>For AMD64 X64 ABI compiliant platforms (such as Linux), the major changes include:</p>
-<ul>
-<li>Introduces a red-zone storage area on the stack</li>
-<li>Officially makes frame pointer explicitly optional</li>
-</ul>
-<p>For Windows X64 ABI(though depictated in supplementary):</p>
-<ul>
-<li>No red-zone; instead, a pre-allocated home-space is enforced for every function call</li>
-<li>Cleanup of old calling convention legacy; no more worry about cdecl/fastcall/stdcall etc.</li>
-</ul>
-<p><a href="http://www.golgi.io/security-ssl-tls/" target="_blank" rel="noopener">Understanding Security in IoT: SSL/TLS</a><br><a href="http://insights.thoughtworkers.org/talk-about-https/" target="_blank" rel="noopener">我也想来谈谈HTTPS</a></p>
-<p><strong>Why HTTPS</strong></p>
-<p>Why HTTP is not secure?</p>
-<p>Because it transports information in plain text and with no anti-eavesdroping protection.</p>
-<p><strong>How does it work</strong></p>
-<p>After TCP connection is established, the client and server will futher start TLS/SSL handshake:</p>
-<ol>
-<li>Client-Hello</li>
-<li>Server-Hello</li>
-<li>Authentication and Key Exchange</li>
-<li>Server-Finish</li>
-<li>Client-Finish</li>
-</ol>
-<p><strong>Extra Bonus</strong></p>
-<p>How to use openssl for https.</p>
-<p>帧哥在他的<a href="http://blog.syscallx.com" target="_blank" rel="noopener">技术博客分站</a>上有三篇和 TLS/SSL 协议实现相关的 posts，可以放到下个月的 reading list 里</p>
-<p><a href="http://thereignn.ghost.io/on-dry-and-the-cost-of-wrongful-abstractions/" target="_blank" rel="noopener">ON DRY AND THE COST OF WRONGFUL ABSTRACTIONS</a></p>
-<p><strong>Insight</strong></p>
-<p>Duplicating code sometimes can be a good thing (when the cost imposed by abstractions is too high); namely, context matters.</p>
-<p><strong>Reasons</strong></p>
-<p>Programmers spend far more time reading code (to understand logic behind) than writing code.</p>
-<p>Abstractions cut both ways: every abstraction comes at a cost.</p>
-<p>Every abstraction imposes an extra layer of knowledge, which places cognitive load on brain, and in turn, increases the time spent on understanding that piece of code.</p>
-<p>In some extreme cases(everything is encapsulated in abstractions), the abstraction lost its value, and became a wrongful one.</p>
-<p><strong>Conclusion</strong></p>
-<p>Always abstract if the cost of abstraction does not surpass the cost of duplicating code.</p>
-<p>But, it’s just hard to get it right in real practice.</p>
-<p><strong>Extra Comments</strong></p>
-<p>之前看过一篇类似的 post，标题大概是 <em>dependency versus redundancy</em>，印象中里面叙述的观点比这边更加的具体。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2016/11/20/disable-crash-fast-in-debug-mode-due-to-invalid-parameters-when-using-breakpad/">避免使用 breakpad 时调试模式下某些错误跳过调试器自动引发崩溃处理</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2016-11-20
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h3 id="现象"><a href="#现象" class="headerlink" title="现象"></a>现象</h3><p>某个小朋友（虽然和我同年同届…）写代码时不注意，出现未知错误，但是即使调试器启用所有断点选项，也并没有断在出现错误的地方，而是直接进入了我写的 crash handler。</p>
-<h3 id="分析过程"><a href="#分析过程" class="headerlink" title="分析过程"></a>分析过程</h3><p>在调用会出现错误的函数前加入</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*<span class="keyword">static_cast</span>&lt;<span class="keyword">int</span>*&gt;(<span class="number">0x0</span>) = <span class="number">0xDEADBEEF</span>;</span><br></pre></td></tr></table></figure>
-<p>调试运行，debugger 成功断下；说明相关功能均正常，问题应该只和该函数产生的错误有关。</p>
-<p>打开 crash handler 生成的 dump 文件，设置符号表，发现错误发生原因是： <code>vector::operator[]</code> 访问下标越界，但是该错误直接触发 crash handler</p>
-<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>去掉 client 安装 crash handler 前的</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">_CrtSetReportMode(_CRT_ASSERT, <span class="number">0</span>);</span><br></pre></td></tr></table></figure>
-<p>即可解决问题。</p>
-<h3 id="原因"><a href="#原因" class="headerlink" title="原因"></a>原因</h3><p>因为标准规定 <code>vector::operator[]</code> 操作不做 bounds checking，有问题情况下直接导致 undefined behavior；MSVC 为了更快诊断问题，Debug 模式下会对这个操作进行 CRT ASSERT。</p>
-<p>而 <code>_CrtSetReportMode()</code> 屏蔽了 CRT ASSERT，所以直接进入了 crash handler。</p>
 
         
       

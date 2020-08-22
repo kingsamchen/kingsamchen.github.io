@@ -227,6 +227,7 @@
 <p><img src="/img/life_sequence_of_tcp_connecion.svg" alt></p>
 <p>我发现其实我需要的，大概就是增加一个 <code>TCPConnection</code> 实例销毁的事件回调。</p>
 <p>于是我们就有：</p>
+<div class="table-container">
 <table>
 <thead>
 <tr>
@@ -258,6 +259,7 @@
 </tr>
 </tbody>
 </table>
+</div>
 <p>同时为了更加明确连接和断开的事件语义，我把 <code>on_connection()</code> 给拆成了 <code>on_connect()</code> 和 <code>on_disconnect()</code>。</p>
 <p>有了这么一个调整，chat-client 里只需要在 <code>TCPClient::on_connection_destroy()</code> 里退出主线程的事件循环就可以了。因为这个时候 <code>TCPConnection</code> 已经是一个可以安全被销毁的状态。</p>
 <p>这个修改其实也就是上面提交里做的。</p>

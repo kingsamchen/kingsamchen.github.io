@@ -182,6 +182,196 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/09/09/avoid-using-signals-on-linux/">避免在 Linux 上使用 signals</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-09
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>首先承认这个标题乍看之下很像 troll，但真的不是 troll；“避免使用”总的来说更接近 _whenever possible_ 的意思。</p>
+<p>另外，这篇 post 面向的主要是偏底层的、直接使用 system calls 或其 runtime wrapper（glibc）的开发者，最典型的比如 C/C++ 开发者。</p>
+<p>其他语言的开发者通常因为要么 runtime “屏蔽”了这部分内容（如 Java）；要么 runtime 自身对这部分做了较大的抽象/改造（如 Golang），因此很难对此 post 提到的各种观点/做法产生共鸣。</p>
+<p>FYI：自从工作后中文写作能力一直在退化，因此这篇文章如果存在语句不通顺或者用词不当的地方，烦请见谅。</p>
+<h2 id="0x00-背景回顾：什么是-signal？"><a href="#0x00-背景回顾：什么是-signal？" class="headerlink" title="0x00 背景回顾：什么是 signal？"></a>0x00 背景回顾：什么是 signal？</h2><p>signal 源自 Unix，后来成为 POSIX 标准的一部分，现在则被几乎所有的 *nix 系统支持。</p>
+<p>signal 本质上是一种通讯机制，用于系统在某个事件（event）发生时通知某个进程（或线程）。<br>
+          <div class="read-more">
+            <a href="/2019/09/09/avoid-using-signals-on-linux/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/09/01/monthly-read-posts-in-aug-2019/">Monthly Read Posts in Aug 2019</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-09-01
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20130529/a-lock-free-linear-search/" target="_blank" rel="noopener">A Lock-Free… Linear Search?</a></p>
+<p>实现一个 lock-free array list。</p>
+<p>可以作为更复杂的 lockess hashtable 的一个基底实现</p>
+<hr>
+<p><a href="https://preshing.com/20130605/the-worlds-simplest-lock-free-hash-table/" target="_blank" rel="noopener">The World’s Simplest Lock-Free Hash Table</a></p>
+<p>上一篇的应用。</p>
+<p>因为核心是 lockless linear search，所以这里的 hashtable 自然是用 open-addressing 来解决冲突了。</p>
+<p>另外两个核心点分别是：</p>
+<ol>
+<li>利用 murmurhash3 finalizer 做 hash function</li>
+<li>利用 <code>idx &amp;= len - 1</code> 其中 <code>len</code> 为二次幂来做 wrap around。</li>
+</ol>
+<hr>
+<p><a href="https://preshing.com/20130618/atomic-vs-non-atomic-operations/" target="_blank" rel="noopener">Atomic vs. Non-Atomic Operations</a></p>
+<p>这次考虑的是 non-atomic load/store operations</p>
+<hr>
+<p><a href="https://preshing.com/20130702/the-happens-before-relation/" target="_blank" rel="noopener">The Happens-Before Relation</a></p>
+<p>happens-before: If operation A happens-before operation B, then the memory effects of A effectively become visible to the thread performing B before B performs.</p>
+<ol>
+<li>Happens-before doesn’t imply happening before: no violation if memory effects visibility preserved</li>
+<li>Happening before doesn’t imply happens-before: the happens-before relationship only exists where the language standard says it exists.</li>
+</ol>
+<hr>
+<p><a href="https://preshing.com/20130823/the-synchronizes-with-relation/" target="_blank" rel="noopener">The Synchronizes-With Relation</a></p>
+<p>guard-variable &amp; payload metaphore</p>
+<p>payload: set of data being propagated between threads<br>guard variable: protects access to the payload.</p>
+<p>a write-release can synchronizes-with a read-acquire.</p>
+<hr>
+<p><a href="https://preshing.com/20130922/acquire-and-release-fences/" target="_blank" rel="noopener">Acquire and Release Fences</a></p>
+<p>An acquire fence prevents the memory reordering of any read which precedes it in program order with any read or write which follows it in program order.</p>
+<p>A release fence prevents the memory reordering of any read or write which precedes it in program order with any write which follows it in program order.</p>
+<p>acquire and release fences is that they can establish a synchronizes-with relationship</p>
+<hr>
+<p><a href="https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/" target="_blank" rel="noopener">Acquire and Release Fences Don’t Work the Way You’d Expect</a></p>
+<p>How acquire/release fences differ from acquire/release operations.</p>
+<h2 id="Database"><a href="#Database" class="headerlink" title="Database"></a>Database</h2><p><a href="http://seanlook.com/2017/03/11/mysql-index_merge-deadlock/" target="_blank" rel="noopener">index merge 引起的死锁分析</a></p>
+<p>学到了原来还有 index merge 这种操作。</p>
+<p>所以说索引不加好，破事一堆。</p>
+<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6" target="_blank" rel="noopener">Creating a Linux service with systemd</a></p>
+<p>看起来比使用 supervisor 靠谱</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/08/31/acquire-release-operations-and-fences/">Acquire/Release Operation 和 Acquire/Release Fence</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-08-31
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>其实是 Jeff Preshing 的 <a href="https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/" target="_blank" rel="noopener">Acquire and Release Fences Don’t Work the Way You’d Expect</a> 这篇文章的笔记。</p>
+<p>acquire-release operation 和 acquire-release fence 之间存在非常 subtle 的区别，很多人都在这个上犯过错误。</p>
+<p>比如 Jeff Preshing 自己，以及 Herb Sutter。</p>
+<p>个人习惯，笔记一开始就是在 onenote 里，懒得重新做一遍 markdown 了，索性转成 PDF 直接内嵌。</p>
+<iframe src="https://onedrive.live.com/embed?cid=4496A33F126535A6&resid=4496A33F126535A6%2149246&authkey=AG4NakEdjaO2xII&em=2" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/08/18/resolve-clashed-cmake-function-call/">解决 CMake 依赖工程中同名 cmake 函数调用混乱</a>
         
       </h1>
@@ -319,7 +509,7 @@
 <ol>
 <li><p>package 的 <code>init()</code> 函数中注册 runtime GC 的回调，以清理池子中的数据</p>
 </li>
-<li><p>会为每个 P 创建一个 <code>pool</code> 实例；每个实例包含 <em>private</em> 和 <em>shared</em> 两部分。</p>
+<li><p>会为每个 P 创建一个 <code>pool</code> 实例；每个实例包含 _private_ 和 _shared_ 两部分。</p>
 <p> 其中 private 只能由 P 自己访问，因此无需考虑并发安全；shared 能被其他的 P 访问，需要考虑并发安全。</p>
 </li>
 <li><p><code>Get()</code> 的操作顺序：private area -&gt; shared area -&gt; create via New()</p>
@@ -410,190 +600,6 @@
 <p>那会儿互联网产业还未兴起，软件开发差不多等同于写桌面客户端。我对数据库的印象停留在大企业内部自用的 Oracle 或者 Microsoft SQL Server，或者外包专用的 MySQL（LAMP），以及几乎没有人用的 Access / Visual Fox Pro；总之…都不是很好的印象。</p>
 <p>于是本科期间几乎没怎么正经学过 RDBMS，唯一有印象的大概就是会写几条 SQL…</p>
 <p>14 年毕业到转到后端前，有机会接触到的 DB 也只有 SQLite，单机存储数据库嘛，会随便写几条 SQL 就已经足够完成任务了，真是挺寒碜。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/07/21/monthly-read-posts-in-jun-2019/">Monthly Read Posts in June 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-07-21
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20120710/memory-barriers-are-like-source-control-operations/" target="_blank" rel="noopener">Memory Barriers Are Like Source Control Operations</a></p>
-<p>用 VCS 来类比四种 memory fence</p>
-<hr>
-<p><a href="https://preshing.com/20120913/acquire-and-release-semantics/" target="_blank" rel="noopener">Acquire and Release Semantics</a></p>
-<p>C++ provides acquire and release semantics, which are in fact founded on barriers.</p>
-<p>acquire semantcis: <code>#LoadLoad</code> and <code>#LoadStore</code>; apply to read operations.</p>
-<p>Acquire semantics prevent memory reordering of the read-acquire with any read or write operation that follows it in program order.</p>
-<p>release sematncis: <code>#StoreStore</code> and <code>#LoadStore</code>; apply to write operations.</p>
-<p>Release semantics prevent memory reordering of the write-release with any read or write operation that precedes it in program order.</p>
-<hr>
-<p><a href="https://preshing.com/20120930/weak-vs-strong-memory-models/" target="_blank" rel="noopener">Weak vs. Strong Memory Models</a></p>
-<p>Categories of memory models.</p>
-<hr>
-<p><a href="https://preshing.com/20121019/this-is-why-they-call-it-a-weakly-ordered-cpu/" target="_blank" rel="noopener">This Is Why They Call It a Weakly-Ordered CPU</a></p>
-<p>Memory reordering in ARM cpus</p>
-<h2 id="Programming-Languages"><a href="#Programming-Languages" class="headerlink" title="Programming Languages"></a>Programming Languages</h2><p><a href="https://go101.org/article/nil.html" target="_blank" rel="noopener">golang nil 101</a></p>
-<p>屎坑子真多。</p>
-<hr>
-<p><a href="https://www.teamten.com/lawrence/writings/why-i-dont-like-go.html" target="_blank" rel="noopener">why-i-dont-like-go.html</a></p>
-<p>深有感触…</p>
-<p>而且居然还是2016年的文章</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/06/30/implementing-compressed-pair/">实现 compressed pair</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-06-30
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>C++ 的 <code>std::unique_ptr</code> 有个神奇的特性：如果使用默认的 deleter（即使用 <code>operator delete</code>），或者 non-capturing lambda 作为 deleter，则有</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">sizeof</span>(<span class="built_in">std</span>::unique&lt;T&gt;) == <span class="keyword">sizeof</span>(<span class="keyword">void</span>*);</span><br></pre></td></tr></table></figure>
-<p>即整个对象的内存布局和 trivial pointer 一致，没有额外的开销。</p>
-<p>这个特性的背后就是 compress-pair；这个设施能够在某个元素是一个 empty class 时避免为其分配内存。</p>
-<p>注：这里假设你知道什么是 EBO，以及为什么会有 EBO。</p>
-<p>这里自己动手实现一个 compressed pair：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Tx, <span class="keyword">typename</span> Ty, <span class="keyword">bool</span> = <span class="built_in">std</span>::is_empty&lt;Tx&gt;::value&gt;</span><br><span class="line">struct CompressedPair : Tx &#123;</span><br><span class="line">    Ty second;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">    <span class="function"><span class="keyword">explicit</span> <span class="title">CompressedPair</span><span class="params">(T&amp;&amp; t)</span></span></span><br><span class="line">        : Tx(),</span><br><span class="line">          second(<span class="built_in">std</span>::forward&lt;T&gt;(t))</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span><br><span class="line">    CompressedPair(T&amp;&amp; t, U&amp;&amp; u)</span><br><span class="line">        : Tx(<span class="built_in">std</span>::forward&lt;T&gt;(t)),</span><br><span class="line">          second(<span class="built_in">std</span>::forward&lt;U&gt;(u))</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Tx&amp; <span class="title">get_first</span><span class="params">()</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">const</span> Tx&amp; <span class="title">get_first</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> *<span class="keyword">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Tx, <span class="keyword">typename</span> Ty&gt;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">CompressedPair</span>&lt;Tx, Ty, false&gt; &#123;</span></span><br><span class="line">    Tx first;</span><br><span class="line">    Ty second;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> U&gt;</span><br><span class="line">    CompressedPair(T&amp;&amp; t, U&amp;&amp; u)</span><br><span class="line">        : first(<span class="built_in">std</span>::forward&lt;T&gt;(t)),</span><br><span class="line">          second(<span class="built_in">std</span>::forward&lt;U&gt;(u))</span><br><span class="line">    &#123;&#125;</span><br><span class="line"></span><br><span class="line">    <span class="function">Tx&amp; <span class="title">get_first</span><span class="params">()</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> first;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">const</span> Tx&amp; <span class="title">get_first</span><span class="params">()</span> <span class="keyword">const</span> <span class="keyword">noexcept</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> first;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
-<p>因为 EBO 是实现的核心，而父类的构造顺序先于子类的任何成员，上面将 <code>Tx</code> 作为可被优化的成员。<br>
-          <div class="read-more">
-            <a href="/2019/06/30/implementing-compressed-pair/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/06/23/add-value-type-conversion-for-cmdline/">为 CommandLine 加上值指定类型转换以及一些扯淡</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-06-23
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>过去两周抽了点时间给 <code>KBase::CommandLine</code> 做了一个<a href="https://github.com/kingsamchen/KBase/commit/e15c81869a9da5422e2012f6b0c4b87be2a1bf0b" target="_blank" rel="noopener">变更</a>，重新设计了 parameter 和 switch 的用户访问接口。</p>
-<p>变更的其中一个核心改动是：获取 parameter 或 switch value 时提供了值类型的转换。</p>
-<p>有了这个 change 之后，使用者可以通过类似</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> port = cmdline.GetSwitchValueAs&lt;<span class="keyword">int</span>&gt;(<span class="string">"port"</span>, <span class="number">9876</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">auto</span> limit = cmdline.GetParameterAs&lt;<span class="keyword">long</span> <span class="keyword">long</span>&gt;(<span class="number">2</span>);</span><br></pre></td></tr></table></figure>
-<p>的方式直接获取目标值，免去了自己手动将 <code>std::string</code> convert 到指定类型的操作。</p>
-<p>同时，这两个接口还支持自定义的 data type converter，用户只需要传入一个 function object 就可以定制转换过程。</p>
-<hr>
-<p>和 Python 的 <code>argparse</code>；golang 的 <code>flag</code> 乃至 boost 的 <code>program_options</code> 这些需要在一开始“定义”程序使用的 switches(flags) 及其绑定的变量的库不同，<code>CommandLine</code> 对 switches 的使用更多的是一种辅助探测，非侵入式的。</p>
-<p>这种设计是有意的，因为这符合我个人的设计哲学：低层次的设计尽量避免对高层次的约束依赖。</p>
-<p>Golang 的 flags 在普通场景下看似使用便利，但是如果你在多个组件里定义了同一个名叫 <code>conf</code> 的flag，程序就会因为 <em>redefined flags</em> 而导致 panic。更不用提 panic 时甚至不会给出重复定义的上下文，只能靠你自己一个一个排查。</p>
-<p>而避免这种问题的发生的唯一方法就是，人为的规定只允许程序主模块（<code>func main()</code>）内才能定义 flag，第三方包千万不能定义flag。</p>
-<p>如果做不到这点，哪怕不发生 redefined flags 的问题，你的程序也会因为引入了第三方包而“自发”的获得了这些 flags 的定义。</p>
-<p>Python 的 <code>argparse</code> 设计上坑比 <code>flag</code> 稍少，但是在一些复杂的需求上也会让你有一种如鲠在喉的感觉。</p>
-<p>本质上，这些库充当的都是 controller 或者 manager 的角色，为了完成他们的定位，不可避免会通过提供一些高层抽象来完成建模；但是 commandline 的作用大部分时候是给主程序提供支持，作为基础库，怎么可能知道主程序对命令行有什么样的需求呢？</p>
-<p>灵活性和易用性绝大多数的时候都是相互冲突的。</p>
-<p>抽象虽然能够简化细节，做到 selective ignorance，但是同时也增加了约束，这部分约束也是抽象的代价之一。</p>
 
         
       

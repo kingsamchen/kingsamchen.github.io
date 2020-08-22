@@ -182,6 +182,186 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2020/06/28/keep-asio-io-context-running/">保持 ASIO io_context 无任务时运行</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-06-28
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>ASIO 的 <code>io_context::run()</code> 如果发现没有 pending 的任务就会返回，对于 server 的监听线程来说这是符合常理的，因为无论如何至少有个 <code>acceptor::async_accept()</code> 在 pending。</p>
+<p>但是如果想利用多核能力，那么一个常用的设计是：master 线程只负责 accept 进来的请求；将接受的 conn_sock 传递到 worker pool 里由其中一个 worker thread 处理。</p>
+<p>每个 worker thread 其实也跑了一个 <code>io_context</code>，但是因为我们无法保证每个 worker 都有 pending task，所以如果不做特殊处理，<code>io_context::run()</code> 会直接返回，导致 worker thread 也退出，这和我们希望的背道而驰。</p>
+<p>ASIO 中的 work guard 就是用了该解决这个问题：一个 work guard 能防止其关联的 io_context 在没有任务时退出。</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[[maybe_unused]] <span class="keyword">auto</span> work_guard = asio::make_work_guard(io_ctx_);</span><br><span class="line">io_ctx_.run();</span><br></pre></td></tr></table></figure>
+<ol>
+<li><code>work_guard</code> 不影响 <code>io_context::stop()</code> 的功能和语义；如果需要结束 io_context loop，推荐的依然是使用这个方法</li>
+<li>如果向去掉 <code>work_guard</code> 的影响，使用 <code>work_guard::reset()</code> 即可；调用后 <code>io_context::run()</code> 会在没有 pending task 时返回</li>
+</ol>
+<h2 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h2><ol>
+<li><a href="https://dens.website/tutorials/cpp-asio/work" target="_blank" rel="noopener">Prevent io_context::run from returning</a></li>
+</ol>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2020/05/04/atoi-with-overflow-handled/">atoi With Overflow Handled</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-05-04
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>leetcode 上有一题是让你实现一个 <code>atoi()</code>，但是因为函数类型是 32-bit int，所以可以直接内部转换到 64-bit int，避免需要直接处理溢出的情况。</p>
+<p>如果要针对 <code>int64</code> 实现一个 <code>atoi()</code> 又该如何做？</p>
+<p>我翻了一下 golang 的标准库源码，大致梳理了一下</p>
+<p>(1) 如果对象是 <code>int32</code>，并且输入字符串有效数据长度小于10位，则一定不会溢出，所以可以直接处理</p>
+<p>(2) 否则统一走 <code>int64</code> 处理；<code>int64</code> 内部会先处理掉符号位 <code>neg</code>，然后转成 <code>uint64</code></p>
+<p>(3) 溢出处理的核心部分：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Cutoff is the smallest number such that cutoff*base &gt; maxUint64.</span></span><br><span class="line"><span class="comment">// Use compile-time constants for common cases.</span></span><br><span class="line"><span class="keyword">var</span> cutoff <span class="keyword">uint64</span></span><br><span class="line"><span class="keyword">switch</span> base &#123;</span><br><span class="line"><span class="keyword">case</span> <span class="number">10</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="number">10</span> + <span class="number">1</span></span><br><span class="line"><span class="keyword">case</span> <span class="number">16</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="number">16</span> + <span class="number">1</span></span><br><span class="line"><span class="keyword">default</span>:</span><br><span class="line">	cutoff = maxUint64/<span class="keyword">uint64</span>(base) + <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> n &gt;= cutoff &#123;</span><br><span class="line">	<span class="comment">// n*base overflows</span></span><br><span class="line">	<span class="keyword">return</span> maxVal, rangeError(fnParseUint, s0)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">maxVal := <span class="keyword">uint64</span>(<span class="number">1</span>)&lt;&lt;<span class="keyword">uint</span>(bitSize) - <span class="number">1</span></span><br><span class="line"></span><br><span class="line">n *= <span class="keyword">uint64</span>(base)</span><br><span class="line"></span><br><span class="line">n1 := n + <span class="keyword">uint64</span>(d)</span><br><span class="line"><span class="keyword">if</span> n1 &lt; n || n1 &gt; maxVal &#123;</span><br><span class="line">	<span class="comment">// n+v overflows</span></span><br><span class="line">	<span class="keyword">return</span> maxVal, rangeError(fnParseUint, s0)</span><br><span class="line">&#125;</span><br><span class="line">n = n1</span><br></pre></td></tr></table></figure>
+<p>(4) <code>cutoff</code> 是防止溢出的第一重栅栏</p>
+<p>对于 <code>uint64</code> 来说</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">cutoff     = 1844674407370955162</span><br><span class="line">UINT64_MAX = 18446744073709551615</span><br></pre></td></tr></table></figure>
+<p>parse 的时候如果当前数已经 &gt;= cutoff 那么后面的数字不管是几都绝对溢出。</p>
+<p>但是即使 cutoff 这里满足，加上后一位数字之后仍然可能会溢出，所以这里要做溢出处理。</p>
+<p>因为类型是 uint64，所以只可能发生上溢出，数值会 wrap-around，所以用 <code>n + uint64(d) &lt; n</code> 来判断</p>
+<p><code>n1 &gt; maxVal</code> 是用来处理 int32 的时候的情况（函数的输入类型已经被转成了 64-bit）</p>
+<p>(5) 如果输入类型本身就是无符号，那么到这里就结束了。</p>
+<p>如果是有符号，需要判断最终结果是否落在范围里，另外要注意补码体系下两端的值是不对称的。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2020/04/19/allow-connections-from-lan-for-trojan-qt5/">Allow Connections From LAN for Trojan-qt5</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2020-04-19
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/CODE-LIFE/">CODE-LIFE</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>因为众所周知的原因，机场的服务商把协议从 SS 切换到了 Trojan。但是之前的 SS windows 客户端只支持 SS 协议，所以切换后只能换 Trojan-qt5 作为客户端。</p>
+<p>但是这个客户端做的实在不怎么样，作者似乎是在原来的 ss-qt5 的基础上做的修改，集成了 libtrojan；以至于之前 SS-Windows 用的好好的 <em>Allow Connections From LAN</em> 功能到这里没法用了。</p>
+<p>更改 socks5 监听地址为 <code>INETADDR_ANY</code> 确实能让局域网内的其他主机链接 socks5 代理，但是 HTTP 代理就神奇的不能用了…</p>
+<p>试验了一番结果发现要使 HTTP 代理能够正常工作，socks5 代理监听地址必须是 <code>localhost</code>… 🤪</p>
+<p>因为我的 Linux 开发环境是搭建在虚拟机里并通过 X11 转发到宿主机的，所以不能使用来自 LAN 的连接会严重影响开发效率。</p>
+<h2 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h2><ol>
+<li>自己写一个 tcp socket 运行在宿主机上，并监听 <code>INETADDR_ANY</code>，Mint 把转发器作为代理</li>
+<li>用 netcat 实现</li>
+<li>找其他替代品</li>
+</ol>
+<p>先考虑 (1)，然而发现 netcat 可以实现单次连接转发，但是后续的同一个连接的通信会直接 hang 住，可能哪里姿势不对</p>
+<p>再考虑 (2)，发现可以用 socat。</p>
+<p>WSL 里通过 apt 安装，然后</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">socat tcp<span class="_">-l</span>:10086,fork,reuseaddr tcp:127.0.0.1:10081</span><br></pre></td></tr></table></figure>
+<p>Mint 把宿主机的 10086 端口作为代理端口</p>
+<p>嗯，发现工作非常顺畅…</p>
+<p>这样就不用考虑 (3) 了，不然哪怕用 ASIO 也差不多要百来行代码。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2020/04/11/randomly-generate-base62-for-url-shortening/">Randomly Generate Base62 for URL Shortening</a>
         
       </h1>
@@ -213,7 +393,7 @@
           <p>Last week I wrote a post about how to design an URL shortening service, like TinyURL, and came up with 2 strategies to encode an URL, and one of which is to randomly generate base64 sequence.</p>
 <p>Although I knew it works, in theory, I was not so confident deep in mind.</p>
 <p>So I wrote some code and made a simulation for generating 10^8 6-digit and 8-digit base62 sequences, respectively.</p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Alphabet</span> &#123;</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">char</span>, 62&gt; arr;</span><br><span class="line">    <span class="function"><span class="keyword">constexpr</span> <span class="title">Alphabet</span><span class="params">()</span></span></span><br><span class="line">        : arr()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch = <span class="string">'a'</span>; ch &lt;= <span class="string">'z'</span>; ++ch) &#123;</span><br><span class="line">            arr[ch - <span class="string">'a'</span>] = ch;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch = <span class="string">'A'</span>; ch &lt;= <span class="string">'Z'</span>; ++ch) &#123;</span><br><span class="line">            arr[ch - <span class="string">'A'</span> + <span class="number">26</span>] = ch;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch = <span class="string">'0'</span>; ch &lt;= <span class="string">'9'</span>; ++ch) &#123;</span><br><span class="line">            arr[ch - <span class="string">'0'</span> + <span class="number">52</span>] = ch;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">operator</span> <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">char</span>, 62&gt;()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> arr;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">char</span>, 62&gt; kAlphabet = Alphabet();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">std</span>::<span class="function">default_random_engine <span class="title">engine</span><span class="params">(<span class="built_in">std</span>::random_device&#123;&#125;())</span></span>;</span><br><span class="line">    <span class="built_in">std</span>::uniform_int_distribution&lt;&gt; dist(<span class="number">0</span>, <span class="number">61</span>);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unordered_set</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; keys;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">size_t</span> kNum = <span class="number">100000000</span>;  <span class="comment">// 10^8</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i = <span class="number">0</span>; i &lt; kNum; ++i) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> key;</span><br><span class="line">        key.reserve(<span class="number">8</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> k = <span class="number">0</span>; k &lt; <span class="number">8</span>; ++k) &#123;</span><br><span class="line">            key.append(<span class="number">1</span>, kAlphabet[dist(engine)]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        keys.insert(<span class="built_in">std</span>::move(key));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"keys-size="</span> &lt;&lt; keys.size() &lt;&lt; <span class="string">"; total="</span> &lt;&lt; kNum &lt;&lt; <span class="string">"\n"</span></span><br><span class="line">              &lt;&lt; <span class="string">"unique ratio="</span> &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(keys.size()) / kNum;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Alphabet</span> &#123;</span></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">char</span>, 62&gt; arr;</span><br><span class="line">    <span class="function"><span class="keyword">constexpr</span> <span class="title">Alphabet</span><span class="params">()</span></span></span><br><span class="line"><span class="function">        : <span class="title">arr</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch = <span class="string">'a'</span>; ch &lt;= <span class="string">'z'</span>; ++ch) &#123;</span><br><span class="line">            arr[ch - <span class="string">'a'</span>] = ch;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch = <span class="string">'A'</span>; ch &lt;= <span class="string">'Z'</span>; ++ch) &#123;</span><br><span class="line">            arr[ch - <span class="string">'A'</span> + <span class="number">26</span>] = ch;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> ch = <span class="string">'0'</span>; ch &lt;= <span class="string">'9'</span>; ++ch) &#123;</span><br><span class="line">            arr[ch - <span class="string">'0'</span> + <span class="number">52</span>] = ch;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">operator</span> <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">char</span>, 62&gt;()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> arr;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">constexpr</span> <span class="built_in">std</span>::<span class="built_in">array</span>&lt;<span class="keyword">char</span>, 62&gt; kAlphabet = Alphabet();</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::default_random_engine <span class="title">engine</span><span class="params">(<span class="built_in">std</span>::random_device&#123;&#125;())</span></span>;</span><br><span class="line">    <span class="function"><span class="built_in">std</span>::uniform_int_distribution&lt;&gt; <span class="title">dist</span><span class="params">(<span class="number">0</span>, <span class="number">61</span>)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">unordered_set</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; keys;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">constexpr</span> <span class="keyword">size_t</span> kNum = <span class="number">100000000</span>;  <span class="comment">// 10^8</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> i = <span class="number">0</span>; i &lt; kNum; ++i) &#123;</span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">string</span> key;</span><br><span class="line">        key.reserve(<span class="number">8</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> k = <span class="number">0</span>; k &lt; <span class="number">8</span>; ++k) &#123;</span><br><span class="line">            key.append(<span class="number">1</span>, kAlphabet[dist(engine)]);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        keys.insert(<span class="built_in">std</span>::move(key));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; <span class="string">"keys-size="</span> &lt;&lt; keys.size() &lt;&lt; <span class="string">"; total="</span> &lt;&lt; kNum &lt;&lt; <span class="string">"\n"</span></span><br><span class="line">              &lt;&lt; <span class="string">"unique ratio="</span> &lt;&lt; <span class="keyword">static_cast</span>&lt;<span class="keyword">double</span>&gt;(keys.size()) / kNum;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>The result shows</p>
 <ul>
 <li>for generating 10^8 6-digit sequences, unique ratio of one-time generation is 0.9991</li>
@@ -270,14 +450,14 @@
         
 
         
-          <h2 id="1-Encoding-Actual-URL"><a href="#1-Encoding-Actual-URL" class="headerlink" title="1. Encoding Actual URL"></a>1. Encoding Actual URL</h2><p>The path part, which we would call it <em>key</em>, of an encoded URL can consist of 6 ~ 8 digits in base62, up to desired uniqueness rate.</p>
+          <h2 id="1-Encoding-Actual-URL"><a href="#1-Encoding-Actual-URL" class="headerlink" title="1. Encoding Actual URL"></a>1. Encoding Actual URL</h2><p>The path part, which we would call it _key_, of an encoded URL can consist of 6 ~ 8 digits in base62, up to desired uniqueness rate.</p>
 <h3 id="Randomly-Generated"><a href="#Randomly-Generated" class="headerlink" title="Randomly Generated"></a>Randomly Generated</h3><p>We can randomly generate those digits each within the range [0, 61].</p>
 <p>Then we must check if the generated key is unique by consulting our key storage.</p>
 <blockquote>
 <p>Aside: this checking process can be optimized with data structures like bloom-filter, provided we have to deal hundres of million records.</p>
 </blockquote>
 <p>If we are unlucky, we may have a key collision; in this case, just re-generate another key until its unique.</p>
-<p>To make encoding more efficient, we can have a standalone <em>Key Generation Service(KGS)</em> that generates those random key beforehand, and store them.<br>
+<p>To make encoding more efficient, we can have a standalone _Key Generation Service(KGS)_ that generates those random key beforehand, and store them.<br>
           <div class="read-more">
             <a href="/2020/04/04/how-to-design-a-url-shortening-system/" class="read-more-link">阅读更多</a>
           </div>
@@ -334,7 +514,7 @@
 <p>注：虽然问题是17年提的，但是考虑到 CMake 的频繁迭代和最佳实践的变化，希望以下内容仍有帮助。</p>
 <h3 id="Why-CMake-？"><a href="#Why-CMake-？" class="headerlink" title="Why CMake ？"></a>Why CMake ？</h3><p>先回答括号中的问题：<strong>被逼的</strong>。</p>
 <p>这三个字是认真的。</p>
-<p>不管 CMake 是否是一个优秀的构建工具，不管你是否认同 CMake，都无法否认 CMake 目前是 C++ 的 de facto build system[^1]。</p>
+<p>不管 CMake 是否是一个优秀的构建工具，不管你是否认同 CMake，都无法否认 CMake 目前是 C++ 的 de facto build system<sup><a href="#fn_1" id="reffn_1">1</a></sup>。</p>
 <p>所以在社区以及生态的影响下，使用 CMake 作为构建工具的项目会越来越多。<br>
           <div class="read-more">
             <a href="/2020/02/08/how-to-learn-cmake-as-the-beginner/" class="read-more-link">阅读更多</a>
@@ -398,163 +578,6 @@
 <p>In this case, connections in state <code>SYN RECEIVED</code> are added to the SYN queue, and later moved to the accept queue when their state changes to <code>ESTABLISHED</code>.<br>
           <div class="read-more">
             <a href="/2019/12/21/syn-queue-and-accept-queue/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/12/08/toml-to-golang-struct/">Toml to Golang Struct</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-12-08
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>之前写某个东西的副产品，本质上和 <a href="https://xuri.me/toml-to-go/" target="_blank" rel="noopener">https://xuri.me/toml-to-go/</a> 一样。</p>
-<p>解析 Toml 仍然依赖 github.com/BurntSushi/toml 这个库。</p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Eliminates _ and capitalizes the key. The key needs to be exported.</span></span><br><span class="line"><span class="comment">// e.g hello_world -&gt; HelloWorld</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">normalizeStructKey</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	str := strings.ReplaceAll(key, <span class="string">"_"</span>, <span class="string">" "</span>)</span><br><span class="line">	str = strings.Title(str)</span><br><span class="line">	str = strings.ReplaceAll(str, <span class="string">" "</span>, <span class="string">""</span>)</span><br><span class="line">	<span class="keyword">return</span> str</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generates golang strcut from a given toml file.</span></span><br><span class="line"><span class="comment">// Result needs re-format.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">translate</span><span class="params">(data <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	def := <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> key, value := <span class="keyword">range</span> data &#123;</span><br><span class="line">		key = normalizeStructKey(key)</span><br><span class="line">		vt := reflect.ValueOf(value)</span><br><span class="line">		<span class="keyword">if</span> vt.Kind() == reflect.Map &#123;</span><br><span class="line">			def += key + <span class="string">" struct &#123;\n"</span> + translate(value.(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)) + <span class="string">"\n&#125;\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> vt.Kind() == reflect.Slice &#123;</span><br><span class="line">			s := <span class="string">"[]interface&#123;&#125;"</span></span><br><span class="line">			<span class="keyword">if</span> vt.Len() &gt; <span class="number">0</span> &#123;</span><br><span class="line">				s = reflect.ValueOf(vt.Index(<span class="number">0</span>).Interface()).Type().String()</span><br><span class="line">			&#125;</span><br><span class="line">			def += key + <span class="string">" []"</span> + s + <span class="string">"\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			def += key + <span class="string">" "</span> + vt.Type().String() + <span class="string">"\n"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> def</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> _, err := toml.DecodeFile(tomlPath, &amp;data); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">inner := translate(data)</span><br></pre></td></tr></table></figure>
-<p>支持结构嵌套。</p>
-<p>不过生成的文本大概需要 gofmt 一下才符合格式规范。</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/11/24/auto-cfs-cores-cpp-version-of-automaxprocs/">auto-cfs-cores C++ 版 automaxprocs</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-11-24
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>之前写了一篇分析 uber 的 automaxprocs 的源码，后面抽个了时间写了一个 C++ 版本的。</p>
-<p>其一是为了加深对原库的理解；其二是避免太长时间没写 C++ 手生，以及顺带体验一下 C++ 17 的感觉。</p>
-<p>代码在：<a href="https://github.com/kingsamchen/Eureka/tree/master/auto-cfs-cores" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/tree/master/auto-cfs-cores</a></p>
-<p>PS：一开始用 filesystem 的时候发现 libstdc++-8 需要专门连接一个 <code>lstdc++fs</code>，否则会因为符号不在同一个 lib 里直接 coredump。。。</p>
-<p>最后折腾了一圈还是直接用了以前自己写的 <code>Path</code></p>
-<p>PPS：<code>std::optional</code> 还挺好用</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/11/09/src-study-uber-automaxprocs/">uber automaxprocs 源码分析</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-11-09
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>最近直播内部的 golang 服务都使用了 uber 出品的 automaxprocs 这个库。</p>
-<p>据伟大的 @ice 马总说，这个库解决了一个困扰B站整个golang（container）技术栈一年多的问题。</p>
-<p>出于好奇这个库到底做了什么 magic，能够解决这个持续了一年多的 pain in the ass，抽了一点时间，稍微翻了一下库的源代码，记录如下。</p>
-<h1 id="automaxprocs-解决了什么问题"><a href="#automaxprocs-解决了什么问题" class="headerlink" title="automaxprocs 解决了什么问题"></a>automaxprocs 解决了什么问题</h1><p>线上容器里的服务通常都对 CPU 资源做了限制，例如默认的 4C。</p>
-<p>但是在容器里通过 <code>lscpu</code> 仍然能看到宿主机的所有 CPU 核心：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">rchitecture:          x86_64</span><br><span class="line">CPU op-mode(s):        32-bit, 64-bit</span><br><span class="line">Byte Order:            Little Endian</span><br><span class="line">CPU(s):                48</span><br><span class="line">On-line CPU(s) list:   0-47</span><br><span class="line">Thread(s) per core:    2</span><br><span class="line">Core(s) per socket:    12</span><br><span class="line">Socket(s):             2</span><br><span class="line">NUMA node(s):          2</span><br><span class="line">Vendor ID:             GenuineIntel</span><br><span class="line">CPU family:            6</span><br><span class="line">Model:                 79</span><br><span class="line">Model name:            Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz</span><br><span class="line">Stepping:              1</span><br></pre></td></tr></table></figure>
-<p>这就导致 golang 服务默认会拿宿主机的 CPU 核心数来调用 <code>runtime.GOMAXPROCS()</code>，导致 P 数量远远大于可用的 CPU 核心，引起频繁上下文切换，影响高负载情况下的服务性能。<br>
-          <div class="read-more">
-            <a href="/2019/11/09/src-study-uber-automaxprocs/" class="read-more-link">阅读更多</a>
           </div>
         
       

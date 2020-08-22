@@ -182,6 +182,163 @@
     <header class="post-header">
       <h1 class="post-title">
         
+          <a class="post-link" href="/2019/12/08/toml-to-golang-struct/">Toml to Golang Struct</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-12-08
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>之前写某个东西的副产品，本质上和 <a href="https://xuri.me/toml-to-go/" target="_blank" rel="noopener">https://xuri.me/toml-to-go/</a> 一样。</p>
+<p>解析 Toml 仍然依赖 github.com/BurntSushi/toml 这个库。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Eliminates _ and capitalizes the key. The key needs to be exported.</span></span><br><span class="line"><span class="comment">// e.g hello_world -&gt; HelloWorld</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">normalizeStructKey</span><span class="params">(key <span class="keyword">string</span>)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	str := strings.ReplaceAll(key, <span class="string">"_"</span>, <span class="string">" "</span>)</span><br><span class="line">	str = strings.Title(str)</span><br><span class="line">	str = strings.ReplaceAll(str, <span class="string">" "</span>, <span class="string">""</span>)</span><br><span class="line">	<span class="keyword">return</span> str</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generates golang strcut from a given toml file.</span></span><br><span class="line"><span class="comment">// Result needs re-format.</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">translate</span><span class="params">(data <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)</span> <span class="title">string</span></span> &#123;</span><br><span class="line">	def := <span class="string">""</span></span><br><span class="line">	<span class="keyword">for</span> key, value := <span class="keyword">range</span> data &#123;</span><br><span class="line">		key = normalizeStructKey(key)</span><br><span class="line">		vt := reflect.ValueOf(value)</span><br><span class="line">		<span class="keyword">if</span> vt.Kind() == reflect.Map &#123;</span><br><span class="line">			def += key + <span class="string">" struct &#123;\n"</span> + translate(value.(<span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">interface</span>&#123;&#125;)) + <span class="string">"\n&#125;\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> <span class="keyword">if</span> vt.Kind() == reflect.Slice &#123;</span><br><span class="line">			s := <span class="string">"[]interface&#123;&#125;"</span></span><br><span class="line">			<span class="keyword">if</span> vt.Len() &gt; <span class="number">0</span> &#123;</span><br><span class="line">				s = reflect.ValueOf(vt.Index(<span class="number">0</span>).Interface()).Type().String()</span><br><span class="line">			&#125;</span><br><span class="line">			def += key + <span class="string">" []"</span> + s + <span class="string">"\n"</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			def += key + <span class="string">" "</span> + vt.Type().String() + <span class="string">"\n"</span></span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> def</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> _, err := toml.DecodeFile(tomlPath, &amp;data); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line">inner := translate(data)</span><br></pre></td></tr></table></figure>
+<p>支持结构嵌套。</p>
+<p>不过生成的文本大概需要 gofmt 一下才符合格式规范。</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/11/24/auto-cfs-cores-cpp-version-of-automaxprocs/">auto-cfs-cores C++ 版 automaxprocs</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-11-24
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+
+        
+          <p>之前写了一篇分析 uber 的 automaxprocs 的源码，后面抽个了时间写了一个 C++ 版本的。</p>
+<p>其一是为了加深对原库的理解；其二是避免太长时间没写 C++ 手生，以及顺带体验一下 C++ 17 的感觉。</p>
+<p>代码在：<a href="https://github.com/kingsamchen/Eureka/tree/master/auto-cfs-cores" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/tree/master/auto-cfs-cores</a></p>
+<p>PS：一开始用 filesystem 的时候发现 libstdc++-8 需要专门连接一个 <code>lstdc++fs</code>，否则会因为符号不在同一个 lib 里直接 coredump。。。</p>
+<p>最后折腾了一圈还是直接用了以前自己写的 <code>Path</code></p>
+<p>PPS：<code>std::optional</code> 还挺好用</p>
+
+        
+      
+    </div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
+          <a class="post-link" href="/2019/11/09/src-study-uber-automaxprocs/">uber automaxprocs 源码分析</a>
+        
+      </h1>
+
+      <div class="post-meta">
+        <span class="post-time">
+          2019-11-09
+        </span>
+        
+          <div class="post-category">
+            
+              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
+            
+          </div>
+        
+        
+      </div>
+    </header>
+
+    
+    
+
+    <div class="post-content">
+      
+        
+        
+          
+        
+
+        
+          <p>最近直播内部的 golang 服务都使用了 uber 出品的 automaxprocs 这个库。</p>
+<p>据伟大的 @ice 马总说，这个库解决了一个困扰B站整个golang（container）技术栈一年多的问题。</p>
+<p>出于好奇这个库到底做了什么 magic，能够解决这个持续了一年多的 pain in the ass，抽了一点时间，稍微翻了一下库的源代码，记录如下。</p>
+<h1 id="automaxprocs-解决了什么问题"><a href="#automaxprocs-解决了什么问题" class="headerlink" title="automaxprocs 解决了什么问题"></a>automaxprocs 解决了什么问题</h1><p>线上容器里的服务通常都对 CPU 资源做了限制，例如默认的 4C。</p>
+<p>但是在容器里通过 <code>lscpu</code> 仍然能看到宿主机的所有 CPU 核心：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">rchitecture:          x86_64</span><br><span class="line">CPU op-mode(s):        32-bit, 64-bit</span><br><span class="line">Byte Order:            Little Endian</span><br><span class="line">CPU(s):                48</span><br><span class="line">On-line CPU(s) list:   0-47</span><br><span class="line">Thread(s) per core:    2</span><br><span class="line">Core(s) per socket:    12</span><br><span class="line">Socket(s):             2</span><br><span class="line">NUMA node(s):          2</span><br><span class="line">Vendor ID:             GenuineIntel</span><br><span class="line">CPU family:            6</span><br><span class="line">Model:                 79</span><br><span class="line">Model name:            Intel(R) Xeon(R) CPU E5-2650 v4 @ 2.20GHz</span><br><span class="line">Stepping:              1</span><br></pre></td></tr></table></figure>
+<p>这就导致 golang 服务默认会拿宿主机的 CPU 核心数来调用 <code>runtime.GOMAXPROCS()</code>，导致 P 数量远远大于可用的 CPU 核心，引起频繁上下文切换，影响高负载情况下的服务性能。<br>
+          <div class="read-more">
+            <a href="/2019/11/09/src-study-uber-automaxprocs/" class="read-more-link">阅读更多</a>
+          </div>
+        
+      
+    </p></div>
+
+    
+
+    
+
+  </article>
+
+    
+      
+  <article class="post">
+    <header class="post-header">
+      <h1 class="post-title">
+        
           <a class="post-link" href="/2019/11/04/token-bucket-based-rate-limit/">一个轮子：基于 token bucket 的 rate-limit</a>
         
       </h1>
@@ -334,7 +491,7 @@
 <p>在第一次判断实例为空和上锁之间存在一个 potential race，因此上锁后需要再一次判断实例是否为空。</p>
 <p>这也是 double checked 的来由。</p>
 <p>所以一个传统但并不100%正确的 DCLP 实现如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; lock(mtx);</span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> Singleton();				<span class="comment">// &lt;-- key point</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// omit explicit static field initialization.</span></span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::mutex mtx;</span><br><span class="line">    <span class="keyword">static</span> Singleton* instance;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Singleton</span> &#123;</span></span><br><span class="line"><span class="keyword">public</span>:</span><br><span class="line">    <span class="function"><span class="keyword">static</span> Singleton* <span class="title">GetInstance</span><span class="params">()</span></span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">            <span class="function"><span class="built_in">std</span>::lock_guard&lt;<span class="built_in">std</span>::mutex&gt; <span class="title">lock</span><span class="params">(mtx)</span></span>;</span><br><span class="line">            <span class="keyword">if</span> (instance == <span class="literal">nullptr</span>) &#123;</span><br><span class="line">                instance = <span class="keyword">new</span> Singleton();				<span class="comment">// &lt;-- key point</span></span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> instance;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">private</span>:</span><br><span class="line">    <span class="comment">// omit explicit static field initialization.</span></span><br><span class="line">    <span class="keyword">static</span> <span class="built_in">std</span>::mutex mtx;</span><br><span class="line">    <span class="keyword">static</span> Singleton* instance;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
 <p>这基本是早起 C++ DCLP 的实现架子。</p>
 <h3 id="0x01-问题：内存乱序以及为什么锁帮不了忙"><a href="#0x01-问题：内存乱序以及为什么锁帮不了忙" class="headerlink" title="0x01 问题：内存乱序以及为什么锁帮不了忙"></a>0x01 问题：内存乱序以及为什么锁帮不了忙</h3><p>语句</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">instance = <span class="keyword">new</span> Singleton();</span><br></pre></td></tr></table></figure>
@@ -400,196 +557,6 @@
           <div class="read-more">
             <a href="/2019/09/22/simple-notes-on-using-asio-buffer/" class="read-more-link">阅读更多</a>
           </div>
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/09/09/avoid-using-signals-on-linux/">避免在 Linux 上使用 signals</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-09-09
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-          
-        
-
-        
-          <p>首先承认这个标题乍看之下很像 troll，但真的不是 troll；“避免使用”总的来说更接近 <em>whenever possible</em> 的意思。</p>
-<p>另外，这篇 post 面向的主要是偏底层的、直接使用 system calls 或其 runtime wrapper（glibc）的开发者，最典型的比如 C/C++ 开发者。</p>
-<p>其他语言的开发者通常因为要么 runtime “屏蔽”了这部分内容（如 Java）；要么 runtime 自身对这部分做了较大的抽象/改造（如 Golang），因此很难对此 post 提到的各种观点/做法产生共鸣。</p>
-<p>FYI：自从工作后中文写作能力一直在退化，因此这篇文章如果存在语句不通顺或者用词不当的地方，烦请见谅。</p>
-<h2 id="0x00-背景回顾：什么是-signal？"><a href="#0x00-背景回顾：什么是-signal？" class="headerlink" title="0x00 背景回顾：什么是 signal？"></a>0x00 背景回顾：什么是 signal？</h2><p>signal 源自 Unix，后来成为 POSIX 标准的一部分，现在则被几乎所有的 *nix 系统支持。</p>
-<p>signal 本质上是一种通讯机制，用于系统在某个事件（event）发生时通知某个进程（或线程）。<br>
-          <div class="read-more">
-            <a href="/2019/09/09/avoid-using-signals-on-linux/" class="read-more-link">阅读更多</a>
-          </div>
-        
-      
-    </p></div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/09/01/monthly-read-posts-in-aug-2019/">Monthly Read Posts in Aug 2019</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-09-01
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <h2 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h2><p><a href="https://preshing.com/20130529/a-lock-free-linear-search/" target="_blank" rel="noopener">A Lock-Free… Linear Search?</a></p>
-<p>实现一个 lock-free array list。</p>
-<p>可以作为更复杂的 lockess hashtable 的一个基底实现</p>
-<hr>
-<p><a href="https://preshing.com/20130605/the-worlds-simplest-lock-free-hash-table/" target="_blank" rel="noopener">The World’s Simplest Lock-Free Hash Table</a></p>
-<p>上一篇的应用。</p>
-<p>因为核心是 lockless linear search，所以这里的 hashtable 自然是用 open-addressing 来解决冲突了。</p>
-<p>另外两个核心点分别是：</p>
-<ol>
-<li>利用 murmurhash3 finalizer 做 hash function</li>
-<li>利用 <code>idx &amp;= len - 1</code> 其中 <code>len</code> 为二次幂来做 wrap around。</li>
-</ol>
-<hr>
-<p><a href="https://preshing.com/20130618/atomic-vs-non-atomic-operations/" target="_blank" rel="noopener">Atomic vs. Non-Atomic Operations</a></p>
-<p>这次考虑的是 non-atomic load/store operations</p>
-<hr>
-<p><a href="https://preshing.com/20130702/the-happens-before-relation/" target="_blank" rel="noopener">The Happens-Before Relation</a></p>
-<p>happens-before: If operation A happens-before operation B, then the memory effects of A effectively become visible to the thread performing B before B performs.</p>
-<ol>
-<li>Happens-before doesn’t imply happening before: no violation if memory effects visibility preserved</li>
-<li>Happening before doesn’t imply happens-before: the happens-before relationship only exists where the language standard says it exists.</li>
-</ol>
-<hr>
-<p><a href="https://preshing.com/20130823/the-synchronizes-with-relation/" target="_blank" rel="noopener">The Synchronizes-With Relation</a></p>
-<p>guard-variable &amp; payload metaphore</p>
-<p>payload: set of data being propagated between threads<br>guard variable: protects access to the payload.</p>
-<p>a write-release can synchronizes-with a read-acquire.</p>
-<hr>
-<p><a href="https://preshing.com/20130922/acquire-and-release-fences/" target="_blank" rel="noopener">Acquire and Release Fences</a></p>
-<p>An acquire fence prevents the memory reordering of any read which precedes it in program order with any read or write which follows it in program order.</p>
-<p>A release fence prevents the memory reordering of any read or write which precedes it in program order with any write which follows it in program order.</p>
-<p>acquire and release fences is that they can establish a synchronizes-with relationship</p>
-<hr>
-<p><a href="https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/" target="_blank" rel="noopener">Acquire and Release Fences Don’t Work the Way You’d Expect</a></p>
-<p>How acquire/release fences differ from acquire/release operations.</p>
-<h2 id="Database"><a href="#Database" class="headerlink" title="Database"></a>Database</h2><p><a href="http://seanlook.com/2017/03/11/mysql-index_merge-deadlock/" target="_blank" rel="noopener">index merge 引起的死锁分析</a></p>
-<p>学到了原来还有 index merge 这种操作。</p>
-<p>所以说索引不加好，破事一堆。</p>
-<h2 id="Misc"><a href="#Misc" class="headerlink" title="Misc"></a>Misc</h2><p><a href="https://medium.com/@benmorel/creating-a-linux-service-with-systemd-611b5c8b91d6" target="_blank" rel="noopener">Creating a Linux service with systemd</a></p>
-<p>看起来比使用 supervisor 靠谱</p>
-
-        
-      
-    </div>
-
-    
-
-    
-
-  </article>
-
-    
-      
-  <article class="post">
-    <header class="post-header">
-      <h1 class="post-title">
-        
-          <a class="post-link" href="/2019/08/31/acquire-release-operations-and-fences/">Acquire/Release Operation 和 Acquire/Release Fence</a>
-        
-      </h1>
-
-      <div class="post-meta">
-        <span class="post-time">
-          2019-08-31
-        </span>
-        
-          <div class="post-category">
-            
-              <a href="/categories/PROGRAMMING/">PROGRAMMING</a>
-            
-          </div>
-        
-        
-      </div>
-    </header>
-
-    
-    
-
-    <div class="post-content">
-      
-        
-        
-
-        
-          <p>其实是 Jeff Preshing 的 <a href="https://preshing.com/20131125/acquire-and-release-fences-dont-work-the-way-youd-expect/" target="_blank" rel="noopener">Acquire and Release Fences Don’t Work the Way You’d Expect</a> 这篇文章的笔记。</p>
-<p>acquire-release operation 和 acquire-release fence 之间存在非常 subtle 的区别，很多人都在这个上犯过错误。</p>
-<p>比如 Jeff Preshing 自己，以及 Herb Sutter。</p>
-<p>个人习惯，笔记一开始就是在 onenote 里，懒得重新做一遍 markdown 了，索性转成 PDF 直接内嵌。</p>
-<iframe src="https://onedrive.live.com/embed?cid=4496A33F126535A6&resid=4496A33F126535A6%2149246&authkey=AG4NakEdjaO2xII&em=2" width="800" height="600" frameborder="0" scrolling="no"></iframe>
-
         
       
     </div>

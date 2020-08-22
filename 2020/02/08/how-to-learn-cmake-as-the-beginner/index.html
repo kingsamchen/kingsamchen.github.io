@@ -220,14 +220,14 @@
 <p>注：虽然问题是17年提的，但是考虑到 CMake 的频繁迭代和最佳实践的变化，希望以下内容仍有帮助。</p>
 <h3 id="Why-CMake-？"><a href="#Why-CMake-？" class="headerlink" title="Why CMake ？"></a>Why CMake ？</h3><p>先回答括号中的问题：<strong>被逼的</strong>。</p>
 <p>这三个字是认真的。</p>
-<p>不管 CMake 是否是一个优秀的构建工具，不管你是否认同 CMake，都无法否认 CMake 目前是 C++ 的 de facto build system[^1]。</p>
+<p>不管 CMake 是否是一个优秀的构建工具，不管你是否认同 CMake，都无法否认 CMake 目前是 C++ 的 de facto build system<sup><a href="#fn_1" id="reffn_1">1</a></sup>。</p>
 <p>所以在社区以及生态的影响下，使用 CMake 作为构建工具的项目会越来越多。<br><a id="more"></a><br>一个佐证是，即使是微软、Google 以及 Facebook 这三家公司都有自己的 C++ 构建系统，他们开源的项目仍支持使用 CMake 构建；并且 CMake 是除了官方构建系统之外的推荐构建系统。</p>
 <h3 id="如何学习-CMake"><a href="#如何学习-CMake" class="headerlink" title="如何学习 CMake"></a>如何学习 CMake</h3><p>首先反对认为 CMake 不需要入门的观点：</p>
 <blockquote>
 <p>cmake还需要入门？这种工具性质的东西，你只要用到哪里学到哪里就行了，如果需要入门那就说明这个工具做的不怎么样。</p>
 </blockquote>
 <p>这句话后半句是符合事实的，CMake 这个工具不仅是做的不怎么样，而且做的….一言难尽….以至于这个问题下就有回答说不要跳 CMake 这个坑的；更多的吐槽可以参考 <a href="https://www.zhihu.com/question/276415476" target="_blank" rel="noopener">如何评价CMake</a> 这个问题。</p>
-<p>所以自 CMake v3.0 开始（严格的来说是 v3.2[^2]），社区开始了浩浩荡荡的 Modern CMake 的运动，试图通过引入一些新的特性并搭配推荐做法来提升用户的生活质量。</p>
+<p>所以自 CMake v3.0 开始（严格的来说是 v3.2<sup><a href="#fn_2" id="reffn_2">2</a></sup>），社区开始了浩浩荡荡的 Modern CMake 的运动，试图通过引入一些新的特性并搭配推荐做法来提升用户的生活质量。</p>
 <p>嗯，另一个广泛喊着 modernization 的社区刚好是 C++ 社区…</p>
 <p>又恰好这俩的现代化用法的相同之处在于需要摒弃老的、传统的观念&amp;使用方法，使用新的、现代化的惯用法。</p>
 <p>打一个可能不太准的比喻：说 CMake 用到哪学到哪就行了和说 C++ 用到哪学到哪就行了一样；如果你本身对这块领域已经很有经验，那么这样做是没问题的；但是对于一个新人来说，无异于让他自己去踩雷。</p>
@@ -265,20 +265,20 @@
 <p>所以如果你还想在这个方面有所深入，最好的方式就看各种会议的talk，包括他们的 slides。</p>
 <p>这里个人比较推荐的几个有：</p>
 <ul>
-<li><p>Effective CMake: a random seletion of best practices – Daniel Pfeifer</p>
+<li><p>Effective CMake: a random seletion of best practices — Daniel Pfeifer</p>
 </li>
-<li><p>Embracing Modern CMake: How to recognize and use modern CMake interfaces – Stephen Kelly @ Dublin C++ Meetup</p>
+<li><p>Embracing Modern CMake: How to recognize and use modern CMake interfaces — Stephen Kelly @ Dublin C++ Meetup</p>
 </li>
-<li><p>Modern CMake for modular design – Mathieu Ropert @ CppCon-2017</p>
+<li><p>Modern CMake for modular design — Mathieu Ropert @ CppCon-2017</p>
 </li>
-<li><p>More Modern CMake: Working With CMake 3.12 And Later – Deniz Bahadir @ Meeting C++ 2018</p>
+<li><p>More Modern CMake: Working With CMake 3.12 And Later — Deniz Bahadir @ Meeting C++ 2018</p>
 </li>
 </ul>
 <p>对应的 slides 和演讲的视频都可以搜到。</p>
 <p>建议：不要试图一次全看懂，遇到不理解或者不认可的可以先跳过</p>
 <p>如果你发现上面的几个 slides 的推荐做法有冲突也别紧张，说不定就是 more modern 对 modern 的一次修正呢。</p>
 <p>这里顺带举个例子来说明一下 modern cmake 发展的有多快。</p>
-<p>因为 CMake 的变量很容易泄露到其他作用域去，所以 Modern CMake 有一个惯用法就是 <em>Avoid Unnecessary Variables</em>。对于项目的源文件，不依赖变量直接加到 target 上，同时可以通过 generator expression 设置不同平台的文件：</p>
+<p>因为 CMake 的变量很容易泄露到其他作用域去，所以 Modern CMake 有一个惯用法就是 _Avoid Unnecessary Variables_。对于项目的源文件，不依赖变量直接加到 target 上，同时可以通过 generator expression 设置不同平台的文件：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">add_executable</span>(hello_cmake main.cpp)</span><br><span class="line">target_source(hello_cmake</span><br><span class="line">  PRIVATE</span><br><span class="line">    foo.h</span><br><span class="line">    foo.cpp</span><br><span class="line"></span><br><span class="line">    $&lt;$&lt;BOOL:<span class="variable">$&#123;WIN32&#125;</span>&gt;:</span><br><span class="line">    <span class="comment"># for Windows</span></span><br><span class="line">    &gt;</span><br><span class="line"></span><br><span class="line">    $&lt;$&lt;<span class="keyword">NOT</span>:$&lt;BOOL:<span class="variable">$&#123;WIN32&#125;</span>&gt;&gt;:</span><br><span class="line">    <span class="comment"># for POSIX</span></span><br><span class="line">    &gt;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
 <p>在 v3.11 之前，<code>add_xxx()</code> 定义一个 target 时，一定要有一个文件（source parameter），但是自 v3.11 开始这个约束被去掉了。所有源码文件可以通过 <code>target_source()</code> 引入，避免出现创建 library 时有一个源码文件孤零零的放在 <code>add_library()</code> 中显得很不协调。</p>
 <h4 id="0x02-第三方依赖引入"><a href="#0x02-第三方依赖引入" class="headerlink" title="0x02 第三方依赖引入"></a>0x02 第三方依赖引入</h4><p>如何引入&amp;管理第三方依赖是一个时常能够在 C++ 社区引发广泛讨论的话题。</p>
@@ -343,8 +343,12 @@
 <p>CPM 在 FetchContent 和传统的 Package dependency 的基础之上做了很多整合，支持：</p>
 <p>指定一个全局的三方源码依赖缓存文件夹，避免多个项目重复拉取同一个版本的依赖源码<br>通过参数 fallback 到 <code>find_package()</code> 的方式使用 local package。<br>依赖的 options 控制<br>最后，希望能在有生之年看到 de facto package manager 出现的那天。</p>
 <p>以及，知乎的编辑框真难用。。。。</p>
-<p>[^1]: CppCon CMake Class <a href="https://cppcon.org/class-2019-cmake/" target="_blank" rel="noopener">https://cppcon.org/class-2019-cmake/</a></p>
-<p>[^2]: 根据发布历史，v3.2版首次发布于2015年 <a href="https://cmake.org/files/" target="_blank" rel="noopener">https://cmake.org/files/</a></p>
+<blockquote id="fn_1">
+<sup>1</sup>. CppCon CMake Class <a href="https://cppcon.org/class-2019-cmake/" target="_blank" rel="noopener">https://cppcon.org/class-2019-cmake/</a><a href="#reffn_1" title="Jump back to footnote [1] in the text."> &#8617;</a>
+</blockquote>
+<blockquote id="fn_2">
+<sup>2</sup>. 根据发布历史，v3.2版首次发布于2015年 <a href="https://cmake.org/files/" target="_blank" rel="noopener">https://cmake.org/files/</a><a href="#reffn_2" title="Jump back to footnote [2] in the text."> &#8617;</a>
+</blockquote>
 
       
     </div>
