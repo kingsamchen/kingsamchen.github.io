@@ -3,13 +3,15 @@ title: Redigo 源码学习：阻塞等待连接可用
 categories: PROGRAMMING
 date: 2020-08-22 11:24:10
 tags: [golang, redigo]
+toc: true
+mathjax: true
 ---
-通过[连接池管理](https://www.notion.so/400e99c27cf445d0ba9388b81dc8cc76) 了解如何回收连接到连接池以及从连接池复用连接后，可以回过头来研究一下 Redigo 支持的阻塞等待可用连接的设计与实现。
+通过{% post_link src-study-redigo-redis-pool 连接池的设计 %}了解如何回收连接到连接池以及从连接池复用连接后，可以回过头来研究一下 Redigo 支持的阻塞等待可用连接的设计与实现。
 
 通过设置 `Pool.Wait == true` 之后如果当前连接池满了， `Pool.Get()` 不会返回连接池耗尽错误，而是阻塞在调用上，直到超时或者存在可用连接才会返回。
 
 这个属于经典的 resource counting 问题，并且最大的 resource count 由 `Pool.MaxActive` 决定。
-
+<!-- more -->
 ## 获取连接
 
 现在看一下 `Pool.GetContext()` 如何处理这种情况。

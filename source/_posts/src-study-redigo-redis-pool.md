@@ -3,6 +3,8 @@ title: Redigo 源码学习：连接池的设计
 categories: PROGRAMMING
 date: 2020-08-21 00:24:17
 tags: [golang, redigo, pool]
+toc: true
+mathjax: true
 ---
 ## 主要数据结构
 

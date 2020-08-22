@@ -7,7 +7,7 @@ title: KC的废墟堆
 subtitle: Will you serve in Heaven, or rule in Hell
 description: Gone with the ruins
 author: Kingsley Chen
-language: default
+language: en
 timezone:
 
 # URL
@@ -73,7 +73,7 @@ archive_generator:
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: even
+theme: maupassant
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
@@ -92,3 +92,5 @@ feed:
   content:
   content_limit: 140
   content_limit_delim: ' '
+
+mathjax: true

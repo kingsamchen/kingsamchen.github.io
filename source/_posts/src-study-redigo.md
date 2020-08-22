@@ -17,3 +17,4 @@ Redigo 是目前比较流行的一个 Redis Client。
 本篇为总起大纲，具体分析学习的内容请自行跳转至指定页面。
 
 - {% post_link src-study-redigo-redis-pool 连接池的设计 %}
+- {% post_link src-study-redigo-wait-on-avail-conn 阻塞等待连接可用 %}
