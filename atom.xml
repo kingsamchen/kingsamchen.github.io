@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2020-08-22T08:32:41.607Z</updated>
+  <updated>2020-09-08T04:22:09.443Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Python fileinput 换行编码问题</title>
+    <link href="http://kingsamchen.github.io/2020/09/08/fileinput-print-and-line-ending/"/>
+    <id>http://kingsamchen.github.io/2020/09/08/fileinput-print-and-line-ending/</id>
+    <published>2020-09-08T03:54:27.000Z</published>
+    <updated>2020-09-08T04:22:09.443Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;昨晚抽了个时间想修一下 anvil 的这个 &lt;a href=&quot;https://github.com/kingsamchen/anvil/issues/2&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;issue&lt;/a&gt;。&lt;/p&gt;
+&lt;p&gt;根据之前的代码实现，我有 99.99% 的把握换行符被替换成 &lt;code&gt;CRLF&lt;/code&gt; 是使用了 &lt;code&gt;fileinput&lt;/code&gt; 原地修改了文件导致的。&lt;/p&gt;
+&lt;p&gt;那段修改的代码的一个等价实现如下：&lt;/p&gt;
+&lt;figure class=&quot;highlight python&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; shutil&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; fileinput&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;import&lt;/span&gt; sys&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;poc&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;:&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    orig_name = &lt;span class=&quot;string&quot;&gt;&#39;orig.txt&#39;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    new_name = &lt;span class=&quot;string&quot;&gt;&#39;new.txt&#39;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    shutil.copy(orig_name, new_name)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;with&lt;/span&gt; fileinput.FileInput(new_name, inplace=&lt;span class=&quot;literal&quot;&gt;True&lt;/span&gt;) &lt;span class=&quot;keyword&quot;&gt;as&lt;/span&gt; f:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;for&lt;/span&gt; line &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; f:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            line = &lt;span class=&quot;string&quot;&gt;&#39;-&amp;gt; &#39;&lt;/span&gt; + line&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            print(line, end=&lt;span class=&quot;string&quot;&gt;&#39;&#39;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;&lt;code&gt;orig.txt&lt;/code&gt; 是一个模板文件，它会被拷贝到指定目录变成一个新文件 &lt;code&gt;new.txt&lt;/code&gt;，并修改文件内容。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="python" scheme="http://kingsamchen.github.io/tags/python/"/>
+    
+      <category term="line ending" scheme="http://kingsamchen.github.io/tags/line-ending/"/>
+    
+      <category term="fileinput" scheme="http://kingsamchen.github.io/tags/fileinput/"/>
+    
+  </entry>
   
   <entry>
     <title>Redigo 源码学习：阻塞等待连接可用</title>
@@ -574,41 +602,6 @@
       <category term="git" scheme="http://kingsamchen.github.io/tags/git/"/>
     
       <category term="powershell" scheme="http://kingsamchen.github.io/tags/powershell/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>复习：DCLP 和 Memory Reordering</title>
-    <link href="http://kingsamchen.github.io/2019/10/01/review-dclp-and-memory-reordering/"/>
-    <id>http://kingsamchen.github.io/2019/10/01/review-dclp-and-memory-reordering/</id>
-    <published>2019-10-01T04:29:03.000Z</published>
-    <updated>2019-10-01T08:40:09.015Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;本文是对 Jeff Preshing 的 &lt;a href=&quot;https://preshing.com/20130930/double-checked-locking-is-fixed-in-cpp11/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Double Checked Locking Is Fixed in C++ 11&lt;/a&gt; 笔记。&lt;/p&gt;
-&lt;h3 id=&quot;0x00-传统实现&quot;&gt;&lt;a href=&quot;#0x00-传统实现&quot; class=&quot;headerlink&quot; title=&quot;0x00 传统实现&quot;&gt;&lt;/a&gt;0x00 传统实现&lt;/h3&gt;&lt;p&gt;因为 synchronization 只需要在实例第一次创建时保证；此后（ &lt;code&gt;instance != nullptr&lt;/code&gt; 时）都不需要锁来保证 synchronization。&lt;/p&gt;
-&lt;p&gt;在第一次判断实例为空和上锁之间存在一个 potential race，因此上锁后需要再一次判断实例是否为空。&lt;/p&gt;
-&lt;p&gt;这也是 double checked 的来由。&lt;/p&gt;
-&lt;p&gt;所以一个传统但并不100%正确的 DCLP 实现如下：&lt;/p&gt;
-&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;18&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;19&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Singleton&lt;/span&gt; &amp;#123;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; Singleton* &lt;span class=&quot;title&quot;&gt;GetInstance&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;    &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (instance == &lt;span class=&quot;literal&quot;&gt;nullptr&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::lock_guard&amp;lt;&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::mutex&amp;gt; &lt;span class=&quot;title&quot;&gt;lock&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(mtx)&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (instance == &lt;span class=&quot;literal&quot;&gt;nullptr&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                instance = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Singleton();				&lt;span class=&quot;comment&quot;&gt;// &amp;lt;-- key point&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;            &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; instance;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;// omit explicit static field initialization.&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::mutex mtx;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;static&lt;/span&gt; Singleton* instance;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;这基本是早起 C++ DCLP 的实现架子。&lt;/p&gt;
-&lt;h3 id=&quot;0x01-问题：内存乱序以及为什么锁帮不了忙&quot;&gt;&lt;a href=&quot;#0x01-问题：内存乱序以及为什么锁帮不了忙&quot; class=&quot;headerlink&quot; title=&quot;0x01 问题：内存乱序以及为什么锁帮不了忙&quot;&gt;&lt;/a&gt;0x01 问题：内存乱序以及为什么锁帮不了忙&lt;/h3&gt;&lt;p&gt;语句&lt;/p&gt;
-&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;instance = &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt; Singleton();&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;在 C++ 中实际上等效于&lt;/p&gt;
-&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;tmp = &lt;span class=&quot;keyword&quot;&gt;operator&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;(&lt;span class=&quot;keyword&quot;&gt;sizeof&lt;/span&gt;(Singleton));  &lt;span class=&quot;comment&quot;&gt;// step 1: allocate memory via operator new&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;new&lt;/span&gt;(tmp) Singleton;                     &lt;span class=&quot;comment&quot;&gt;// step 2: placement-new for construction&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;instance = tmp;                         &lt;span class=&quot;comment&quot;&gt;// step 3: assign addr to instance&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;注意：其中除了分配内存是固定第一步之外，构造对象和赋值内存地址的&lt;strong&gt;生成代码顺序&lt;/strong&gt;是由编译器自己决定。这里的顺序只是一种可能性。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="singleton" scheme="http://kingsamchen.github.io/tags/singleton/"/>
-    
-      <category term="memory-reordering" scheme="http://kingsamchen.github.io/tags/memory-reordering/"/>
     
   </entry>
   
