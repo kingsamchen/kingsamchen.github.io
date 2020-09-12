@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2020-09-08T04:22:09.443Z</updated>
+  <updated>2020-09-12T12:27:54.827Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Error Handling is Operation Cancellation</title>
+    <link href="http://kingsamchen.github.io/2020/09/12/error-handling-is-operation-cancellation/"/>
+    <id>http://kingsamchen.github.io/2020/09/12/error-handling-is-operation-cancellation/</id>
+    <published>2020-09-12T12:21:46.000Z</published>
+    <updated>2020-09-12T12:27:54.827Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;最近看了&lt;a href=&quot;https://akrzemi1.wordpress.com/2019/04/25/handling-errors-is-canceling-operations/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;这篇文章&lt;/a&gt;有一种顿悟感，想着写点总结加深理解。&lt;/p&gt;
+&lt;p&gt;如果嫌原文太长可以直接看这篇总结；不过别人咀嚼过的不一定适合你，所以还是推荐一块把原文也看了😁。&lt;/p&gt;
+&lt;h2 id=&quot;Operation-Cancellation&quot;&gt;&lt;a href=&quot;#Operation-Cancellation&quot; class=&quot;headerlink&quot; title=&quot;Operation Cancellation&quot;&gt;&lt;/a&gt;Operation Cancellation&lt;/h2&gt;&lt;p&gt;假设一个函数 &lt;code&gt;foo()&lt;/code&gt; 中的某个操作发生了错误，并且后续操作&lt;strong&gt;直接或间接地依赖&lt;/strong&gt;当前操作的正确行为；那么，不管使用何种错误处理/汇报手段，这里都需要 (1) 中止后续操作并 (2) 向上汇报错误。&lt;/p&gt;
+&lt;p&gt;这里称这种行为为 &lt;em&gt;operation cancellation&lt;/em&gt;。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="error handling" scheme="http://kingsamchen.github.io/tags/error-handling/"/>
+    
+      <category term="exception" scheme="http://kingsamchen.github.io/tags/exception/"/>
+    
+  </entry>
   
   <entry>
     <title>Python fileinput 换行编码问题</title>
@@ -574,34 +601,6 @@
       <category term="token bucket" scheme="http://kingsamchen.github.io/tags/token-bucket/"/>
     
       <category term="rate-limit" scheme="http://kingsamchen.github.io/tags/rate-limit/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Windows 上使用 Git Tips 两则</title>
-    <link href="http://kingsamchen.github.io/2019/10/19/two-git-tips-on-windows/"/>
-    <id>http://kingsamchen.github.io/2019/10/19/two-git-tips-on-windows/</id>
-    <published>2019-10-19T09:12:14.000Z</published>
-    <updated>2019-10-19T09:27:44.767Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Windows-Terminal-中-git-log-显示-UTF-8-编码的中文&quot;&gt;&lt;a href=&quot;#Windows-Terminal-中-git-log-显示-UTF-8-编码的中文&quot; class=&quot;headerlink&quot; title=&quot;Windows
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="git" scheme="http://kingsamchen.github.io/tags/git/"/>
-    
-      <category term="powershell" scheme="http://kingsamchen.github.io/tags/powershell/"/>
     
   </entry>
   
