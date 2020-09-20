@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2020-09-12T12:27:54.827Z</updated>
+  <updated>2020-09-20T13:05:18.567Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Redigo 源码学习：Pipeline</title>
+    <link href="http://kingsamchen.github.io/2020/09/20/src-study-redigo-using-pipeline/"/>
+    <id>http://kingsamchen.github.io/2020/09/20/src-study-redigo-using-pipeline/</id>
+    <published>2020-09-20T13:02:04.000Z</published>
+    <updated>2020-09-20T13:05:18.567Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;如何使用-pipeline&quot;&gt;&lt;a href=&quot;#如何使用-pipeline&quot; class=&quot;headerlink&quot; title=&quot;如何使用 pipeline&quot;&gt;&lt;/a&gt;如何使用 pipeline&lt;/h2&gt;&lt;p&gt;先来回顾一下如何在 redigo 中使用 pipeline&lt;/p&gt;
+&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;c := pool.Get()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;defer&lt;/span&gt; c.Close()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;c.Send(&lt;span class=&quot;string&quot;&gt;&quot;SET&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;foo&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;bar&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;c.Send(&lt;span class=&quot;string&quot;&gt;&quot;GET&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;foo&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;c.Flush()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;c.Receive() &lt;span class=&quot;comment&quot;&gt;// reply from SET&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;v, err = c.Receive() &lt;span class=&quot;comment&quot;&gt;// reply from GET&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;核心是 Send — Flush — Receive 三个步骤。&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="redis" scheme="http://kingsamchen.github.io/tags/redis/"/>
+    
+      <category term="redigo" scheme="http://kingsamchen.github.io/tags/redigo/"/>
+    
+      <category term="pipeline" scheme="http://kingsamchen.github.io/tags/pipeline/"/>
+    
+  </entry>
   
   <entry>
     <title>Error Handling is Operation Cancellation</title>
@@ -126,7 +154,7 @@
     <link href="http://kingsamchen.github.io/2020/08/21/src-study-redigo/"/>
     <id>http://kingsamchen.github.io/2020/08/21/src-study-redigo/</id>
     <published>2020-08-20T16:11:04.000Z</published>
-    <updated>2020-08-22T08:33:11.479Z</updated>
+    <updated>2020-09-20T13:05:01.312Z</updated>
     
     <summary type="html">
     
@@ -146,6 +174,8 @@
     
     
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
+    
+      <category term="redis" scheme="http://kingsamchen.github.io/tags/redis/"/>
     
       <category term="redigo" scheme="http://kingsamchen.github.io/tags/redigo/"/>
     
@@ -571,36 +601,6 @@
       <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
       <category term="automaxprocs" scheme="http://kingsamchen.github.io/tags/automaxprocs/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一个轮子：基于 token bucket 的 rate-limit</title>
-    <link href="http://kingsamchen.github.io/2019/11/04/token-bucket-based-rate-limit/"/>
-    <id>http://kingsamchen.github.io/2019/11/04/token-bucket-based-rate-limit/</id>
-    <published>2019-11-04T12:31:14.000Z</published>
-    <updated>2019-11-04T14:09:43.877Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;地址：&lt;a href=&quot;https://github.com/kingsamchen/Eureka/tree/master/token-bucket-rate-limit&quot; target=&quot;_blank&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="algorithm" scheme="http://kingsamchen.github.io/tags/algorithm/"/>
-    
-      <category term="token bucket" scheme="http://kingsamchen.github.io/tags/token-bucket/"/>
-    
-      <category term="rate-limit" scheme="http://kingsamchen.github.io/tags/rate-limit/"/>
     
   </entry>
   
