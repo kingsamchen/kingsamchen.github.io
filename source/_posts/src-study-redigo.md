@@ -2,7 +2,7 @@
 title: Redigo 源码学习
 categories: PROGRAMMING
 date: 2020-08-21 00:11:04
-tags: [redigo, golang]
+tags: [redigo, golang, redis]
 ---
 Redigo 是目前比较流行的一个 Redis Client。
 
@@ -18,3 +18,4 @@ Redigo 是目前比较流行的一个 Redis Client。
 
 - {% post_link src-study-redigo-redis-pool 连接池的设计 %}
 - {% post_link src-study-redigo-wait-on-avail-conn 阻塞等待连接可用 %}
+- {% post_link src-study-redigo-using-pipeline Pipeline %}
