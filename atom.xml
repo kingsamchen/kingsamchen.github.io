@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2021-02-10T08:29:46.447Z</updated>
+  <updated>2021-02-26T14:48:37.898Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>UUID 及其实现 1</title>
+    <link href="http://kingsamchen.github.io/2021/02/25/uuid-and-its-implementations-1/"/>
+    <id>http://kingsamchen.github.io/2021/02/25/uuid-and-its-implementations-1/</id>
+    <published>2021-02-24T16:44:30.000Z</published>
+    <updated>2021-02-26T14:48:37.898Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;数据格式&quot;&gt;&lt;a href=&quot;#数据格式&quot; class=&quot;headerlink&quot; title=&quot;数据格式&quot;&gt;&lt;/a&gt;数据格式&lt;/h2&gt;&lt;p&gt;UUID 是 &lt;em&gt;Universally Unique IDentifier&lt;/em&gt; 的缩写，本质上是一个 128-bit (16-byte) 长的标识符，可以用32个16进制数表示，并且通常以如下形式展示：&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;// 每组字符长度分别是 8-4-4-4-12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;              ^    ^&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;              M    N&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;上面 &lt;code&gt;M&lt;/code&gt; 和 &lt;code&gt;N&lt;/code&gt; 出的数字分别表示了这个 UUID 使用的 version 和 variant；具体下面展开。&lt;/p&gt;
+&lt;p&gt;HEX 字符存在大小写，按照 RFC 4122 要求，UUID 输出时 &lt;code&gt;&amp;#39;a&amp;#39;-&amp;#39;f&amp;#39;&lt;/code&gt; 应为小写；但是在作为输入时大小写不敏感。&lt;/p&gt;
+&lt;p&gt;因为 UUID 的生成不需要中心管理节点 (central authority)，是天然分布式；也正因如此，没有一个验证 UUID 是否有效的方法，最多只能验证是否满足数据格式要求。&lt;/p&gt;
+&lt;h3 id=&quot;0x0-Variant&quot;&gt;&lt;a href=&quot;#0x0-Variant&quot; class=&quot;headerlink&quot; title=&quot;0x0 Variant&quot;&gt;&lt;/a&gt;0x0 Variant&lt;/h3&gt;&lt;p&gt;上面 &lt;code&gt;N&lt;/code&gt; 处的 HEX 的 3-bit MSB 指明了 UUID 使用的 variant。&lt;/p&gt;
+&lt;p&gt;Variant 决定了当前 UUID 其他的 bits 如何 interpret。这里的 bits 也包含 &lt;code&gt;M&lt;/code&gt; 处指示 version 的那部分。&lt;/p&gt;
+&lt;p&gt;语义上讲，variant 更适合被叫做 type&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="uuid" scheme="http://kingsamchen.github.io/tags/uuid/"/>
+    
+      <category term="RFC 4122" scheme="http://kingsamchen.github.io/tags/RFC-4122/"/>
+    
+  </entry>
   
   <entry>
     <title>写了一个右键菜单清理工具以及一些吐槽</title>
@@ -357,11 +386,11 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
-    
       <category term="make_unique" scheme="http://kingsamchen.github.io/tags/make-unique/"/>
     
       <category term="make_shared" scheme="http://kingsamchen.github.io/tags/make-shared/"/>
+    
+      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
     
   </entry>
   
@@ -573,40 +602,6 @@
     
     
       <category term="cmake" scheme="http://kingsamchen.github.io/tags/cmake/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>SYN Queue and Accept Queue</title>
-    <link href="http://kingsamchen.github.io/2019/12/21/syn-queue-and-accept-queue/"/>
-    <id>http://kingsamchen.github.io/2019/12/21/syn-queue-and-accept-queue/</id>
-    <published>2019-12-21T14:23:19.000Z</published>
-    <updated>2019-12-21T14:33:35.910Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;0x00-A-Single-Queue-or-Two-Queues&quot;&gt;&lt;a href=&quot;#0x00-A-Single-Queue-or-Two-Queues&quot; class=&quot;headerlink&quot; title=&quot;0x00 A Single Queue or Two Queues&quot;&gt;&lt;/a&gt;0x00 A Single Queue or Two Queues&lt;/h2&gt;&lt;p&gt;TCP/IP stack has two options to implement the backlog queue for a socket in the &lt;code&gt;LISTEN&lt;/code&gt; state.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Door #1: A Single Queue&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;A single queue can contain connections in two different states:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;SYN RECEIVED&lt;/li&gt;
-&lt;li&gt;ESTABLISHED&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;And only connections in &lt;code&gt;ESTABLISHED&lt;/code&gt; state can be returned to the application by calling the &lt;code&gt;accept()&lt;/code&gt; syscall.&lt;/p&gt;
-&lt;p&gt;Therefore, the length of this queue is determined by the &lt;code&gt;backlog&lt;/code&gt; argument of the &lt;code&gt;listen()&lt;/code&gt; syscall.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Door #2: A SYN Queue &amp;amp; An Accept Queue&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;In this case, connections in state &lt;code&gt;SYN RECEIVED&lt;/code&gt; are added to the SYN queue, and later moved to the accept queue when their state changes to &lt;code&gt;ESTABLISHED&lt;/code&gt;.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="tcp" scheme="http://kingsamchen.github.io/tags/tcp/"/>
-    
-      <category term="listen" scheme="http://kingsamchen.github.io/tags/listen/"/>
-    
-      <category term="backlog" scheme="http://kingsamchen.github.io/tags/backlog/"/>
     
   </entry>
   
