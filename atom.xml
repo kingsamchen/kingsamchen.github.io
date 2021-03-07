@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2021-03-06T14:58:38.251Z</updated>
+  <updated>2021-03-07T12:09:27.372Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,45 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>UUID 及其实现 3</title>
+    <link href="http://kingsamchen.github.io/2021/03/07/uuid-and-its-implementations-3/"/>
+    <id>http://kingsamchen.github.io/2021/03/07/uuid-and-its-implementations-3/</id>
+    <published>2021-03-07T10:17:42.000Z</published>
+    <updated>2021-03-07T12:09:27.372Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;这一篇来讲 v3 和 v5 的实现。&lt;/p&gt;
+&lt;p&gt;这两个实现要求使用方提供：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;一个称为 namespace 的 UUID&lt;/li&gt;
+&lt;li&gt;一个叫 name 的数据块（不限于字符串）&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;然后利用一个 hash 算法算得结果，作为目标 UUID 的基础数据（还需要额外设置 variant 和 version）。&lt;/p&gt;
+&lt;p&gt;即，对于 v3/v5 的实现，本质上是&lt;/p&gt;
+&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;uuid = hash(namespace, name)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;set_variant(uuid)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;set_version(uuid, ver)&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;v3 和 v5 区别在于，前者是用 MD5，后者使用 SHA-1。&lt;/p&gt;
+&lt;p&gt;并且可以发现，对于相同的 namespace 和 name，生成的结果 UUID 是一样的。&lt;/p&gt;
+&lt;p&gt;这个就是 v3/v5 版本的特性。&lt;/p&gt;
+&lt;p&gt;借用 RFC 的描述就是：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The UUIDs generated at different times from the same name in the same namespace MUST be equal.&lt;/li&gt;
+&lt;li&gt;The UUIDs generated from two different names in the same namespace should be different (with very high probability).&lt;/li&gt;
+&lt;li&gt;The UUIDs generated from the same name in two different namespaces should be different with (very high probability).&lt;/li&gt;
+&lt;li&gt;If two UUIDs that were generated from names are equal, then they were generated from the same name in the same namespace (with very high probability).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;所以 v3/v5 的版本又被叫做 name-based implementation&lt;br&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="uuid" scheme="http://kingsamchen.github.io/tags/uuid/"/>
+    
+  </entry>
   
   <entry>
     <title>UUID 及其实现 2</title>
@@ -425,11 +464,11 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
-    
       <category term="make_unique" scheme="http://kingsamchen.github.io/tags/make-unique/"/>
     
       <category term="make_shared" scheme="http://kingsamchen.github.io/tags/make-shared/"/>
+    
+      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
     
   </entry>
   
@@ -580,39 +619,6 @@
       <category term="url shortening" scheme="http://kingsamchen.github.io/tags/url-shortening/"/>
     
       <category term="base62" scheme="http://kingsamchen.github.io/tags/base62/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>How To Design a URL Shortening Service</title>
-    <link href="http://kingsamchen.github.io/2020/04/04/how-to-design-a-url-shortening-system/"/>
-    <id>http://kingsamchen.github.io/2020/04/04/how-to-design-a-url-shortening-system/</id>
-    <published>2020-04-04T09:32:38.000Z</published>
-    <updated>2020-04-04T09:36:44.280Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;1-Encoding-Actual-URL&quot;&gt;&lt;a href=&quot;#1-Encoding-Actual-URL&quot; class=&quot;headerlink&quot; title=&quot;1. Encoding Actual URL&quot;&gt;&lt;/a&gt;1. Encoding Actual URL&lt;/h2&gt;&lt;p&gt;The path part, which we would call it &lt;em&gt;key&lt;/em&gt;, of an encoded URL can consist of 6 ~ 8 digits in base62, up to desired uniqueness rate.&lt;/p&gt;
-&lt;h3 id=&quot;Randomly-Generated&quot;&gt;&lt;a href=&quot;#Randomly-Generated&quot; class=&quot;headerlink&quot; title=&quot;Randomly Generated&quot;&gt;&lt;/a&gt;Randomly Generated&lt;/h3&gt;&lt;p&gt;We can randomly generate those digits each within the range [0, 61].&lt;/p&gt;
-&lt;p&gt;Then we must check if the generated key is unique by consulting our key storage.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;Aside: this checking process can be optimized with data structures like bloom-filter, provided we have to deal hundres of million records.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;If we are unlucky, we may have a key collision; in this case, just re-generate another key until its unique.&lt;/p&gt;
-&lt;p&gt;To make encoding more efficient, we can have a standalone &lt;em&gt;Key Generation Service(KGS)&lt;/em&gt; that generates those random key beforehand, and store them.&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="system design" scheme="http://kingsamchen.github.io/tags/system-design/"/>
-    
-      <category term="url shortening" scheme="http://kingsamchen.github.io/tags/url-shortening/"/>
-    
-      <category term="tinyurl" scheme="http://kingsamchen.github.io/tags/tinyurl/"/>
-    
-      <category term="bit.ly" scheme="http://kingsamchen.github.io/tags/bit-ly/"/>
     
   </entry>
   
