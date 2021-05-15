@@ -4,7 +4,7 @@ layout: page
 date: 2018-03-01 15:29:13
 ---
 
-A low-level coder @ Bilibili; and yes, *low-level* here is a pun XD.
+A low-level coder; and yes, *low-level* here is a pun XD.
 
 You can also find me on [Douban](https://www.douban.com/people/kingsamchen/).
 
