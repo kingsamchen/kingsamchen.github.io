@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2021-06-14T10:03:29.439Z</updated>
+  <updated>2021-07-04T15:29:14.078Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>第二次跑路</title>
+    <link href="http://kingsamchen.github.io/2021/07/04/quitting-from-my-last-job/"/>
+    <id>http://kingsamchen.github.io/2021/07/04/quitting-from-my-last-job/</id>
+    <published>2021-07-04T13:07:55.000Z</published>
+    <updated>2021-07-04T15:29:14.078Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;在阿哔呆了 1860 天（2016/04/11 –
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="扯淡" scheme="http://kingsamchen.github.io/tags/%E6%89%AF%E6%B7%A1/"/>
+    
+  </entry>
   
   <entry>
     <title>用 unique_ptr 管理 Windows HANDLE</title>
@@ -519,11 +545,11 @@
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
-    
       <category term="make_unique" scheme="http://kingsamchen.github.io/tags/make-unique/"/>
     
       <category term="make_shared" scheme="http://kingsamchen.github.io/tags/make-shared/"/>
+    
+      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
     
   </entry>
   
@@ -584,35 +610,6 @@
       <category term="io_context" scheme="http://kingsamchen.github.io/tags/io-context/"/>
     
       <category term="work_guard" scheme="http://kingsamchen.github.io/tags/work-guard/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>atoi With Overflow Handled</title>
-    <link href="http://kingsamchen.github.io/2020/05/04/atoi-with-overflow-handled/"/>
-    <id>http://kingsamchen.github.io/2020/05/04/atoi-with-overflow-handled/</id>
-    <published>2020-05-04T07:03:26.000Z</published>
-    <updated>2020-05-04T07:53:16.256Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;leetcode 上有一题是让你实现一个 &lt;code&gt;atoi()&lt;/code&gt;，但是因为函数类型是 32-bit int，所以可以直接内部转换到 64-bit int，避免需要直接处理溢出的情况。&lt;/p&gt;
-&lt;p&gt;如果要针对 &lt;code&gt;int64&lt;/code&gt; 实现一个
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="atoi" scheme="http://kingsamchen.github.io/tags/atoi/"/>
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
     
   </entry>
   
