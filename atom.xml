@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2021-07-04T15:29:14.078Z</updated>
+  <updated>2021-07-11T11:35:48.375Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,42 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>sa-update 和直率的 spamassassin</title>
+    <link href="http://kingsamchen.github.io/2021/07/11/sa-update-and-the-blunt-spamassassin/"/>
+    <id>http://kingsamchen.github.io/2021/07/11/sa-update-and-the-blunt-spamassassin/</id>
+    <published>2021-07-11T08:38:00.000Z</published>
+    <updated>2021-07-11T11:35:48.375Z</updated>
+    
+    <summary type="html">
+    
+      &lt;h2 id=&quot;背景&quot;&gt;&lt;a href=&quot;#背景&quot; class=&quot;headerlink&quot; title=&quot;背景&quot;&gt;&lt;/a&gt;背景&lt;/h2&gt;&lt;p&gt;amavisd 是 MTA（例如 postfix）流行的 content-filtering 模块，可以提供垃圾邮件试别过滤、病毒邮件检测隔离等功能。&lt;/p&gt;
+&lt;p&gt;spamassassin 则是 amavisd 使用的垃圾邮件模块。&lt;/p&gt;
+&lt;p&gt;在目前主流的 Linux 发行版上，这两个系统都会以 systemd 管理的服务运行。&lt;/p&gt;
+&lt;p&gt;在系统集成过程中遇到一个神奇的问题：amavisd 和 spamassassin 服务会定期挂掉，&lt;code&gt;journalctl -fu&lt;/code&gt; 的日志都提到了&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;config: no rules were found! Do you need to run sa-update​?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;的错误内容&lt;/p&gt;
+&lt;h2 id=&quot;处理&quot;&gt;&lt;a href=&quot;#处理&quot; class=&quot;headerlink&quot; title=&quot;处理&quot;&gt;&lt;/a&gt;处理&lt;/h2&gt;&lt;p&gt;解决步骤：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;检查 &lt;code&gt;/var/lib/spamassassin/&lt;/code&gt; 目录下是否有一个对应版本的目录，例如 &lt;code&gt;3.00402&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;如果有的话，删除这个目录&lt;/li&gt;
+&lt;li&gt;然后先后重启 spamassassin 和 amavisd 服务
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="amavisd" scheme="http://kingsamchen.github.io/tags/amavisd/"/>
+    
+      <category term="spamassassin" scheme="http://kingsamchen.github.io/tags/spamassassin/"/>
+    
+  </entry>
   
   <entry>
     <title>第二次跑路</title>
@@ -580,36 +616,6 @@
       <category term="options" scheme="http://kingsamchen.github.io/tags/options/"/>
     
       <category term="design patterns" scheme="http://kingsamchen.github.io/tags/design-patterns/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>保持 ASIO io_context 无任务时运行</title>
-    <link href="http://kingsamchen.github.io/2020/06/28/keep-asio-io-context-running/"/>
-    <id>http://kingsamchen.github.io/2020/06/28/keep-asio-io-context-running/</id>
-    <published>2020-06-28T15:03:22.000Z</published>
-    <updated>2020-06-28T15:17:24.037Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;ASIO 的 &lt;code&gt;io_context::run()&lt;/code&gt; 如果发现没有 pending 的任务就会返回，对于 server 的监听线程来说这是符合常理的，因为无论如何至少有个 &lt;code&gt;acceptor::async_accept()&lt;/code&gt; 在
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
-    
-      <category term="io_context" scheme="http://kingsamchen.github.io/tags/io-context/"/>
-    
-      <category term="work_guard" scheme="http://kingsamchen.github.io/tags/work-guard/"/>
     
   </entry>
   
