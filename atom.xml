@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2021-09-23T15:13:53.593Z</updated>
+  <updated>2021-10-09T08:38:25.822Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Using Headless Chrome to Convert Offline HTML to PDF in Bulk</title>
+    <link href="http://kingsamchen.github.io/2021/10/09/headless-chrome-for-converting-offline-htmls-to-pdf-in-bulk/"/>
+    <id>http://kingsamchen.github.io/2021/10/09/headless-chrome-for-converting-offline-htmls-to-pdf-in-bulk/</id>
+    <published>2021-10-09T08:16:00.000Z</published>
+    <updated>2021-10-09T08:38:25.822Z</updated>
+    
+    <summary type="html">
+    
+      &lt;p&gt;手里有一批某课程内容的教案但是都是导出的 HTML 文档，因为每次打开都会请求一堆的外部资源（比如JS），导致卡顿几秒钟。&lt;/p&gt;
+&lt;p&gt;但是这是盗版资源 (shame on me) 所以这些外部请求完全是捣乱；于是想到批量转换为 PDF 就好了。&lt;/p&gt;
+&lt;p&gt;一开始选择的是 wkhtmltopdf，但是 libpng 会因为源文件的 sRGB 不正确导致失败。看到有个 2017 年报的 issue 到现在还是 Open 状态，遂放弃。&lt;/p&gt;
+&lt;p&gt;后来想到浏览器可以正常打开，也可以正常 print to pdf，那何不让浏览器批量处理？&lt;/p&gt;
+&lt;p&gt;恰好 Chrome 支持 headless mode，结合简单的 powershell 就可以做到批量转换：&lt;/p&gt;
+&lt;figure class=&quot;highlight powershell&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$dest_dir&lt;/span&gt; = &lt;span class=&quot;string&quot;&gt;&quot;/your/dest/dir/&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$src_files&lt;/span&gt; = &lt;span class=&quot;built_in&quot;&gt;Get-ChildItem&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;/your/src/dir/&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;variable&quot;&gt;$env:Path&lt;/span&gt; += &lt;span class=&quot;string&quot;&gt;&quot;;C:\Program Files (x86)\Google\Chrome\Application\&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;foreach&lt;/span&gt; (&lt;span class=&quot;variable&quot;&gt;$file&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$src_files&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;variable&quot;&gt;$output_file&lt;/span&gt; = &lt;span class=&quot;variable&quot;&gt;$file&lt;/span&gt;.BaseName + &lt;span class=&quot;string&quot;&gt;&quot;.pdf&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;variable&quot;&gt;$dest_file&lt;/span&gt; = &lt;span class=&quot;built_in&quot;&gt;Join-Path&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;-Path&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$dest_dir&lt;/span&gt; &lt;span class=&quot;literal&quot;&gt;-ChildPath&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$output_file&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;Write-Output&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;Processing &lt;span class=&quot;variable&quot;&gt;$dest_file&lt;/span&gt;&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    chrome.exe -&lt;span class=&quot;literal&quot;&gt;-headless&lt;/span&gt; -&lt;span class=&quot;literal&quot;&gt;-disable&lt;/span&gt;&lt;span class=&quot;literal&quot;&gt;-gpu&lt;/span&gt; -&lt;span class=&quot;literal&quot;&gt;-print&lt;/span&gt;&lt;span class=&quot;literal&quot;&gt;-to&lt;/span&gt;&lt;span class=&quot;literal&quot;&gt;-pdf&lt;/span&gt;&lt;span class=&quot;literal&quot;&gt;-no&lt;/span&gt;&lt;span class=&quot;literal&quot;&gt;-header&lt;/span&gt; -&lt;span class=&quot;literal&quot;&gt;-print&lt;/span&gt;&lt;span class=&quot;literal&quot;&gt;-to&lt;/span&gt;&lt;span class=&quot;literal&quot;&gt;-pdf&lt;/span&gt;=&lt;span class=&quot;variable&quot;&gt;$dest_file&lt;/span&gt; &lt;span class=&quot;variable&quot;&gt;$file&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;comment&quot;&gt;# a simple throttle&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;built_in&quot;&gt;Start-Sleep&lt;/span&gt; &lt;span class=&quot;number&quot;&gt;5&lt;/span&gt;s&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;built_in&quot;&gt;Write-Output&lt;/span&gt; &lt;span class=&quot;string&quot;&gt;&quot;Congratulations!!!&quot;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
+&lt;p&gt;每次调用都会创建一个 headless chrome 做转换，而一次转换大概需要十几秒；同时这个调用是启动 chrome 之后就立即返回的，并非等到转换结束。&lt;/p&gt;
+&lt;p&gt;所以为了避免短时间内创建大量的 headless chrome 进程把系统资源耗死，这里简单的用 sleep 做一个节流器&lt;/p&gt;
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="headless" scheme="http://kingsamchen.github.io/tags/headless/"/>
+    
+      <category term="pdf" scheme="http://kingsamchen.github.io/tags/pdf/"/>
+    
+  </entry>
   
   <entry>
     <title>Postfix Policy Delegation</title>
@@ -593,38 +622,6 @@
     
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Passkey Idiom</title>
-    <link href="http://kingsamchen.github.io/2020/07/02/passkey-idiom-for-make-functions/"/>
-    <id>http://kingsamchen.github.io/2020/07/02/passkey-idiom-for-make-functions/</id>
-    <published>2020-07-01T16:28:19.000Z</published>
-    <updated>2020-07-04T08:55:14.196Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;如果出于某些目的希望将某个类的构造函数设置为 private，并提供工厂函数 &lt;code&gt;Make()&lt;/code&gt; 创建最终对象；工厂函数中通常会使用 &lt;code&gt;std::make_unique()&lt;/code&gt; 或者
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="make_unique" scheme="http://kingsamchen.github.io/tags/make-unique/"/>
-    
-      <category term="make_shared" scheme="http://kingsamchen.github.io/tags/make-shared/"/>
-    
-      <category term="passkey" scheme="http://kingsamchen.github.io/tags/passkey/"/>
     
   </entry>
   
