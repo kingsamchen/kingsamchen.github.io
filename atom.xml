@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-02-13T16:08:15.491Z</updated>
+  <updated>2022-02-20T16:21:39.645Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Feb 2022</title>
+    <link href="http://kingsamchen.github.io/2022/02/20/weekly-2022-feb-3/"/>
+    <id>http://kingsamchen.github.io/2022/02/20/weekly-2022-feb-3/</id>
+    <published>2022-02-20T15:41:06.000Z</published>
+    <updated>2022-02-20T16:21:39.645Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;节后第二周，生活和工作节奏都慢慢恢复到了之前的状态。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;一口气刷了好几集 The Expanse
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Feb 2022</title>
@@ -626,30 +654,6 @@
       <category term="line ending" scheme="http://kingsamchen.github.io/tags/line-ending/"/>
     
       <category term="fileinput" scheme="http://kingsamchen.github.io/tags/fileinput/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Redigo 源码学习：阻塞等待连接可用</title>
-    <link href="http://kingsamchen.github.io/2020/08/22/src-study-redigo-wait-on-avail-conn/"/>
-    <id>http://kingsamchen.github.io/2020/08/22/src-study-redigo-wait-on-avail-conn/</id>
-    <published>2020-08-22T03:24:10.000Z</published>
-    <updated>2020-08-22T08:32:41.607Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;通过&lt;a href=&quot;/2020/08/21/src-study-redigo-redis-pool/&quot; title=&quot;连接池的设计&quot;&gt;连接池的设计&lt;/a&gt;了解如何回收连接到连接池以及从连接池复用连接后，可以回过头来研究一下 Redigo 支持的阻塞等待可用连接的设计与实现。&lt;/p&gt;
-&lt;p&gt;通过设置 &lt;code&gt;Pool.Wait == true&lt;/code&gt; 之后如果当前连接池满了， &lt;code&gt;Pool.Get()&lt;/code&gt; 不会返回连接池耗尽错误，而是阻塞在调用上，直到超时或者存在可用连接才会返回。&lt;/p&gt;
-&lt;p&gt;这个属于经典的 resource counting 问题，并且最大的 resource count 由 &lt;code&gt;Pool.MaxActive&lt;/code&gt; 决定。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-      <category term="redigo" scheme="http://kingsamchen.github.io/tags/redigo/"/>
     
   </entry>
   
