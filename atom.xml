@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-03-06T16:43:35.425Z</updated>
+  <updated>2022-03-13T16:21:34.545Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Mar 2022</title>
+    <link href="http://kingsamchen.github.io/2022/03/13/weekly-2022-mar-2/"/>
+    <id>http://kingsamchen.github.io/2022/03/13/weekly-2022-mar-2/</id>
+    <published>2022-03-13T15:22:57.000Z</published>
+    <updated>2022-03-13T16:21:34.545Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Mar 2022</title>
@@ -625,34 +651,6 @@
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
       <category term="sfinae" scheme="http://kingsamchen.github.io/tags/sfinae/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Redigo 源码学习：Pipeline</title>
-    <link href="http://kingsamchen.github.io/2020/09/20/src-study-redigo-using-pipeline/"/>
-    <id>http://kingsamchen.github.io/2020/09/20/src-study-redigo-using-pipeline/</id>
-    <published>2020-09-20T13:02:04.000Z</published>
-    <updated>2020-09-20T13:05:18.567Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;如何使用-pipeline&quot;&gt;&lt;a href=&quot;#如何使用-pipeline&quot; class=&quot;headerlink&quot; title=&quot;如何使用 pipeline&quot;&gt;&lt;/a&gt;如何使用 pipeline&lt;/h2&gt;&lt;p&gt;先来回顾一下如何在 redigo 中使用 pipeline&lt;/p&gt;
-&lt;figure class=&quot;highlight go&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;c := pool.Get()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;defer&lt;/span&gt; c.Close()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;c.Send(&lt;span class=&quot;string&quot;&gt;&quot;SET&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;foo&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;bar&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;c.Send(&lt;span class=&quot;string&quot;&gt;&quot;GET&quot;&lt;/span&gt;, &lt;span class=&quot;string&quot;&gt;&quot;foo&quot;&lt;/span&gt;)&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;c.Flush()&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;c.Receive() &lt;span class=&quot;comment&quot;&gt;// reply from SET&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;v, err = c.Receive() &lt;span class=&quot;comment&quot;&gt;// reply from GET&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;核心是 Send — Flush — Receive 三个步骤。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="golang" scheme="http://kingsamchen.github.io/tags/golang/"/>
-    
-      <category term="redis" scheme="http://kingsamchen.github.io/tags/redis/"/>
-    
-      <category term="redigo" scheme="http://kingsamchen.github.io/tags/redigo/"/>
-    
-      <category term="pipeline" scheme="http://kingsamchen.github.io/tags/pipeline/"/>
     
   </entry>
   
