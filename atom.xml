@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-03-13T16:21:34.545Z</updated>
+  <updated>2022-03-20T16:23:26.186Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Mar 2022</title>
+    <link href="http://kingsamchen.github.io/2022/03/20/weekly-2022-mar-3/"/>
+    <id>http://kingsamchen.github.io/2022/03/20/weekly-2022-mar-3/</id>
+    <published>2022-03-20T12:57:09.000Z</published>
+    <updated>2022-03-20T16:23:26.186Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;感觉这周时间过得特别快。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;周六去医院打了最后一针狂犬疫苗，只要疫苗是真的有效，那么至少 1-2
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Mar 2022</title>
@@ -625,32 +651,6 @@
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
       <category term="range-based for" scheme="http://kingsamchen.github.io/tags/range-based-for/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>禁用某些构造函数</title>
-    <link href="http://kingsamchen.github.io/2020/10/02/disable-certain-ctors/"/>
-    <id>http://kingsamchen.github.io/2020/10/02/disable-certain-ctors/</id>
-    <published>2020-10-02T07:28:10.000Z</published>
-    <updated>2020-10-08T09:08:01.364Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;有时候我们希望用更明确的自定义类型取代一些 primitives，依靠类型系统来减少一些人为错误：&lt;/p&gt;
-&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;Run&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(WithMultithreading mt, WithAdvancedMode advanced)&lt;/span&gt;&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;comment&quot;&gt;// Both of them work like bool&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;auto&lt;/span&gt; mt = WithMultithreading(&lt;span class=&quot;literal&quot;&gt;true&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;auto&lt;/span&gt; mode = WithAdvancedMode(&lt;span class=&quot;literal&quot;&gt;false&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;Run(mt, mode);&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;类型 &lt;code&gt;WithMultithraeding&lt;/code&gt; 和 &lt;code&gt;WithAdvancedMode&lt;/code&gt; 用起来很像 &lt;code&gt;bool&lt;/code&gt;，但是他们是两个不同的类型，混用会出现编译错误。&lt;/p&gt;
-&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;Run(mode, mt);  &lt;span class=&quot;comment&quot;&gt;// compile failure; type mis-match&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;不管我们使用 &lt;code&gt;typedef&lt;/code&gt; 还是 &lt;code&gt;using&lt;/code&gt;，都只能定义 &lt;code&gt;bool&lt;/code&gt; 的类型别名；在类型系统看来他们还是一回事。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="sfinae" scheme="http://kingsamchen.github.io/tags/sfinae/"/>
     
   </entry>
   
