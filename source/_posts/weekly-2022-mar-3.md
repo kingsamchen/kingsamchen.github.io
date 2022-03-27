@@ -2,7 +2,7 @@
 title: 一周杂记 in Week 3 Mar 2022
 categories: CODE-LIFE
 date: 2022-03-20 20:57:09
-tags:
+tags: [杂记]
 ---
 
 感觉这周时间过得特别快。
