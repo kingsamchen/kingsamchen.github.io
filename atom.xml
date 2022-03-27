@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-03-20T16:23:26.186Z</updated>
+  <updated>2022-03-27T15:49:04.470Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -17,11 +17,38 @@
   <generator uri="http://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>一周杂记 in Week 4 Mar 2022</title>
+    <link href="http://kingsamchen.github.io/2022/03/27/weekly-2022-mar-4/"/>
+    <id>http://kingsamchen.github.io/2022/03/27/weekly-2022-mar-4/</id>
+    <published>2022-03-27T13:24:19.000Z</published>
+    <updated>2022-03-27T15:49:04.470Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ul&gt;
+&lt;li&gt;本周看了三部电影：&lt;em&gt;Cruella&lt;/em&gt;, &lt;em&gt;Sully&lt;/em&gt; and &lt;em&gt;The
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
     <title>一周杂记 in Week 3 Mar 2022</title>
     <link href="http://kingsamchen.github.io/2022/03/20/weekly-2022-mar-3/"/>
     <id>http://kingsamchen.github.io/2022/03/20/weekly-2022-mar-3/</id>
     <published>2022-03-20T12:57:09.000Z</published>
-    <updated>2022-03-20T16:23:26.186Z</updated>
+    <updated>2022-03-27T12:19:36.552Z</updated>
     
     <summary type="html">
     
@@ -39,6 +66,8 @@
     
       <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -623,34 +652,6 @@
       <category term="rant" scheme="http://kingsamchen.github.io/tags/rant/"/>
     
       <category term="life" scheme="http://kingsamchen.github.io/tags/life/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Reverse Range Based For Loops</title>
-    <link href="http://kingsamchen.github.io/2020/12/22/reverse-range-based-for-loops/"/>
-    <id>http://kingsamchen.github.io/2020/12/22/reverse-range-based-for-loops/</id>
-    <published>2020-12-21T16:40:09.000Z</published>
-    <updated>2020-12-26T09:49:47.615Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h3 id=&quot;实现&quot;&gt;&lt;a href=&quot;#实现&quot; class=&quot;headerlink&quot; title=&quot;实现&quot;&gt;&lt;/a&gt;实现&lt;/h3&gt;&lt;figure class=&quot;highlight cpp&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="range-based for" scheme="http://kingsamchen.github.io/tags/range-based-for/"/>
     
   </entry>
   
