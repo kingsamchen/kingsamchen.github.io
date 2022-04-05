@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-03-27T15:49:04.470Z</updated>
+  <updated>2022-04-05T06:16:33.659Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 5 Mar 2022</title>
+    <link href="http://kingsamchen.github.io/2022/03/29/weekly-2022-mar-5/"/>
+    <id>http://kingsamchen.github.io/2022/03/29/weekly-2022-mar-5/</id>
+    <published>2022-03-29T07:52:21.000Z</published>
+    <updated>2022-04-05T06:16:33.659Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;本周是清明假前的最后一周，要上6天班。周二的时候把去年遗留的一天年假用了，结果到了周三 3/30
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Mar 2022</title>
@@ -611,47 +638,6 @@
       <category term="uuid" scheme="http://kingsamchen.github.io/tags/uuid/"/>
     
       <category term="RFC 4122" scheme="http://kingsamchen.github.io/tags/RFC-4122/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>写了一个右键菜单清理工具以及一些吐槽</title>
-    <link href="http://kingsamchen.github.io/2021/02/09/a-context-menu-cleaner-tool-and-some-rants/"/>
-    <id>http://kingsamchen.github.io/2021/02/09/a-context-menu-cleaner-tool-and-some-rants/</id>
-    <published>2021-02-09T07:26:52.000Z</published>
-    <updated>2021-02-10T08:29:46.447Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;&lt;em&gt;注：这是一篇没有什么营养的吐槽文&lt;/em&gt;&lt;/p&gt;
-&lt;h2 id=&quot;清理工具&quot;&gt;&lt;a href=&quot;#清理工具&quot; class=&quot;headerlink&quot; title=&quot;清理工具&quot;&gt;&lt;/a&gt;清理工具&lt;/h2&gt;&lt;p&gt;自从一年多前删了一批程序发现右键上下文菜单留下了一批钉子户之后就想着哪天有时间写个工具清理一下。&lt;/p&gt;
-&lt;p&gt;但是因为比较懒就一直拖到了现在；并且在某天脑袋被门撞了之后想着要不顺带做一个 GUI 吧…&lt;/p&gt;
-&lt;p&gt;因为核心需要操作注册表，免不了一顿 Win32 API 调用，所以自然用 C++ 比较方便，但是用 C++ 写 GUI 吧，稍有经验的人都知道这是一个蛋疼的事情。&lt;/p&gt;
-&lt;p&gt;还好我还算比较有毅力：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;用了一个晚上基于 KBase 封装的基础工具写完了核心逻辑&lt;/li&gt;
-&lt;li&gt;在网上找了一个比较轻量的 nana-gui 糊了一个周末的 UI&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;最后算是把成品给做了出来，也确实达成了我的目的，清掉了残留的菜单项。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;/img/the_stupid_context_menu_cleaner.png&quot; alt&gt;&lt;/p&gt;
-&lt;p&gt;完整工程链接：&lt;a href=&quot;https://github.com/kingsamchen/Eureka/blob/master/context-menu-cleaner/&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;the-stupid-context-menu-cleaner&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&quot;GUI-Thanks-but-NO&quot;&gt;&lt;a href=&quot;#GUI-Thanks-but-NO&quot; class=&quot;headerlink&quot; title=&quot;GUI? Thanks, but NO&quot;&gt;&lt;/a&gt;GUI? Thanks, but NO&lt;/h2&gt;&lt;p&gt;这部分又名 我为什么不喜欢写 UI。&lt;/p&gt;
-&lt;p&gt;说起来我的编程生涯是从 GUI 程序开始的。&lt;/p&gt;
-&lt;p&gt;初中的时候各种折腾 VB6，一直想做个好看、高大上的应用；经常为了追求实现一些炫酷的效果大规模使用当时口口相传的秘术：子类化（sub-classing）。&lt;/p&gt;
-&lt;p&gt;说是秘术无非是 VB6 本身不支持这样做，强行通过 Win32 API 接管被内部封装的 wndproc（窗口的消息处理过程）；记得很容易因为一个不小心连带 IDE 都自动退出。&lt;/p&gt;
-&lt;p&gt;并且那会儿也没有所谓的 layout management，全靠可视化界面编辑器一个一个拖控件，然后通过手写 on_resize 事件根据窗口大小来调整控件的布局。&lt;/p&gt;
-&lt;p&gt;即使到了高中开始学 C++ (with classes)，也是想着怎么在 MFC 里用那些蹩脚的基础控件和机制把应用做得漂亮点。&lt;/p&gt;
-&lt;p&gt;直到升入大学并在 C++ 和 system programming 这条歪路上越走越远，GUI 编程对我的吸引开始日益减少；直至今天我对这部分事情完全提不起兴趣。&lt;/p&gt;
-&lt;p&gt;导致这个变化的原因粗想了一下大概有下面几个。&lt;br&gt;
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="rant" scheme="http://kingsamchen.github.io/tags/rant/"/>
-    
-      <category term="life" scheme="http://kingsamchen.github.io/tags/life/"/>
     
   </entry>
   
