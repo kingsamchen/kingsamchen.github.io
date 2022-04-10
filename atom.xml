@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-04-05T06:16:33.659Z</updated>
+  <updated>2022-04-10T16:09:07.780Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Apr 2022</title>
+    <link href="http://kingsamchen.github.io/2022/04/10/weekly-2022-apr-1/"/>
+    <id>http://kingsamchen.github.io/2022/04/10/weekly-2022-apr-1/</id>
+    <published>2022-04-10T14:52:21.000Z</published>
+    <updated>2022-04-10T16:09:07.780Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;本周掺杂了一个清明假期，节后三天工作日还算恰到好处，没有太明显的假期综合症。&lt;/p&gt;
+&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;电影上看了
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 5 Mar 2022</title>
@@ -31,34 +59,6 @@
         
           &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
 &lt;p&gt;本周是清明假前的最后一周，要上6天班。周二的时候把去年遗留的一天年假用了，结果到了周三 3/30
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Apr 2022</title>
-    <link href="http://kingsamchen.github.io/2022/03/29/weekly-2022-apr-1/"/>
-    <id>http://kingsamchen.github.io/2022/03/29/weekly-2022-apr-1/</id>
-    <published>2022-03-29T07:52:21.000Z</published>
-    <updated>2022-04-10T16:05:51.114Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;本周掺杂了一个清明假期，节后三天工作日还算恰到好处，没有太明显的假期综合症。&lt;/p&gt;
-&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;电影上看了
         
       
     
