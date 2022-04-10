@@ -44,6 +44,34 @@
   </entry>
   
   <entry>
+    <title>一周杂记 in Week 1 Apr 2022</title>
+    <link href="http://kingsamchen.github.io/2022/03/29/weekly-2022-apr-1/"/>
+    <id>http://kingsamchen.github.io/2022/03/29/weekly-2022-apr-1/</id>
+    <published>2022-03-29T07:52:21.000Z</published>
+    <updated>2022-04-10T16:05:51.114Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;本周掺杂了一个清明假期，节后三天工作日还算恰到好处，没有太明显的假期综合症。&lt;/p&gt;
+&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;电影上看了
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
     <title>一周杂记 in Week 4 Mar 2022</title>
     <link href="http://kingsamchen.github.io/2022/03/27/weekly-2022-mar-4/"/>
     <id>http://kingsamchen.github.io/2022/03/27/weekly-2022-mar-4/</id>
@@ -609,35 +637,6 @@
     
     
       <category term="uuid" scheme="http://kingsamchen.github.io/tags/uuid/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>UUID 及其实现 1</title>
-    <link href="http://kingsamchen.github.io/2021/02/25/uuid-and-its-implementations-1/"/>
-    <id>http://kingsamchen.github.io/2021/02/25/uuid-and-its-implementations-1/</id>
-    <published>2021-02-24T16:44:30.000Z</published>
-    <updated>2021-02-26T14:48:37.898Z</updated>
-    
-    <summary type="html">
-    
-      &lt;h2 id=&quot;数据格式&quot;&gt;&lt;a href=&quot;#数据格式&quot; class=&quot;headerlink&quot; title=&quot;数据格式&quot;&gt;&lt;/a&gt;数据格式&lt;/h2&gt;&lt;p&gt;UUID 是 &lt;em&gt;Universally Unique IDentifier&lt;/em&gt; 的缩写，本质上是一个 128-bit (16-byte) 长的标识符，可以用32个16进制数表示，并且通常以如下形式展示：&lt;/p&gt;
-&lt;figure class=&quot;highlight plain&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;// 每组字符长度分别是 8-4-4-4-12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;              ^    ^&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;              M    N&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;上面 &lt;code&gt;M&lt;/code&gt; 和 &lt;code&gt;N&lt;/code&gt; 出的数字分别表示了这个 UUID 使用的 version 和 variant；具体下面展开。&lt;/p&gt;
-&lt;p&gt;HEX 字符存在大小写，按照 RFC 4122 要求，UUID 输出时 &lt;code&gt;&amp;#39;a&amp;#39;-&amp;#39;f&amp;#39;&lt;/code&gt; 应为小写；但是在作为输入时大小写不敏感。&lt;/p&gt;
-&lt;p&gt;因为 UUID 的生成不需要中心管理节点 (central authority)，是天然分布式；也正因如此，没有一个验证 UUID 是否有效的方法，最多只能验证是否满足数据格式要求。&lt;/p&gt;
-&lt;h3 id=&quot;0x0-Variant&quot;&gt;&lt;a href=&quot;#0x0-Variant&quot; class=&quot;headerlink&quot; title=&quot;0x0 Variant&quot;&gt;&lt;/a&gt;0x0 Variant&lt;/h3&gt;&lt;p&gt;上面 &lt;code&gt;N&lt;/code&gt; 处的 HEX 的 3-bit MSB 指明了 UUID 使用的 variant。&lt;/p&gt;
-&lt;p&gt;Variant 决定了当前 UUID 其他的 bits 如何 interpret。这里的 bits 也包含 &lt;code&gt;M&lt;/code&gt; 处指示 version 的那部分。&lt;/p&gt;
-&lt;p&gt;语义上讲，variant 更适合被叫做 type&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="uuid" scheme="http://kingsamchen.github.io/tags/uuid/"/>
-    
-      <category term="RFC 4122" scheme="http://kingsamchen.github.io/tags/RFC-4122/"/>
     
   </entry>
   
