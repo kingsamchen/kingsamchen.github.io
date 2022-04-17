@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-04-10T16:09:07.780Z</updated>
+  <updated>2022-04-17T16:18:48.870Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Apr 2022</title>
+    <link href="http://kingsamchen.github.io/2022/04/17/weekly-2022-apr-2/"/>
+    <id>http://kingsamchen.github.io/2022/04/17/weekly-2022-apr-2/</id>
+    <published>2022-04-17T14:52:21.000Z</published>
+    <updated>2022-04-17T16:18:48.870Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;上周因为用了三年多的 MIX2S 屏幕碎裂连带排线断了无法使用，下单买了 iPhone
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Apr 2022</title>
@@ -591,45 +618,6 @@
 &lt;li&gt;If two UUIDs that were generated from names are equal, then they were generated from the same name in the same namespace (with very high probability).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;所以 v3/v5 的版本又被叫做 name-based implementation&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="uuid" scheme="http://kingsamchen.github.io/tags/uuid/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>UUID 及其实现 2</title>
-    <link href="http://kingsamchen.github.io/2021/03/06/uuid-and-its-implementations-2/"/>
-    <id>http://kingsamchen.github.io/2021/03/06/uuid-and-its-implementations-2/</id>
-    <published>2021-03-06T03:33:30.000Z</published>
-    <updated>2021-03-06T14:58:38.251Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;上篇介绍了 UUID 的格式和 v4 的实现，这篇讲 v1 &amp;amp; v2 的实现。&lt;/p&gt;
-&lt;p&gt;v2 版本是 v1 上衍生出来的，而 v1 因为涉及到时间戳，又称为 time-based implementation。&lt;/p&gt;
-&lt;h2 id=&quot;实现-UUID-v1&quot;&gt;&lt;a href=&quot;#实现-UUID-v1&quot; class=&quot;headerlink&quot; title=&quot;实现 UUID v1&quot;&gt;&lt;/a&gt;实现 UUID v1&lt;/h2&gt;&lt;p&gt;v1 除了常规的 variant 和 version 部份外，还涉及三个部分：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;timestamp，需要 60-bit 通常用 64-bit 容纳；非寻常的 Unix Timestamp&lt;/li&gt;
-&lt;li&gt;clock sequence，需要 14-bit，通常用 16-bit 存储&lt;/li&gt;
-&lt;li&gt;node identifier，48-bit 和设备相关&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;下面逐一解释这三个部分。&lt;/p&gt;
-&lt;h3 id=&quot;0x0-UUID-Timestamp&quot;&gt;&lt;a href=&quot;#0x0-UUID-Timestamp&quot; class=&quot;headerlink&quot; title=&quot;0x0. UUID Timestamp&quot;&gt;&lt;/a&gt;0x0. UUID Timestamp&lt;/h3&gt;&lt;p&gt;和常见的 Unix 时间戳不同，UUID 时间戳记录的是，自 1582-10-15 00:00:00 至今的 100-ns 数。&lt;/p&gt;
-&lt;p&gt;1582年10月15日的零点是&lt;a href=&quot;https://zh.wikipedia.org/zh-cn/%E6%A0%BC%E9%87%8C%E6%9B%86&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;格里高力历&lt;/a&gt;开始的时间，这个时间也是 UUID Epoch Time。&lt;/p&gt;
-&lt;p&gt;UUID 时间戳的分辨率（resolution）是 100 纳秒，即每 100ns 为一个 tick。&lt;/p&gt;
-&lt;p&gt;现代编程语言都可以获取 unix 时间戳，因此可以先获取 unix 时间戳，然后加上两个 epoch time 的差值；这个差值是个定值，等于 &lt;code&gt;122192928000000000&lt;/code&gt;。&lt;/p&gt;
-&lt;p&gt;注意：获取时间戳时需要注意系统或者语言库能提供的分辨率。&lt;/p&gt;
-&lt;h3 id=&quot;0x1-Clock-Sequence&quot;&gt;&lt;a href=&quot;#0x1-Clock-Sequence&quot; class=&quot;headerlink&quot; title=&quot;0x1. Clock Sequence&quot;&gt;&lt;/a&gt;0x1. Clock Sequence&lt;/h3&gt;&lt;p&gt;因为引入了时间戳，所以存在可能由于时钟回拨、闰秒，甚至因为系统提供的时钟分辨率不够导致使用了重复的时间戳。&lt;/p&gt;
-&lt;p&gt;另外 node identifier 也有可能被改变。&lt;/p&gt;
-&lt;p&gt;所以为了尽可能保证 UUID 的唯一性，引入了 clock sequence。&lt;/p&gt;
-&lt;p&gt;注：RFC 4122 没有规定 UUID v1 必须要使用 steady clock，所以使用能够被回拨的 system clock 也是允许的。另外，即使使用了 steady clock，机器在两次启动之间也可能调整了硬件时间，一样可能会导致回拨。&lt;/p&gt;
-&lt;p&gt;Clock sequence 一开始会被初始化为一个随机值；之后如果某次获取 UUID 时间戳发现 &amp;lt;= 上一次的时间戳，就会自增 clock sequence。&lt;/p&gt;
-&lt;p&gt;clock sequence 通常会设置为一个无符号数，以确保溢出 wrap-around 的行为是确定的。&lt;br&gt;
     
     </summary>
     
