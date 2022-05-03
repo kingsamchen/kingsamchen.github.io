@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-04-25T16:17:32.837Z</updated>
+  <updated>2022-05-03T13:47:17.833Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Apr 2022</title>
+    <link href="http://kingsamchen.github.io/2022/05/02/weekly-2022-apr-4/"/>
+    <id>http://kingsamchen.github.io/2022/05/02/weekly-2022-apr-4/</id>
+    <published>2022-05-02T14:30:00.000Z</published>
+    <updated>2022-05-03T13:47:17.833Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;亲自补上四月份最后一周的周报…&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Apr 2022</title>
@@ -586,32 +613,6 @@
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
       <category term="unique_ptr" scheme="http://kingsamchen.github.io/tags/unique-ptr/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一个符合 RFC-4122 的实现</title>
-    <link href="http://kingsamchen.github.io/2021/05/15/uuidxx-a-rfc-compliant-implementation/"/>
-    <id>http://kingsamchen.github.io/2021/05/15/uuidxx-a-rfc-compliant-implementation/</id>
-    <published>2021-05-15T14:42:06.000Z</published>
-    <updated>2021-05-15T15:17:31.683Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;系列第一篇文章里说后面会给出一个满足 RFC 4122 的可用实现，并且那会儿是打算讲一讲实现中一些需要注意的坑和有意思的点。&lt;/p&gt;
-&lt;p&gt;但是因为3月份开始就忙着准备面试，清明结束后的两周基本不是在面试，就是在准备面试；一直到五一回了趟温州老家才有比较充裕的时间把 uuidxx 的核心逻辑写完。&lt;/p&gt;
-&lt;p&gt;拉锯到现在一开始的冲动都已经被消磨得不剩下多少了（可能还是因为我比较懒），所以我不打算把具体的实现部分展开，有兴趣的可以自行查阅源代码。&lt;/p&gt;
-&lt;p&gt;Repo 地址在 &lt;a href=&quot;https://github.com/kingsamchen/uuidxx&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;https://github.com/kingsamchen/uuidxx&lt;/a&gt;&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;因为这次换工作我有很多槽点想吐，所以后面我会专门写一篇文章讲一讲。&lt;/p&gt;
-&lt;p&gt;这篇应该不会鸽，毕竟喷人挺爽的一件事。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="uuid" scheme="http://kingsamchen.github.io/tags/uuid/"/>
     
   </entry>
   
