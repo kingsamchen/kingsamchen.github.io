@@ -1,0 +1,132 @@
+<!DOCTYPE html><html lang="en"><head><meta name="generator" content="Hexo 3.9.0"><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Gone with the ruins"><title>实现 subprocess 中踩过的坑 | KC的废墟堆</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">实现 subprocess 中踩过的坑</h1><a id="logo" href="/.">KC的废墟堆</a><p class="description">Will you serve in Heaven, or rule in Hell</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">实现 subprocess 中踩过的坑</h1><div class="post-meta">2022-05-03<span> | </span><span class="category"><a href="/categories/PROGRAMMING/">PROGRAMMING</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2022/05/03/lesson-learned-from-writing-subprocess/" href="/2022/05/03/lesson-learned-from-writing-subprocess/#disqus_thread"></a><div class="post-content"><p><code>subprocess</code> 是我为 Lumper 实现的一个基础类，主要功能是创建子进程运行指定的 executable，同时支持 I/O 重定向和 clone flags。</p>
+<p>因为 Lumper 的目的是实现一个类似 Docker 的东西，所以子进程的创建必须要用 <code>SYS_clone</code> 才能设置 namespace 进行隔离。许多直接使用 <code>fork()</code> 的三方库其实都是不满足要求的；而 Golang 的 <code>cmd/exec</code> 好巧不巧的实现上恰好使用了 <code>SYS_clone</code>，算是捡了一个大便宜。</p>
+<p>刚好我也想试一下实现一个 industrial-grade 的 sub processing 会遇到哪些问题，所以便有了 <code>base/subprocess</code>。</p>
+<p>注：下面内容不会涉及接口语义设计、组织设计这些高屋建瓴的内容，只会谈谈我在实现过程中遇到的问题和一些 trade-off 的考量。</p>
+<p>源码位置：<a href="https://github.com/kingsamchen/Eureka/tree/master/Lumper/base" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/tree/master/Lumper/base</a></p>
+<h3 id="0x0-下马威-——-编译器的-Bug"><a href="#0x0-下马威-——-编译器的-Bug" class="headerlink" title="0x0 下马威 —— 编译器的 Bug"></a>0x0 下马威 —— 编译器的 Bug</h3><p>Bug 的位置见 <a href="https://github.com/kingsamchen/Eureka/blob/master/Lumper/base/subprocess.h#L124" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/blob/master/Lumper/base/subprocess.h#L124</a></p>
+<p>如果使用 <code>options() = default</code> 来实现默认构造，会出现奇怪且晦涩的编译错误，而且感觉八竿子打不着。</p>
+<p>几轮排除法下来后才确信这大概率是一个编译器的 bug；经过一番 Google 也在 Stackoverflow 上找到了相关的<a href="https://stackoverflow.com/questions/53408962/try-to-understand-compiler-error-message-default-member-initializer-required-be" target="_blank" rel="noopener">问题</a>。</p>
+<p>总结一下就是：内部类使用 <code>=default</code> 作为默认构造实现，且内部类作为函数的默认参数就会触发。</p>
+<p>因为 workaround 会引发 clang-tidy 的 complain，所以我主动 supress 了这个 issue。</p>
+<h3 id="0x1-避免继承不必要的-fd"><a href="#0x1-避免继承不必要的-fd" class="headerlink" title="0x1 避免继承不必要的 fd"></a>0x1 避免继承不必要的 fd</h3><p>和 Windows 的设计不同，Linux 上父进程的 fd 默认会被子进程继承。</p>
+<p>传统的多进程单线程模型下，这种行为是合理的；但是对于 subprocess 来说，fork/clone 出子进程后我们会直接用 <code>exec()</code> 运行对应的 executable 替换掉子进程，这些继承来的 fd 不仅毫无用处，还会导致即使父进程退出，fd 对应的资源也不会被释放。</p>
+<p>一个通行的做法是，父进程在创建 fd 时，如果这个 fd 不希望被子进程使用，统一加上 <code>O_CLOEXEC</code> flag。</p>
+<p>Modern 一些的系统调用在创建 fd 时基本都支持这个标志，因为可以避免 <em>create-then-fcntl</em> 的 race 情况。</p>
+<p>对于 IO 重定向：不管是重定向到 pipe 还是重定向到 <code>/dev/null</code> 都是通过 <code>dup2()</code> 将源 fd 复制到目标 fd 上，例如 <code>FILENOSTDOUT</code>，所以源 fd 创建时可以并且应该设置 <code>O_CLOEXEC</code> 标志。</p>
+<p>同时 <code>dup2()</code> 之后的 <strong>fd 不会带上这个标志</strong>，并且我们也希望这个 fd 对 exec 之后的进程同样有效，因此这个行为是符合预期的。</p>
+<blockquote>
+<p>The two file descriptors do not share file descriptor flags (the      close-on-exec flag).  The close-on-exec flag (<code>FD_CLOEXEC</code>; see <code>fcntl(2)</code>) for the duplicate descriptor is off.</p>
+</blockquote>
+<ol>
+<li><a href="https://man7.org/linux/man-pages/man2/dup.2.html" target="_blank" rel="noopener">https://man7.org/linux/man-pages/man2/dup.2.html</a></li>
+<li><a href="https://man7.org/linux/man-pages/man3/dup.3p.html" target="_blank" rel="noopener">https://man7.org/linux/man-pages/man3/dup.3p.html</a></li>
+</ol>
+<h3 id="0x2-子进程发生错误时通知父进程"><a href="#0x2-子进程发生错误时通知父进程" class="headerlink" title="0x2 子进程发生错误时通知父进程"></a>0x2 子进程发生错误时通知父进程</h3><p>父进程通过 <code>clone()</code> 创建子进程后，还需要做一些准备工作才能调用 <code>exec()</code> 替换掉执行的程序</p>
+<p>这些准备工作是可能会发生错误的，而一旦发生不可继续的错误，那么子进程只能退出，但是退出前子进程必须要通知父进程自己失败了。</p>
+<p>一个常用的方法是父进程在创建子进程前先创建一个 error pipe（创建时别忘了指定 <code>O_CLOEXEC</code>），子进程在 <code>exec()</code> 前的准备工作中如果出现错误，则退出前往 error pipe 中写入相关错误信息。</p>
+<p>一般来说，<code>errno</code> 和约定的错误码即可.</p>
+<p>如果子进程的准备工作很顺利，那么 <code>exec()</code> 调用时，error pipe 的 fd 都会被自动关闭。</p>
+<p>父进程读 error pipe 前先关闭自己这一侧的 write fd，这样一来：</p>
+<ul>
+<li>如果 read pipe 返回 0，则说明子进程工作顺利</li>
+<li>如果 read pipe 能读出完整的错误信息，则说明子进程出现错误，父进程要进行相应处理。注意，父进程处理前最好等子进程退出干净之后。</li>
+</ul>
+<p>如果我们往 pipe 读写不超过 <code>PIPE_BUF</code> 的数据，调用可能会被 block，但是基本不会出现 short write 和 short read。</p>
+<p>可以做一个兜底处理：</p>
+<ul>
+<li>写端 best efforts only；反正通知完就退出了<br><strong>WARNING: 子进程这时千万不要打日志！</strong> 原因后面讲。</li>
+<li>读端如果出现 short read，或者其他错误，因为没法确定子进程是否正常，所以这里只能假定它正常<br>因为如果父子进程有其他的通信方式的话后续也能判断子进程异常退出；而如果父子进程不再需要通信，那么父进程最后 wait 子进程时，也能正常给出问题的子进程招魂</li>
+</ul>
+<ol>
+<li>子进程写 error pipe <a href="https://github.com/kingsamchen/Eureka/blob/master/Lumper/base/subprocess.cpp#L70" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/blob/master/Lumper/base/subprocess.cpp#L70</a></li>
+<li>父进程读 error pipe <a href="https://github.com/kingsamchen/Eureka/blob/master/Lumper/base/subprocess.cpp#L215" target="_blank" rel="noopener">https://github.com/kingsamchen/Eureka/blob/master/Lumper/base/subprocess.cpp#L215</a></li>
+<li><a href="https://man7.org/linux/man-pages/man7/pipe.7.html#PIPE_BUF" target="_blank" rel="noopener">https://man7.org/linux/man-pages/man7/pipe.7.html#PIPE_BUF</a></li>
+</ol>
+<h3 id="0x3-正确的等待子进程退出"><a href="#0x3-正确的等待子进程退出" class="headerlink" title="0x3 正确的等待子进程退出"></a>0x3 正确的等待子进程退出</h3><p>父进程等待子进程应该用 <code>waitpid()</code>，因为我们有子进程的 pid 值。并且只要 <code>clone()</code> 调用成功，就可以确保这个 pid 值是合法的。</p>
+<p><code>waitpid()</code> 返回时有必要检查返回值，成功时返回值应等于子进程的 pid。另外可以把调用失败（返回值为 -1）和等待的 pid 对不上子进程当作两种情况处理，后者可以专门容错。</p>
+<p>注：这里检查返回值帮我发现了一开始 clone 有个标志位问题。</p>
+<p>参数 <code>wstatus</code> 必须要设置，因为这个参数可以区分子进程是正常退出还是被 kill 了，并且可以获得相应的 exit code 或者 signal number。</p>
+<p>pid 默认值可以用 -1 或者 0，我个人偏好 -1。</p>
+<h3 id="0x4-选用对的-syscall"><a href="#0x4-选用对的-syscall" class="headerlink" title="0x4 选用对的 syscall"></a>0x4 选用对的 syscall</h3><p>Glibc 有一个包装后的 <code>clone(2)</code> 原型如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">clone</span><span class="params">(<span class="keyword">int</span> (*fn)(<span class="keyword">void</span> *), <span class="keyword">void</span> *<span class="built_in">stack</span>, <span class="keyword">int</span> flags, <span class="keyword">void</span> *arg, ...</span></span></span><br><span class="line"><span class="function"><span class="params">          <span class="comment">/* pid_t *parent_tid, void *tls, pid_t *child_tid */</span> )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>但是这个包装后的函数语义和 raw <code>SYS_clone</code> 是有区别的，新进程会直接跑 <code>fn</code> 这个函数，并且还得很麻烦的提供一块内存充当栈。</p>
+<p>因为这个函数其实是给 pthread 这样的线程库创建线程用的，如果我们想要使用类似 <code>fork()</code> 的语义，应该使用 <code>SYS_clone</code> raw syscall。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> pid = <span class="keyword">static_cast</span>&lt;<span class="keyword">pid_t</span>&gt;(::syscall(SYS_clone, clone_flags, <span class="number">0</span>, <span class="literal">nullptr</span>, <span class="literal">nullptr</span>));</span><br></pre></td></tr></table></figure>
+<p>因为我们的目的是创建单独进程，所以不需要设置任何共享资源的标志位。当然子进程还是具有 COW 特性的。</p>
+<p><a href="https://man7.org/linux/man-pages/man2/clone.2.html" target="_blank" rel="noopener">https://man7.org/linux/man-pages/man2/clone.2.html</a></p>
+<h3 id="0x5-clone-flags-默认加上-SIGCHLD"><a href="#0x5-clone-flags-默认加上-SIGCHLD" class="headerlink" title="0x5 clone flags 默认加上 SIGCHLD"></a>0x5 clone flags 默认加上 SIGCHLD</h3><p>使用 clone 有一个另外的坑是需要保证使用的 <code>clone_flags</code> 启用了 <code>SIGCHLD</code>。</p>
+<p>在 manual 的 <em>The child termination signal</em> 这节提到这么一句：</p>
+<blockquote>
+<p>If no signal (i.e., zero) is specified, then the parent process is not signaled when the child terminates.</p>
+</blockquote>
+<p>如果没有这个标志位，并且子进程在父进程调用 <code>waitpid()</code> 前就退出了，不管正常退出还是异常退出，父进程都不会收到通知，导致后续的 <code>waitpid()</code> 会出错，返回 <code>ECHILD</code> 抱怨给定 pid 的进程不存在。</p>
+<h3 id="0x6-fork-clone-之后-exec-之前的虚无状态"><a href="#0x6-fork-clone-之后-exec-之前的虚无状态" class="headerlink" title="0x6 fork/clone 之后 exec 之前的虚无状态"></a>0x6 fork/clone 之后 exec 之前的虚无状态</h3><p>在多线程的环境下，fork/clone 之后的进程处于一个非常危险的状态。</p>
+<p>子进程会复制父进程调用 fork/clone 的线程，但是其他资源是全量复制的，比如锁。</p>
+<p>如果父进程一个线程在 fork/clone 时，另外一个线程刚好上了个锁。那么子进程里也会有这个锁，而且是处于 lock 状态。</p>
+<p>如果子进程没注意又去上锁，那么就会出现死锁。子进程 hang 住的话，父进程除非 kill 或者不去收拾，否则一 wait 也会连着 hang 住。</p>
+<p>因为内存动态分配释放也会涉及到锁，这意味着子进程在这个状态时甚至不能进行动态分配内存。</p>
+<p>不严格来说，这个时候的子进程能做的事情，等价于 signal handler 里能做的事情。</p>
+<p>所以 fork/clone 之后，一直到 exec 之前的代码都要非常小心非常注意。不要动态分配资源，不要抛异常，出错了也不要打日志，因为可能实现里会用到锁进行同步。</p>
+<p>那么 <code>base/subprocess</code> 的 <code>options</code> 为啥要提供一个 callback 允许在这个时候执行函数呢？因为 Lumper 需要在执行 <code>exec()</code> 前用 <code>mount()</code> 挂上新的 <code>/proc</code>。</p>
+<h3 id="0x7-重定向-I-O-到-dev-null"><a href="#0x7-重定向-I-O-到-dev-null" class="headerlink" title="0x7 重定向 I/O 到 /dev/null"></a>0x7 重定向 I/O 到 /dev/null</h3><p>直接 <code>::open()</code> 打开 <code>/dev/null</code> 拿到 fd 即可。</p>
+<p>别忘了加上 <code>O_CLOEXEC</code> 标志位；另外这个函数在 after-fork-before-exec 这段时间进行即可，也不会遇到什么意外。</p>
+<h3 id="0x8-析构处理"><a href="#0x8-析构处理" class="headerlink" title="0x8 析构处理"></a>0x8 析构处理</h3><p>类似 <code>std::thread</code>，<code>base::subprocess</code> 对象析构时关联的进程可能还在运行，这会导致两个东西的生命周期不一致了。</p>
+<p>目前的做法是如果析构时当前还是 <code>waitable() == true</code> 的，就直接 terminate。</p>
+<p>后续有必要的话可以引入一个选项，只打印错误之类的。</p>
+<h3 id="0x9-移动语义支持"><a href="#0x9-移动语义支持" class="headerlink" title="0x9 移动语义支持"></a>0x9 移动语义支持</h3><p>这里必须要显式实现两个移动操作，原因有两点：1) 状态一致 2) 移动赋值同样设计生命周期问题。</p>
+<p>先看第一个。</p>
+<p>标准要求：被移动的对象至少要满足能正常析构。</p>
+<p>所以如果我们将一个有关联进程的 <code>subprocess</code> 对象进行移动，那么操作完成之后，这个对象一定不能是 waitable 的，否则无法安全析构。</p>
+<p>而 bitwise move 做不到这点。</p>
+<p>更严格一点，如果我们希望被移动后的对象是 default inited 状态，那么我们还得考虑 pid 的值。</p>
+<p>另外，如果移动赋值时 lhs 的对象关联的进程还在运行，那么是不能进行移动的。</p>
+<p>所以这里两个移动操作都要显式实现。</p>
+<hr>
+<p>以上就是实现 <code>base::subprocess</code> 时遇到的坑。</p>
+<p>细数一下还不少，实现起来需要注意的细节也很多。</p>
+</div><div class="tags"><a href="/tags/cpp/"><i class="fa fa-tag"></i>cpp</a><a href="/tags/Linux/"><i class="fa fa-tag"></i>Linux</a><a href="/tags/clone/"><i class="fa fa-tag"></i>clone</a><a href="/tags/fork/"><i class="fa fa-tag"></i>fork</a><a href="/tags/多进程/"><i class="fa fa-tag"></i>多进程</a></div><div class="post-nav"><a class="next" href="/2022/05/02/weekly-2022-apr-4/">一周杂记 in Week 4 Apr 2022</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://kingsamchen.github.io/2022/05/03/lesson-learned-from-writing-subprocess/';
+    this.page.identifier = '2022/05/03/lesson-learned-from-writing-subprocess/';
+    this.page.title = '实现 subprocess 中踩过的坑';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://kingsamchen-github-io.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2022/05/03/lesson-learned-from-writing-subprocess/">实现 subprocess 中踩过的坑</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/05/02/weekly-2022-apr-4/">一周杂记 in Week 4 Apr 2022</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/04/24/weekly-2022-apr-3/">一周杂记 in Week 3 Apr 2022</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/04/17/weekly-2022-apr-2/">一周杂记 in Week 2 Apr 2022</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/04/10/weekly-2022-apr-1/">一周杂记 in Week 1 Apr 2022</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/03/29/weekly-2022-mar-5/">一周杂记 in Week 5 Mar 2022</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/03/27/weekly-2022-mar-4/">一周杂记 in Week 4 Mar 2022</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/03/20/weekly-2022-mar-3/">一周杂记 in Week 3 Mar 2022</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/03/13/weekly-2022-mar-2/">一周杂记 in Week 2 Mar 2022</a></li><li class="post-list-item"><a class="post-list-link" href="/2022/03/06/weekly-2022-mar-1/">一周杂记 in Week 1 Mar 2022</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/rant/" style="font-size: 15px;">rant</a> <a href="/tags/life/" style="font-size: 15px;">life</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/crash/" style="font-size: 15px;">crash</a> <a href="/tags/breakpad/" style="font-size: 15px;">breakpad</a> <a href="/tags/cpp/" style="font-size: 15px;">cpp</a> <a href="/tags/exception/" style="font-size: 15px;">exception</a> <a href="/tags/android/" style="font-size: 15px;">android</a> <a href="/tags/multiple-instance/" style="font-size: 15px;">multiple instance</a> <a href="/tags/memory-fence/" style="font-size: 15px;">memory fence</a> <a href="/tags/memory-ordering/" style="font-size: 15px;">memory ordering</a> <a href="/tags/KBase/" style="font-size: 15px;">KBase</a> <a href="/tags/command-line/" style="font-size: 15px;">command-line</a> <a href="/tags/abstraction/" style="font-size: 15px;">abstraction</a> <a href="/tags/c/" style="font-size: 15px;">c++</a> <a href="/tags/enum/" style="font-size: 15px;">enum</a> <a href="/tags/flag/" style="font-size: 15px;">flag</a> <a href="/tags/bitwise，-SFINAE/" style="font-size: 15px;">bitwise， SFINAE</a> <a href="/tags/梯子/" style="font-size: 15px;">梯子</a> <a href="/tags/shadowsocks/" style="font-size: 15px;">shadowsocks</a> <a href="/tags/trojan/" style="font-size: 15px;">trojan</a> <a href="/tags/socat/" style="font-size: 15px;">socat</a> <a href="/tags/windows/" style="font-size: 15px;">windows</a> <a href="/tags/design/" style="font-size: 15px;">design</a> <a href="/tags/environment/" style="font-size: 15px;">environment</a> <a href="/tags/buddy-allocator/" style="font-size: 15px;">buddy-allocator</a> <a href="/tags/algorithms/" style="font-size: 15px;">algorithms</a> <a href="/tags/C-17/" style="font-size: 15px;">C++ 17</a> <a href="/tags/string-view/" style="font-size: 15px;">string_view</a> <a href="/tags/tokenizer/" style="font-size: 15px;">tokenizer</a> <a href="/tags/anvil/" style="font-size: 15px;">anvil</a> <a href="/tags/cmake/" style="font-size: 15px;">cmake</a> <a href="/tags/project-management/" style="font-size: 15px;">project management</a> <a href="/tags/asio/" style="font-size: 15px;">asio</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/cfs/" style="font-size: 15px;">cfs</a> <a href="/tags/atoi/" style="font-size: 15px;">atoi</a> <a href="/tags/golang/" style="font-size: 15px;">golang</a> <a href="/tags/non-capturing-lambda/" style="font-size: 15px;">non-capturing lambda</a> <a href="/tags/function-pointer/" style="font-size: 15px;">function pointer</a> <a href="/tags/obs-studio/" style="font-size: 15px;">obs-studio</a> <a href="/tags/inno-setup/" style="font-size: 15px;">inno setup</a> <a href="/tags/installer/" style="font-size: 15px;">installer</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/Unix/" style="font-size: 15px;">Unix</a> <a href="/tags/signal/" style="font-size: 15px;">signal</a> <a href="/tags/signalfd/" style="font-size: 15px;">signalfd</a> <a href="/tags/self-pipe-trick/" style="font-size: 15px;">self-pipe trick</a> <a href="/tags/cant/" style="font-size: 15px;">cant</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/HandlerThread/" style="font-size: 15px;">HandlerThread</a> <a href="/tags/Looper/" style="font-size: 15px;">Looper</a> <a href="/tags/Handler/" style="font-size: 15px;">Handler</a> <a href="/tags/MessageLoop/" style="font-size: 15px;">MessageLoop</a> <a href="/tags/http/" style="font-size: 15px;">http</a> <a href="/tags/proxy/" style="font-size: 15px;">proxy</a> <a href="/tags/thread-pool/" style="font-size: 15px;">thread-pool</a> <a href="/tags/chromium/" style="font-size: 15px;">chromium</a> <a href="/tags/urlfetcher/" style="font-size: 15px;">urlfetcher</a> <a href="/tags/SFINAE/" style="font-size: 15px;">SFINAE</a> <a href="/tags/template/" style="font-size: 15px;">template</a> <a href="/tags/source-internals/" style="font-size: 15px;">source internals</a> <a href="/tags/message-loop/" style="font-size: 15px;">message-loop</a> <a href="/tags/wireshark/" style="font-size: 15px;">wireshark</a> <a href="/tags/localhost/" style="font-size: 15px;">localhost</a> <a href="/tags/visual-studio/" style="font-size: 15px;">visual studio</a> <a href="/tags/libx264/" style="font-size: 15px;">libx264</a> <a href="/tags/vcpkg/" style="font-size: 15px;">vcpkg</a> <a href="/tags/shared-ptr/" style="font-size: 15px;">shared_ptr</a> <a href="/tags/type-injection/" style="font-size: 15px;">type injection</a> <a href="/tags/tag-dispatching/" style="font-size: 15px;">tag dispatching</a> <a href="/tags/shared-ptr-internals/" style="font-size: 15px;">shared_ptr-internals</a> <a href="/tags/source-code-study/" style="font-size: 15px;">source-code-study</a> <a href="/tags/weak-ptr/" style="font-size: 15px;">weak_ptr</a> <a href="/tags/base-lib/" style="font-size: 15px;">base lib</a> <a href="/tags/boost/" style="font-size: 15px;">boost</a> <a href="/tags/libstdc/" style="font-size: 15px;">libstdc++</a> <a href="/tags/gcc/" style="font-size: 15px;">gcc</a> <a href="/tags/clang/" style="font-size: 15px;">clang</a> <a href="/tags/sfinae/" style="font-size: 15px;">sfinae</a> <a href="/tags/google-breakpad/" style="font-size: 15px;">google-breakpad</a> <a href="/tags/invalid-paramter/" style="font-size: 15px;">invalid paramter</a> <a href="/tags/operator/" style="font-size: 15px;">operator[]</a> <a href="/tags/Visual-Studio/" style="font-size: 15px;">Visual Studio</a> <a href="/tags/debugger/" style="font-size: 15px;">debugger</a> <a href="/tags/UTF-8/" style="font-size: 15px;">UTF-8</a> <a href="/tags/owner-semantics/" style="font-size: 15px;">owner semantics</a> <a href="/tags/view-semantics/" style="font-size: 15px;">view semantics</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/msvc/" style="font-size: 15px;">msvc</a> <a href="/tags/ebo/" style="font-size: 15px;">ebo</a> <a href="/tags/multiple-inheritance/" style="font-size: 15px;">multiple inheritance</a> <a href="/tags/haskell/" style="font-size: 15px;">haskell</a> <a href="/tags/infix-operator/" style="font-size: 15px;">infix operator</a> <a href="/tags/error-handling/" style="font-size: 15px;">error handling</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/mint/" style="font-size: 15px;">mint</a> <a href="/tags/磁盘/" style="font-size: 15px;">磁盘</a> <a href="/tags/扩容/" style="font-size: 15px;">扩容</a> <a href="/tags/ffmpeg/" style="font-size: 15px;">ffmpeg</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://www.daozhihun.com/" title="刀之魂 | 大木老师成长日记" target="_blank">刀之魂 | 大木老师成长日记</a><ul></ul><a href="https://blog.nlogn.cn/" title="帧哥 | 硅谷谈撸管" target="_blank">帧哥 | 硅谷谈撸管</a><ul></ul><a href="https://blog.chichou.me/" title="ChiChou | 首席安全地球仪切图总奸" target="_blank">ChiChou | 首席安全地球仪切图总奸</a><ul></ul><a href="https://fleurer.github.io/" title="Fleurer-lee | F叔的读书笔记（大量干货）" target="_blank">Fleurer-lee | F叔的读书笔记（大量干货）</a><ul></ul><a href="https://vizee.org/" title="Vizee | 即将走上人生巅峰推萝莉的章总" target="_blank">Vizee | 即将走上人生巅峰推萝莉的章总</a><ul></ul><a href="https://blog.thecjw.me/" title="TheCJW | 爱弹棉花的小伟" target="_blank">TheCJW | 爱弹棉花的小伟</a><ul></ul><a href="https://newbiecoder.0ginr.com/blog/" title="Newbie Coder | 萌萌哒的炉子" target="_blank">Newbie Coder | 萌萌哒的炉子</a><ul></ul><a href="https://frankpie.github.io/" title="裴草莓 | 愤怒的老司机" target="_blank">裴草莓 | 愤怒的老司机</a><ul></ul><a href="https://beanbee.me/" title="陈老师 | Beanbee.Max" target="_blank">陈老师 | Beanbee.Max</a><ul></ul><a href="https://sunus.me/" title="Sunus | 李师傅食品厂CEO" target="_blank">Sunus | 李师傅食品厂CEO</a><ul></ul><a href="http://www.tolower.net/" title="Lower | 喊大木大哥的小弟" target="_blank">Lower | 喊大木大哥的小弟</a><ul></ul><a href="http://mrljdx.com/" title="Mrljdx | 大保健老司机" target="_blank">Mrljdx | 大保健老司机</a><ul></ul><a href="https://www.mydavelv.net/" title="Davelv | 江湖人称大尾驴" target="_blank">Davelv | 江湖人称大尾驴</a></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> Recent Comments</i></div><script type="text/javascript" src="//kingsamchen-github-io.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2022 <a href="/." rel="nofollow">KC的废墟堆.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

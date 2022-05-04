@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-05-03T13:47:17.833Z</updated>
+  <updated>2022-05-04T13:22:23.770Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,41 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>实现 subprocess 中踩过的坑</title>
+    <link href="http://kingsamchen.github.io/2022/05/03/lesson-learned-from-writing-subprocess/"/>
+    <id>http://kingsamchen.github.io/2022/05/03/lesson-learned-from-writing-subprocess/</id>
+    <published>2022-05-03T15:50:30.000Z</published>
+    <updated>2022-05-04T13:22:23.770Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;code&gt;subprocess&lt;/code&gt; 是我为 Lumper 实现的一个基础类，主要功能是创建子进程运行指定的 executable，同时支持 I/O 重定向和 clone flags。&lt;/p&gt;
+&lt;p&gt;因为 Lumper 的目的是实现一个类似 Docker
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="Linux" scheme="http://kingsamchen.github.io/tags/Linux/"/>
+    
+      <category term="clone" scheme="http://kingsamchen.github.io/tags/clone/"/>
+    
+      <category term="fork" scheme="http://kingsamchen.github.io/tags/fork/"/>
+    
+      <category term="多进程" scheme="http://kingsamchen.github.io/tags/%E5%A4%9A%E8%BF%9B%E7%A8%8B/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Apr 2022</title>
@@ -101,7 +136,7 @@
     <link href="http://kingsamchen.github.io/2022/04/10/weekly-2022-apr-1/"/>
     <id>http://kingsamchen.github.io/2022/04/10/weekly-2022-apr-1/</id>
     <published>2022-04-10T14:52:21.000Z</published>
-    <updated>2022-04-10T16:09:07.780Z</updated>
+    <updated>2022-04-10T16:10:11.902Z</updated>
     
     <summary type="html">
     
@@ -584,35 +619,6 @@
     
     
       <category term="扯淡" scheme="http://kingsamchen.github.io/tags/%E6%89%AF%E6%B7%A1/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>用 unique_ptr 管理 Windows HANDLE</title>
-    <link href="http://kingsamchen.github.io/2021/06/14/wrap-win32-handle-into-unique-ptr/"/>
-    <id>http://kingsamchen.github.io/2021/06/14/wrap-win32-handle-into-unique-ptr/</id>
-    <published>2021-06-14T09:16:27.000Z</published>
-    <updated>2021-06-14T10:03:29.439Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;作为一个曾经的资深 Windows developer，Windows &lt;code&gt;HANDLE&lt;/code&gt; 一个不引人注意的但是绝对值得引起注意的地方是，它的无效值表示是不唯一的。&lt;/p&gt;
-&lt;p&gt;除了最常见的 &lt;code&gt;NULL&lt;/code&gt; 之外还有一个 &lt;code&gt;INVALID_HANDLE_VALUE&lt;/code&gt;，并且即使是在数值上这两个东西也不一样。&lt;/p&gt;
-&lt;p&gt;如果要为 &lt;code&gt;HANDLE&lt;/code&gt; 写一个 C++ RAII Wrapper 那么必须要考虑这个点，比如 Chromium 就是&lt;a href=&quot;https://chromium.googlesource.com/chromium/src/+/refs/heads/main/base/win/scoped_handle.h#116&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;这么做的&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;Chromium 的这个设施早在 C++ 11 之前就有了，并且经过多年来的迭代已经变得异常复杂；如果你自己需要这样一个东西，又无法从 Chromium 这种工业项目中抽取一个组件的话，只能考虑自己实现。&lt;/p&gt;
-&lt;p&gt;但是要写对一个工业强度的 handle-wrapper 并不容易，同时还要考虑到通用性和实用性，比如可能后续要支持 fd/socket，Windows HDC 等各种奇奇怪怪的东西。&lt;/p&gt;
-&lt;p&gt;所以能否用 &lt;code&gt;std::unique_ptr&lt;/code&gt; 来作为基础实现，针对一些特定细节做泛化？&lt;/p&gt;
-&lt;p&gt;这就引出一个问题：如果希望用 &lt;code&gt;std::unique_ptr&lt;/code&gt; 来作为 &lt;code&gt;HANDLE&lt;/code&gt; 的一个 RAII 包装，如何正确判断一个 handle 是否 valid？&lt;/p&gt;
-&lt;p&gt;更进一步，问题还可以变为：如何用 &lt;code&gt;std::unique_ptr&lt;/code&gt; 管理 pointer-like 的资源？&lt;br&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="unique_ptr" scheme="http://kingsamchen.github.io/tags/unique-ptr/"/>
     
   </entry>
   
