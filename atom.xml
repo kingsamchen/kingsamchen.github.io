@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-05-29T16:03:45.657Z</updated>
+  <updated>2022-06-06T05:32:06.482Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 June 2022</title>
+    <link href="http://kingsamchen.github.io/2022/06/05/weekly-2022-jun-1/"/>
+    <id>http://kingsamchen.github.io/2022/06/05/weekly-2022-jun-1/</id>
+    <published>2022-06-05T14:13:01.000Z</published>
+    <updated>2022-06-06T05:32:06.482Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 May 2022</title>
@@ -555,44 +579,6 @@
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
       <category term="exception" scheme="http://kingsamchen.github.io/tags/exception/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>himsw - Hey I aM Still Working</title>
-    <link href="http://kingsamchen.github.io/2021/10/10/himsw-hey-i-am-still-working/"/>
-    <id>http://kingsamchen.github.io/2021/10/10/himsw-hey-i-am-still-working/</id>
-    <published>2021-10-10T15:25:19.000Z</published>
-    <updated>2021-10-10T15:48:58.962Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;因为公司的安全政策要求，公司发的笔记本会在5分钟没有操作后自动锁住当前账户，并且这是由预装的安全组件强制保证的。&lt;/p&gt;
-&lt;p&gt;（不要想着可以把安全组件卸载或者禁用了，会被 IT 查水表的）&lt;/p&gt;
-&lt;p&gt;有时候加着仓或者用手机看个新闻就超时锁屏了，总有种摸鱼被发现的感觉，不太好。&lt;/p&gt;
-&lt;p&gt;更蛋疼的是，WFH 的时候只能用公司发的笔记本；而每次锁屏后都会导致 VPN 掉线需要重连，并且有概率会无法重连需要重置网卡….&lt;/p&gt;
-&lt;p&gt;没办法只能自己写了个小工具，在3分钟没有操作后进入模拟工作状态，定时发送键盘按键消息；同时监听鼠标和键盘消息，如果出现人为操作，就退出模拟状态。&lt;/p&gt;
-&lt;p&gt;经过一段时间的体验，基本实现了初衷，摸鱼再久也不会被发现了 😁&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;项目代码完全开源，可以在&lt;a href=&quot;https://github.com/kingsamchen/Eureka/tree/master/hey-i-am-still-working&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;这里&lt;/a&gt;查看&lt;/p&gt;
-&lt;p&gt;核心就三点：&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;用 &lt;code&gt;GetLastInputInfo()&lt;/code&gt; 获取程序上次获得输入的时间；用来判断 idle duration&lt;/li&gt;
-&lt;li&gt;进入 simulation state 之后定时通过 &lt;code&gt;SendInput()&lt;/code&gt; 发送键盘事件；为了避免干扰，选择了 ScrollLock 这个按键&lt;/li&gt;
-&lt;li&gt;利用键盘钩子和鼠标钩子监听全局的键盘/鼠标事件；有人为活动后，自动退出 simulation state&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;因为用到了系统的 API 所以目前只支持 Windows，估计也不好移植到其他平台。&lt;/p&gt;
-&lt;p&gt;一开始 GUI 是用 nana 做的，后来发现如果要支持 tray icon 的消息处理还要自己对窗口做一遍 sub classing…&lt;/p&gt;
-&lt;p&gt;索性弃用 nana 用 native win32 做了个 dialog，起码各种 message handling 会灵活一点。&lt;/p&gt;
-&lt;p&gt;因为是自家用，所以也不提供功能选项定制啥的，毕竟用不到啊。&lt;/p&gt;
-&lt;p&gt;最后再吐槽一下：我是真不喜欢做 UI&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
     
   </entry>
   
