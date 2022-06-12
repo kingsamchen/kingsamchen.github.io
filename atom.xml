@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-06-06T05:32:06.482Z</updated>
+  <updated>2022-06-12T15:37:57.865Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -18,10 +18,38 @@
   
   <entry>
     <title>一周杂记 in Week 1 June 2022</title>
+    <link href="http://kingsamchen.github.io/2022/06/12/weekly-2022-jun-2/"/>
+    <id>http://kingsamchen.github.io/2022/06/12/weekly-2022-jun-2/</id>
+    <published>2022-06-12T15:25:55.000Z</published>
+    <updated>2022-06-12T15:37:57.865Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;这周学了一个从 Youtube 下载梗图保存为 GIF 的技巧。&lt;/p&gt;
+&lt;p&gt;首先用 &lt;a
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 1 June 2022</title>
     <link href="http://kingsamchen.github.io/2022/06/05/weekly-2022-jun-1/"/>
     <id>http://kingsamchen.github.io/2022/06/05/weekly-2022-jun-1/</id>
     <published>2022-06-05T14:13:01.000Z</published>
-    <updated>2022-06-06T05:32:06.482Z</updated>
+    <updated>2022-06-12T15:26:45.221Z</updated>
     
     <summary type="html">
     
@@ -37,6 +65,8 @@
     
       <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -536,49 +566,6 @@
     
     
       <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>(Ab)use system_error exception for System Calls</title>
-    <link href="http://kingsamchen.github.io/2021/10/17/abuse-system-error-exception-for-system-calls/"/>
-    <id>http://kingsamchen.github.io/2021/10/17/abuse-system-error-exception-for-system-calls/</id>
-    <published>2021-10-17T13:31:34.000Z</published>
-    <updated>2021-10-17T15:54:44.575Z</updated>
-    
-    <summary type="html">
-    
-      &lt;p&gt;C++ 11 引入了没有掀起什么波澜的 &lt;a href=&quot;https://en.cppreference.com/w/cpp/error/error_code&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;std::error_code&lt;/a&gt; 和几乎没收到什么关注的 &lt;a href=&quot;https://en.cppreference.com/w/cpp/error/system_error&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;std::system_error&lt;/a&gt;。&lt;/p&gt;
-&lt;p&gt;偶然发现后者可以用来做针对 system calls 的异常汇报处理。&lt;/p&gt;
-&lt;h3 id=&quot;0x0-A-Traditional-Approach&quot;&gt;&lt;a href=&quot;#0x0-A-Traditional-Approach&quot; class=&quot;headerlink&quot; title=&quot;0x0 A Traditional Approach&quot;&gt;&lt;/a&gt;0x0 A Traditional Approach&lt;/h3&gt;&lt;p&gt;Win32 API 调用失败后具体的错误码可以通过 &lt;code&gt;::GetLastError()&lt;/code&gt; 获取；Linux 上 syscall 的错误码则用更 C-ish 的 &lt;code&gt;errno&lt;/code&gt; 获取。&lt;/p&gt;
-&lt;p&gt;如果希望通过异常来汇报这些系统调用失败，那么通常会从 &lt;code&gt;std::runtime_error&lt;/code&gt; 继承出一个 exception class，额外包含系统调用的错误码。&lt;/p&gt;
-&lt;p&gt;例如：&lt;/p&gt;
-&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;class&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;class&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;win_last_error&lt;/span&gt; :&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::runtime_error &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;public&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;using&lt;/span&gt; error_code_type = &lt;span class=&quot;keyword&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;long&lt;/span&gt;;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;explicit&lt;/span&gt; &lt;span class=&quot;title&quot;&gt;win_last_error&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;(&lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;char&lt;/span&gt;* msg)&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        : runtime_error(msg),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;          error_code_(::GetLastError()) &amp;#123;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    [[nodiscard]] &lt;span class=&quot;function&quot;&gt;error_code_type &lt;span class=&quot;title&quot;&gt;error_code&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;keyword&quot;&gt;noexcept&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;return&lt;/span&gt; error_code_;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;private&lt;/span&gt;:&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    error_code_type error_code_;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;上面的代码稍加处理后可以同时支持 &lt;code&gt;GetLastError()&lt;/code&gt; 和 &lt;code&gt;errno&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&quot;0x1-Using-std-system-error&quot;&gt;&lt;a href=&quot;#0x1-Using-std-system-error&quot; class=&quot;headerlink&quot; title=&quot;0x1 Using std::system_error&quot;&gt;&lt;/a&gt;0x1 Using std::system_error&lt;/h3&gt;&lt;p&gt;&lt;code&gt;std::system_error&lt;/code&gt; 恰好也是一个和 system facilities 有关的异常类，汇报系统相关的错误。&lt;/p&gt;
-&lt;p&gt;除了传统的 &lt;code&gt;what()&lt;/code&gt; 之外它还提供一个 &lt;code&gt;code()&lt;/code&gt; 函数返回对应的 &lt;code&gt;error_code&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;而 &lt;code&gt;std::error_code&lt;/code&gt; 可以通过指定不同的 category 来指示其包含的错误码语义。&lt;/p&gt;
-&lt;p&gt;所以实际上我们可以这么用：&lt;/p&gt;
-&lt;figure class=&quot;highlight c++&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;gutter&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;1&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;2&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;3&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;4&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;5&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;6&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;7&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;8&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;9&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;10&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;11&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;12&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;13&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;14&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;15&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;16&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;17&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;function&quot;&gt;&lt;span class=&quot;keyword&quot;&gt;inline&lt;/span&gt; pipe &lt;span class=&quot;title&quot;&gt;make_pipe&lt;/span&gt;&lt;span class=&quot;params&quot;&gt;()&lt;/span&gt; &lt;/span&gt;&amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;if&lt;/span&gt; defined(OS_WIN)&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (::CreatePipe(&amp;amp;fds[&lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;], &amp;amp;fds[&lt;span class=&quot;number&quot;&gt;1&lt;/span&gt;], &amp;amp;sa, &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) == &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::system_error(&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::error_code(::GetLastError(), &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::system_category()),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                &lt;span class=&quot;string&quot;&gt;&quot;CreatePipe() failure&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;else&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &lt;span class=&quot;keyword&quot;&gt;if&lt;/span&gt; (::pipe(fds) != &lt;span class=&quot;number&quot;&gt;0&lt;/span&gt;) &amp;#123;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;        &lt;span class=&quot;keyword&quot;&gt;throw&lt;/span&gt; &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::system_error(&lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::error_code(errno, &lt;span class=&quot;built_in&quot;&gt;std&lt;/span&gt;::system_category()),&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;                                &lt;span class=&quot;string&quot;&gt;&quot;pipe() failure&quot;&lt;/span&gt;);&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    &amp;#125;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;    ...&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&lt;span class=&quot;meta&quot;&gt;#&lt;span class=&quot;meta-keyword&quot;&gt;endif&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;br&gt;&lt;span class=&quot;line&quot;&gt;&amp;#125;&lt;/span&gt;&lt;br&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;&lt;/figure&gt;
-&lt;p&gt;注意这里使用的 &lt;code&gt;system_category()&lt;/code&gt;，它代表 error code 是 reported by the system.&lt;/p&gt;
-&lt;hr&gt;
-&lt;p&gt;有些地方可能会说这里要使用 &lt;code&gt;std::generic_category&lt;/code&gt;；但是通过试验发现使用 &lt;code&gt;std::generic_category&lt;/code&gt; 的 Windows last-error 和 &lt;code&gt;ec.message()&lt;/code&gt; 是对不上的；而 &lt;code&gt;std::system_category()&lt;/code&gt; 则是正确的。&lt;/p&gt;
-&lt;p&gt;猜测 generic category 可能针对的是 CRT 的错误码&lt;/p&gt;
-&lt;h3 id=&quot;0x2-Q-amp-A&quot;&gt;&lt;a href=&quot;#0x2-Q-amp-A&quot; class=&quot;headerlink&quot; title=&quot;0x2 Q&amp;amp;A&quot;&gt;&lt;/a&gt;0x2 Q&amp;amp;A&lt;/h3&gt;&lt;p&gt;&lt;strong&gt;Q: error_code 是啥？&lt;/strong&gt;&lt;br&gt;A: 这玩意儿实际上是 ASIO 的作者针对 async-handler 的错误处理设计的；boost 中 ASIO 和 filesystem 都大量支持了它。&lt;/p&gt;
-&lt;p&gt;但是这玩意儿的设计门槛有点高，以至于不看完几篇文章压根没法理解这东西的设计意图；导致除了 ASIO 和 filesystem 及他们相关的衍生 lib 之外都没啥人去用它。&lt;/p&gt;
-&lt;p&gt;而 filesystem C++ 17 才进入标准；而 ASIO/network TS 几天前也差不多宣告死亡了…&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Q: 为啥要用异常？&lt;/strong&gt;&lt;br&gt;A: Why not？我不排斥使用异常，而且我觉得我写的东西还没关键到需要考虑目前异常实现带来的性能问题。&lt;/p&gt;
-&lt;p&gt;并且我觉得 exception 在充满大量业务逻辑的应用层是非常优秀的错误处理机制。&lt;/p&gt;
-&lt;p&gt;即使提供了支持 chaining operations 的 sum type（例如这个 &lt;a href=&quot;https://github.com/TartanLlama/expected&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;expected&lt;/a&gt;），在业务层基本也需要人肉实现 failure cascading 层层上抛。&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="exception" scheme="http://kingsamchen.github.io/tags/exception/"/>
     
   </entry>
   
