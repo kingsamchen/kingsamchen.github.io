@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-06-26T14:52:55.112Z</updated>
+  <updated>2022-07-03T16:12:46.666Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 5 June 2022</title>
+    <link href="http://kingsamchen.github.io/2022/07/03/weekly-2022-jun-5/"/>
+    <id>http://kingsamchen.github.io/2022/07/03/weekly-2022-jun-5/</id>
+    <published>2022-07-03T03:45:24.000Z</published>
+    <updated>2022-07-03T16:12:46.666Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;这周是六月最后一周，七月的开头，正式进入下半年。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 June 2022</title>
@@ -521,34 +548,6 @@
         
           &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;刷完了 The Expanse
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Feb 2022</title>
-    <link href="http://kingsamchen.github.io/2022/02/20/weekly-2022-feb-3/"/>
-    <id>http://kingsamchen.github.io/2022/02/20/weekly-2022-feb-3/</id>
-    <published>2022-02-20T15:41:06.000Z</published>
-    <updated>2022-02-20T16:21:39.645Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;节后第二周，生活和工作节奏都慢慢恢复到了之前的状态。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ol&gt;
-&lt;li&gt;一口气刷了好几集 The Expanse
         
       
     
