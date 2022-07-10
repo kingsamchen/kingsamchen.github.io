@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-07-03T16:12:46.666Z</updated>
+  <updated>2022-07-10T15:02:48.312Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 July 2022</title>
+    <link href="http://kingsamchen.github.io/2022/07/10/weekly-2022-july-1/"/>
+    <id>http://kingsamchen.github.io/2022/07/10/weekly-2022-july-1/</id>
+    <published>2022-07-10T14:23:39.000Z</published>
+    <updated>2022-07-10T15:02:48.312Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 5 June 2022</title>
@@ -521,33 +545,6 @@
         
           &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;这周沉迷 The Witcher
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Feb 2022</title>
-    <link href="http://kingsamchen.github.io/2022/02/24/weekly-2022-feb-4/"/>
-    <id>http://kingsamchen.github.io/2022/02/24/weekly-2022-feb-4/</id>
-    <published>2022-02-24T14:42:33.000Z</published>
-    <updated>2022-02-27T15:11:20.609Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;刷完了 The Expanse
         
       
     
