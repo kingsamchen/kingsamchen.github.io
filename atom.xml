@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-07-18T15:42:27.140Z</updated>
+  <updated>2022-07-24T16:30:00.677Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 July 2022</title>
+    <link href="http://kingsamchen.github.io/2022/07/24/weekly-2022-july-3/"/>
+    <id>http://kingsamchen.github.io/2022/07/24/weekly-2022-july-3/</id>
+    <published>2022-07-24T14:06:40.000Z</published>
+    <updated>2022-07-24T16:30:00.677Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 July 2022</title>
@@ -520,32 +546,6 @@
           &lt;p&gt;感觉这周时间过得特别快。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ul&gt;
 &lt;li&gt;周六去医院打了最后一针狂犬疫苗，只要疫苗是真的有效，那么至少 1-2
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 Mar 2022</title>
-    <link href="http://kingsamchen.github.io/2022/03/13/weekly-2022-mar-2/"/>
-    <id>http://kingsamchen.github.io/2022/03/13/weekly-2022-mar-2/</id>
-    <published>2022-03-13T15:22:57.000Z</published>
-    <updated>2022-03-13T16:21:34.545Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
         
       
     
