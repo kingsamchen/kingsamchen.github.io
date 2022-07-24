@@ -2,7 +2,7 @@
 title: 一周杂记 in Week 1 July 2022
 categories: CODE-LIFE
 date: 2022-07-10 22:23:39
-tags:
+tags: [杂记]
 ---
 
 ## Life
