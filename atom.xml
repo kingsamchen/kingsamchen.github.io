@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-07-31T15:38:25.555Z</updated>
+  <updated>2022-08-07T09:18:13.713Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Facebook 如何实现 Golang 服务优雅重启 —— 以 Grace 为例</title>
+    <link href="http://kingsamchen.github.io/2022/08/07/how-facebook-implement-graceful-restart-for-golang-servers/"/>
+    <id>http://kingsamchen.github.io/2022/08/07/how-facebook-implement-graceful-restart-for-golang-servers/</id>
+    <published>2022-08-07T07:25:04.000Z</published>
+    <updated>2022-08-07T09:18:13.713Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;&lt;a href=&quot;https://github.com/facebookarchive/grace&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Grace&lt;/a&gt; 是 Facebook 推出的一个用于 Golang
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="graceful restart" scheme="http://kingsamchen.github.io/tags/graceful-restart/"/>
+    
+      <category term="graceful shutdown" scheme="http://kingsamchen.github.io/tags/graceful-shutdown/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 July 2022</title>
@@ -518,33 +546,6 @@
         
           &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
 &lt;p&gt;本周是清明假前的最后一周，要上6天班。周二的时候把去年遗留的一天年假用了，结果到了周三 3/30
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Mar 2022</title>
-    <link href="http://kingsamchen.github.io/2022/03/27/weekly-2022-mar-4/"/>
-    <id>http://kingsamchen.github.io/2022/03/27/weekly-2022-mar-4/</id>
-    <published>2022-03-27T13:24:19.000Z</published>
-    <updated>2022-03-27T15:49:04.470Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;ul&gt;
-&lt;li&gt;本周看了三部电影：&lt;em&gt;Cruella&lt;/em&gt;, &lt;em&gt;Sully&lt;/em&gt; and &lt;em&gt;The
         
       
     
