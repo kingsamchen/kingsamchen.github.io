@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-08-27T04:40:00.549Z</updated>
+  <updated>2022-08-28T15:15:01.363Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Aug 2022</title>
+    <link href="http://kingsamchen.github.io/2022/08/28/weekly-2022-aug-4/"/>
+    <id>http://kingsamchen.github.io/2022/08/28/weekly-2022-aug-4/</id>
+    <published>2022-08-28T14:05:42.000Z</published>
+    <updated>2022-08-28T15:15:01.363Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;这周是8月份的第四周&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Aug 2022</title>
@@ -521,32 +548,6 @@
         
           &lt;p&gt;亲自补上四月份最后一周的周报…&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Apr 2022</title>
-    <link href="http://kingsamchen.github.io/2022/04/24/weekly-2022-apr-3/"/>
-    <id>http://kingsamchen.github.io/2022/04/24/weekly-2022-apr-3/</id>
-    <published>2022-04-24T14:52:21.000Z</published>
-    <updated>2022-04-25T16:17:32.837Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
         
       
     
