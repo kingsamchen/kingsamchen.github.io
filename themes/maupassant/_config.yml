@@ -81,6 +81,9 @@ menu:
   - page: archive
     directory: archives/
     icon: fa-archive
+  - page: 源码分析
+    directory: source-code-reading/
+    icon: fa-archive
   - page: about
     directory: about/
     icon: fa-user
