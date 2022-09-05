@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-08-28T15:15:01.363Z</updated>
+  <updated>2022-09-05T15:53:33.829Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Sep 2022</title>
+    <link href="http://kingsamchen.github.io/2022/09/05/weekly-2022-sep-1/"/>
+    <id>http://kingsamchen.github.io/2022/09/05/weekly-2022-sep-1/</id>
+    <published>2022-09-05T14:44:57.000Z</published>
+    <updated>2022-09-05T15:53:33.829Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Aug 2022</title>
@@ -530,33 +556,6 @@
       <category term="fork" scheme="http://kingsamchen.github.io/tags/fork/"/>
     
       <category term="多进程" scheme="http://kingsamchen.github.io/tags/%E5%A4%9A%E8%BF%9B%E7%A8%8B/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Apr 2022</title>
-    <link href="http://kingsamchen.github.io/2022/05/02/weekly-2022-apr-4/"/>
-    <id>http://kingsamchen.github.io/2022/05/02/weekly-2022-apr-4/</id>
-    <published>2022-05-02T14:30:00.000Z</published>
-    <updated>2022-05-03T13:47:17.833Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;亲自补上四月份最后一周的周报…&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
