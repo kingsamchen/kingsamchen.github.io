@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-09-05T15:53:33.829Z</updated>
+  <updated>2022-09-12T16:24:14.240Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,68 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Sep 2022</title>
+    <link href="http://kingsamchen.github.io/2022/09/12/weekly-2022-sep-2/"/>
+    <id>http://kingsamchen.github.io/2022/09/12/weekly-2022-sep-2/</id>
+    <published>2022-09-12T15:58:21.000Z</published>
+    <updated>2022-09-12T16:24:14.240Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;本周是9月第二周，并且周末是中秋假期。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>abseil strings/string_view 源码分析</title>
+    <link href="http://kingsamchen.github.io/2022/09/12/src-study-abseil-strings-string-view/"/>
+    <id>http://kingsamchen.github.io/2022/09/12/src-study-abseil-strings-string-view/</id>
+    <published>2022-09-12T15:51:47.000Z</published>
+    <updated>2022-09-12T15:56:40.418Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;Revision:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LTS_20210324.2&lt;/li&gt;
+&lt;li&gt;278e0a071885a22dcd2fd1b5576cc44757299343&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;这个模块是 absl 提供的和 C++ 17 保持兼容的
+        
+      
+    
+    </summary>
+    
+      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+      <category term="string_view" scheme="http://kingsamchen.github.io/tags/string-view/"/>
+    
+      <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Sep 2022</title>
@@ -495,67 +557,6 @@
     
     
       <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 May 2022</title>
-    <link href="http://kingsamchen.github.io/2022/05/08/weekly-2022-may-1/"/>
-    <id>http://kingsamchen.github.io/2022/05/08/weekly-2022-may-1/</id>
-    <published>2022-05-08T14:08:40.000Z</published>
-    <updated>2022-05-08T14:08:20.993Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>实现 subprocess 中踩过的坑</title>
-    <link href="http://kingsamchen.github.io/2022/05/03/lesson-learned-from-writing-subprocess/"/>
-    <id>http://kingsamchen.github.io/2022/05/03/lesson-learned-from-writing-subprocess/</id>
-    <published>2022-05-03T15:50:30.000Z</published>
-    <updated>2022-05-04T13:22:23.770Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;&lt;code&gt;subprocess&lt;/code&gt; 是我为 Lumper 实现的一个基础类，主要功能是创建子进程运行指定的 executable，同时支持 I/O 重定向和 clone flags。&lt;/p&gt;
-&lt;p&gt;因为 Lumper 的目的是实现一个类似 Docker
-        
-      
-    
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-      <category term="Linux" scheme="http://kingsamchen.github.io/tags/Linux/"/>
-    
-      <category term="clone" scheme="http://kingsamchen.github.io/tags/clone/"/>
-    
-      <category term="fork" scheme="http://kingsamchen.github.io/tags/fork/"/>
-    
-      <category term="多进程" scheme="http://kingsamchen.github.io/tags/%E5%A4%9A%E8%BF%9B%E7%A8%8B/"/>
     
   </entry>
   
