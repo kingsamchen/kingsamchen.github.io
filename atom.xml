@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-09-25T16:19:14.177Z</updated>
+  <updated>2022-10-06T06:46:24.283Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Oct 2022</title>
+    <link href="http://kingsamchen.github.io/2022/10/02/weekly-2022-oct-1/"/>
+    <id>http://kingsamchen.github.io/2022/10/02/weekly-2022-oct-1/</id>
+    <published>2022-10-02T15:49:33.000Z</published>
+    <updated>2022-10-06T06:46:24.283Z</updated>
+    
+    <summary type="html">
+    
+      
+      
+        
+        
+          &lt;p&gt;本周是十月第一周，因为周末两天刚好开始十一长假。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+        
+      
+    
+    </summary>
+    
+      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Sep 2022</title>
@@ -539,34 +566,6 @@
           &lt;p&gt;这周状态一般，周记就写的稍微零散一点。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
 &lt;p&gt;周六 6.18 趁着确实有优惠，给老爸买了一个
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 June 2022</title>
-    <link href="http://kingsamchen.github.io/2022/06/12/weekly-2022-jun-2/"/>
-    <id>http://kingsamchen.github.io/2022/06/12/weekly-2022-jun-2/</id>
-    <published>2022-06-12T15:25:55.000Z</published>
-    <updated>2022-06-12T15:40:50.388Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;这周学了一个从 Youtube 下载梗图保存为 GIF 的技巧。&lt;/p&gt;
-&lt;p&gt;首先用 &lt;a
         
       
     
