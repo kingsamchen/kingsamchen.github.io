@@ -3,10 +3,10 @@
   <title>KC的废墟堆</title>
   
   <subtitle>Will you serve in Heaven, or rule in Hell</subtitle>
-  <link href="/atom.xml" rel="self"/>
+  <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-10-06T06:46:24.283Z</updated>
+  <updated>2022-10-09T15:30:11.921Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -14,7 +14,62 @@
     
   </author>
   
-  <generator uri="http://hexo.io/">Hexo</generator>
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Oct 2022</title>
+    <link href="http://kingsamchen.github.io/2022/10/09/weekly-2022-oct-2/"/>
+    <id>http://kingsamchen.github.io/2022/10/09/weekly-2022-oct-2/</id>
+    <published>2022-10-09T14:36:19.000Z</published>
+    <updated>2022-10-09T15:30:11.921Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周是十月第二周。&lt;/p&gt;
+&lt;p&gt;10.2 和老婆一起回了温州老家，10.6 回到杭州，周末两天休了年假所以这周整周都是在休息中。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>基于 Docker 快速搭建用于学习 C/C++ 项目源码的环境</title>
+    <link href="http://kingsamchen.github.io/2022/10/09/dockerfile-for-studying-cxx-projects/"/>
+    <id>http://kingsamchen.github.io/2022/10/09/dockerfile-for-studying-cxx-projects/</id>
+    <published>2022-10-09T14:06:52.000Z</published>
+    <updated>2022-10-09T14:34:32.737Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;如果要研究学习的项目是 Java 或者 Golang 这种，那么其实没有必要专门基于 docker 容器搞出一个环境，直接在自己机器跑就行了。&lt;/p&gt;
+&lt;p&gt;但是对于很多上了规模的 C&amp;#x2F;C++</summary>
+        
+      
+    
+    
+    
+    <category term="ROGRAMMING" scheme="http://kingsamchen.github.io/categories/ROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="docker" scheme="http://kingsamchen.github.io/tags/docker/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Oct 2022</title>
@@ -23,23 +78,22 @@
     <published>2022-10-02T15:49:33.000Z</published>
     <updated>2022-10-06T06:46:24.283Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;本周是十月第一周，因为周末两天刚好开始十一长假。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;p&gt;本周是十月第一周，因为周末两天刚好开始十一长假。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -50,23 +104,22 @@
     <published>2022-09-25T15:10:44.000Z</published>
     <updated>2022-09-25T16:19:14.177Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;本周是九月第四周，下周周末就是十一长假了。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;p&gt;本周是九月第四周，下周周末就是十一长假了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -77,29 +130,28 @@
     <published>2022-09-25T15:10:37.000Z</published>
     <updated>2022-09-25T15:13:01.607Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;Revision:&lt;/p&gt;
+    <summary type="html">&lt;p&gt;Revision:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;lts_2021_03_24&lt;/li&gt;
 &lt;li&gt;278e0a071885a22dcd2fd1b5576cc44757299343&lt;/li&gt;
 &lt;li&gt;&lt;code&gt;absl/strings/ascii.h&lt;/code&gt;&lt;/li&gt;
-&lt;
+&lt;</summary>
         
       
     
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
-      <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
     
   </entry>
   
@@ -110,24 +162,23 @@
     <published>2022-09-18T14:35:09.000Z</published>
     <updated>2022-09-18T16:06:05.990Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;本周是9月第三周，因为周一中秋节假日，所以感觉这周过的非常快。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周是9月第三周，因为周一中秋节假日，所以感觉这周过的非常快。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;这周猎豹的前前同事
+&lt;p&gt;这周猎豹的前前同事</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -138,31 +189,30 @@
     <published>2022-09-18T13:26:45.000Z</published>
     <updated>2022-09-18T15:28:46.133Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;Revision:&lt;/p&gt;
+    <summary type="html">&lt;p&gt;Revision:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;lts_2021_03_24&lt;/li&gt;
 &lt;li&gt;278e0a071885a22dcd2fd1b5576cc44757299343&lt;/li&gt;
 &lt;/ul&gt;
-&lt;h2 id=&quot;接口一览&quot;&gt;&lt;a href=&quot;#接口一览&quot;
+&lt;h2 id=&quot;接口一览&quot;&gt;&lt;a href=&quot;#接口一览&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
-      <category term="string_view" scheme="http://kingsamchen.github.io/tags/string-view/"/>
     
-      <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="string_view" scheme="http://kingsamchen.github.io/tags/string-view/"/>
+    
+    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
     
   </entry>
   
@@ -173,23 +223,22 @@
     <published>2022-09-12T15:58:21.000Z</published>
     <updated>2022-09-12T16:24:14.240Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;本周是9月第二周，并且周末是中秋假期。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;p&gt;本周是9月第二周，并且周末是中秋假期。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -200,31 +249,30 @@
     <published>2022-09-12T15:51:47.000Z</published>
     <updated>2022-09-12T15:56:40.418Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;Revision:&lt;/p&gt;
+    <summary type="html">&lt;p&gt;Revision:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;LTS_20210324.2&lt;/li&gt;
 &lt;li&gt;278e0a071885a22dcd2fd1b5576cc44757299343&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;这个模块是 absl 提供的和 C++ 17 保持兼容的
+&lt;p&gt;这个模块是 absl 提供的和 C++ 17 保持兼容的</summary>
         
       
     
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
-      <category term="string_view" scheme="http://kingsamchen.github.io/tags/string-view/"/>
     
-      <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="string_view" scheme="http://kingsamchen.github.io/tags/string-view/"/>
+    
+    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
     
   </entry>
   
@@ -235,22 +283,21 @@
     <published>2022-09-05T14:44:57.000Z</published>
     <updated>2022-09-05T15:53:33.829Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -261,23 +308,22 @@
     <published>2022-08-28T14:05:42.000Z</published>
     <updated>2022-08-28T15:15:01.363Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;这周是8月份的第四周&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;p&gt;这周是8月份的第四周&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -288,24 +334,23 @@
     <published>2022-08-27T04:05:38.000Z</published>
     <updated>2022-08-27T04:40:00.549Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;这周其实是8月的第四周了，但是因为上个周末一些事情耽搁了，加上工作日比较忙，所以上周的杂记一直没来得及写…趁着这周周末还没结束，先&lt;del&gt;悄悄&lt;/del&gt;补上。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;这周其实是8月的第四周了，但是因为上个周末一些事情耽搁了，加上工作日比较忙，所以上周的杂记一直没来得及写…趁着这周周末还没结束，先&lt;del&gt;悄悄&lt;/del&gt;补上。&lt;/p&gt;
 &lt;p&gt;所以这是8月分第三周的事情 🤣&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -316,23 +361,22 @@
     <published>2022-08-14T13:18:47.000Z</published>
     <updated>2022-08-15T15:19:38.280Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;本周是 8 月份第二周。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;p&gt;本周是 8 月份第二周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -343,24 +387,23 @@
     <published>2022-08-07T15:03:48.000Z</published>
     <updated>2022-08-07T15:31:13.295Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;本周是 8 月份第一周。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周是 8 月份第一周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;这周把 &lt;em&gt;The Matrix 4:
+&lt;p&gt;这周把 &lt;em&gt;The Matrix 4:</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -371,24 +414,23 @@
     <published>2022-08-07T07:25:04.000Z</published>
     <updated>2022-08-07T09:18:13.713Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;&lt;a href=&quot;https://github.com/facebookarchive/grace&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;Grace&lt;/a&gt; 是 Facebook 推出的一个用于 Golang
+    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/facebookarchive/grace&quot;&gt;Grace&lt;/a&gt; 是 Facebook 推出的一个用于 Golang 服务优雅重启的框架库，设计目的上可以作为 &lt;code&gt;net/http&lt;/code&gt; 的一个</summary>
         
       
     
-    </summary>
-    
-      <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-      <category term="graceful restart" scheme="http://kingsamchen.github.io/tags/graceful-restart/"/>
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
-      <category term="graceful shutdown" scheme="http://kingsamchen.github.io/tags/graceful-shutdown/"/>
+    
+    <category term="graceful restart" scheme="http://kingsamchen.github.io/tags/graceful-restart/"/>
+    
+    <category term="graceful shutdown" scheme="http://kingsamchen.github.io/tags/graceful-shutdown/"/>
     
   </entry>
   
@@ -399,23 +441,22 @@
     <published>2022-07-31T14:30:55.000Z</published>
     <updated>2022-07-31T15:38:25.555Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;本周是 7 月份的最后一周，周末刚好是最后两天&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;p&gt;本周是 7 月份的最后一周，周末刚好是最后两天&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -426,22 +467,21 @@
     <published>2022-07-24T14:06:40.000Z</published>
     <updated>2022-07-24T16:30:00.677Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -452,22 +492,21 @@
     <published>2022-07-17T14:23:39.000Z</published>
     <updated>2022-07-18T15:42:27.140Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -478,22 +517,21 @@
     <published>2022-07-10T14:23:39.000Z</published>
     <updated>2022-07-18T15:28:39.858Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
@@ -504,77 +542,22 @@
     <published>2022-07-03T03:45:24.000Z</published>
     <updated>2022-07-03T16:12:46.666Z</updated>
     
-    <summary type="html">
     
       
       
         
         
-          &lt;p&gt;这周是六月最后一周，七月的开头，正式进入下半年。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
+    <summary type="html">&lt;p&gt;这周是六月最后一周，七月的开头，正式进入下半年。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 June 2022</title>
-    <link href="http://kingsamchen.github.io/2022/06/26/weekly-2022-jun-4/"/>
-    <id>http://kingsamchen.github.io/2022/06/26/weekly-2022-jun-4/</id>
-    <published>2022-06-26T14:17:57.000Z</published>
-    <updated>2022-06-26T14:52:55.112Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
     
     
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 June 2022</title>
-    <link href="http://kingsamchen.github.io/2022/06/19/weekly-2022-jun-3/"/>
-    <id>http://kingsamchen.github.io/2022/06/19/weekly-2022-jun-3/</id>
-    <published>2022-06-19T15:29:26.000Z</published>
-    <updated>2022-06-19T15:43:16.176Z</updated>
-    
-    <summary type="html">
-    
-      
-      
-        
-        
-          &lt;p&gt;这周状态一般，周记就写的稍微零散一点。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;周六 6.18 趁着确实有优惠，给老爸买了一个
-        
-      
-    
-    </summary>
-    
-      <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-      <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
