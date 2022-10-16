@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-10-09T15:30:11.921Z</updated>
+  <updated>2022-10-16T16:54:32.212Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Oct 2022</title>
+    <link href="http://kingsamchen.github.io/2022/10/16/weekly-2022-oct-3/"/>
+    <id>http://kingsamchen.github.io/2022/10/16/weekly-2022-oct-3/</id>
+    <published>2022-10-16T15:38:40.000Z</published>
+    <updated>2022-10-16T16:54:32.212Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周是十月第三周，也是十一假期后全面恢复上班的第一周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Oct 2022</title>
@@ -523,32 +549,6 @@
         
         
     <summary type="html">&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 5 June 2022</title>
-    <link href="http://kingsamchen.github.io/2022/07/03/weekly-2022-jun-5/"/>
-    <id>http://kingsamchen.github.io/2022/07/03/weekly-2022-jun-5/</id>
-    <published>2022-07-03T03:45:24.000Z</published>
-    <updated>2022-07-03T16:12:46.666Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;这周是六月最后一周，七月的开头，正式进入下半年。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
