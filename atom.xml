@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-10-16T16:54:32.212Z</updated>
+  <updated>2022-10-24T17:12:47.855Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Oct 2022</title>
+    <link href="http://kingsamchen.github.io/2022/10/23/weekly-2022-oct-4/"/>
+    <id>http://kingsamchen.github.io/2022/10/23/weekly-2022-oct-4/</id>
+    <published>2022-10-23T14:48:38.000Z</published>
+    <updated>2022-10-24T17:12:47.855Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周是十月第四周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Oct 2022</title>
@@ -517,31 +543,6 @@
     <id>http://kingsamchen.github.io/2022/07/17/weekly-2022-july-2/</id>
     <published>2022-07-17T14:23:39.000Z</published>
     <updated>2022-07-18T15:42:27.140Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 July 2022</title>
-    <link href="http://kingsamchen.github.io/2022/07/10/weekly-2022-july-1/"/>
-    <id>http://kingsamchen.github.io/2022/07/10/weekly-2022-july-1/</id>
-    <published>2022-07-10T14:23:39.000Z</published>
-    <updated>2022-07-18T15:28:39.858Z</updated>
     
     
       
