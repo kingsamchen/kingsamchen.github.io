@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-11-13T15:48:44.421Z</updated>
+  <updated>2022-11-21T16:03:44.046Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Nov 2022</title>
+    <link href="http://kingsamchen.github.io/2022/11/21/weekly-2022-nov-3/"/>
+    <id>http://kingsamchen.github.io/2022/11/21/weekly-2022-nov-3/</id>
+    <published>2022-11-21T15:31:43.000Z</published>
+    <updated>2022-11-21T16:03:44.046Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周是 11 月的第三周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;这周把 &lt;em&gt;Event Horizon&lt;/em&gt;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Nov 2022</title>
@@ -537,33 +564,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Facebook 如何实现 Golang 服务优雅重启 —— 以 Grace 为例</title>
-    <link href="http://kingsamchen.github.io/2022/08/07/how-facebook-implement-graceful-restart-for-golang-servers/"/>
-    <id>http://kingsamchen.github.io/2022/08/07/how-facebook-implement-graceful-restart-for-golang-servers/</id>
-    <published>2022-08-07T07:25:04.000Z</published>
-    <updated>2022-08-07T09:18:13.713Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;&lt;a href=&quot;https://github.com/facebookarchive/grace&quot;&gt;Grace&lt;/a&gt; 是 Facebook 推出的一个用于 Golang 服务优雅重启的框架库，设计目的上可以作为 &lt;code&gt;net/http&lt;/code&gt; 的一个</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="graceful restart" scheme="http://kingsamchen.github.io/tags/graceful-restart/"/>
-    
-    <category term="graceful shutdown" scheme="http://kingsamchen.github.io/tags/graceful-shutdown/"/>
     
   </entry>
   
