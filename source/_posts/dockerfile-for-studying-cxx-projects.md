@@ -1,6 +1,6 @@
 ---
 title: 基于 Docker 快速搭建用于学习 C/C++ 项目源码的环境
-categories: ROGRAMMING
+categories: PROGRAMMING
 date: 2022-10-09 22:06:52
 tags: [cpp, docker]
 ---
