@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2022-12-25T16:17:16.191Z</updated>
+  <updated>2023-01-01T13:22:42.992Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 5 Dec 2022</title>
+    <link href="http://kingsamchen.github.io/2023/01/01/weekly-2022-dec-5/"/>
+    <id>http://kingsamchen.github.io/2023/01/01/weekly-2022-dec-5/</id>
+    <published>2023-01-01T12:51:07.000Z</published>
+    <updated>2023-01-01T13:22:42.992Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周是12月第五周，也是2022年的最后一周。&lt;/p&gt;
+&lt;p&gt;因为每周都已经有大致的记录了，所以今年就不再写年度总结了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Dec 2022</title>
@@ -530,40 +557,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>abseil strings/string_view 源码分析</title>
-    <link href="http://kingsamchen.github.io/2022/09/12/src-study-abseil-strings-string-view/"/>
-    <id>http://kingsamchen.github.io/2022/09/12/src-study-abseil-strings-string-view/</id>
-    <published>2022-09-12T15:51:47.000Z</published>
-    <updated>2022-09-12T15:56:40.418Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;Revision:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;LTS_20210324.2&lt;/li&gt;
-&lt;li&gt;278e0a071885a22dcd2fd1b5576cc44757299343&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;这个模块是 absl 提供的和 C++ 17 保持兼容的</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="string_view" scheme="http://kingsamchen.github.io/tags/string-view/"/>
-    
-    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
     
   </entry>
   
