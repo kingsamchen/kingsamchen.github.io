@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-01-08T16:49:30.339Z</updated>
+  <updated>2023-01-16T12:23:47.761Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Jan 2023</title>
+    <link href="http://kingsamchen.github.io/2023/01/16/weekly-2023-jan-2/"/>
+    <id>http://kingsamchen.github.io/2023/01/16/weekly-2023-jan-2/</id>
+    <published>2023-01-16T11:23:59.000Z</published>
+    <updated>2023-01-16T12:23:47.761Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周是1月份的第二周，春节节前一周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;本周依然 work from</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Jan 2023</title>
@@ -523,40 +550,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>abseil strings/str_join 源码分析</title>
-    <link href="http://kingsamchen.github.io/2022/09/18/src-study-abseil-strings-str-join/"/>
-    <id>http://kingsamchen.github.io/2022/09/18/src-study-abseil-strings-str-join/</id>
-    <published>2022-09-18T13:26:45.000Z</published>
-    <updated>2022-09-18T15:28:46.133Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;Revision:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;lts_2021_03_24&lt;/li&gt;
-&lt;li&gt;278e0a071885a22dcd2fd1b5576cc44757299343&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&quot;接口一览&quot;&gt;&lt;a href=&quot;#接口一览&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="string_view" scheme="http://kingsamchen.github.io/tags/string-view/"/>
-    
-    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
     
   </entry>
   
