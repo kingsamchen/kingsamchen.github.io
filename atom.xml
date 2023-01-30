@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-01-16T12:23:47.761Z</updated>
+  <updated>2023-01-30T14:11:16.312Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,58 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Jan 2023</title>
+    <link href="http://kingsamchen.github.io/2023/01/30/weekly-2023-jan-4/"/>
+    <id>http://kingsamchen.github.io/2023/01/30/weekly-2023-jan-4/</id>
+    <published>2023-01-30T13:43:56.000Z</published>
+    <updated>2023-01-30T14:11:16.312Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周是1月份的第四周，春节将于本周正式结束。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Jan 2023</title>
+    <link href="http://kingsamchen.github.io/2023/01/23/weekly-2023-jan-3/"/>
+    <id>http://kingsamchen.github.io/2023/01/23/weekly-2023-jan-3/</id>
+    <published>2023-01-23T05:18:36.000Z</published>
+    <updated>2023-01-30T13:44:07.948Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周是1月份的第三周，进入中国农历新年。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Jan 2023</title>
@@ -482,65 +534,6 @@
         
     <summary type="html">&lt;p&gt;本周是九月第四周，下周周末就是十一长假了。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>abseil strings/ascii 源码分析</title>
-    <link href="http://kingsamchen.github.io/2022/09/25/src-study-abseil-strings-str-ascii/"/>
-    <id>http://kingsamchen.github.io/2022/09/25/src-study-abseil-strings-str-ascii/</id>
-    <published>2022-09-25T15:10:37.000Z</published>
-    <updated>2022-09-25T15:13:01.607Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;Revision:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;lts_2021_03_24&lt;/li&gt;
-&lt;li&gt;278e0a071885a22dcd2fd1b5576cc44757299343&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;absl/strings/ascii.h&lt;/code&gt;&lt;/li&gt;
-&lt;</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Sep 2022</title>
-    <link href="http://kingsamchen.github.io/2022/09/18/weekly-2022-sep-3/"/>
-    <id>http://kingsamchen.github.io/2022/09/18/weekly-2022-sep-3/</id>
-    <published>2022-09-18T14:35:09.000Z</published>
-    <updated>2022-09-18T16:06:05.990Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周是9月第三周，因为周一中秋节假日，所以感觉这周过的非常快。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;这周猎豹的前前同事</summary>
         
       
     
