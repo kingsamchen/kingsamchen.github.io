@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-03-20T12:08:16.787Z</updated>
+  <updated>2023-03-27T15:52:30.786Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Mar 2023</title>
+    <link href="http://kingsamchen.github.io/2023/03/27/weekly-2023-mar-4/"/>
+    <id>http://kingsamchen.github.io/2023/03/27/weekly-2023-mar-4/</id>
+    <published>2023-03-27T14:36:20.000Z</published>
+    <updated>2023-03-27T15:52:30.786Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;20 ~ 03&amp;#x2F;26）是三月份的第四周，所以下周还有一周才能到四月份。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Mar 2023</title>
@@ -506,33 +532,6 @@
     <summary type="html">&lt;p&gt;本周是 11 月的第二周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
 &lt;p&gt;这周产品终于 GA + public beta</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Nov 2022</title>
-    <link href="http://kingsamchen.github.io/2022/11/08/weekly-2022-nov-1/"/>
-    <id>http://kingsamchen.github.io/2022/11/08/weekly-2022-nov-1/</id>
-    <published>2022-11-08T13:51:32.000Z</published>
-    <updated>2022-11-08T14:47:02.694Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周是 11 月的第一周。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;这周双十一开始，又恰逢老妈来杭州看牙齿，所以直接 JD</summary>
         
       
     
