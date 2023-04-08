@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-04-03T16:45:15.041Z</updated>
+  <updated>2023-04-08T16:12:35.501Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>glog 源码分析 Part 1</title>
+    <link href="http://kingsamchen.github.io/2023/04/09/src-study-glog-1/"/>
+    <id>http://kingsamchen.github.io/2023/04/09/src-study-glog-1/</id>
+    <published>2023-04-08T16:08:07.000Z</published>
+    <updated>2023-04-08T16:12:35.501Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;Revision: v0.6.0 (latest release)&lt;/p&gt;
+&lt;h2 id=&quot;为什么要初始化-x2F-初始化做了什么&quot;&gt;&lt;a href=&quot;#为什么要初始化-x2F-初始化做了什么&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="glog" scheme="http://kingsamchen.github.io/tags/glog/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 5 Mar 2023</title>
@@ -504,33 +532,6 @@
         
     <summary type="html">&lt;p&gt;这周是11月第四周，也是最后一周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Nov 2022</title>
-    <link href="http://kingsamchen.github.io/2022/11/21/weekly-2022-nov-3/"/>
-    <id>http://kingsamchen.github.io/2022/11/21/weekly-2022-nov-3/</id>
-    <published>2022-11-21T15:31:43.000Z</published>
-    <updated>2022-11-21T16:03:44.046Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周是 11 月的第三周。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;这周把 &lt;em&gt;Event Horizon&lt;/em&gt;</summary>
         
       
     
