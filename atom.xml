@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-04-16T06:12:54.383Z</updated>
+  <updated>2023-04-17T15:11:26.784Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Apr 2023</title>
+    <link href="http://kingsamchen.github.io/2023/04/17/weekly-2023-apr-2/"/>
+    <id>http://kingsamchen.github.io/2023/04/17/weekly-2023-apr-2/</id>
+    <published>2023-04-17T14:46:44.000Z</published>
+    <updated>2023-04-17T15:11:26.784Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;10 ~ 04&amp;#x2F;16）是四月份第二周&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;前同事 Ice</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>glog 源码分析 Part 2</title>
@@ -507,32 +534,6 @@
     <summary type="html">&lt;p&gt;本周是12月第三周，也是屁事贼多的一周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
 &lt;p&gt;周五（当天</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 Dec 2022</title>
-    <link href="http://kingsamchen.github.io/2022/12/12/weekly-2022-dec-2/"/>
-    <id>http://kingsamchen.github.io/2022/12/12/weekly-2022-dec-2/</id>
-    <published>2022-12-12T13:07:51.000Z</published>
-    <updated>2022-12-12T13:38:54.109Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周是12月第二周。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
