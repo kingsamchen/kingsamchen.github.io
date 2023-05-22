@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-05-15T15:39:12.434Z</updated>
+  <updated>2023-05-22T13:54:22.678Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 May 2023</title>
+    <link href="http://kingsamchen.github.io/2023/05/22/weekly-2023-may-3/"/>
+    <id>http://kingsamchen.github.io/2023/05/22/weekly-2023-may-3/</id>
+    <published>2023-05-22T13:25:56.000Z</published>
+    <updated>2023-05-22T13:54:22.678Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（05&amp;#x2F;15 ~ 05&amp;#x2F;21）是五月的第三周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;这周某天刷</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 May 2023</title>
@@ -505,32 +532,6 @@
         
         
     <summary type="html">&lt;p&gt;本周是1月份的第四周，春节将于本周正式结束。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Jan 2023</title>
-    <link href="http://kingsamchen.github.io/2023/01/23/weekly-2023-jan-3/"/>
-    <id>http://kingsamchen.github.io/2023/01/23/weekly-2023-jan-3/</id>
-    <published>2023-01-23T05:18:36.000Z</published>
-    <updated>2023-01-30T13:44:07.948Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周是1月份的第三周，进入中国农历新年。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       

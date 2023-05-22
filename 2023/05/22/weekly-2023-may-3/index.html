@@ -1,0 +1,121 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Gone with the ruins"><title>一周杂记 in Week 3 May 2023 | KC的废墟堆</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">一周杂记 in Week 3 May 2023</h1><a id="logo" href="/.">KC的废墟堆</a><p class="description">Will you serve in Heaven, or rule in Hell</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/source-code-reading/"><i class="fa fa-archive"> 源码分析</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">一周杂记 in Week 3 May 2023</h1><div class="post-meta">2023-05-22<span> | </span><span class="category"><a href="/categories/CODE-LIFE/">CODE-LIFE</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/05/22/weekly-2023-may-3/" href="/2023/05/22/weekly-2023-may-3/#disqus_thread"></a><div class="post-content"><p>本周（05&#x2F;15 ~ 05&#x2F;21）是五月的第三周。</p>
+<h2 id="Life"><a href="#Life" class="headerlink" title="Life"></a>Life</h2><p>#1</p>
+<p>这周某天刷 twitter 的时候突然刷到业内知名技术专家左耳朵耗子（coolshell）因心梗去世的消息。</p>
+<p>一开始还以为是恶作剧，但是看到多个大V都确认了消息之后才确定这是真事。</p>
+<p>哎，心脑血管疾病看起来已经是程序员的头号杀手了。想起去年体检的时候血脂爆表，而且已经开始影响到了心电图，被我媳妇儿骂了一顿，并且勒令调整饮食习惯，加强运动。</p>
+<p>劳逸结合千万不能过度工作，甚至锻炼也不能过度锻炼。活得久最重要。</p>
+<p>#2</p>
+<p>周二和同事一起看了戈达尔的《随心所欲》 3&#x2F;5</p>
+<p>整体来说我个人并不喜欢这个电影的表现手法，总觉得很刻意；而且影片表达的主题现在看并不是什么特别突破的东西，所以一度看的我昏昏欲睡。</p>
+<p>另外看完了银护的圣诞特辑 3&#x2F;5</p>
+<p>整体也是感觉一般，各种尬…比起银护3确实差不少。</p>
+<h2 id="Work"><a href="#Work" class="headerlink" title="Work"></a>Work</h2><p>#1</p>
+<p>本周 CppCon 2020 因为开始刷 lightning talks，所以量贼大，毕竟一个 talk 只有 5mins 上下。</p>
+<p><strong>CppCon 2020 | Functional Error and Optional-value Handling with STX - Basit Ayantunde</strong></p>
+<ul>
+<li>演讲者公司做嵌入式系统内部用的一个基础库 STX，这个 STX 提供的一些错误处理的方法，比如<ul>
+<li>abort 这类的替代 panic 系列，提供上下文信息</li>
+<li>monadic Result &#x2F; Optional .etc 差不多类似 std::expected 和支持 monad 操作的 std::optional</li>
+<li>以及一些错误处理的性能比较；这里我其实非常不赞同批评异常在 sad path 下的性能太差，因为异常作为错误处理汇报机制它本身是面向错误的case，实际产品中异常处理引起显著开销的那个错误发生频率下早就被打出业务告警了。</li>
+</ul>
+</li>
+</ul>
+<p>以下都是 5mins 左右的 lightning talks</p>
+<p><strong>CppCon 2020 | Become A Game Developer In 5 Minutes Or Less - Mathieu Ropert</strong></p>
+<ul>
+<li>作者分享了一些开发游戏中的趣事</li>
+</ul>
+<p><strong>CppCon 2020 | C++ Community Surveys - Jens Weller</strong></p>
+<ul>
+<li>社区的一些 C++ 调查</li>
+</ul>
+<p><strong>CppCon 2020 | What’s My Object? - Staffan Tjernström</strong></p>
+<ul>
+<li>引出了 start_lifetime_as<T> 这个提案</li>
+</ul>
+<p><strong>CppCon 2020 | What did I learn teaching C++ to beginners - Alex Voronov</strong></p>
+<ul>
+<li>分享了一下C++教学的事情</li>
+</ul>
+<p><strong>CppCon 2020 | C++20 Lambdas: Familiar Template Syntax - Ben Deane</strong></p>
+<ul>
+<li>简单介绍了一下 C++ 20 lambda 支持通过类似模板参数语法引入参数类型名字</li>
+</ul>
+<p><strong>CppCon 2020 | How We Used To Be - Ben Deane</strong></p>
+<ul>
+<li>分享了这本书 <a target="_blank" rel="noopener" href="https://book.douban.com/subject/10605778/">https://book.douban.com/subject/10605778/</a></li>
+</ul>
+<p><strong>CppCon 2020 | C++ Dependency Management the Meson Way - Jussi Pakkanen</strong></p>
+<ul>
+<li>将 meson 的 dependency managment，但是没看懂具体有什么优势</li>
+</ul>
+<p><strong>CppCon 2020 | Drinking from the Fire Hose: Keeping up with the evolving landscape of C++ - Brian Ruth</strong></p>
+<ul>
+<li>C++ 发展越来越快内容越来越多，但是不代表 you need to know everything. 但是 get familiar with names 还是大有脾益的</li>
+</ul>
+<p>另外还抽空看了</p>
+<p><strong>现代C++白皮书 | 8. C++17：大海迷航</strong></p>
+<ul>
+<li>BS 挑了一些核心的点讲了一些自己的看法</li>
+</ul>
+<p><strong>现代C++白皮书 | 9. C++ 20：方向之争</strong></p>
+<ul>
+<li>C++ 20 核心特性在提案&#x2F;投票过程中的一些 anecdotes</li>
+</ul>
+<p>C++ 20 高级编程第三章看了几页，因为看的内容不多所以就没有特别记录了。</p>
+<p>#2</p>
+<p>因为之前 vm remake 过，所以这周抽了点时间重新搞了一个 study-abseil-cpp 的 docker 环境。</p>
+<p>并且考虑到希望在这个 docker container 里做一些更“自由”的事情，所以重新基于 socat 给 vm 加了一个 proxy-agent 服务将请求转发到宿主机的梯子上。</p>
+<p>这样依赖 docker container 就算用默认的 bridge newtork mode 也可以翻墙。</p>
+<p>#3</p>
+<p>上周搞得 postfix 日志桥接踩了一个 flagfile 的坑；不过也好在我们有完善的测试，MR 回归阶段就跑出来问题了。</p>
+<p>一顿研究后又用了另外一个 trick 给解决了…</p>
+<p>希望下周这个改动能顺利合进去。</p>
+<hr>
+<p>好了这周就这样，下周见！</p>
+</div><div class="tags"><a href="/tags/%E6%9D%82%E8%AE%B0/"><i class="fa fa-tag"></i>杂记</a></div><div class="post-nav"><a class="next" href="/2023/05/15/weekly-2023-may-2/">一周杂记 in Week 2 May 2023</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://kingsamchen.github.io/2023/05/22/weekly-2023-may-3/';
+    this.page.identifier = '2023/05/22/weekly-2023-may-3/';
+    this.page.title = '一周杂记 in Week 3 May 2023';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://kingsamchen-github-io.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2023/05/22/weekly-2023-may-3/">一周杂记 in Week 3 May 2023</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/15/weekly-2023-may-2/">一周杂记 in Week 2 May 2023</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/09/weekly-2023-may-1/">一周杂记 in Week 1 May 2023</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/05/02/weekly-2023-apr-4/">一周杂记 in Week 4 Apr 2023</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/04/25/weekly-2023-apr-3/">一周杂记 in Week 3 Apr 2023</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/04/20/src-study-glog-3/">glog 源码分析 Part 3</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/04/17/weekly-2023-apr-2/">一周杂记 in Week 2 Apr 2023</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/04/16/src-study-glog-2/">glog 源码分析 Part 2</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/04/10/weekly-2023-apr-1/">一周杂记 in Week 1 Apr 2023</a></li><li class="post-list-item"><a class="post-list-link" href="/2023/04/09/src-study-glog-1/">glog 源码分析 Part 1</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/rant/" style="font-size: 15px;">rant</a> <a href="/tags/life/" style="font-size: 15px;">life</a> <a href="/tags/android/" style="font-size: 15px;">android</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/crash/" style="font-size: 15px;">crash</a> <a href="/tags/breakpad/" style="font-size: 15px;">breakpad</a> <a href="/tags/cpp/" style="font-size: 15px;">cpp</a> <a href="/tags/exception/" style="font-size: 15px;">exception</a> <a href="/tags/memory-fence/" style="font-size: 15px;">memory fence</a> <a href="/tags/memory-ordering/" style="font-size: 15px;">memory ordering</a> <a href="/tags/multiple-instance/" style="font-size: 15px;">multiple instance</a> <a href="/tags/c/" style="font-size: 15px;">c++</a> <a href="/tags/enum/" style="font-size: 15px;">enum</a> <a href="/tags/flag/" style="font-size: 15px;">flag</a> <a href="/tags/bitwise%EF%BC%8C-SFINAE/" style="font-size: 15px;">bitwise， SFINAE</a> <a href="/tags/KBase/" style="font-size: 15px;">KBase</a> <a href="/tags/command-line/" style="font-size: 15px;">command-line</a> <a href="/tags/abstraction/" style="font-size: 15px;">abstraction</a> <a href="/tags/%E6%A2%AF%E5%AD%90/" style="font-size: 15px;">梯子</a> <a href="/tags/shadowsocks/" style="font-size: 15px;">shadowsocks</a> <a href="/tags/trojan/" style="font-size: 15px;">trojan</a> <a href="/tags/socat/" style="font-size: 15px;">socat</a> <a href="/tags/windows/" style="font-size: 15px;">windows</a> <a href="/tags/design/" style="font-size: 15px;">design</a> <a href="/tags/environment/" style="font-size: 15px;">environment</a> <a href="/tags/buddy-allocator/" style="font-size: 15px;">buddy-allocator</a> <a href="/tags/algorithms/" style="font-size: 15px;">algorithms</a> <a href="/tags/C-17/" style="font-size: 15px;">C++ 17</a> <a href="/tags/string-view/" style="font-size: 15px;">string_view</a> <a href="/tags/tokenizer/" style="font-size: 15px;">tokenizer</a> <a href="/tags/asio/" style="font-size: 15px;">asio</a> <a href="/tags/cmake/" style="font-size: 15px;">cmake</a> <a href="/tags/anvil/" style="font-size: 15px;">anvil</a> <a href="/tags/project-management/" style="font-size: 15px;">project management</a> <a href="/tags/atoi/" style="font-size: 15px;">atoi</a> <a href="/tags/golang/" style="font-size: 15px;">golang</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/cfs/" style="font-size: 15px;">cfs</a> <a href="/tags/non-capturing-lambda/" style="font-size: 15px;">non-capturing lambda</a> <a href="/tags/function-pointer/" style="font-size: 15px;">function pointer</a> <a href="/tags/obs-studio/" style="font-size: 15px;">obs-studio</a> <a href="/tags/inno-setup/" style="font-size: 15px;">inno setup</a> <a href="/tags/installer/" style="font-size: 15px;">installer</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/Unix/" style="font-size: 15px;">Unix</a> <a href="/tags/signal/" style="font-size: 15px;">signal</a> <a href="/tags/signalfd/" style="font-size: 15px;">signalfd</a> <a href="/tags/self-pipe-trick/" style="font-size: 15px;">self-pipe trick</a> <a href="/tags/cant/" style="font-size: 15px;">cant</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/HandlerThread/" style="font-size: 15px;">HandlerThread</a> <a href="/tags/Looper/" style="font-size: 15px;">Looper</a> <a href="/tags/Handler/" style="font-size: 15px;">Handler</a> <a href="/tags/MessageLoop/" style="font-size: 15px;">MessageLoop</a> <a href="/tags/http/" style="font-size: 15px;">http</a> <a href="/tags/proxy/" style="font-size: 15px;">proxy</a> <a href="/tags/thread-pool/" style="font-size: 15px;">thread-pool</a> <a href="/tags/chromium/" style="font-size: 15px;">chromium</a> <a href="/tags/urlfetcher/" style="font-size: 15px;">urlfetcher</a> <a href="/tags/wireshark/" style="font-size: 15px;">wireshark</a> <a href="/tags/localhost/" style="font-size: 15px;">localhost</a> <a href="/tags/source-internals/" style="font-size: 15px;">source internals</a> <a href="/tags/message-loop/" style="font-size: 15px;">message-loop</a> <a href="/tags/SFINAE/" style="font-size: 15px;">SFINAE</a> <a href="/tags/template/" style="font-size: 15px;">template</a> <a href="/tags/visual-studio/" style="font-size: 15px;">visual studio</a> <a href="/tags/libx264/" style="font-size: 15px;">libx264</a> <a href="/tags/vcpkg/" style="font-size: 15px;">vcpkg</a> <a href="/tags/shared-ptr/" style="font-size: 15px;">shared_ptr</a> <a href="/tags/type-injection/" style="font-size: 15px;">type injection</a> <a href="/tags/shared-ptr-internals/" style="font-size: 15px;">shared_ptr-internals</a> <a href="/tags/source-code-study/" style="font-size: 15px;">source-code-study</a> <a href="/tags/weak-ptr/" style="font-size: 15px;">weak_ptr</a> <a href="/tags/base-lib/" style="font-size: 15px;">base lib</a> <a href="/tags/tag-dispatching/" style="font-size: 15px;">tag dispatching</a> <a href="/tags/boost/" style="font-size: 15px;">boost</a> <a href="/tags/libstdc/" style="font-size: 15px;">libstdc++</a> <a href="/tags/gcc/" style="font-size: 15px;">gcc</a> <a href="/tags/clang/" style="font-size: 15px;">clang</a> <a href="/tags/sfinae/" style="font-size: 15px;">sfinae</a> <a href="/tags/google-breakpad/" style="font-size: 15px;">google-breakpad</a> <a href="/tags/invalid-paramter/" style="font-size: 15px;">invalid paramter</a> <a href="/tags/operator/" style="font-size: 15px;">operator[]</a> <a href="/tags/owner-semantics/" style="font-size: 15px;">owner semantics</a> <a href="/tags/view-semantics/" style="font-size: 15px;">view semantics</a> <a href="/tags/msvc/" style="font-size: 15px;">msvc</a> <a href="/tags/ebo/" style="font-size: 15px;">ebo</a> <a href="/tags/multiple-inheritance/" style="font-size: 15px;">multiple inheritance</a> <a href="/tags/Visual-Studio/" style="font-size: 15px;">Visual Studio</a> <a href="/tags/debugger/" style="font-size: 15px;">debugger</a> <a href="/tags/UTF-8/" style="font-size: 15px;">UTF-8</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/haskell/" style="font-size: 15px;">haskell</a> <a href="/tags/infix-operator/" style="font-size: 15px;">infix operator</a> <a href="/tags/error-handling/" style="font-size: 15px;">error handling</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/mint/" style="font-size: 15px;">mint</a> <a href="/tags/%E7%A3%81%E7%9B%98/" style="font-size: 15px;">磁盘</a> <a href="/tags/%E6%89%A9%E5%AE%B9/" style="font-size: 15px;">扩容</a> <a href="/tags/line-ending/" style="font-size: 15px;">line ending</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://www.daozhihun.com/" title="刀之魂 | 大木老师成长日记" target="_blank">刀之魂 | 大木老师成长日记</a><ul></ul><a href="https://blog.nlogn.cn/" title="帧哥 | 硅谷谈撸管" target="_blank">帧哥 | 硅谷谈撸管</a><ul></ul><a href="https://blog.chichou.me/" title="ChiChou | 首席安全地球仪切图总奸" target="_blank">ChiChou | 首席安全地球仪切图总奸</a><ul></ul><a href="https://fleurer.github.io/" title="Fleurer-lee | F叔的读书笔记（大量干货）" target="_blank">Fleurer-lee | F叔的读书笔记（大量干货）</a><ul></ul><a href="https://vizee.org/" title="Vizee | 即将走上人生巅峰推萝莉的章总" target="_blank">Vizee | 即将走上人生巅峰推萝莉的章总</a><ul></ul><a href="https://blog.thecjw.me/" title="TheCJW | 爱弹棉花的小伟" target="_blank">TheCJW | 爱弹棉花的小伟</a><ul></ul><a href="https://newbiecoder.0ginr.com/blog/" title="Newbie Coder | 萌萌哒的炉子" target="_blank">Newbie Coder | 萌萌哒的炉子</a><ul></ul><a href="https://frankpie.github.io/" title="裴草莓 | 愤怒的老司机" target="_blank">裴草莓 | 愤怒的老司机</a><ul></ul><a href="https://beanbee.me/" title="陈老师 | Beanbee.Max" target="_blank">陈老师 | Beanbee.Max</a><ul></ul><a href="https://sunus.me/" title="Sunus | 李师傅食品厂CEO" target="_blank">Sunus | 李师傅食品厂CEO</a><ul></ul><a href="http://www.tolower.net/" title="Lower | 喊大木大哥的小弟" target="_blank">Lower | 喊大木大哥的小弟</a><ul></ul><a href="http://mrljdx.com/" title="Mrljdx | 大保健老司机" target="_blank">Mrljdx | 大保健老司机</a><ul></ul><a href="https://www.mydavelv.net/" title="Davelv | 江湖人称大尾驴" target="_blank">Davelv | 江湖人称大尾驴</a></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> Recent Comments</i></div><script type="text/javascript" src="//kingsamchen-github-io.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2023 <a href="/." rel="nofollow">KC的废墟堆.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
