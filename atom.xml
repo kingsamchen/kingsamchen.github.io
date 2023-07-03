@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-06-26T16:37:22.695Z</updated>
+  <updated>2023-07-03T14:49:46.751Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 5 Jun 2023</title>
+    <link href="http://kingsamchen.github.io/2023/07/03/weekly-2023-jun-5/"/>
+    <id>http://kingsamchen.github.io/2023/07/03/weekly-2023-jun-5/</id>
+    <published>2023-07-03T14:25:31.000Z</published>
+    <updated>2023-07-03T14:49:46.751Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（06&amp;#x2F;26 ~ 07&amp;#x2F;02）是6月份的第五周，也是最后一周。&lt;/p&gt;
+&lt;p&gt;这周的 &lt;em&gt;Life part&lt;/em&gt; 比较多&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Jun 2023</title>
@@ -506,32 +533,6 @@
     <summary type="html">&lt;p&gt;时间来到三月份第二周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
 &lt;p&gt;周一下午整个 HZ server 大组由 manager</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Mar 2023</title>
-    <link href="http://kingsamchen.github.io/2023/03/06/weekly-2023-mar-1/"/>
-    <id>http://kingsamchen.github.io/2023/03/06/weekly-2023-mar-1/</id>
-    <published>2023-03-05T16:34:22.000Z</published>
-    <updated>2023-03-05T16:55:30.664Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;终于进入了三月份。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
