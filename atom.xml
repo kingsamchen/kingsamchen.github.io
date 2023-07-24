@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-07-17T12:33:13.418Z</updated>
+  <updated>2023-07-24T13:35:37.762Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 July 2023</title>
+    <link href="http://kingsamchen.github.io/2023/07/24/weekly-2023-july-3/"/>
+    <id>http://kingsamchen.github.io/2023/07/24/weekly-2023-july-3/</id>
+    <published>2023-07-24T13:23:15.000Z</published>
+    <updated>2023-07-24T13:35:37.762Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（07&amp;#x2F;17 ~ 07&amp;#x2F;23）是7月份的第三周&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 July 2023</title>
@@ -505,32 +531,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（03&amp;#x2F;27 ~ 04&amp;#x2F;02）是三月份最后一周，虽然周末已经进入了四月份但是 3 月的天数多就归入3月份吧&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Mar 2023</title>
-    <link href="http://kingsamchen.github.io/2023/03/27/weekly-2023-mar-4/"/>
-    <id>http://kingsamchen.github.io/2023/03/27/weekly-2023-mar-4/</id>
-    <published>2023-03-27T14:36:20.000Z</published>
-    <updated>2023-03-27T15:52:30.786Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;20 ~ 03&amp;#x2F;26）是三月份的第四周，所以下周还有一周才能到四月份。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
