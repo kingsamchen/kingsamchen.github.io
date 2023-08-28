@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-08-21T12:33:06.651Z</updated>
+  <updated>2023-08-28T15:18:04.693Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Aug 2023</title>
+    <link href="http://kingsamchen.github.io/2023/08/28/weekly-2023-aug-4/"/>
+    <id>http://kingsamchen.github.io/2023/08/28/weekly-2023-aug-4/</id>
+    <published>2023-08-28T14:24:31.000Z</published>
+    <updated>2023-08-28T15:18:04.693Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（08&amp;#x2F;21 ~ 08&amp;#x2F;27）是8月份的第四周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Aug 2023</title>
@@ -511,33 +537,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>glog 源码分析 Part 3</title>
-    <link href="http://kingsamchen.github.io/2023/04/20/src-study-glog-3/"/>
-    <id>http://kingsamchen.github.io/2023/04/20/src-study-glog-3/</id>
-    <published>2023-04-20T13:18:59.000Z</published>
-    <updated>2023-04-20T13:22:39.413Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;LOG-EVERY-N-如何实现&quot;&gt;&lt;a href=&quot;#LOG-EVERY-N-如何实现&quot; class=&quot;headerlink&quot; title=&quot;LOG_EVERY_N 如何实现&quot;&gt;&lt;/a&gt;LOG_EVERY_N 如何实现&lt;/h2&gt;&lt;p&gt;每个</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="glog" scheme="http://kingsamchen.github.io/tags/glog/"/>
     
   </entry>
   
