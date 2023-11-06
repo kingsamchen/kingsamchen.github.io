@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2023-10-30T15:13:12.133Z</updated>
+  <updated>2023-11-06T14:47:41.611Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Nov 2023</title>
+    <link href="http://kingsamchen.github.io/2023/11/06/weekly-2023-nov-1/"/>
+    <id>http://kingsamchen.github.io/2023/11/06/weekly-2023-nov-1/</id>
+    <published>2023-11-06T14:29:23.000Z</published>
+    <updated>2023-11-06T14:47:41.611Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（10&amp;#x2F;30 ~ 11&amp;#x2F;05）是十一月的第一周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Oct 2023</title>
@@ -508,33 +534,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（07&amp;#x2F;10 ~ 07&amp;#x2F;16）是7月份的第二周&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 July 2023</title>
-    <link href="http://kingsamchen.github.io/2023/07/10/weekly-2023-july-1/"/>
-    <id>http://kingsamchen.github.io/2023/07/10/weekly-2023-july-1/</id>
-    <published>2023-07-10T12:55:46.000Z</published>
-    <updated>2023-07-10T13:20:21.064Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（07&amp;#x2F;03 ~ 07&amp;#x2F;09）是7月份的第一周&lt;/p&gt;
-&lt;p&gt;这周是真热啊…&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
