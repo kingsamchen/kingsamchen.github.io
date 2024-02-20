@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2024-02-05T16:36:16.106Z</updated>
+  <updated>2024-02-20T03:18:43.350Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,58 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Feb 2024</title>
+    <link href="http://kingsamchen.github.io/2024/02/19/weekly-2024-feb-3/"/>
+    <id>http://kingsamchen.github.io/2024/02/19/weekly-2024-feb-3/</id>
+    <published>2024-02-19T14:00:00.000Z</published>
+    <updated>2024-02-20T03:18:43.350Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;12 ~ 02&amp;#x2F;18）是二月份的第三周，也是农历新年假期将进入尾声的一周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Feb 2024</title>
+    <link href="http://kingsamchen.github.io/2024/02/12/weekly-2024-feb-2/"/>
+    <id>http://kingsamchen.github.io/2024/02/12/weekly-2024-feb-2/</id>
+    <published>2024-02-12T06:08:55.000Z</published>
+    <updated>2024-02-19T17:06:50.115Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;05 ~ 02&amp;#x2F;11）是二月份第二周，也是中国农历新年开始的一周，02&amp;#x2F;09 是除夕。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Feb 2024</title>
@@ -482,65 +534,6 @@
     <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
     <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>abseil strings/strip 源码分析</title>
-    <link href="http://kingsamchen.github.io/2023/10/15/src-study-abseil-strings-strip/"/>
-    <id>http://kingsamchen.github.io/2023/10/15/src-study-abseil-strings-strip/</id>
-    <published>2023-10-14T16:09:59.000Z</published>
-    <updated>2023-10-14T16:14:24.068Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;Revision:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;lts_2022_06_23&lt;/li&gt;
-&lt;li&gt;273292d1cfc0a94a65082ee350509af1d113344d&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;absl/strings/strip.h&lt;/code&gt;&lt;/li&gt;
-&lt;</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Oct 2023</title>
-    <link href="http://kingsamchen.github.io/2023/10/10/weekly-2023-oct-1/"/>
-    <id>http://kingsamchen.github.io/2023/10/10/weekly-2023-oct-1/</id>
-    <published>2023-10-09T16:39:14.000Z</published>
-    <updated>2023-10-10T16:08:08.664Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周是（10&amp;#x2F;01 ~ 10&amp;#x2F;08）是十一假期周。&lt;/p&gt;
-&lt;p&gt;因为这周事情比较多，所以很多事情会简略略过&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
