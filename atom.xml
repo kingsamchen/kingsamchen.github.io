@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2024-02-20T03:18:43.350Z</updated>
+  <updated>2024-02-25T06:53:54.146Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Dive into error_code, error_condition and error_category in C++</title>
+    <link href="http://kingsamchen.github.io/2024/02/25/dive-into-error-code-error-condition-and-error-category-in-cxx/"/>
+    <id>http://kingsamchen.github.io/2024/02/25/dive-into-error-code-error-condition-and-error-category-in-cxx/</id>
+    <published>2024-02-25T06:49:19.000Z</published>
+    <updated>2024-02-25T06:53:54.146Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;最近抽了点时间，重新读了一下 Christopher Kohlhoff 早年写的几篇介绍 &lt;code&gt;std::error_code&lt;/code&gt; 由来的文章（后面简称“系列文章”），以及 &lt;code&gt;Boost.System&lt;/code&gt; 这个 lib</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="error handling" scheme="http://kingsamchen.github.io/tags/error-handling/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Feb 2024</title>
@@ -507,33 +534,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>abseil base/attributes 源码分析</title>
-    <link href="http://kingsamchen.github.io/2023/10/15/src-study-abseil-base-attributes/"/>
-    <id>http://kingsamchen.github.io/2023/10/15/src-study-abseil-base-attributes/</id>
-    <published>2023-10-14T16:15:26.000Z</published>
-    <updated>2023-10-14T16:16:16.742Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;标准库检测&quot;&gt;&lt;a href=&quot;#标准库检测&quot; class=&quot;headerlink&quot; title=&quot;标准库检测&quot;&gt;&lt;/a&gt;标准库检测&lt;/h2&gt;&lt;p&gt;C++ 20 开始终于有了 feature testing macro</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
     
   </entry>
   
