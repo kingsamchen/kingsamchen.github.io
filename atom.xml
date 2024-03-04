@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2024-02-26T13:41:24.821Z</updated>
+  <updated>2024-03-04T16:36:56.450Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Mar 2024</title>
+    <link href="http://kingsamchen.github.io/2024/03/04/weekly-2024-mar-1/"/>
+    <id>http://kingsamchen.github.io/2024/03/04/weekly-2024-mar-1/</id>
+    <published>2024-03-04T15:50:31.000Z</published>
+    <updated>2024-03-04T16:36:56.450Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;26 ~ 03&amp;#x2F;03）是2月份最后一周；因为本周2月天数略大于3月，所以归入2月&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Feb 2024</title>
@@ -498,32 +524,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（10&amp;#x2F;23 ~ 10&amp;#x2F;29）是十月份的最后一周，因为 10&amp;#x2F;30 和 31 两天被我归入到 11 月第一周了。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Oct 2023</title>
-    <link href="http://kingsamchen.github.io/2023/10/23/weekly-2023-oct-3/"/>
-    <id>http://kingsamchen.github.io/2023/10/23/weekly-2023-oct-3/</id>
-    <published>2023-10-23T15:08:04.000Z</published>
-    <updated>2023-10-23T15:21:17.808Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（10&amp;#x2F;16 ~ 10&amp;#x2F;22）是十月份的第三周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
