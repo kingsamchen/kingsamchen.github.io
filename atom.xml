@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2024-05-06T16:09:27.434Z</updated>
+  <updated>2024-05-12T07:02:46.168Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,40 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>abseil status/status 源码分析</title>
+    <link href="http://kingsamchen.github.io/2024/05/12/src-study-abseil-status-status/"/>
+    <id>http://kingsamchen.github.io/2024/05/12/src-study-abseil-status-status/</id>
+    <published>2024-05-12T06:52:37.000Z</published>
+    <updated>2024-05-12T07:02:46.168Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;Revision：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;LTS_2024_01_16&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;💡 LTS_2024_01_16 开始 rep_ 成员的解释开始发生变化，所以之前版本的需要找对应源码&lt;/p&gt;
+&lt;h2 id=&quot;Status-成员结构&quot;&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
+    
+    <category term="absl::Status" scheme="http://kingsamchen.github.io/tags/absl-Status/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 May 2024</title>
@@ -498,32 +532,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（01&amp;#x2F;01 ~ 01&amp;#x2F;07）是1月份的第一周，happy new year!&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Dec 2023</title>
-    <link href="http://kingsamchen.github.io/2024/01/01/weekly-2023-dec-4/"/>
-    <id>http://kingsamchen.github.io/2024/01/01/weekly-2023-dec-4/</id>
-    <published>2024-01-01T12:41:54.000Z</published>
-    <updated>2024-01-01T13:53:04.800Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（12&amp;#x2F;25 ~ 12&amp;#x2F;31）是12月份的最后一周，也是本年度的最后一周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
