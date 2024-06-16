@@ -45,3 +45,4 @@ date: 2022-08-08 22:29:00
 
 - {% post_link how-facebook-implement-graceful-restart-for-golang-servers Facebook 如何实现 Golang 服务优雅重启 —— 以 Grace 为例 %}
 - {% post_link src-study-uber-automaxprocs uber automaxprocs 源码分析 %}
+- {% post_link src-study-tl-generator TartanLlama/generator 源码分析 %}
