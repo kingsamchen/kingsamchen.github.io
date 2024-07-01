@@ -1,0 +1,126 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Gone with the ruins"><title>一周杂记 in Week 4 June 2024 | KC的废墟堆</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">一周杂记 in Week 4 June 2024</h1><a id="logo" href="/.">KC的废墟堆</a><p class="description">Will you serve in Heaven, or rule in Hell</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/source-code-reading/"><i class="fa fa-archive"> 源码分析</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">一周杂记 in Week 4 June 2024</h1><div class="post-meta">2024-07-01<span> | </span><span class="category"><a href="/categories/CODE-LIFE/">CODE-LIFE</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2024/07/01/weekly-2024-jun-4/" href="/2024/07/01/weekly-2024-jun-4/#disqus_thread"></a><div class="post-content"><p>本周（06&#x2F;24 ~ 06&#x2F;30）是六月份第四周，六月最后一周。</p>
+<h2 id="Life"><a href="#Life" class="headerlink" title="Life"></a>Life</h2><p>#1</p>
+<p>周二上午还下着大雨，一个人开车到了省妇保重新做了一次精子检查。</p>
+<p>检查结果出来的也比较及时，让媳妇儿看了一下，说：你这年纪精子质量比起年轻人确实差了一些，但是还没到无可救药的地步…</p>
+<p>然后就是制定了饮食和生活习惯计划，包括从原来的每天三杯咖啡到隔天一杯咖啡，少吃甜食零食，尽量不喝碳酸饮料这些…然后多补充蛋白质，晚上11点左右上床，保证睡眠质量</p>
+<p>这人上了年纪之后确实各种方面都容易出问题 😩</p>
+<p>#2</p>
+<p>上周日把 lucky 的骨灰拿回家之后本来打算周五晚上头七的时候到对面的河道公园埋了，但是因为周五下了一天的雨，到了晚上还很大，所以这件事一直拖到了周六晚上。</p>
+<p>周六晚还好基本没雨，我拿着JD买的小铲子在河道公园转了一会儿，找了一个感觉不错的地方就开始挖土。</p>
+<p>实话说用小铲子挖土确实有点吃力，而且之前这方面没有太多经验，所以之挖了一个不大不小的坑，还好骨灰盒能放进去。</p>
+<p>又从边上挖了一些土盖上去，弄弄平，至少看上去不太有问题了</p>
+<p>#3</p>
+<p>这周电影俱乐部看了 <strong>唯一的家园</strong> 3&#x2F;5 内容上还行吧，但是拍摄和叙事太一般了，感觉还不如中国强拆纪录片来的好看…</p>
+<p>#4</p>
+<p>电动车电瓶又挂了…</p>
+<p>骑到 8% 的时候突然自己掉电，推回家后发现充电也充不上…</p>
+<p>只能等到雨停了找个天晴的时候推到店里检修一下。上一次电瓶挂了的时候给我免费换了一个，这次不知道还能不能免费换一个</p>
+<h2 id="Work"><a href="#Work" class="headerlink" title="Work"></a>Work</h2><p>#1</p>
+<p><strong>Lazy Futures with Coroutines</strong> <a target="_blank" rel="noopener" href="https://www.modernescpp.com/index.php/lazy-futures-with-coroutines-in-c-20/">https://www.modernescpp.com/index.php/lazy-futures-with-coroutines-in-c-20/</a></p>
+<ul>
+<li>这个 Post 把之前 eager coroutine 改成了 lazy coroutine，本质是通过调整 promise_type 的 initial_suspend 和 final_suspend 返回的 awaitable 来做到的</li>
+<li>前后对比可以对 coroutine execution workflow 有一个更好的认识</li>
+</ul>
+<p><strong>Executing a Future in a Separate Thread with Coroutines</strong> <a target="_blank" rel="noopener" href="https://www.modernescpp.com/index.php/executing-a-future-in-a-separate-thread-with-coroutines/">https://www.modernescpp.com/index.php/executing-a-future-in-a-separate-thread-with-coroutines/</a></p>
+<ul>
+<li>在前篇的基础上讲如何将 coroutine 放到其他线程去 resume&#x2F;execute</li>
+<li>容易上手</li>
+</ul>
+<p><strong>An Infinite Data Stream with Coroutines in C++20</strong> <a target="_blank" rel="noopener" href="https://www.modernescpp.com/index.php/an-infinite-data-stream-with-coroutines-in-c-20/">https://www.modernescpp.com/index.php/an-infinite-data-stream-with-coroutines-in-c-20/</a></p>
+<ul>
+<li>开始讲 co_yield 以及如何实现简单的 generator</li>
+<li>另外有个优点是把 <code>initial_suspend</code> 和 <code>yield_value</code> 返回的类型分别是 <code>suspend_always</code> 和 <code>suspend_never</code> 会发生什么事分析了一下，感觉很不错</li>
+</ul>
+<p><strong>A Generic Data Stream with Coroutines in C++20</strong> <a target="_blank" rel="noopener" href="https://www.modernescpp.com/index.php/a-generic-data-stream-with-coroutines-in-c-20/">https://www.modernescpp.com/index.php/a-generic-data-stream-with-coroutines-in-c-20/</a></p>
+<ul>
+<li>这篇在上篇的基础上引出 awaitable 三大函数并且用伪码描述了一下 workflow</li>
+</ul>
+<p><strong>Starting Jobs with Coroutines</strong> <a target="_blank" rel="noopener" href="https://www.modernescpp.com/index.php/starting-jobs-with-coroutines/">https://www.modernescpp.com/index.php/starting-jobs-with-coroutines/</a></p>
+<ul>
+<li>实现一个 job coroutine wrapper 并且用自己实现的带注释的 suspend always 和 suspend never 来探究 awaitable 的 workflow</li>
+</ul>
+<p><strong>Automatically Resuming a Job with Coroutines on a Separate Thread</strong> <a target="_blank" rel="noopener" href="https://www.modernescpp.com/index.php/automatically-resuming-a-job-with-coroutines/">https://www.modernescpp.com/index.php/automatically-resuming-a-job-with-coroutines/</a></p>
+<ul>
+<li>系列最后一篇，再其他线程 resume coroutine</li>
+<li>这里 task 的 initial_suspend 和 final_suspend 都变成了 suspend never，不知道是不是为了简单起见</li>
+</ul>
+<p><strong>Move Annoyance</strong> <a target="_blank" rel="noopener" href="https://sean-parent.stlab.cc/2021/03/31/move-annoyance.html">https://sean-parent.stlab.cc/2021/03/31/move-annoyance.html</a></p>
+<ul>
+<li>如果一个类内部用(智能)指针管理了某个资源，那么 moved-from 状态之后，这个指针可能会被实现成 nullptr，这虽然是符合标准对于 moved-from object 要能够被正确析构的要求，但是如果 copy assignment 或者 move assignment 实现的不太对，就有可能出现对这个 nullptr 指针的解引用</li>
+<li>并且要非常注意避免因为这种内部实现要引入一个 empty state 来处理 equality 语义</li>
+</ul>
+<p><strong>CppCon 2021 | Using Clang LibASTMatchers for Compliance in Codebases - Jonah Jolley</strong></p>
+<ul>
+<li>利用 libclang 来做 code compliance 的 search&#x2F;match</li>
+<li>思路不错但是有点曲高和寡</li>
+</ul>
+<p><strong>CppCon 2021 | Finding Bugs Using Path-Sensitive Static Analysis - Gabor Horvath</strong></p>
+<ul>
+<li>作者是研究静态分析的 PhD 现在在 MSVC team 做静态分析，就是 MSVC static analyzer 那个</li>
+<li>但是讲的算法门槛太高了哥，完全听不懂，只能大概 get 到基础的利用几个约束做线性求值看是否存在可能性的部分</li>
+</ul>
+<p><strong>CppCon 2021 | Zen and the Art of Code Lifecycle Maintenance - Phil Nash</strong></p>
+<ul>
+<li>quality system</li>
+<li>handling error</li>
+<li>use type to restrict input domain</li>
+</ul>
+<p><strong>C++ Weekly - Ep 265 - C++20’s std::bit_cast</strong></p>
+<ul>
+<li>type punning 在 C++ 中是 UB，所以也是合法的</li>
+<li>另外，不管是 reinterpret_cast 还是 <code>std::memcpy</code> 都没法在 constexpr 中使用，而 <code>std::bit_cast</code> 是允许的</li>
+</ul>
+<p>#2</p>
+<p>最近写 learn-cxx-coroutine 的时候发现生成的 main module 的 CMakeLists.txt 中的 sanitizer 的设置遗留了之前 POSIX only 的部分没有清理，所以就抽了个时间 cleanup 了一下</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/kingsamchen/anvil/pull/18">https://github.com/kingsamchen/anvil/pull/18</a></p>
+<p>#3</p>
+<p>最近学习 moderncpp 的 learn coroutine mini-series 照葫芦画瓢写了一些代码，但是都是学习性质的就不放了。</p>
+<p>另外上周基本没有抽时间看书和做线性代数的习题 🤣</p>
+<hr>
+<p>好了这周就这样，下周见</p>
+</div><div class="tags"><a href="/tags/%E6%9D%82%E8%AE%B0/"><i class="fa fa-tag"></i>杂记</a></div><div class="post-nav"><a class="next" href="/2024/06/24/weekly-2024-jun-3/">一周杂记 in Week 3 June 2024</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://kingsamchen.github.io/2024/07/01/weekly-2024-jun-4/';
+    this.page.identifier = '2024/07/01/weekly-2024-jun-4/';
+    this.page.title = '一周杂记 in Week 4 June 2024';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://kingsamchen-github-io.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2024/07/01/weekly-2024-jun-4/">一周杂记 in Week 4 June 2024</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/06/24/weekly-2024-jun-3/">一周杂记 in Week 3 June 2024</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/06/17/weekly-2024-jun-2/">一周杂记 in Week 2 June 2024</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/06/16/src-study-tl-generator/">TartanLlama/generator 源码分析</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/06/12/weekly-2024-jun-1/">一周杂记 in Week 1 June 2024</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/06/03/weekly-2024-may-5/">一周杂记 in Week 5 May 2024</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/05/27/weekly-2024-may-4/">一周杂记 in Week 4 May 2024</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/05/20/weekly-2024-may-3/">一周杂记 in Week 3 May 2024</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/05/13/weekly-2024-may-2/">一周杂记 in Week 2 May 2024</a></li><li class="post-list-item"><a class="post-list-link" href="/2024/05/12/src-study-abseil-status-status/">abseil status/status 源码分析</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/rant/" style="font-size: 15px;">rant</a> <a href="/tags/life/" style="font-size: 15px;">life</a> <a href="/tags/android/" style="font-size: 15px;">android</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/crash/" style="font-size: 15px;">crash</a> <a href="/tags/breakpad/" style="font-size: 15px;">breakpad</a> <a href="/tags/cpp/" style="font-size: 15px;">cpp</a> <a href="/tags/exception/" style="font-size: 15px;">exception</a> <a href="/tags/memory-fence/" style="font-size: 15px;">memory fence</a> <a href="/tags/memory-ordering/" style="font-size: 15px;">memory ordering</a> <a href="/tags/multiple-instance/" style="font-size: 15px;">multiple instance</a> <a href="/tags/c/" style="font-size: 15px;">c++</a> <a href="/tags/enum/" style="font-size: 15px;">enum</a> <a href="/tags/flag/" style="font-size: 15px;">flag</a> <a href="/tags/bitwise%EF%BC%8C-SFINAE/" style="font-size: 15px;">bitwise， SFINAE</a> <a href="/tags/KBase/" style="font-size: 15px;">KBase</a> <a href="/tags/command-line/" style="font-size: 15px;">command-line</a> <a href="/tags/abstraction/" style="font-size: 15px;">abstraction</a> <a href="/tags/%E6%A2%AF%E5%AD%90/" style="font-size: 15px;">梯子</a> <a href="/tags/shadowsocks/" style="font-size: 15px;">shadowsocks</a> <a href="/tags/trojan/" style="font-size: 15px;">trojan</a> <a href="/tags/socat/" style="font-size: 15px;">socat</a> <a href="/tags/windows/" style="font-size: 15px;">windows</a> <a href="/tags/design/" style="font-size: 15px;">design</a> <a href="/tags/environment/" style="font-size: 15px;">environment</a> <a href="/tags/buddy-allocator/" style="font-size: 15px;">buddy-allocator</a> <a href="/tags/algorithms/" style="font-size: 15px;">algorithms</a> <a href="/tags/C-17/" style="font-size: 15px;">C++ 17</a> <a href="/tags/string-view/" style="font-size: 15px;">string_view</a> <a href="/tags/tokenizer/" style="font-size: 15px;">tokenizer</a> <a href="/tags/asio/" style="font-size: 15px;">asio</a> <a href="/tags/cmake/" style="font-size: 15px;">cmake</a> <a href="/tags/anvil/" style="font-size: 15px;">anvil</a> <a href="/tags/project-management/" style="font-size: 15px;">project management</a> <a href="/tags/atoi/" style="font-size: 15px;">atoi</a> <a href="/tags/golang/" style="font-size: 15px;">golang</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/cfs/" style="font-size: 15px;">cfs</a> <a href="/tags/non-capturing-lambda/" style="font-size: 15px;">non-capturing lambda</a> <a href="/tags/function-pointer/" style="font-size: 15px;">function pointer</a> <a href="/tags/obs-studio/" style="font-size: 15px;">obs-studio</a> <a href="/tags/inno-setup/" style="font-size: 15px;">inno setup</a> <a href="/tags/installer/" style="font-size: 15px;">installer</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/Unix/" style="font-size: 15px;">Unix</a> <a href="/tags/signal/" style="font-size: 15px;">signal</a> <a href="/tags/signalfd/" style="font-size: 15px;">signalfd</a> <a href="/tags/self-pipe-trick/" style="font-size: 15px;">self-pipe trick</a> <a href="/tags/cant/" style="font-size: 15px;">cant</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/HandlerThread/" style="font-size: 15px;">HandlerThread</a> <a href="/tags/Looper/" style="font-size: 15px;">Looper</a> <a href="/tags/Handler/" style="font-size: 15px;">Handler</a> <a href="/tags/MessageLoop/" style="font-size: 15px;">MessageLoop</a> <a href="/tags/http/" style="font-size: 15px;">http</a> <a href="/tags/proxy/" style="font-size: 15px;">proxy</a> <a href="/tags/thread-pool/" style="font-size: 15px;">thread-pool</a> <a href="/tags/chromium/" style="font-size: 15px;">chromium</a> <a href="/tags/urlfetcher/" style="font-size: 15px;">urlfetcher</a> <a href="/tags/wireshark/" style="font-size: 15px;">wireshark</a> <a href="/tags/localhost/" style="font-size: 15px;">localhost</a> <a href="/tags/source-internals/" style="font-size: 15px;">source internals</a> <a href="/tags/message-loop/" style="font-size: 15px;">message-loop</a> <a href="/tags/SFINAE/" style="font-size: 15px;">SFINAE</a> <a href="/tags/template/" style="font-size: 15px;">template</a> <a href="/tags/visual-studio/" style="font-size: 15px;">visual studio</a> <a href="/tags/libx264/" style="font-size: 15px;">libx264</a> <a href="/tags/vcpkg/" style="font-size: 15px;">vcpkg</a> <a href="/tags/shared-ptr/" style="font-size: 15px;">shared_ptr</a> <a href="/tags/type-injection/" style="font-size: 15px;">type injection</a> <a href="/tags/shared-ptr-internals/" style="font-size: 15px;">shared_ptr-internals</a> <a href="/tags/source-code-study/" style="font-size: 15px;">source-code-study</a> <a href="/tags/weak-ptr/" style="font-size: 15px;">weak_ptr</a> <a href="/tags/base-lib/" style="font-size: 15px;">base lib</a> <a href="/tags/tag-dispatching/" style="font-size: 15px;">tag dispatching</a> <a href="/tags/boost/" style="font-size: 15px;">boost</a> <a href="/tags/libstdc/" style="font-size: 15px;">libstdc++</a> <a href="/tags/gcc/" style="font-size: 15px;">gcc</a> <a href="/tags/clang/" style="font-size: 15px;">clang</a> <a href="/tags/sfinae/" style="font-size: 15px;">sfinae</a> <a href="/tags/google-breakpad/" style="font-size: 15px;">google-breakpad</a> <a href="/tags/invalid-paramter/" style="font-size: 15px;">invalid paramter</a> <a href="/tags/operator/" style="font-size: 15px;">operator[]</a> <a href="/tags/owner-semantics/" style="font-size: 15px;">owner semantics</a> <a href="/tags/view-semantics/" style="font-size: 15px;">view semantics</a> <a href="/tags/msvc/" style="font-size: 15px;">msvc</a> <a href="/tags/ebo/" style="font-size: 15px;">ebo</a> <a href="/tags/multiple-inheritance/" style="font-size: 15px;">multiple inheritance</a> <a href="/tags/Visual-Studio/" style="font-size: 15px;">Visual Studio</a> <a href="/tags/debugger/" style="font-size: 15px;">debugger</a> <a href="/tags/UTF-8/" style="font-size: 15px;">UTF-8</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/haskell/" style="font-size: 15px;">haskell</a> <a href="/tags/infix-operator/" style="font-size: 15px;">infix operator</a> <a href="/tags/error-handling/" style="font-size: 15px;">error handling</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/mint/" style="font-size: 15px;">mint</a> <a href="/tags/%E7%A3%81%E7%9B%98/" style="font-size: 15px;">磁盘</a> <a href="/tags/%E6%89%A9%E5%AE%B9/" style="font-size: 15px;">扩容</a> <a href="/tags/line-ending/" style="font-size: 15px;">line ending</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://www.daozhihun.com/" title="刀之魂 | 大木老师成长日记" target="_blank">刀之魂 | 大木老师成长日记</a><ul></ul><a href="https://blog.nlogn.cn/" title="帧哥 | 硅谷谈撸管" target="_blank">帧哥 | 硅谷谈撸管</a><ul></ul><a href="https://blog.chichou.me/" title="ChiChou | 首席安全地球仪切图总奸" target="_blank">ChiChou | 首席安全地球仪切图总奸</a><ul></ul><a href="https://fleurer.github.io/" title="Fleurer-lee | F叔的读书笔记（大量干货）" target="_blank">Fleurer-lee | F叔的读书笔记（大量干货）</a><ul></ul><a href="https://vizee.org/" title="Vizee | 即将走上人生巅峰推萝莉的章总" target="_blank">Vizee | 即将走上人生巅峰推萝莉的章总</a><ul></ul><a href="https://blog.thecjw.me/" title="TheCJW | 爱弹棉花的小伟" target="_blank">TheCJW | 爱弹棉花的小伟</a><ul></ul><a href="https://newbiecoder.0ginr.com/blog/" title="Newbie Coder | 萌萌哒的炉子" target="_blank">Newbie Coder | 萌萌哒的炉子</a><ul></ul><a href="https://frankpie.github.io/" title="裴草莓 | 愤怒的老司机" target="_blank">裴草莓 | 愤怒的老司机</a><ul></ul><a href="https://beanbee.me/" title="陈老师 | Beanbee.Max" target="_blank">陈老师 | Beanbee.Max</a><ul></ul><a href="https://sunus.me/" title="Sunus | 李师傅食品厂CEO" target="_blank">Sunus | 李师傅食品厂CEO</a><ul></ul><a href="http://www.tolower.net/" title="Lower | 喊大木大哥的小弟" target="_blank">Lower | 喊大木大哥的小弟</a><ul></ul><a href="http://mrljdx.com/" title="Mrljdx | 大保健老司机" target="_blank">Mrljdx | 大保健老司机</a><ul></ul><a href="https://www.mydavelv.net/" title="Davelv | 江湖人称大尾驴" target="_blank">Davelv | 江湖人称大尾驴</a></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> Recent Comments</i></div><script type="text/javascript" src="//kingsamchen-github-io.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2024 <a href="/." rel="nofollow">KC的废墟堆.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
