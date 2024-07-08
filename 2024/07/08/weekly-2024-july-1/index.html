@@ -71,6 +71,11 @@
 <p>所以就想着参照之前给 nlohmann json 做的 JSON SERDE 宏，做一套类似的生成 <code>cpr::Parameters</code> 的宏</p>
 <p>代码不复杂，并且因为字段类型强制都是 string，所以需要做的 trick 少了一些 <a target="_blank" rel="noopener" href="https://github.com/kingsamchen/Eureka/pull/24">https://github.com/kingsamchen/Eureka/pull/24</a></p>
 <p>PS：如果你的项目用 fmtlib 的话，stringify 直接用 <code>fmt::to_string()</code> 就行了</p>
+<p>PPS：这次又一次遇到了 MSVC 下 <code>__VA_ARGS__</code> 展开不正确的问题，这次 mark 一下免得以后忘了</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly">https://stackoverflow.com/questions/5134523/msvc-doesnt-expand-va-args-correctly</a></li>
+<li><a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/cpp/preprocessor/preprocessor-experimental-overview?view=msvc-160">https://learn.microsoft.com/en-us/cpp/preprocessor/preprocessor-experimental-overview?view=msvc-160</a></li>
+</ul>
 <hr>
 <p>好了这周就这样，下周见</p>
 </div><div class="tags"><a href="/tags/%E6%9D%82%E8%AE%B0/"><i class="fa fa-tag"></i>杂记</a></div><div class="post-nav"><a class="next" href="/2024/07/01/weekly-2024-jun-4/">一周杂记 in Week 4 June 2024</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
