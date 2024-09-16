@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2024-09-09T12:01:13.523Z</updated>
+  <updated>2024-09-16T06:52:55.363Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Sep 2024</title>
+    <link href="http://kingsamchen.github.io/2024/09/16/weekly-2024-sep-2/"/>
+    <id>http://kingsamchen.github.io/2024/09/16/weekly-2024-sep-2/</id>
+    <published>2024-09-16T06:27:54.000Z</published>
+    <updated>2024-09-16T06:52:55.363Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（09&amp;#x2F;09 ~ 09&amp;#x2F;15）是9月份第二周，09&amp;#x2F;15 是中秋假期第一天&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Sep 2024</title>
@@ -510,40 +536,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>abseil status/status 源码分析</title>
-    <link href="http://kingsamchen.github.io/2024/05/12/src-study-abseil-status-status/"/>
-    <id>http://kingsamchen.github.io/2024/05/12/src-study-abseil-status-status/</id>
-    <published>2024-05-12T06:52:37.000Z</published>
-    <updated>2024-05-12T07:02:46.168Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;Revision：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;LTS_2024_01_16&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;💡 LTS_2024_01_16 开始 rep_ 成员的解释开始发生变化，所以之前版本的需要找对应源码&lt;/p&gt;
-&lt;h2 id=&quot;Status-成员结构&quot;&gt;&lt;a</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="abseil" scheme="http://kingsamchen.github.io/tags/abseil/"/>
-    
-    <category term="absl::Status" scheme="http://kingsamchen.github.io/tags/absl-Status/"/>
     
   </entry>
   
