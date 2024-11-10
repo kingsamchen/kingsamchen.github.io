@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2024-11-05T16:52:39.570Z</updated>
+  <updated>2024-11-10T17:08:38.873Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -17,9 +17,47 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>码农安装好 Windows 11 后要做的1001件事，以及如何拯救就电脑上的 vagrant vm</title>
+    <link href="http://kingsamchen.github.io/2024/11/10/must-dos-and-rescue-vagrant-vm-after-installing-windows-11/"/>
+    <id>http://kingsamchen.github.io/2024/11/10/must-dos-and-rescue-vagrant-vm-after-installing-windows-11/</id>
+    <published>2024-11-10T08:34:06.000Z</published>
+    <updated>2024-11-10T17:08:38.873Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;系统装的是 Windows 11 Pro 24H2，没有选用 LTSC 的原因是感觉必要性不大而且看某些资料的描述 LTSC 可能并不适合开发者。&lt;/p&gt;
+&lt;p&gt;另，激活用的是14年从刀老师那边要来的 product license，研究之后发现居然是个企业 MAK</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
+    
+    <category term="vagrant" scheme="http://kingsamchen.github.io/tags/vagrant/"/>
+    
+    <category term="telegram" scheme="http://kingsamchen.github.io/tags/telegram/"/>
+    
+    <category term="font" scheme="http://kingsamchen.github.io/tags/font/"/>
+    
+    <category term="scoop" scheme="http://kingsamchen.github.io/tags/scoop/"/>
+    
+    <category term="dev drive" scheme="http://kingsamchen.github.io/tags/dev-drive/"/>
+    
+  </entry>
+  
+  <entry>
     <title>一周杂记 in Week 5 Oct 2024</title>
-    <link href="http://kingsamchen.github.io/2024/11/04/weekly-2024-nov-1/"/>
-    <id>http://kingsamchen.github.io/2024/11/04/weekly-2024-nov-1/</id>
+    <link href="http://kingsamchen.github.io/2024/11/04/weekly-2024-oct-5/"/>
+    <id>http://kingsamchen.github.io/2024/11/04/weekly-2024-oct-5/</id>
     <published>2024-11-03T16:17:19.000Z</published>
     <updated>2024-11-05T16:52:39.570Z</updated>
     
@@ -496,32 +534,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（06&amp;#x2F;24 ~ 06&amp;#x2F;30）是六月份第四周，六月最后一周。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 June 2024</title>
-    <link href="http://kingsamchen.github.io/2024/06/24/weekly-2024-jun-3/"/>
-    <id>http://kingsamchen.github.io/2024/06/24/weekly-2024-jun-3/</id>
-    <published>2024-06-24T14:12:43.000Z</published>
-    <updated>2024-06-24T15:41:45.124Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（06&amp;#x2F;17 ~ 06&amp;#x2F;23）是六月份第三周，这周充满了遗憾 😩&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
