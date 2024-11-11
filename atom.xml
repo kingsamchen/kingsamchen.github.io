@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2024-11-10T17:08:38.873Z</updated>
+  <updated>2024-11-11T15:28:07.791Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Nov 2024</title>
+    <link href="http://kingsamchen.github.io/2024/11/11/weekly-2024-nov-1/"/>
+    <id>http://kingsamchen.github.io/2024/11/11/weekly-2024-nov-1/</id>
+    <published>2024-11-10T17:12:32.000Z</published>
+    <updated>2024-11-11T15:28:07.791Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（11&amp;#x2F;04 ~ 11&amp;#x2F;10）是十一月份的第一周，天气开始正式转凉。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>码农安装好 Windows 11 后要做的1001件事，以及如何拯救就电脑上的 vagrant vm</title>
@@ -508,32 +534,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（07&amp;#x2F;01 ~ 07&amp;#x2F;07）是七月份的第一周，梅雨季结束之后直接进入酷暑，每天气温都是30℃以上，白天大部分甚至都在35℃以上…&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 June 2024</title>
-    <link href="http://kingsamchen.github.io/2024/07/01/weekly-2024-jun-4/"/>
-    <id>http://kingsamchen.github.io/2024/07/01/weekly-2024-jun-4/</id>
-    <published>2024-07-01T02:20:14.000Z</published>
-    <updated>2024-07-01T13:23:22.874Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（06&amp;#x2F;24 ~ 06&amp;#x2F;30）是六月份第四周，六月最后一周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
