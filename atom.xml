@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-03-19T02:55:05.159Z</updated>
+  <updated>2025-03-24T16:25:42.596Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,30 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Mar 2025</title>
+    <link href="http://kingsamchen.github.io/2025/03/24/weekly-2025-mar-3/"/>
+    <id>http://kingsamchen.github.io/2025/03/24/weekly-2025-mar-3/</id>
+    <published>2025-03-24T15:54:31.000Z</published>
+    <updated>2025-03-24T16:25:42.596Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;17 ~ 03&amp;#x2F;23）是3月份第三周，天气短暂的开始转热，感觉已经要一秒入夏了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Mar 2025</title>
@@ -507,44 +531,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>码农安装好 Windows 11 后要做的1001件事，以及如何拯救就电脑上的 vagrant vm</title>
-    <link href="http://kingsamchen.github.io/2024/11/10/must-dos-and-rescue-vagrant-vm-after-installing-windows-11/"/>
-    <id>http://kingsamchen.github.io/2024/11/10/must-dos-and-rescue-vagrant-vm-after-installing-windows-11/</id>
-    <published>2024-11-10T08:34:06.000Z</published>
-    <updated>2024-11-10T17:08:38.873Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;系统装的是 Windows 11 Pro 24H2，没有选用 LTSC 的原因是感觉必要性不大而且看某些资料的描述 LTSC 可能并不适合开发者。&lt;/p&gt;
-&lt;p&gt;另，激活用的是14年从刀老师那边要来的 product license，研究之后发现居然是个企业 MAK</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="windows" scheme="http://kingsamchen.github.io/tags/windows/"/>
-    
-    <category term="vagrant" scheme="http://kingsamchen.github.io/tags/vagrant/"/>
-    
-    <category term="telegram" scheme="http://kingsamchen.github.io/tags/telegram/"/>
-    
-    <category term="font" scheme="http://kingsamchen.github.io/tags/font/"/>
-    
-    <category term="scoop" scheme="http://kingsamchen.github.io/tags/scoop/"/>
-    
-    <category term="dev drive" scheme="http://kingsamchen.github.io/tags/dev-drive/"/>
     
   </entry>
   
