@@ -1,0 +1,182 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Gone with the ruins"><title>hashids: generate short unique ids from integers | KC的废墟堆</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">hashids: generate short unique ids from integers</h1><a id="logo" href="/.">KC的废墟堆</a><p class="description">Will you serve in Heaven, or rule in Hell</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/source-code-reading/"><i class="fa fa-archive"> 源码分析</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">hashids: generate short unique ids from integers</h1><div class="post-meta">2023-08-07<span> | </span><span class="category"><a href="/categories/PROGRAMMING/">PROGRAMMING</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2023/08/07/hashids-generate-short-unique-ids-from-integers/" href="/2023/08/07/hashids-generate-short-unique-ids-from-integers/#disqus_thread"></a><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">Contents</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-hashids"><span class="toc-text">什么是 hashids</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%85%B7%E4%BD%93%E7%AE%97%E6%B3%95"><span class="toc-text">具体算法</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x0-Initialize-Separator-Alphabet-Content-Alphabet-Guard-Alphabet"><span class="toc-text">0x0 Initialize Separator-Alphabet &amp; Content-Alphabet &amp; Guard-Alphabet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x1-Reorder-Shuffle-Alphabet-with-Salt"><span class="toc-text">0x1 Reorder&#x2F;Shuffle Alphabet with Salt</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x2-Encode"><span class="toc-text">0x2 Encode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x3-Specified-Min-Length"><span class="toc-text">0x3 Specified Min Length</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x3-Decode"><span class="toc-text">0x3 Decode</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x4-Custom-Alphabet"><span class="toc-text">0x4 Custom Alphabet</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Rework-with-C"><span class="toc-text">Rework with C++</span></a></li></ol></div></div><div class="post-content"><h2 id="什么是-hashids"><a href="#什么是-hashids" class="headerlink" title="什么是 hashids"></a>什么是 hashids</h2><p>hashids 是一种可以将一个或多个 integer(s) 编码为字符串的算法，并且支持自定义字母表和盐。</p>
+<p>例如可以将</p>
+<ul>
+<li><code>347</code> 搭配 <code>salt=&quot;this is my salt&quot;</code> 编码为 <code>yr8</code></li>
+<li><code>[27, 986]</code> 搭配相同的盐编码为 <code>3kTMd</code></li>
+</ul>
+<p>总结一下特性就是</p>
+<ol>
+<li>Generate short, unique, non-sequential ids from <strong>non-negative numbers</strong> $(n\geqslant0)$</li>
+<li>Allow <strong>custom alphabet and custom salt</strong>; so ids are unique only to you</li>
+<li>Incremental input is mangled to stay unguessable</li>
+</ol>
+<p>FYI：他们最近换了个品牌叫 sqids <a target="_blank" rel="noopener" href="https://sqids.org/%E3%80%82%E5%89%8D%E7%AB%AF%E7%9A%84%E4%BA%BA%E7%9C%9F%E8%83%BD%E6%8A%98%E8%85%BE">https://sqids.org/。前端的人真能折腾</a>…</p>
+<h2 id="具体算法"><a href="#具体算法" class="headerlink" title="具体算法"></a>具体算法</h2><p>注：这部分算法是根据 hashids-python 记录的</p>
+<h3 id="0x0-Initialize-Separator-Alphabet-Content-Alphabet-Guard-Alphabet"><a href="#0x0-Initialize-Separator-Alphabet-Content-Alphabet-Guard-Alphabet" class="headerlink" title="0x0 Initialize Separator-Alphabet &amp; Content-Alphabet &amp; Guard-Alphabet"></a>0x0 Initialize Separator-Alphabet &amp; Content-Alphabet &amp; Guard-Alphabet</h3><p>默认字母表：base62，即 a-zA-Z0-9</p>
+<p>最终生成的字符串使用的字符必须全都来自于 alphabet，但是这个 alphabet 会被拆成两个<strong>核心</strong>子表（因为最终是三个表）：</p>
+<ol>
+<li><p>separators 表（下面简称 SA）：用于分隔实际转换生成的字符<br>生成方式是从基表 <code>&#39;cfhistuCFHISTU&#39;</code> 中去掉初始 alphabet 中不存在的字符，因为前面讲了最终生成的字符串的所有字符必须来自 alphabet</p>
+<p> 💡 基表选用这部分字符的目的之一是为了保证生成的最终字符串不包含 SHIT 等脏词</p>
+</li>
+<li><p>内容字母表（下面简称 CA）：一开始的 alphabet 去掉 separators 表字符之后的字符表<br>需要同时确保这个表<strong>没有重复字符</strong></p>
+</li>
+<li><p>长度上需要满足 $|SA|+|CA| \geqslant 16$ 否则给定的 alphabet 不合格</p>
+</li>
+<li><p>将 <em><strong>SA</strong></em> 结合 <em><strong>salt</strong></em> 进行 shuffle；到这步 <em><strong>SA</strong></em> 的初始化就完成了</p>
+</li>
+<li><p>为了保证 <em><strong>SA</strong></em> 中的字符能够比较“均匀”的混入正文字符中，<em><strong>SA</strong></em> 的长度和 <em><strong>CA</strong></em> 长度相差不能太大：需要保证</p>
+<p> $$<br> \frac{|CA|}{|SA|} \leqslant 3.5<br> $$</p>
+<p> 即，单个 separator 字符不能“搭配”超过3.5个正文字符。</p>
+<p> 变形一下公式可以换算得到 <em>minimum-separators</em> 的个数，这个数必须 ≤ 前面 <em><strong>SA</strong></em> 的大小</p>
+</li>
+<li><p>如果 5. 不满足要求那么需要对 <em><strong>SA</strong></em> 和 <em><strong>CA</strong></em> 进行微调整：因为 <em><strong>CA</strong></em> 多了 <em><strong>SA</strong></em> 少了所以需要匀一下：</p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">separators += alphabet[:number_of_missing_separators]</span><br><span class="line">alphabet = alphabet[number_of_missing_separators:]</span><br><span class="line">len_alphabet = <span class="built_in">len</span>(alphabet)</span><br></pre></td></tr></table></figure>
+
+<p> 因为 <em><strong>SA</strong></em> 前面已经 shuffle 过了，所以即使这里做了挪动，也不需要再次进行 shuffle；只需要更新一下长度即可</p>
+</li>
+<li><p>现在可以对 <em><strong>CA</strong></em> 也结合 salt 做一次 shuffle 了；到这步 <em><strong>CA</strong></em> 的初始化也大致算完成了</p>
+</li>
+<li><p>最后需要处理 guard alphabet（后面简称 <em><strong>GA</strong></em>），这个表是从 <em><strong>SA</strong></em> 或者 <em><strong>CA</strong></em> “匀”出来的。首先根据公式计算需要的 guards 数量</p>
+<p> $$<br> K&#x3D;\left \lceil \frac{|CA|}{12} \right \rceil<br> $$</p>
+</li>
+<li><p>再看 $|CA| \lt 3$ 是否成立，如果成立那么从 <em><strong>SA</strong></em> 头部匀给 <em><strong>GA</strong></em>，否则则从 <em><strong>CA</strong></em> 头部匀给 <em><strong>GA</strong></em></p>
+ <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">num_guards = _index_from_ratio(len_alphabet, RATIO_GUARDS)</span><br><span class="line"><span class="keyword">if</span> len_alphabet &lt; <span class="number">3</span>:</span><br><span class="line">    guards = separators[:num_guards]</span><br><span class="line">    separators = separators[num_guards:]</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    guards = alphabet[:num_guards]</span><br><span class="line">    alphabet = alphabet[num_guards:]</span><br></pre></td></tr></table></figure>
+
+<p> 考虑到来源，<em><strong>GA</strong></em> 就不再需要 shuffle 了</p>
+</li>
+</ol>
+<p>至此，初始化工作最重要的三个字母表就都确定了</p>
+<h3 id="0x1-Reorder-Shuffle-Alphabet-with-Salt"><a href="#0x1-Reorder-Shuffle-Alphabet-with-Salt" class="headerlink" title="0x1 Reorder&#x2F;Shuffle Alphabet with Salt"></a>0x1 Reorder&#x2F;Shuffle Alphabet with Salt</h3><p>Reorder 只会在提供了 Salt 的情况下进行。</p>
+<p>本质是 swap characters as per salt，即利用 salt 数据来在每一轮迭代产生一个下表 <code>j</code>，来和遍历下标 <code>i</code> 产生交换。</p>
+<p>伪码描述如下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">fn shuffle(str, salt) -&gt; string &#123;</span><br><span class="line">  if len(salt) == 0 &#123;</span><br><span class="line">    return str</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  salt_idx, sum = 0, 0</span><br><span class="line">  for iq = len(str) - 1 ... 1 &#123;</span><br><span class="line">    n = ascii(salt[salt_idx])</span><br><span class="line">    sum += n</span><br><span class="line">    j = (salt_index + n + sum) % i</span><br><span class="line">    str[i] &lt;-&gt; str[j]</span><br><span class="line">    salt_idx = (salt_idx + 1) % len(salt)</span><br><span class="line">  &#125;</span><br><span class="line">  return str</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="0x2-Encode"><a href="#0x2-Encode" class="headerlink" title="0x2 Encode"></a>0x2 Encode</h3><p>Encode 的输入是一个 array of non-negative integers；这个要求是 hashids 算法一开始就要求的。</p>
+<ol>
+<li><p>首先计算输入序列的 value-hash：</p>
+<p> <code>i</code> 是 <code>x</code> 对应的下标</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">value_hash = 0</span><br><span class="line">for i, value in values &#123;</span><br><span class="line">  value_hash += value % (i + 100)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>确定 lottery character，这里会用到 <em><strong>CA</strong></em></p>
+ <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">lottery = CA[value_hash % <span class="built_in">len</span>(CA)]</span><br></pre></td></tr></table></figure>
+
+<p> 并且 lottery 是最终生成内容 <code>encoded</code> 的第一个字符</p>
+</li>
+<li><p>关键一步：逐一迭代输入序列的每个元素，并且每轮迭代</p>
+<ol>
+<li><p>利用 lottery, salt 和上一轮的 CA 生成 CA_Salt</p>
+</li>
+<li><p>利用 CA 和 CA_Salt 对 CA 进行 reorder&#x2F;shuffle；这里的 reorder 是强制的，因为 CA_Salt 不会为空</p>
+</li>
+<li><p>结合这轮的 value 和 CA 做一个 hash 算出本轮的内容字符，append 到 <code>encoded</code></p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">fn hash(number, alphabet) -&gt; string &#123;</span><br><span class="line">  string hashed</span><br><span class="line">  while true &#123;</span><br><span class="line">    hashed = alphabet[number % len(alphabet)] + hashed</span><br><span class="line">    number /= len(alphabet)</span><br><span class="line">    if number == 0 &#123;</span><br><span class="line">      return hashed</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>利用 hash 结果来选择本轮的 separator 字符，也 append 到 <code>encoded</code> 上</p>
+</li>
+</ol>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">for i, value in values &#123;</span><br><span class="line">  ca_salt = concat(lottery, salt, ca)[:len(ca)]  // salt may be empty</span><br><span class="line">  ca = shuffle(ca, ca_salt)</span><br><span class="line">  hashed = hash(value, ca)</span><br><span class="line">  encoded.append(hashed)</span><br><span class="line">  value %= ascii(hashed[0]) + i</span><br><span class="line">  encoded.append(sa[value % len(sa)])</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">encoded.pop_back()  // remove last sep</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>如果不要求 minimum length 的话 encode 操作到这里就结束了。</p>
+<h3 id="0x3-Specified-Min-Length"><a href="#0x3-Specified-Min-Length" class="headerlink" title="0x3 Specified Min Length"></a>0x3 Specified Min Length</h3><p>如果一开始指定了 encode 要保证的最小长度，那么还需要额外考虑 <code>encoded</code> 长度不够的问题。</p>
+<p>额外的长度由 Guard Alphabet 提供。</p>
+<ol>
+<li><p>先试试往头部加一个 guard</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">guard_idx = (value_hash + ascii(encoded[0])) % len(GA)</span><br><span class="line">encoded.prepend(GA[guard_idx])</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果不够的话再往尾部加一个 guard</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">guard_idx = (value_hash + ascii(encoded[2])) % len(GA)</span><br><span class="line">encoded.append(GA[guard_idx])</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>如果还不够最小长度那就只能继续花式增加，但是这一步反而是从 <em><strong>CA</strong></em> 而不是 <em><strong>GA</strong></em> 取字母了。</p>
+<p> 不过要注意这里的 CA 是前面 encode 过程中用剩下的 <em><strong>CA</strong></em>，不是原始未经修改的 <em><strong>CA</strong></em></p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">mid = len(ca) / 2</span><br><span class="line">while len(encoded) &lt; min_length &#123;</span><br><span class="line">  ca = shuffle(ca, ca)</span><br><span class="line">  encoded = ca[mid:] + encoded + ca[:mid]</span><br><span class="line">  excess = len(encoded) - min_length</span><br><span class="line">  if excess &gt; 0 &#123;  // trim a little</span><br><span class="line">    idx = excess / 2</span><br><span class="line">    encoded = encoded[idx:idx+min_length]</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="0x3-Decode"><a href="#0x3-Decode" class="headerlink" title="0x3 Decode"></a>0x3 Decode</h3><p>💡 Decode 必须用相同的 hashid 对象操作，以保证 CA&#x2F;SA&#x2F;GA&#x2F;Salt 一致</p>
+<ol>
+<li><p>先去掉保证长度中额外加的 guard 字符和补充 CA</p>
+<p> 做法是直接对 <code>encoded</code> 以 GA 中任意字符为 delim 做 split，并且切出来的空串也要保留，即</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">split(&quot;1abc1&quot;, &quot;123&quot;) -&gt; (&#x27;&#x27;, &#x27;abc&#x27;, &#x27;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p> 这样保证长度中的四种情况都可以用如下策略处理</p>
+<ul>
+<li><p>split 如果只有一个 part，那么 <code>parts[0]</code> 就是原始 <code>encoded</code></p>
+</li>
+<li><p>如果有2个或3个part，那么 <code>parts[1]</code> 就是原始 <code>encoded</code></p>
+<p>  并且理论上最多只有3个parts</p>
+</li>
+</ul>
+<p> 到这里可以发现前面 ensure length 的时候本质上是以原始 encoded 为中心往两边扩张</p>
+</li>
+<li><p>如果选中的 encoded 是空那么说明有问题，需要专门考虑一下</p>
+</li>
+<li><p><code>encoded[0]</code> 是 lottery，并且移除</p>
+</li>
+<li><p>用同样的 split 处理方法以 <em><strong>SA</strong></em> 为 delim 进行切分</p>
+</li>
+<li><p>对每个 part 做 unhash 操作</p>
+<ol>
+<li><p>用和 encode 一样的操作拿到编码时的 CA</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ca_salt = concat(lottery, salt, ca)[:len(ca)]  // salt may be empty</span><br><span class="line">ca = shuffle(ca, ca_salt)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>执行 unhash 算法解出这个 part 对应的原始值</p>
+ <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fn unhash(hashed, ca) -&gt; int &#123;</span><br><span class="line">  num = 0</span><br><span class="line">  for c in hashed &#123;</span><br><span class="line">    pos = ca.index(c)</span><br><span class="line">    num *= len(ca)</span><br><span class="line">    num += pos</span><br><span class="line">  &#125;</span><br><span class="line">  return num</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+</li>
+<li><p>最后做一个 sanity check，即对 decode 的数值做一次 encode 比较是否和输入一样</p>
+</li>
+</ol>
+<h3 id="0x4-Custom-Alphabet"><a href="#0x4-Custom-Alphabet" class="headerlink" title="0x4 Custom Alphabet"></a>0x4 Custom Alphabet</h3><p>alphabet 的作用和参与过程前面讲了，这里就总结一下自定义 alphabet 的要求：</p>
+<ul>
+<li>不能有重复字符</li>
+<li>长度不能小于16个字符</li>
+</ul>
+<h2 id="Rework-with-C"><a href="#Rework-with-C" class="headerlink" title="Rework with C++"></a>Rework with C++</h2><p>拿 C++ 重新写了一遍算法实现，并且是 bear performance with mind 的态度</p>
+<p>代码在 <a target="_blank" rel="noopener" href="https://github.com/kingsamchen/Eureka/tree/master/hashids/hashids">https://github.com/kingsamchen/Eureka/tree/master/hashids/hashids</a></p>
+</div><div class="tags"><a href="/tags/hashids/"><i class="fa fa-tag"></i>hashids</a><a href="/tags/unique-id/"><i class="fa fa-tag"></i>unique id</a></div><div class="post-nav"><a class="pre" href="/2023/08/15/weekly-2023-aug-2/">一周杂记 in Week 2 Aug 2023</a><a class="next" href="/2023/08/07/weekly-2023-aug-1/">一周杂记 in Week 1 Aug 2023</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://kingsamchen.github.io/2023/08/07/hashids-generate-short-unique-ids-from-integers/';
+    this.page.identifier = '2023/08/07/hashids-generate-short-unique-ids-from-integers/';
+    this.page.title = 'hashids: generate short unique ids from integers';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://kingsamchen-github-io.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2025/05/25/weekly-2025-may-4/">一周杂记 in Week 4 May 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/05/18/weekly-2025-may-3/">一周杂记 in Week 3 May 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/05/11/weekly-2025-may-2/">一周杂记 in Week 2 May 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/05/05/weekly-2025-may-1/">一周杂记 in Week 1 May 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/04/28/weekly-2025-apr-4/">一周杂记 in Week 4 Apr 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/04/21/weekly-2025-apr-3/">一周杂记 in Week 3 Apr 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/04/13/weekly-2025-apr-2/">一周杂记 in Week 2 Apr 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/04/07/weekly-2025-apr-1/">一周杂记 in Week 1 Apr 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/30/weekly-2025-mar-4/">一周杂记 in Week 4 Mar 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/24/weekly-2025-mar-3/">一周杂记 in Week 3 Mar 2025</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/rant/" style="font-size: 15px;">rant</a> <a href="/tags/life/" style="font-size: 15px;">life</a> <a href="/tags/android/" style="font-size: 15px;">android</a> <a href="/tags/cpp/" style="font-size: 15px;">cpp</a> <a href="/tags/exception/" style="font-size: 15px;">exception</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/crash/" style="font-size: 15px;">crash</a> <a href="/tags/breakpad/" style="font-size: 15px;">breakpad</a> <a href="/tags/memory-fence/" style="font-size: 15px;">memory fence</a> <a href="/tags/memory-ordering/" style="font-size: 15px;">memory ordering</a> <a href="/tags/multiple-instance/" style="font-size: 15px;">multiple instance</a> <a href="/tags/c/" style="font-size: 15px;">c++</a> <a href="/tags/enum/" style="font-size: 15px;">enum</a> <a href="/tags/flag/" style="font-size: 15px;">flag</a> <a href="/tags/bitwise%EF%BC%8C-SFINAE/" style="font-size: 15px;">bitwise， SFINAE</a> <a href="/tags/KBase/" style="font-size: 15px;">KBase</a> <a href="/tags/command-line/" style="font-size: 15px;">command-line</a> <a href="/tags/abstraction/" style="font-size: 15px;">abstraction</a> <a href="/tags/%E6%A2%AF%E5%AD%90/" style="font-size: 15px;">梯子</a> <a href="/tags/shadowsocks/" style="font-size: 15px;">shadowsocks</a> <a href="/tags/trojan/" style="font-size: 15px;">trojan</a> <a href="/tags/socat/" style="font-size: 15px;">socat</a> <a href="/tags/windows/" style="font-size: 15px;">windows</a> <a href="/tags/design/" style="font-size: 15px;">design</a> <a href="/tags/environment/" style="font-size: 15px;">environment</a> <a href="/tags/C-17/" style="font-size: 15px;">C++ 17</a> <a href="/tags/string-view/" style="font-size: 15px;">string_view</a> <a href="/tags/tokenizer/" style="font-size: 15px;">tokenizer</a> <a href="/tags/buddy-allocator/" style="font-size: 15px;">buddy-allocator</a> <a href="/tags/algorithms/" style="font-size: 15px;">algorithms</a> <a href="/tags/anvil/" style="font-size: 15px;">anvil</a> <a href="/tags/cmake/" style="font-size: 15px;">cmake</a> <a href="/tags/project-management/" style="font-size: 15px;">project management</a> <a href="/tags/asio/" style="font-size: 15px;">asio</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/cfs/" style="font-size: 15px;">cfs</a> <a href="/tags/non-capturing-lambda/" style="font-size: 15px;">non-capturing lambda</a> <a href="/tags/function-pointer/" style="font-size: 15px;">function pointer</a> <a href="/tags/obs-studio/" style="font-size: 15px;">obs-studio</a> <a href="/tags/atoi/" style="font-size: 15px;">atoi</a> <a href="/tags/golang/" style="font-size: 15px;">golang</a> <a href="/tags/inno-setup/" style="font-size: 15px;">inno setup</a> <a href="/tags/installer/" style="font-size: 15px;">installer</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/Unix/" style="font-size: 15px;">Unix</a> <a href="/tags/signal/" style="font-size: 15px;">signal</a> <a href="/tags/signalfd/" style="font-size: 15px;">signalfd</a> <a href="/tags/self-pipe-trick/" style="font-size: 15px;">self-pipe trick</a> <a href="/tags/cant/" style="font-size: 15px;">cant</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/HandlerThread/" style="font-size: 15px;">HandlerThread</a> <a href="/tags/Looper/" style="font-size: 15px;">Looper</a> <a href="/tags/Handler/" style="font-size: 15px;">Handler</a> <a href="/tags/MessageLoop/" style="font-size: 15px;">MessageLoop</a> <a href="/tags/http/" style="font-size: 15px;">http</a> <a href="/tags/proxy/" style="font-size: 15px;">proxy</a> <a href="/tags/thread-pool/" style="font-size: 15px;">thread-pool</a> <a href="/tags/chromium/" style="font-size: 15px;">chromium</a> <a href="/tags/urlfetcher/" style="font-size: 15px;">urlfetcher</a> <a href="/tags/wireshark/" style="font-size: 15px;">wireshark</a> <a href="/tags/localhost/" style="font-size: 15px;">localhost</a> <a href="/tags/SFINAE/" style="font-size: 15px;">SFINAE</a> <a href="/tags/template/" style="font-size: 15px;">template</a> <a href="/tags/source-internals/" style="font-size: 15px;">source internals</a> <a href="/tags/message-loop/" style="font-size: 15px;">message-loop</a> <a href="/tags/visual-studio/" style="font-size: 15px;">visual studio</a> <a href="/tags/libx264/" style="font-size: 15px;">libx264</a> <a href="/tags/vcpkg/" style="font-size: 15px;">vcpkg</a> <a href="/tags/shared-ptr/" style="font-size: 15px;">shared_ptr</a> <a href="/tags/type-injection/" style="font-size: 15px;">type injection</a> <a href="/tags/tag-dispatching/" style="font-size: 15px;">tag dispatching</a> <a href="/tags/shared-ptr-internals/" style="font-size: 15px;">shared_ptr-internals</a> <a href="/tags/source-code-study/" style="font-size: 15px;">source-code-study</a> <a href="/tags/weak-ptr/" style="font-size: 15px;">weak_ptr</a> <a href="/tags/base-lib/" style="font-size: 15px;">base lib</a> <a href="/tags/boost/" style="font-size: 15px;">boost</a> <a href="/tags/libstdc/" style="font-size: 15px;">libstdc++</a> <a href="/tags/gcc/" style="font-size: 15px;">gcc</a> <a href="/tags/clang/" style="font-size: 15px;">clang</a> <a href="/tags/sfinae/" style="font-size: 15px;">sfinae</a> <a href="/tags/google-breakpad/" style="font-size: 15px;">google-breakpad</a> <a href="/tags/invalid-paramter/" style="font-size: 15px;">invalid paramter</a> <a href="/tags/operator/" style="font-size: 15px;">operator[]</a> <a href="/tags/Visual-Studio/" style="font-size: 15px;">Visual Studio</a> <a href="/tags/debugger/" style="font-size: 15px;">debugger</a> <a href="/tags/UTF-8/" style="font-size: 15px;">UTF-8</a> <a href="/tags/error-handling/" style="font-size: 15px;">error handling</a> <a href="/tags/owner-semantics/" style="font-size: 15px;">owner semantics</a> <a href="/tags/view-semantics/" style="font-size: 15px;">view semantics</a> <a href="/tags/msvc/" style="font-size: 15px;">msvc</a> <a href="/tags/ebo/" style="font-size: 15px;">ebo</a> <a href="/tags/multiple-inheritance/" style="font-size: 15px;">multiple inheritance</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/haskell/" style="font-size: 15px;">haskell</a> <a href="/tags/infix-operator/" style="font-size: 15px;">infix operator</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/mint/" style="font-size: 15px;">mint</a> <a href="/tags/%E7%A3%81%E7%9B%98/" style="font-size: 15px;">磁盘</a> <a href="/tags/%E6%89%A9%E5%AE%B9/" style="font-size: 15px;">扩容</a> <a href="/tags/ffmpeg/" style="font-size: 15px;">ffmpeg</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://www.daozhihun.com/" title="刀之魂 | 大木老师成长日记" target="_blank">刀之魂 | 大木老师成长日记</a><ul></ul><a href="https://blog.nlogn.cn/" title="帧哥 | 硅谷谈撸管" target="_blank">帧哥 | 硅谷谈撸管</a><ul></ul><a href="https://blog.chichou.me/" title="ChiChou | 首席安全地球仪切图总奸" target="_blank">ChiChou | 首席安全地球仪切图总奸</a><ul></ul><a href="https://fleurer.github.io/" title="Fleurer-lee | F叔的读书笔记（大量干货）" target="_blank">Fleurer-lee | F叔的读书笔记（大量干货）</a><ul></ul><a href="https://vizee.org/" title="Vizee | 即将走上人生巅峰推萝莉的章总" target="_blank">Vizee | 即将走上人生巅峰推萝莉的章总</a><ul></ul><a href="https://blog.thecjw.me/" title="TheCJW | 爱弹棉花的小伟" target="_blank">TheCJW | 爱弹棉花的小伟</a><ul></ul><a href="https://newbiecoder.0ginr.com/blog/" title="Newbie Coder | 萌萌哒的炉子" target="_blank">Newbie Coder | 萌萌哒的炉子</a><ul></ul><a href="https://frankpie.github.io/" title="裴草莓 | 愤怒的老司机" target="_blank">裴草莓 | 愤怒的老司机</a><ul></ul><a href="https://beanbee.me/" title="陈老师 | Beanbee.Max" target="_blank">陈老师 | Beanbee.Max</a><ul></ul><a href="https://sunus.me/" title="Sunus | 李师傅食品厂CEO" target="_blank">Sunus | 李师傅食品厂CEO</a><ul></ul><a href="http://www.tolower.net/" title="Lower | 喊大木大哥的小弟" target="_blank">Lower | 喊大木大哥的小弟</a><ul></ul><a href="http://mrljdx.com/" title="Mrljdx | 大保健老司机" target="_blank">Mrljdx | 大保健老司机</a><ul></ul><a href="https://www.mydavelv.net/" title="Davelv | 江湖人称大尾驴" target="_blank">Davelv | 江湖人称大尾驴</a></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> Recent Comments</i></div><script type="text/javascript" src="//kingsamchen-github-io.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="/." rel="nofollow">KC的废墟堆.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/x-mathjax-config">MathJax.Hub.Config({
+  tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}
+  });
+</script><script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML" async></script><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

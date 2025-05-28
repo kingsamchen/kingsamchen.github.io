@@ -1,0 +1,127 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Gone with the ruins"><title>开了个新坑 ezio | KC的废墟堆</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">开了个新坑 ezio</h1><a id="logo" href="/.">KC的废墟堆</a><p class="description">Will you serve in Heaven, or rule in Hell</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/source-code-reading/"><i class="fa fa-archive"> 源码分析</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">开了个新坑 ezio</h1><div class="post-meta">2018-08-31<span> | </span><span class="category"><a href="/categories/PROGRAMMING/">PROGRAMMING</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2018/08/31/new-toy-ezio/" href="/2018/08/31/new-toy-ezio/#disqus_thread"></a><div class="post-content"><p>前段时间分别在 Linux 和 Windows 下实现了一个简单的 TCP 网络框架之后，感觉一些必要的坑都踩的差不多了，可以开始动手写一个真正的跨平台的 TCP 网络框架了。</p>
+<p>于是就有了这个新坑：ezio。</p>
+<p>ezio 这个名字是某天跑步的时候突然想到的，有几重含义：</p>
+<ul>
+<li>致敬刺客信条里的 Ezio Auditore，寓意希望这个库能够和刺客一样，虽轻量，但需要时恰到好处，不含糊</li>
+<li>致敬（碰瓷）Boost.ASIO，因为两个名字发音非常接近</li>
+<li>第三个是朋友发现的，他把 ezio 念成了 e-z-io（easy io），于是赋予了一个新的含义</li>
+</ul>
+<p>ezio 的目标是：<strong>提供同时支持 Linux 和 Windows 的轻量型非阻塞且具备扩展性（non-blocking and scalable）的 TCP 网络框架；针对 Linux 做性能侧优化，针对 Windows 做一致性开发体验的优化。</strong></p>
+<p>这个目标初看起来有点怪异，但是确实非常实际的做法。</p>
+<p>因为 Linux 和 Windows 在网络编程上存在根本的范式差异性，所以为了提供一致的对外接口，必须要有所侧重和牺牲。Linux 目前占据了绝大多数互联网产品服务器系统的份额，而 Windows 则提供了可以说是当前最好的开发环境。</p>
+<p>ezio 这个设计目标可以使得绝大多数业务逻辑在 Windows 上开发，然后在 Linux 上进行最后的部署。</p>
+<span id="more"></span>
+
+<h2 id="一些有点技术范的讨论"><a href="#一些有点技术范的讨论" class="headerlink" title="一些有点技术范的讨论"></a>一些有点技术范的讨论</h2><p><strong>0x00</strong></p>
+<p>宏观上选用的 IO 模型是 one-loop-per-thread，并且一个 master thread 负责 accept 新连接，然后从一堆 worker thread 中选出一个将 socket 分给他。</p>
+<p>这个模型的核心是每个线程独有的 event-loop。</p>
+<p>在 Linux 上选择的显然是 non-blocking + epoll；在 Windows 上则是 IO completion port + overlapped IO。</p>
+<p><strong>0x01</strong></p>
+<p>因为 non-blocking 本质上仍是同步 IO，而后者则是实打实的异步 IO，所以这里有一个融合的问题；用俗话说就是，reactor pattern 和 proactor pattern 要如何 unify。</p>
+<p>我的策略是：将前者转换为后者，比如对于 read 操作，内部 read 完成后才通知用户，并且给到读到的数据。</p>
+<p>有人怀疑这样做会有不必要的开销，我觉得这是不对的，因为封装完善的网络框架不应该将对 socket 的 <code>read()</code> 或者 <code>write()</code> 直接暴露给用户让用户完成，相反，用户接触到的只是框架提供的一层抽象。</p>
+<p>如果直接暴露给用户，那么用户应该用 <code>read(2)</code> 去读 socket 还是用 <code>readv()</code> 呢？如果我们封装 epoll 时选择的是 edge-trigger，那么用户就一定要反复 <code>read()</code> 直到返回 <code>EAGAIN</code> .etc 这意味着用户不仅需要关心底层 IO multiplexor 的具体实现，还要自己管理应用层的 buffer。</p>
+<p>另外，我不觉得 libevent, libuv 甚至 Boost.ASIO 是封装完善的网络框架；相反，在实际工程使用它们避不开需要再往上面加一层不会太薄的封装。</p>
+<p>所以不管是 reactor 还是 proactor，这是对直接操作 multiplexor 的上下文来说的，框架用户看到的应该只是完成的通知；而性能的保证，应该落在 application-layer buffer 的实现上。</p>
+<p><strong>0x02</strong></p>
+<p>epoll 虽然是 poll 的后继者，但是在很多地方反而和 IOCP 存在相似之处，而这些地方刚好和 poll 存在差异。</p>
+<p>首先，epoll 和 IOCP 都是有状态的（stateful）。</p>
+<p>要让 epoll &#x2F; IOCP 管理一个 fd &#x2F; handle，首先要将这个 fd &#x2F; handle 与之关联；之后对这个 socket 的所有 IO 操作就可以直接从 epoll &#x2F; IOCP 中获取。</p>
+<p>这带来两个改变：</p>
+<ul>
+<li>event-loop 自身不需要维护关心的 socket 列表了，因为对应的 multiplexor 内部已经维护了一份</li>
+<li>socket 的生命周期的维护变得更加重要，尤其是 epoll 在设计上犯了一个很愚蠢创新（内部区分 file descriptor 和 file description）</li>
+</ul>
+<p>另外，无论是 <code>epoll_wait()</code> 还是 <code>GetQueuedCompletionStatusEx()</code> 都可以尝试获取指定大小的事件数组；这样的话就可以设计一个统一的优化策略：如果某次大小为 n 的数组用满了，下一轮之前可以将数组大小翻倍（或者 1.5x 放大）。</p>
+<p><strong>0x03</strong></p>
+<p>虽然理论上异步 IO 的性能要高于非阻塞同步 IO，但是异步 IO 割裂了上下文，尤其是资源上下文，因此在资源管理上充满了艰险。</p>
+<p>首先为了让 os kernel 能够直接将网卡收到的数据写入内存页，这部分内存必须事先提供；而操作系统避免内存页被内存管理 swap-out，必须将这块内存页 pin 住。</p>
+<p>对于每个发出去的 read 异步请求，都伴随着一块被 PIN 住的 mem-page，更揪心的是在请求 complete 之前，内存页始终被 pin 的死死的。</p>
+<p>如果有很多恶意连接，建立了连接之后就什么都不做，那么按照每个内存页 4K 计算，用不了多少时间内存管理就撑不住了。在 Windows 上这个时候异步的 IO 操作就会返回一个错误 <code>WSAENOBUFS</code>，表示 too many pinned memory pages。</p>
+<p>对于这个问题，我的想法是使用 read-probe-request，即对于新建立的连接，先发一个大小为 0 的异步 read，如果之后这个请求完成了，那就说明 socket 存在可读数据，后面就可以大胆读了。</p>
+<p>当然，不排除有恶意客户端针对性的搞破坏，那样就要做一些资源使用的处理了。</p>
+<p>对于 accept 调用来说，这个问题稍微没有那么严重，因为可以控制 concurrent outstanding accept requests 的数量在一个比较小的值，比如 10；甚至完全不考虑做优化，顺序依次的发都行，毕竟这个优化对应到 epoll 也要求调用 <code>accept()</code> 直到出现 <code>EAGAIN</code>，并不是一个每个人都会做的优化。</p>
+<p>相比较下，同步 IO 一个明显的优势是可以利用 stack，内存资源的使用上更加紧凑。</p>
+<p>这个很容易理解，因为 <code>read()</code> 操作的发起和结束是在一个函数调用上下文，完全可以在 <code>read()</code> 调用时使用一部分 stack 空间，比如 64-KB，利用 <code>readv()</code> 读取一个 buffer vetor 即可。等到这个栈帧结束，这部分资源完璧归赵。</p>
+<p>对于异步 IO 来说，因为 request 和 completion 是分开的上下文，栈内存就别想了，只能动一些其他的手段。</p>
+<p><strong>0x04</strong></p>
+<p>level-trigger 还是 edge-trigger，这是使用 epoll 时首先需要考虑的，毕竟这影响到内部的 IO 策略。</p>
+<p>结合之前的经历，我觉得选择 level-trigger 是一个比较稳妥地做法。</p>
+<p>对于读侧来说，如果使用 LT，那么每次能读多少就读多少，反正只要还能读，下一轮 polling 还有机会。而对于 ET 来说，则需要反复调用 <code>read()</code> 直到出现 <code>EAGAIN</code>，哪怕你某一次读到的数据小于 buffer size。</p>
+<p><code>read()</code> 毕竟是 syscall 啊，多几次调用的开销是不能忽视的，而且一般来说，如果 size-read 已经小于 buffer，那么有很大的概率下一次 read 几乎一定会返回 <code>EAGAIN</code>，这是一个令人失望的故事。</p>
+<p>对于写操作来说，如果使用 LT，那么需要注意，一旦 application-layer output-buffer 空了，那么就要立马屏蔽这个 socket 的写标志，避免上层没有书需要写，但是 socket 始终可写导致出现 busy-loop。</p>
+<p>如果使用 ET，这点稍微好一些，但是 epoll 不支持对 read 和 write 分开设置 LT &#x2F; ET 不是…</p>
+<p>综上，如果使用 LT，那么要注意避免 busy-loop；使用 ET，需要注意避免漏了活动事件，而反复直到确认 <code>EAGAIN</code> 出现也有开销。</p>
+<p>所以 ET 不一定就性能高，反而使用 ET 需要加倍小心，更具心智负担。</p>
+<p>可能除了一些极端的需要 micro-optimization 的场合，LT 都是首选。</p>
+<p><strong>0x05</strong></p>
+<p>多线程环境。</p>
+<p>在多线程环境中实现并发 TCP 网络编程可以说是荆棘密布，一不小心就能摔倒坑里。</p>
+<p>区别于常规的 disk IO，TCP socket IO 存在本质的特点，那就是存在 short-read 和 short-write。</p>
+<p>因此在多线程环境中，首要做的就是<strong>避免存在多个线程能操作同一个 socket 的情况</strong>。</p>
+<p>实话说，在17年底我还没正式系统学习过 TCP 网络编程时，写的两个（分别针对 Windows IOCP 和 Linux epoll） tiny http server 就犯过这样的错误。</p>
+<p>epoll 本身是没有明确说一个 epoll-fd 是 thread-safe 的， ET + EPOLLONESHOT 是一个解决方案，但是看起来更像是掩耳盗铃，而且一次性作对的难度不小。</p>
+<p>具体细节可以参考我之前在 montly read posts 里分享过的这篇文章：<a target="_blank" rel="noopener" href="https://idea.popcount.org/2017-02-20-epoll-is-fundamentally-broken-12/">epoll is fundamentally broken</a></p>
+<p>对于 IOCP，虽然微软明确说 IOCP 是 thread-safe 的，并且内部设计时也考虑了多个线程访问同一个 device-handle 的负载均衡（这样就允许在操作中使用 blocking functions），但是必须要认识到一点：IOCP 也是支持 disk I&#x2F;O 的！</p>
+<p>对于 disk I&#x2F;O 来说，这么做时无可厚非的，但是 TCP socket IO 却是存在 short-read 和 short-write。</p>
+<p>假设两个线程同时对一个 socket 做了 read 请求，那么首先回来触发应用层回调的一定先发请求的那个线程吗？考虑过期间系统调度的影响吗？</p>
+<p>在 CodeProject 上能看到不少这样的文章：为了解决乱序的问题，对每个请求进行 seq 的编号，同时考虑到多个线程访问同一个 buffer 存在 race 又要上锁…</p>
+<p>这不就是重新发明了一遍 TCP sliding window protocol 吗…</p>
+<p>如果保证一个 socket 只有一个线程操作，那么什么事儿都没了；而这个，才是 one-loop-per-thread 所要表达的真正的意思。</p>
+<p>当然，eventloop-thread 中要避免出现 blocking 操作，这样刚好有可以和 Linux epoll 保持一致了。</p>
+<p><strong>0x06</strong></p>
+<p>想了一下，觉得关闭逻辑也有必要提一下。</p>
+<p>对于服务端程序来说，应该尽量避免主动 shutdown；主要是为了避免进入 TIME-WAIT，毕竟这个时间段长达 2MSL（据说在 Linux 上固定是 60s)。</p>
+<p>那么正确的关闭逻辑应该这样操作：</p>
+<ul>
+<li>服务端通过 <code>EPOLLRDHUP</code> 或者 <code>read()</code> 知道对端关闭，然后进入被动关闭流程。</li>
+<li>如果服务端自己要结束，则服务端通过 <code>shutdown()</code> 先关闭 socket 的写端，保留读端（因为可能有数据还在路上）；这样的客户端通过 <code>EPOLLRDHUP</code> 或者 <code>read()</code> 返回 0 就主动断开连接，发出 FIN 包；然后服务端接着进入被动关闭流程。</li>
+</ul>
+<p>对于一些异常的 socket，服务端别无法他，只能主动断开，一般来说这种关闭的连接数量较少。</p>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>哔哔了这么多，希望能在十月份结束前完成整个库的实现。嗯，最起码别烂尾…</p>
+</div><div class="tags"><a href="/tags/epoll/"><i class="fa fa-tag"></i>epoll</a><a href="/tags/TCP/"><i class="fa fa-tag"></i>TCP</a><a href="/tags/network/"><i class="fa fa-tag"></i>network</a><a href="/tags/IOCP/"><i class="fa fa-tag"></i>IOCP</a></div><div class="post-nav"><a class="pre" href="/2018/09/03/monthly-read-posts-in-aug-2018/">Monthly Read Posts in Aug 2018</a><a class="next" href="/2018/08/15/dealing-with-multiple-types-as-a-category/">Dealing With Multiple Types As a Category</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://kingsamchen.github.io/2018/08/31/new-toy-ezio/';
+    this.page.identifier = '2018/08/31/new-toy-ezio/';
+    this.page.title = '开了个新坑 ezio';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://kingsamchen-github-io.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2025/05/25/weekly-2025-may-4/">一周杂记 in Week 4 May 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/05/18/weekly-2025-may-3/">一周杂记 in Week 3 May 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/05/11/weekly-2025-may-2/">一周杂记 in Week 2 May 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/05/05/weekly-2025-may-1/">一周杂记 in Week 1 May 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/04/28/weekly-2025-apr-4/">一周杂记 in Week 4 Apr 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/04/21/weekly-2025-apr-3/">一周杂记 in Week 3 Apr 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/04/13/weekly-2025-apr-2/">一周杂记 in Week 2 Apr 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/04/07/weekly-2025-apr-1/">一周杂记 in Week 1 Apr 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/30/weekly-2025-mar-4/">一周杂记 in Week 4 Mar 2025</a></li><li class="post-list-item"><a class="post-list-link" href="/2025/03/24/weekly-2025-mar-3/">一周杂记 in Week 3 Mar 2025</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/rant/" style="font-size: 15px;">rant</a> <a href="/tags/life/" style="font-size: 15px;">life</a> <a href="/tags/android/" style="font-size: 15px;">android</a> <a href="/tags/cpp/" style="font-size: 15px;">cpp</a> <a href="/tags/exception/" style="font-size: 15px;">exception</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/crash/" style="font-size: 15px;">crash</a> <a href="/tags/breakpad/" style="font-size: 15px;">breakpad</a> <a href="/tags/memory-fence/" style="font-size: 15px;">memory fence</a> <a href="/tags/memory-ordering/" style="font-size: 15px;">memory ordering</a> <a href="/tags/multiple-instance/" style="font-size: 15px;">multiple instance</a> <a href="/tags/c/" style="font-size: 15px;">c++</a> <a href="/tags/enum/" style="font-size: 15px;">enum</a> <a href="/tags/flag/" style="font-size: 15px;">flag</a> <a href="/tags/bitwise%EF%BC%8C-SFINAE/" style="font-size: 15px;">bitwise， SFINAE</a> <a href="/tags/KBase/" style="font-size: 15px;">KBase</a> <a href="/tags/command-line/" style="font-size: 15px;">command-line</a> <a href="/tags/abstraction/" style="font-size: 15px;">abstraction</a> <a href="/tags/%E6%A2%AF%E5%AD%90/" style="font-size: 15px;">梯子</a> <a href="/tags/shadowsocks/" style="font-size: 15px;">shadowsocks</a> <a href="/tags/trojan/" style="font-size: 15px;">trojan</a> <a href="/tags/socat/" style="font-size: 15px;">socat</a> <a href="/tags/windows/" style="font-size: 15px;">windows</a> <a href="/tags/design/" style="font-size: 15px;">design</a> <a href="/tags/environment/" style="font-size: 15px;">environment</a> <a href="/tags/C-17/" style="font-size: 15px;">C++ 17</a> <a href="/tags/string-view/" style="font-size: 15px;">string_view</a> <a href="/tags/tokenizer/" style="font-size: 15px;">tokenizer</a> <a href="/tags/buddy-allocator/" style="font-size: 15px;">buddy-allocator</a> <a href="/tags/algorithms/" style="font-size: 15px;">algorithms</a> <a href="/tags/anvil/" style="font-size: 15px;">anvil</a> <a href="/tags/cmake/" style="font-size: 15px;">cmake</a> <a href="/tags/project-management/" style="font-size: 15px;">project management</a> <a href="/tags/asio/" style="font-size: 15px;">asio</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/cfs/" style="font-size: 15px;">cfs</a> <a href="/tags/non-capturing-lambda/" style="font-size: 15px;">non-capturing lambda</a> <a href="/tags/function-pointer/" style="font-size: 15px;">function pointer</a> <a href="/tags/obs-studio/" style="font-size: 15px;">obs-studio</a> <a href="/tags/atoi/" style="font-size: 15px;">atoi</a> <a href="/tags/golang/" style="font-size: 15px;">golang</a> <a href="/tags/inno-setup/" style="font-size: 15px;">inno setup</a> <a href="/tags/installer/" style="font-size: 15px;">installer</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/Unix/" style="font-size: 15px;">Unix</a> <a href="/tags/signal/" style="font-size: 15px;">signal</a> <a href="/tags/signalfd/" style="font-size: 15px;">signalfd</a> <a href="/tags/self-pipe-trick/" style="font-size: 15px;">self-pipe trick</a> <a href="/tags/cant/" style="font-size: 15px;">cant</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/HandlerThread/" style="font-size: 15px;">HandlerThread</a> <a href="/tags/Looper/" style="font-size: 15px;">Looper</a> <a href="/tags/Handler/" style="font-size: 15px;">Handler</a> <a href="/tags/MessageLoop/" style="font-size: 15px;">MessageLoop</a> <a href="/tags/http/" style="font-size: 15px;">http</a> <a href="/tags/proxy/" style="font-size: 15px;">proxy</a> <a href="/tags/thread-pool/" style="font-size: 15px;">thread-pool</a> <a href="/tags/chromium/" style="font-size: 15px;">chromium</a> <a href="/tags/urlfetcher/" style="font-size: 15px;">urlfetcher</a> <a href="/tags/wireshark/" style="font-size: 15px;">wireshark</a> <a href="/tags/localhost/" style="font-size: 15px;">localhost</a> <a href="/tags/SFINAE/" style="font-size: 15px;">SFINAE</a> <a href="/tags/template/" style="font-size: 15px;">template</a> <a href="/tags/source-internals/" style="font-size: 15px;">source internals</a> <a href="/tags/message-loop/" style="font-size: 15px;">message-loop</a> <a href="/tags/visual-studio/" style="font-size: 15px;">visual studio</a> <a href="/tags/libx264/" style="font-size: 15px;">libx264</a> <a href="/tags/vcpkg/" style="font-size: 15px;">vcpkg</a> <a href="/tags/shared-ptr/" style="font-size: 15px;">shared_ptr</a> <a href="/tags/type-injection/" style="font-size: 15px;">type injection</a> <a href="/tags/tag-dispatching/" style="font-size: 15px;">tag dispatching</a> <a href="/tags/shared-ptr-internals/" style="font-size: 15px;">shared_ptr-internals</a> <a href="/tags/source-code-study/" style="font-size: 15px;">source-code-study</a> <a href="/tags/weak-ptr/" style="font-size: 15px;">weak_ptr</a> <a href="/tags/base-lib/" style="font-size: 15px;">base lib</a> <a href="/tags/boost/" style="font-size: 15px;">boost</a> <a href="/tags/libstdc/" style="font-size: 15px;">libstdc++</a> <a href="/tags/gcc/" style="font-size: 15px;">gcc</a> <a href="/tags/clang/" style="font-size: 15px;">clang</a> <a href="/tags/sfinae/" style="font-size: 15px;">sfinae</a> <a href="/tags/google-breakpad/" style="font-size: 15px;">google-breakpad</a> <a href="/tags/invalid-paramter/" style="font-size: 15px;">invalid paramter</a> <a href="/tags/operator/" style="font-size: 15px;">operator[]</a> <a href="/tags/Visual-Studio/" style="font-size: 15px;">Visual Studio</a> <a href="/tags/debugger/" style="font-size: 15px;">debugger</a> <a href="/tags/UTF-8/" style="font-size: 15px;">UTF-8</a> <a href="/tags/error-handling/" style="font-size: 15px;">error handling</a> <a href="/tags/owner-semantics/" style="font-size: 15px;">owner semantics</a> <a href="/tags/view-semantics/" style="font-size: 15px;">view semantics</a> <a href="/tags/msvc/" style="font-size: 15px;">msvc</a> <a href="/tags/ebo/" style="font-size: 15px;">ebo</a> <a href="/tags/multiple-inheritance/" style="font-size: 15px;">multiple inheritance</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/haskell/" style="font-size: 15px;">haskell</a> <a href="/tags/infix-operator/" style="font-size: 15px;">infix operator</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/mint/" style="font-size: 15px;">mint</a> <a href="/tags/%E7%A3%81%E7%9B%98/" style="font-size: 15px;">磁盘</a> <a href="/tags/%E6%89%A9%E5%AE%B9/" style="font-size: 15px;">扩容</a> <a href="/tags/ffmpeg/" style="font-size: 15px;">ffmpeg</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://www.daozhihun.com/" title="刀之魂 | 大木老师成长日记" target="_blank">刀之魂 | 大木老师成长日记</a><ul></ul><a href="https://blog.nlogn.cn/" title="帧哥 | 硅谷谈撸管" target="_blank">帧哥 | 硅谷谈撸管</a><ul></ul><a href="https://blog.chichou.me/" title="ChiChou | 首席安全地球仪切图总奸" target="_blank">ChiChou | 首席安全地球仪切图总奸</a><ul></ul><a href="https://fleurer.github.io/" title="Fleurer-lee | F叔的读书笔记（大量干货）" target="_blank">Fleurer-lee | F叔的读书笔记（大量干货）</a><ul></ul><a href="https://vizee.org/" title="Vizee | 即将走上人生巅峰推萝莉的章总" target="_blank">Vizee | 即将走上人生巅峰推萝莉的章总</a><ul></ul><a href="https://blog.thecjw.me/" title="TheCJW | 爱弹棉花的小伟" target="_blank">TheCJW | 爱弹棉花的小伟</a><ul></ul><a href="https://newbiecoder.0ginr.com/blog/" title="Newbie Coder | 萌萌哒的炉子" target="_blank">Newbie Coder | 萌萌哒的炉子</a><ul></ul><a href="https://frankpie.github.io/" title="裴草莓 | 愤怒的老司机" target="_blank">裴草莓 | 愤怒的老司机</a><ul></ul><a href="https://beanbee.me/" title="陈老师 | Beanbee.Max" target="_blank">陈老师 | Beanbee.Max</a><ul></ul><a href="https://sunus.me/" title="Sunus | 李师傅食品厂CEO" target="_blank">Sunus | 李师傅食品厂CEO</a><ul></ul><a href="http://www.tolower.net/" title="Lower | 喊大木大哥的小弟" target="_blank">Lower | 喊大木大哥的小弟</a><ul></ul><a href="http://mrljdx.com/" title="Mrljdx | 大保健老司机" target="_blank">Mrljdx | 大保健老司机</a><ul></ul><a href="https://www.mydavelv.net/" title="Davelv | 江湖人称大尾驴" target="_blank">Davelv | 江湖人称大尾驴</a></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> Recent Comments</i></div><script type="text/javascript" src="//kingsamchen-github-io.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2025 <a href="/." rel="nofollow">KC的废墟堆.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
