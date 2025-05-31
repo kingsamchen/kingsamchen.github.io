@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-05-19T16:43:48.511Z</updated>
+  <updated>2025-05-31T07:14:11.557Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -17,11 +17,70 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>C++20 Calendar Datetime Quick Intro</title>
+    <link href="http://kingsamchen.github.io/2025/05/31/cxx-20-date-time-samples/"/>
+    <id>http://kingsamchen.github.io/2025/05/31/cxx-20-date-time-samples/</id>
+    <published>2025-05-31T07:09:32.000Z</published>
+    <updated>2025-05-31T07:14:11.557Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;blockquote&gt;
+&lt;p&gt;💡 标准库是以 Howard Hinnant 的 date library 为原型，考虑到编译器的支持，以下用 date library 为例子&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;核心类型-year-month-day&quot;&gt;&lt;a</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="datetime" scheme="http://kingsamchen.github.io/tags/datetime/"/>
+    
+    <category term="chrono" scheme="http://kingsamchen.github.io/tags/chrono/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 4 May 2025</title>
+    <link href="http://kingsamchen.github.io/2025/05/25/weekly-2025-may-4/"/>
+    <id>http://kingsamchen.github.io/2025/05/25/weekly-2025-may-4/</id>
+    <published>2025-05-25T15:43:28.000Z</published>
+    <updated>2025-05-28T13:17:35.235Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（05&amp;#x2F;19 ~ 05&amp;#x2F;25）是五月份第四周&lt;/p&gt;
+&lt;p&gt;老婆22号顺利分娩，喜得一女，开始进入人生新阶段了&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
     <title>一周杂记 in Week 3 May 2025</title>
     <link href="http://kingsamchen.github.io/2025/05/18/weekly-2025-may-3/"/>
     <id>http://kingsamchen.github.io/2025/05/18/weekly-2025-may-3/</id>
     <published>2025-05-18T15:45:06.000Z</published>
-    <updated>2025-05-19T16:43:48.511Z</updated>
+    <updated>2025-05-28T13:17:31.578Z</updated>
     
     
       
@@ -47,7 +106,7 @@
     <link href="http://kingsamchen.github.io/2025/05/11/weekly-2025-may-2/"/>
     <id>http://kingsamchen.github.io/2025/05/11/weekly-2025-may-2/</id>
     <published>2025-05-11T15:38:00.000Z</published>
-    <updated>2025-05-13T01:05:24.987Z</updated>
+    <updated>2025-05-28T13:17:31.578Z</updated>
     
     
       
@@ -73,7 +132,7 @@
     <link href="http://kingsamchen.github.io/2025/05/05/weekly-2025-may-1/"/>
     <id>http://kingsamchen.github.io/2025/05/05/weekly-2025-may-1/</id>
     <published>2025-05-05T03:30:42.000Z</published>
-    <updated>2025-05-05T04:17:39.534Z</updated>
+    <updated>2025-05-28T13:17:31.576Z</updated>
     
     
       
@@ -99,7 +158,7 @@
     <link href="http://kingsamchen.github.io/2025/04/28/weekly-2025-apr-4/"/>
     <id>http://kingsamchen.github.io/2025/04/28/weekly-2025-apr-4/</id>
     <published>2025-04-27T16:35:05.000Z</published>
-    <updated>2025-04-28T16:53:02.139Z</updated>
+    <updated>2025-05-28T13:17:31.572Z</updated>
     
     
       
@@ -125,7 +184,7 @@
     <link href="http://kingsamchen.github.io/2025/04/21/weekly-2025-apr-3/"/>
     <id>http://kingsamchen.github.io/2025/04/21/weekly-2025-apr-3/</id>
     <published>2025-04-20T17:01:19.000Z</published>
-    <updated>2025-04-21T16:11:47.288Z</updated>
+    <updated>2025-05-28T13:17:31.572Z</updated>
     
     
       
@@ -151,7 +210,7 @@
     <link href="http://kingsamchen.github.io/2025/04/13/weekly-2025-apr-2/"/>
     <id>http://kingsamchen.github.io/2025/04/13/weekly-2025-apr-2/</id>
     <published>2025-04-13T15:46:36.000Z</published>
-    <updated>2025-04-14T14:16:19.700Z</updated>
+    <updated>2025-05-28T13:17:31.572Z</updated>
     
     
       
@@ -177,7 +236,7 @@
     <link href="http://kingsamchen.github.io/2025/04/07/weekly-2025-apr-1/"/>
     <id>http://kingsamchen.github.io/2025/04/07/weekly-2025-apr-1/</id>
     <published>2025-04-06T16:47:15.000Z</published>
-    <updated>2025-04-08T16:34:07.782Z</updated>
+    <updated>2025-05-28T13:17:31.572Z</updated>
     
     
       
@@ -203,7 +262,7 @@
     <link href="http://kingsamchen.github.io/2025/03/30/weekly-2025-mar-4/"/>
     <id>http://kingsamchen.github.io/2025/03/30/weekly-2025-mar-4/</id>
     <published>2025-03-30T15:55:05.000Z</published>
-    <updated>2025-03-31T16:20:13.942Z</updated>
+    <updated>2025-05-28T13:17:31.576Z</updated>
     
     
       
@@ -230,7 +289,7 @@
     <link href="http://kingsamchen.github.io/2025/03/24/weekly-2025-mar-3/"/>
     <id>http://kingsamchen.github.io/2025/03/24/weekly-2025-mar-3/</id>
     <published>2025-03-24T15:54:31.000Z</published>
-    <updated>2025-03-24T16:25:42.596Z</updated>
+    <updated>2025-05-28T13:17:31.576Z</updated>
     
     
       
@@ -254,7 +313,7 @@
     <link href="http://kingsamchen.github.io/2025/03/18/weekly-2025-mar-2/"/>
     <id>http://kingsamchen.github.io/2025/03/18/weekly-2025-mar-2/</id>
     <published>2025-03-17T17:53:04.000Z</published>
-    <updated>2025-03-19T02:55:05.159Z</updated>
+    <updated>2025-05-28T13:17:31.576Z</updated>
     
     
       
@@ -280,7 +339,7 @@
     <link href="http://kingsamchen.github.io/2025/03/11/weekly-2025-mar-1/"/>
     <id>http://kingsamchen.github.io/2025/03/11/weekly-2025-mar-1/</id>
     <published>2025-03-10T16:58:49.000Z</published>
-    <updated>2025-03-10T17:10:44.583Z</updated>
+    <updated>2025-05-28T13:17:31.576Z</updated>
     
     
       
@@ -306,7 +365,7 @@
     <link href="http://kingsamchen.github.io/2025/03/04/weekly-2025-feb-4/"/>
     <id>http://kingsamchen.github.io/2025/03/04/weekly-2025-feb-4/</id>
     <published>2025-03-04T13:24:44.000Z</published>
-    <updated>2025-03-04T15:20:25.099Z</updated>
+    <updated>2025-05-28T13:17:31.574Z</updated>
     
     
       
@@ -332,7 +391,7 @@
     <link href="http://kingsamchen.github.io/2025/02/25/weekly-2025-feb-3/"/>
     <id>http://kingsamchen.github.io/2025/02/25/weekly-2025-feb-3/</id>
     <published>2025-02-24T16:14:56.000Z</published>
-    <updated>2025-02-24T16:55:19.671Z</updated>
+    <updated>2025-05-28T13:17:31.574Z</updated>
     
     
       
@@ -358,7 +417,7 @@
     <link href="http://kingsamchen.github.io/2025/02/17/weekly-2025-feb-2/"/>
     <id>http://kingsamchen.github.io/2025/02/17/weekly-2025-feb-2/</id>
     <published>2025-02-16T16:45:25.000Z</published>
-    <updated>2025-02-17T15:43:14.665Z</updated>
+    <updated>2025-05-28T13:17:31.574Z</updated>
     
     
       
@@ -384,7 +443,7 @@
     <link href="http://kingsamchen.github.io/2025/02/09/weekly-2025-feb-1/"/>
     <id>http://kingsamchen.github.io/2025/02/09/weekly-2025-feb-1/</id>
     <published>2025-02-09T15:40:50.000Z</published>
-    <updated>2025-02-10T14:31:10.931Z</updated>
+    <updated>2025-05-28T13:17:31.574Z</updated>
     
     
       
@@ -410,7 +469,7 @@
     <link href="http://kingsamchen.github.io/2025/02/03/weekly-2025-jan-5/"/>
     <id>http://kingsamchen.github.io/2025/02/03/weekly-2025-jan-5/</id>
     <published>2025-02-02T16:12:55.000Z</published>
-    <updated>2025-02-04T13:27:34.638Z</updated>
+    <updated>2025-05-28T13:17:31.576Z</updated>
     
     
       
@@ -436,7 +495,7 @@
     <link href="http://kingsamchen.github.io/2025/01/26/weekly-2025-jan-4/"/>
     <id>http://kingsamchen.github.io/2025/01/26/weekly-2025-jan-4/</id>
     <published>2025-01-26T15:30:23.000Z</published>
-    <updated>2025-01-27T03:22:40.933Z</updated>
+    <updated>2025-05-28T13:17:31.576Z</updated>
     
     
       
@@ -462,7 +521,7 @@
     <link href="http://kingsamchen.github.io/2025/01/19/weekly-2025-jan-3/"/>
     <id>http://kingsamchen.github.io/2025/01/19/weekly-2025-jan-3/</id>
     <published>2025-01-19T15:57:03.000Z</published>
-    <updated>2025-01-20T16:50:01.604Z</updated>
+    <updated>2025-05-28T13:17:31.574Z</updated>
     
     
       
@@ -470,58 +529,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（01&amp;#x2F;13 ~ 01&amp;#x2F;19）是一月份第三周，节前工作的倒数第二周了 🫡&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 Jan 2025</title>
-    <link href="http://kingsamchen.github.io/2025/01/12/weekly-2025-jan-2/"/>
-    <id>http://kingsamchen.github.io/2025/01/12/weekly-2025-jan-2/</id>
-    <published>2025-01-12T15:30:07.000Z</published>
-    <updated>2025-01-13T14:10:43.089Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;06 ~ 01&amp;#x2F;12）是新年1月份第二周，离春节回家又近了 🤔&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Jan 2025</title>
-    <link href="http://kingsamchen.github.io/2025/01/06/weekly-2025-jan-1/"/>
-    <id>http://kingsamchen.github.io/2025/01/06/weekly-2025-jan-1/</id>
-    <published>2025-01-05T16:40:30.000Z</published>
-    <updated>2025-01-06T17:00:17.625Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（12&amp;#x2F;30 ~ 01&amp;#x2F;05）是2025年1月份的第一周，happy new year!&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
