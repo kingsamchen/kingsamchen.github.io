@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-05-31T07:14:11.557Z</updated>
+  <updated>2025-06-03T14:48:23.774Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 5 May 2025</title>
+    <link href="http://kingsamchen.github.io/2025/06/03/weekly-2025-may-5/"/>
+    <id>http://kingsamchen.github.io/2025/06/03/weekly-2025-may-5/</id>
+    <published>2025-06-03T13:38:36.000Z</published>
+    <updated>2025-06-03T14:48:23.774Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（05&amp;#x2F;26 ~ 06&amp;#x2F;02）是五月份最后一周，因为周末有端午假日，所以直接算到周一假日最后一天了。&lt;/p&gt;
+&lt;p&gt;这周突发的事情一个接一个，我快忙晕头转向。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>C++20 Calendar Datetime Quick Intro</title>
@@ -503,32 +530,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（01&amp;#x2F;20 ~ 01&amp;#x2F;26）是一月份第四周，本周五已经开启了春节休假旅程 😊&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Jan 2025</title>
-    <link href="http://kingsamchen.github.io/2025/01/19/weekly-2025-jan-3/"/>
-    <id>http://kingsamchen.github.io/2025/01/19/weekly-2025-jan-3/</id>
-    <published>2025-01-19T15:57:03.000Z</published>
-    <updated>2025-05-28T13:17:31.574Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;13 ~ 01&amp;#x2F;19）是一月份第三周，节前工作的倒数第二周了 🫡&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
