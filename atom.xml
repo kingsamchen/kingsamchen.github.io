@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-06-03T14:48:23.774Z</updated>
+  <updated>2025-06-10T06:44:52.223Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,63 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Display Proxy Status on Shell Prompt</title>
+    <link href="http://kingsamchen.github.io/2025/06/10/display-proxy-status-on-shell-prompt/"/>
+    <id>http://kingsamchen.github.io/2025/06/10/display-proxy-status-on-shell-prompt/</id>
+    <published>2025-06-10T06:11:30.000Z</published>
+    <updated>2025-06-10T06:44:52.223Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;因为众所周知的原因，在 china mainland 的开发者必须要精通各种代理的用法。为了方便时常在 terminal 中拉取&amp;#x2F;构建一些开源项目，我在开发环境，不管是 Windows 还是 Linux&amp;#x2F;Ubuntu 里都配置了函数来开关</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="powershell" scheme="http://kingsamchen.github.io/tags/powershell/"/>
+    
+    <category term="shell" scheme="http://kingsamchen.github.io/tags/shell/"/>
+    
+    <category term="zsh" scheme="http://kingsamchen.github.io/tags/zsh/"/>
+    
+    <category term="byobu" scheme="http://kingsamchen.github.io/tags/byobu/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 1 June 2025</title>
+    <link href="http://kingsamchen.github.io/2025/06/09/weekly-2025-june-1/"/>
+    <id>http://kingsamchen.github.io/2025/06/09/weekly-2025-june-1/</id>
+    <published>2025-06-09T06:01:55.000Z</published>
+    <updated>2025-06-10T06:10:47.962Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（06&amp;#x2F;03 ~ 06&amp;#x2F;08）是六月份第一周，也是休陪产假的第二周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 5 May 2025</title>
@@ -478,58 +535,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（02&amp;#x2F;03 ~ 02&amp;#x2F;09）是2月份第一周，舒服幸福的春节假期也马上结束了，又要回到惨无人道的工作中去 🤷‍♂️&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 5 Jan 2025</title>
-    <link href="http://kingsamchen.github.io/2025/02/03/weekly-2025-jan-5/"/>
-    <id>http://kingsamchen.github.io/2025/02/03/weekly-2025-jan-5/</id>
-    <published>2025-02-02T16:12:55.000Z</published>
-    <updated>2025-05-28T13:17:31.576Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;27 ~ 02&amp;#x2F;02）是一月份第五周，春节假期过半，也终于进入了2月份。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Jan 2025</title>
-    <link href="http://kingsamchen.github.io/2025/01/26/weekly-2025-jan-4/"/>
-    <id>http://kingsamchen.github.io/2025/01/26/weekly-2025-jan-4/</id>
-    <published>2025-01-26T15:30:23.000Z</published>
-    <updated>2025-05-28T13:17:31.576Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;20 ~ 01&amp;#x2F;26）是一月份第四周，本周五已经开启了春节休假旅程 😊&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
