@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-06-10T06:44:52.223Z</updated>
+  <updated>2025-06-17T15:10:05.137Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 June 2025</title>
+    <link href="http://kingsamchen.github.io/2025/06/16/weekly-2025-june-2/"/>
+    <id>http://kingsamchen.github.io/2025/06/16/weekly-2025-june-2/</id>
+    <published>2025-06-16T15:36:32.000Z</published>
+    <updated>2025-06-17T15:10:05.137Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（06&amp;#x2F;09 ~ 06&amp;#x2F;16）是六月份第二周，陪产假假期的最后一周；因为周一是陪产假最后一天，所以直接算进一周了&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>Display Proxy Status on Shell Prompt</title>
@@ -509,32 +535,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（02&amp;#x2F;10 ~ 02&amp;#x2F;16）是2月份第二周，节后开始正式上班了&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Feb 2025</title>
-    <link href="http://kingsamchen.github.io/2025/02/09/weekly-2025-feb-1/"/>
-    <id>http://kingsamchen.github.io/2025/02/09/weekly-2025-feb-1/</id>
-    <published>2025-02-09T15:40:50.000Z</published>
-    <updated>2025-05-28T13:17:31.574Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;03 ~ 02&amp;#x2F;09）是2月份第一周，舒服幸福的春节假期也马上结束了，又要回到惨无人道的工作中去 🤷‍♂️&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
