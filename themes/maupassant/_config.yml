@@ -102,8 +102,8 @@ widgets: ## Six widgets in sidebar provided: search, category, tag, recent_posts
 links:
   - title: 刀之魂 | 大木老师成长日记
     url: https://www.daozhihun.com/
-  - title: 帧哥 | 硅谷谈撸管
-    url: https://blog.nlogn.cn/
+  - title: 管理员 | 硅谷谈撸管
+    url: https://runzhen.github.io/
   - title: ChiChou | 首席安全地球仪切图总奸
     url: https://blog.chichou.me/
   - title: Fleurer-lee | F叔的读书笔记（大量干货）
