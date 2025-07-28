@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-07-21T15:02:59.646Z</updated>
+  <updated>2025-07-28T16:33:59.909Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 July 2025</title>
+    <link href="http://kingsamchen.github.io/2025/07/28/weekly-2025-july-4/"/>
+    <id>http://kingsamchen.github.io/2025/07/28/weekly-2025-july-4/</id>
+    <published>2025-07-28T15:23:05.000Z</published>
+    <updated>2025-07-28T16:33:59.909Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（07&amp;#x2F;21 ~ 07&amp;#x2F;27）是7月份的第四周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 July 2025</title>
@@ -521,30 +547,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Mar 2025</title>
-    <link href="http://kingsamchen.github.io/2025/03/24/weekly-2025-mar-3/"/>
-    <id>http://kingsamchen.github.io/2025/03/24/weekly-2025-mar-3/</id>
-    <published>2025-03-24T15:54:31.000Z</published>
-    <updated>2025-05-28T13:17:31.576Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;17 ~ 03&amp;#x2F;23）是3月份第三周，天气短暂的开始转热，感觉已经要一秒入夏了。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
     
   </entry>
   
