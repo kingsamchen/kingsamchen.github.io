@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-09-29T15:25:56.101Z</updated>
+  <updated>2025-10-07T16:19:47.791Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Oct 2025</title>
+    <link href="http://kingsamchen.github.io/2025/10/07/weekly-2025-oct-1/"/>
+    <id>http://kingsamchen.github.io/2025/10/07/weekly-2025-oct-1/</id>
+    <published>2025-10-07T15:58:26.000Z</published>
+    <updated>2025-10-07T16:19:47.791Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（09&amp;#x2F;29 ~ 10&amp;#x2F;05）是十月份第一周，十一假期终于来了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Sep 2025</title>
@@ -520,38 +546,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>C++20 Calendar Datetime Quick Intro</title>
-    <link href="http://kingsamchen.github.io/2025/05/31/cxx-20-date-time-samples/"/>
-    <id>http://kingsamchen.github.io/2025/05/31/cxx-20-date-time-samples/</id>
-    <published>2025-05-31T07:09:32.000Z</published>
-    <updated>2025-05-31T07:14:11.557Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;blockquote&gt;
-&lt;p&gt;💡 标准库是以 Howard Hinnant 的 date library 为原型，考虑到编译器的支持，以下用 date library 为例子&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&quot;核心类型-year-month-day&quot;&gt;&lt;a</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="datetime" scheme="http://kingsamchen.github.io/tags/datetime/"/>
-    
-    <category term="chrono" scheme="http://kingsamchen.github.io/tags/chrono/"/>
     
   </entry>
   
