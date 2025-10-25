@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-10-21T15:32:17.684Z</updated>
+  <updated>2025-10-25T09:24:13.291Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,34 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>std::tuple 的 for-each 手法</title>
+    <link href="http://kingsamchen.github.io/2025/10/25/revisit-for-each-on-tuples/"/>
+    <id>http://kingsamchen.github.io/2025/10/25/revisit-for-each-on-tuples/</id>
+    <published>2025-10-25T09:20:08.000Z</published>
+    <updated>2025-10-25T09:24:13.291Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;好久没写正经技术文章了，刚好前段时间给 fawkes 加 middlewars 的遇到一些坑，刚好借这个机会温故知新&amp;#x2F;水一篇&lt;/p&gt;
+&lt;p&gt;核心思路：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;可以编译期获得 tuple</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="tuple" scheme="http://kingsamchen.github.io/tags/tuple/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Oct 2025</title>
@@ -514,37 +542,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Display Proxy Status on Shell Prompt</title>
-    <link href="http://kingsamchen.github.io/2025/06/10/display-proxy-status-on-shell-prompt/"/>
-    <id>http://kingsamchen.github.io/2025/06/10/display-proxy-status-on-shell-prompt/</id>
-    <published>2025-06-10T06:11:30.000Z</published>
-    <updated>2025-06-10T06:44:52.223Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;因为众所周知的原因，在 china mainland 的开发者必须要精通各种代理的用法。为了方便时常在 terminal 中拉取&amp;#x2F;构建一些开源项目，我在开发环境，不管是 Windows 还是 Linux&amp;#x2F;Ubuntu 里都配置了函数来开关</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="powershell" scheme="http://kingsamchen.github.io/tags/powershell/"/>
-    
-    <category term="shell" scheme="http://kingsamchen.github.io/tags/shell/"/>
-    
-    <category term="zsh" scheme="http://kingsamchen.github.io/tags/zsh/"/>
-    
-    <category term="byobu" scheme="http://kingsamchen.github.io/tags/byobu/"/>
     
   </entry>
   
