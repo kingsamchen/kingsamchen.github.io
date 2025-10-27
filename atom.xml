@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-10-25T09:24:13.291Z</updated>
+  <updated>2025-10-27T16:15:04.361Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Oct 2025</title>
+    <link href="http://kingsamchen.github.io/2025/10/27/weekly-2025-oct-4/"/>
+    <id>http://kingsamchen.github.io/2025/10/27/weekly-2025-oct-4/</id>
+    <published>2025-10-27T15:25:35.000Z</published>
+    <updated>2025-10-27T16:15:04.361Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（10&amp;#x2F;20 ~ 10&amp;#x2F;26）是十月第四周，这周杭州气温全面下降，给人一种一秒入冬的体验。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>std::tuple 的 for-each 手法</title>
@@ -506,32 +532,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（06&amp;#x2F;17 ~ 06&amp;#x2F;22）是六月份的第三周，这周大事一件接一件。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 June 2025</title>
-    <link href="http://kingsamchen.github.io/2025/06/16/weekly-2025-june-2/"/>
-    <id>http://kingsamchen.github.io/2025/06/16/weekly-2025-june-2/</id>
-    <published>2025-06-16T15:36:32.000Z</published>
-    <updated>2025-06-23T13:44:48.140Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（06&amp;#x2F;09 ~ 06&amp;#x2F;16）是六月份第二周，陪产假假期的最后一周；因为周一是陪产假最后一天，所以直接算进一周了&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
