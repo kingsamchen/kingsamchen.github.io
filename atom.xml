@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-11-02T15:11:48.014Z</updated>
+  <updated>2025-11-03T15:00:16.608Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 5 Oct 2025</title>
+    <link href="http://kingsamchen.github.io/2025/11/03/weekly-2025-oct-5/"/>
+    <id>http://kingsamchen.github.io/2025/11/03/weekly-2025-oct-5/</id>
+    <published>2025-11-03T12:58:36.000Z</published>
+    <updated>2025-11-03T15:00:16.608Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（10&amp;#x2F;27 ~ 11&amp;#x2F;02）是十月最后一周，气温已经比较稳定的进入秋冬季节。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>fmt 格式化 custom types</title>
@@ -508,32 +534,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（06&amp;#x2F;30 ~ 07&amp;#x2F;06）是七月份的第一周，炎炎夏日依然到来。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 June 2025</title>
-    <link href="http://kingsamchen.github.io/2025/06/30/weekly-2025-june-4/"/>
-    <id>http://kingsamchen.github.io/2025/06/30/weekly-2025-june-4/</id>
-    <published>2025-06-30T14:04:49.000Z</published>
-    <updated>2025-06-30T15:11:22.066Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（06&amp;#x2F;23 ~ 06&amp;#x2F;29）是6月份的最后一周，下周二就是7月份了，要进入暑假了。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
