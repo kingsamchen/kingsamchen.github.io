@@ -118,3 +118,4 @@ PR 见 https://github.com/kingsamchen/fawkes/pull/8
 
 ---
 
+好了这周就这样，下周见
