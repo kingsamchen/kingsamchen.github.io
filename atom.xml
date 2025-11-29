@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-11-24T15:26:03.555Z</updated>
+  <updated>2025-11-29T12:05:47.537Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Using ASIO awaitable the Easy Way</title>
+    <link href="http://kingsamchen.github.io/2025/11/29/using-asio-awaitable/"/>
+    <id>http://kingsamchen.github.io/2025/11/29/using-asio-awaitable/</id>
+    <published>2025-11-29T12:03:50.000Z</published>
+    <updated>2025-11-29T12:05:47.537Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;基础规则&quot;&gt;&lt;a href=&quot;#基础规则&quot; class=&quot;headerlink&quot; title=&quot;基础规则&quot;&gt;&lt;/a&gt;基础规则&lt;/h2&gt;&lt;p&gt;先复习一下，基础规则是针对所有 C++ coroutine 实现的，不单单对 ASIO</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
+    
+    <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
+    
+    <category term="awaitable" scheme="http://kingsamchen.github.io/tags/awaitable/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Nov 2025</title>
@@ -511,33 +542,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（08&amp;#x2F;04 ~ 08&amp;#x2F;10）是8月份的第一周，灾后重建 quality workstream 已经略有眉头的不错进展&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 5 July 2025</title>
-    <link href="http://kingsamchen.github.io/2025/08/04/weekly-2025-july-5/"/>
-    <id>http://kingsamchen.github.io/2025/08/04/weekly-2025-july-5/</id>
-    <published>2025-08-04T15:26:22.000Z</published>
-    <updated>2025-08-04T15:36:57.840Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（07&amp;#x2F;28 ~ 08&amp;#x2F;03）是7月份最后一周，这周五已经是8月1号了。&lt;/p&gt;
-&lt;p&gt;这周公司的事情直接忙傻了&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
