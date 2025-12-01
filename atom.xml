@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-11-29T12:05:47.537Z</updated>
+  <updated>2025-12-01T13:27:35.910Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Nov 2025</title>
+    <link href="http://kingsamchen.github.io/2025/12/01/weekly-2025-nov-4/"/>
+    <id>http://kingsamchen.github.io/2025/12/01/weekly-2025-nov-4/</id>
+    <published>2025-12-01T12:57:28.000Z</published>
+    <updated>2025-12-01T13:27:35.910Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;这周（11&amp;#x2F;24 ~ 11&amp;#x2F;30）是11月份最后一周，下周一开始就是本年度最后一个月了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>Using ASIO awaitable the Easy Way</title>
@@ -516,32 +542,6 @@
         
     <summary type="html">&lt;p&gt;本周（08&amp;#x2F;11 ~ 08&amp;#x2F;17）是8月份的第二周，炎炎夏日又来了。&lt;/p&gt;
 &lt;p&gt;这周事情还是太多了，每天忙的不行。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Aug 2025</title>
-    <link href="http://kingsamchen.github.io/2025/08/11/weekly-2025-aug-1/"/>
-    <id>http://kingsamchen.github.io/2025/08/11/weekly-2025-aug-1/</id>
-    <published>2025-08-10T16:05:23.000Z</published>
-    <updated>2025-08-11T15:14:22.654Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（08&amp;#x2F;04 ~ 08&amp;#x2F;10）是8月份的第一周，灾后重建 quality workstream 已经略有眉头的不错进展&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
