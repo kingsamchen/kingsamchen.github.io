@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-01-05T15:40:38.038Z</updated>
+  <updated>2026-01-10T13:47:28.587Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,35 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>The Lambda Coroutine Fiasco</title>
+    <link href="http://kingsamchen.github.io/2026/01/10/the-lambda-coroutine-fiasco/"/>
+    <id>http://kingsamchen.github.io/2026/01/10/the-lambda-coroutine-fiasco/</id>
+    <published>2026-01-10T06:56:48.000Z</published>
+    <updated>2026-01-10T13:47:28.587Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;This is a follow-up to &lt;a href=&quot;/2025/11/29/using-asio-awaitable/&quot; title=&quot;Using ASIO awaitable the Easy Way&quot;&gt;Using ASIO awaitable the</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
+    
+    <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Jan 2026</title>
@@ -513,33 +542,6 @@
     <summary type="html">&lt;p&gt;本周（09&amp;#x2F;22 ~ 09&amp;#x2F;28）是9月份第四周。&lt;/p&gt;
 &lt;p&gt;这周有十一的工作调休，下周正式十一假期；不过这周气温回升，好几天都35-6，又是酷暑的感觉。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Sep 2025</title>
-    <link href="http://kingsamchen.github.io/2025/09/22/weekly-2025-sep-3/"/>
-    <id>http://kingsamchen.github.io/2025/09/22/weekly-2025-sep-3/</id>
-    <published>2025-09-22T13:45:38.000Z</published>
-    <updated>2025-09-22T14:23:01.087Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（09&amp;#x2F;15 ~ 09&amp;#x2F;21）是9月份第三周。&lt;/p&gt;
-&lt;p&gt;本周气温开始有下降的趋势&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
