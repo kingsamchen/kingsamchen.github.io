@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-01-10T13:47:28.587Z</updated>
+  <updated>2026-01-12T13:58:15.894Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Jan 2026</title>
+    <link href="http://kingsamchen.github.io/2026/01/11/weekly-2026-jan-2/"/>
+    <id>http://kingsamchen.github.io/2026/01/11/weekly-2026-jan-2/</id>
+    <published>2026-01-11T14:45:54.000Z</published>
+    <updated>2026-01-12T13:58:15.894Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;05 ~ 01&amp;#x2F;11）是1月份第二周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>The Lambda Coroutine Fiasco</title>
@@ -515,33 +541,6 @@
         
     <summary type="html">&lt;p&gt;本周（09&amp;#x2F;29 ~ 10&amp;#x2F;05）是十月份第一周，十一假期终于来了。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Sep 2025</title>
-    <link href="http://kingsamchen.github.io/2025/09/29/weekly-2025-sep-4/"/>
-    <id>http://kingsamchen.github.io/2025/09/29/weekly-2025-sep-4/</id>
-    <published>2025-09-29T14:43:24.000Z</published>
-    <updated>2025-09-29T15:25:56.101Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（09&amp;#x2F;22 ~ 09&amp;#x2F;28）是9月份第四周。&lt;/p&gt;
-&lt;p&gt;这周有十一的工作调休，下周正式十一假期；不过这周气温回升，好几天都35-6，又是酷暑的感觉。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot;</summary>
         
       
     
