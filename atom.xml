@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-02-02T06:04:12.269Z</updated>
+  <updated>2026-02-09T15:40:45.178Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Feb 2026</title>
+    <link href="http://kingsamchen.github.io/2026/02/08/weekly-2026-feb-1/"/>
+    <id>http://kingsamchen.github.io/2026/02/08/weekly-2026-feb-1/</id>
+    <published>2026-02-08T14:07:15.000Z</published>
+    <updated>2026-02-09T15:40:45.178Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;这周（02&amp;#x2F;02 ~ 02&amp;#x2F;08）是2月份第一周，下周是节前最后一个工作周了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 5 Jan 2026</title>
@@ -523,34 +549,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>std::tuple 的 for-each 手法</title>
-    <link href="http://kingsamchen.github.io/2025/10/25/revisit-for-each-on-tuples/"/>
-    <id>http://kingsamchen.github.io/2025/10/25/revisit-for-each-on-tuples/</id>
-    <published>2025-10-25T09:20:08.000Z</published>
-    <updated>2025-10-25T09:24:13.291Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;好久没写正经技术文章了，刚好前段时间给 fawkes 加 middlewars 的遇到一些坑，刚好借这个机会温故知新&amp;#x2F;水一篇&lt;/p&gt;
-&lt;p&gt;核心思路：&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;可以编译期获得 tuple</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="tuple" scheme="http://kingsamchen.github.io/tags/tuple/"/>
     
   </entry>
   
