@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-02-09T15:40:45.178Z</updated>
+  <updated>2026-02-16T04:49:55.169Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Feb 2026</title>
+    <link href="http://kingsamchen.github.io/2026/02/15/weekly-2026-feb-2/"/>
+    <id>http://kingsamchen.github.io/2026/02/15/weekly-2026-feb-2/</id>
+    <published>2026-02-15T15:52:43.000Z</published>
+    <updated>2026-02-16T04:49:55.169Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;09 ~ 02&amp;#x2F;15）是2月份第二周，周六已经提前进入春节假期。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Feb 2026</title>
@@ -523,32 +549,6 @@
     <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
     <category term="fmt" scheme="http://kingsamchen.github.io/tags/fmt/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Oct 2025</title>
-    <link href="http://kingsamchen.github.io/2025/10/27/weekly-2025-oct-4/"/>
-    <id>http://kingsamchen.github.io/2025/10/27/weekly-2025-oct-4/</id>
-    <published>2025-10-27T15:25:35.000Z</published>
-    <updated>2025-10-27T16:15:04.361Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（10&amp;#x2F;20 ~ 10&amp;#x2F;26）是十月第四周，这周杭州气温全面下降，给人一种一秒入冬的体验。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
