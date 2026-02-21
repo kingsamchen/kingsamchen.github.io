@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-02-16T04:49:55.169Z</updated>
+  <updated>2026-02-21T05:54:37.871Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>std::stop_token: A General-Purpose Cancellation Mechanism</title>
+    <link href="http://kingsamchen.github.io/2026/02/20/general-purpose-cancellation-mechanism-stop-token/"/>
+    <id>http://kingsamchen.github.io/2026/02/20/general-purpose-cancellation-mechanism-stop-token/</id>
+    <published>2026-02-20T03:29:12.000Z</published>
+    <updated>2026-02-21T05:54:37.871Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;Using-std-stop-source-and-std-stop-token&quot;&gt;&lt;a href=&quot;#Using-std-stop-source-and-std-stop-token&quot; class=&quot;headerlink&quot; title=&quot;Using</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="stop_token" scheme="http://kingsamchen.github.io/tags/stop-token/"/>
+    
+    <category term="cancellation" scheme="http://kingsamchen.github.io/tags/cancellation/"/>
+    
+    <category term="asynchronous" scheme="http://kingsamchen.github.io/tags/asynchronous/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Feb 2026</title>
@@ -521,34 +552,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>fmt 格式化 custom types</title>
-    <link href="http://kingsamchen.github.io/2025/11/02/fmt-custom-type-support/"/>
-    <id>http://kingsamchen.github.io/2025/11/02/fmt-custom-type-support/</id>
-    <published>2025-11-02T14:52:32.000Z</published>
-    <updated>2025-11-02T15:11:48.014Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;之前用 fmt 格式化 custom types 的时候只知道特化的那个方法，并且因为需要写两个函数而且返回类型不容易记忆所以每次都是找个模板抄…&lt;/p&gt;
-&lt;p&gt;这次花了点时间完整看了一下 fmt 的 official</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="fmt" scheme="http://kingsamchen.github.io/tags/fmt/"/>
     
   </entry>
   
