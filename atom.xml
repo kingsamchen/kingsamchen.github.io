@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-02-24T06:38:07.300Z</updated>
+  <updated>2026-03-02T15:15:04.964Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Feb 2026</title>
+    <link href="http://kingsamchen.github.io/2026/03/01/weekly-2026-feb-4/"/>
+    <id>http://kingsamchen.github.io/2026/03/01/weekly-2026-feb-4/</id>
+    <published>2026-03-01T14:32:03.000Z</published>
+    <updated>2026-03-02T15:15:04.964Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;23 ~ 03&amp;#x2F;01）是2月份第四周，周日已经是3&amp;#x2F;1，春节假期也结束了，又回到了打工牛马的状态。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 Feb 2026</title>
@@ -522,36 +548,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>注意 std::views::filter</title>
-    <link href="http://kingsamchen.github.io/2025/11/09/be-wary-of-std-views-filter/"/>
-    <id>http://kingsamchen.github.io/2025/11/09/be-wary-of-std-views-filter/</id>
-    <published>2025-11-09T07:46:58.000Z</published>
-    <updated>2025-11-09T08:06:42.734Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;C++ 20 把 ranges standardize 之后看似有了一种很 fancy 很 fp-style 的实现算法的方式，但是这套东西坑也不少。&lt;/p&gt;
-&lt;p&gt;这篇 post 的主要内容来自 &lt;a</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="ranges" scheme="http://kingsamchen.github.io/tags/ranges/"/>
-    
-    <category term="undefined behavior" scheme="http://kingsamchen.github.io/tags/undefined-behavior/"/>
     
   </entry>
   
