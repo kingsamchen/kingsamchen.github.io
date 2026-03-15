@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-03-15T14:16:01.856Z</updated>
+  <updated>2026-03-15T14:37:33.237Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Mar 2026</title>
+    <link href="http://kingsamchen.github.io/2026/03/15/weekly-2026-mar-2/"/>
+    <id>http://kingsamchen.github.io/2026/03/15/weekly-2026-mar-2/</id>
+    <published>2026-03-15T14:22:54.000Z</published>
+    <updated>2026-03-15T14:37:33.237Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;09 ~ 03&amp;#x2F;15）是3月份的第二周，天气渐渐暖起来了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>Object-Wide Cancellation and Per-Operation Cancellation in ASIO</title>
@@ -527,32 +553,6 @@
     <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
     
     <category term="awaitable" scheme="http://kingsamchen.github.io/tags/awaitable/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Nov 2025</title>
-    <link href="http://kingsamchen.github.io/2025/11/24/weekly-2025-nov-3/"/>
-    <id>http://kingsamchen.github.io/2025/11/24/weekly-2025-nov-3/</id>
-    <published>2025-11-24T14:47:10.000Z</published>
-    <updated>2025-11-24T15:26:03.555Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（11&amp;#x2F;17 ~ 11&amp;#x2F;23）是十一月第三周，这周气温变化比较大，依旧是中午回升，早晚冷。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
     
   </entry>
   
