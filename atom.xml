@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-03-08T16:15:52.520Z</updated>
+  <updated>2026-03-15T14:16:01.856Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Object-Wide Cancellation and Per-Operation Cancellation in ASIO</title>
+    <link href="http://kingsamchen.github.io/2026/03/15/per-operation-cancellation-in-asio/"/>
+    <id>http://kingsamchen.github.io/2026/03/15/per-operation-cancellation-in-asio/</id>
+    <published>2026-03-15T08:35:20.000Z</published>
+    <updated>2026-03-15T14:16:01.856Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;In the post &lt;a href=&quot;/2026/02/20/general-purpose-cancellation-mechanism-stop-token/&quot; title=&quot;std::stop_token: A General-Purpose</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
+    
+    <category term="cancellation" scheme="http://kingsamchen.github.io/tags/cancellation/"/>
+    
+    <category term="asynchronous" scheme="http://kingsamchen.github.io/tags/asynchronous/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 1 Mar 2026</title>
@@ -39,37 +70,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Object-Wide Cancellation and Per-Operation Cancellation in ASIO</title>
-    <link href="http://kingsamchen.github.io/2026/03/08/per-operation-cancellation-in-asio/"/>
-    <id>http://kingsamchen.github.io/2026/03/08/per-operation-cancellation-in-asio/</id>
-    <published>2026-03-08T08:35:20.000Z</published>
-    <updated>2026-03-15T14:09:15.463Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;In the post &lt;a href=&quot;/2026/02/20/general-purpose-cancellation-mechanism-stop-token/&quot; title=&quot;std::stop_token: A General-Purpose</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
-    
-    <category term="cancellation" scheme="http://kingsamchen.github.io/tags/cancellation/"/>
-    
-    <category term="asynchronous" scheme="http://kingsamchen.github.io/tags/asynchronous/"/>
     
   </entry>
   
