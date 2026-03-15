@@ -1,7 +1,7 @@
 ---
 title: Object-Wide Cancellation and Per-Operation Cancellation in ASIO
 categories: PROGRAMMING
-date: 2026-03-08 16:35:20
+date: 2026-03-15 16:35:20
 tags: [cpp, asio, cancellation, asynchronous]
 toc: true
 ---
