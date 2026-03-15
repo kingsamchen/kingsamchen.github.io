@@ -43,6 +43,37 @@
   </entry>
   
   <entry>
+    <title>Object-Wide Cancellation and Per-Operation Cancellation in ASIO</title>
+    <link href="http://kingsamchen.github.io/2026/03/08/per-operation-cancellation-in-asio/"/>
+    <id>http://kingsamchen.github.io/2026/03/08/per-operation-cancellation-in-asio/</id>
+    <published>2026-03-08T08:35:20.000Z</published>
+    <updated>2026-03-15T14:09:15.463Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;In the post &lt;a href=&quot;/2026/02/20/general-purpose-cancellation-mechanism-stop-token/&quot; title=&quot;std::stop_token: A General-Purpose</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
+    
+    <category term="cancellation" scheme="http://kingsamchen.github.io/tags/cancellation/"/>
+    
+    <category term="asynchronous" scheme="http://kingsamchen.github.io/tags/asynchronous/"/>
+    
+  </entry>
+  
+  <entry>
     <title>一周杂记 in Week 4 Feb 2026</title>
     <link href="http://kingsamchen.github.io/2026/03/01/weekly-2026-feb-4/"/>
     <id>http://kingsamchen.github.io/2026/03/01/weekly-2026-feb-4/</id>
@@ -512,32 +543,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（11&amp;#x2F;17 ~ 11&amp;#x2F;23）是十一月第三周，这周气温变化比较大，依旧是中午回升，早晚冷。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 Nov 2025</title>
-    <link href="http://kingsamchen.github.io/2025/11/17/weekly-2025-nov-2/"/>
-    <id>http://kingsamchen.github.io/2025/11/17/weekly-2025-nov-2/</id>
-    <published>2025-11-17T12:11:35.000Z</published>
-    <updated>2025-11-17T14:27:02.310Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（11&amp;#x2F;10 ~ 11&amp;#x2F;16）是11月份第二周，这周各种突发的事情太多了。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
