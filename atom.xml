@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-03-15T14:37:33.237Z</updated>
+  <updated>2026-03-24T13:26:24.010Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Mar 2026</title>
+    <link href="http://kingsamchen.github.io/2026/03/24/weekly-2026-mar-3/"/>
+    <id>http://kingsamchen.github.io/2026/03/24/weekly-2026-mar-3/</id>
+    <published>2026-03-23T16:35:59.000Z</published>
+    <updated>2026-03-24T13:26:24.010Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;16 ~ 03&amp;#x2F;22）是3月份的第三周，这周空气不是很好。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Mar 2026</title>
@@ -522,37 +548,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Using ASIO awaitable the Easy Way</title>
-    <link href="http://kingsamchen.github.io/2025/11/29/using-asio-awaitable/"/>
-    <id>http://kingsamchen.github.io/2025/11/29/using-asio-awaitable/</id>
-    <published>2025-11-29T12:03:50.000Z</published>
-    <updated>2025-11-29T12:05:47.537Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;h2 id=&quot;基础规则&quot;&gt;&lt;a href=&quot;#基础规则&quot; class=&quot;headerlink&quot; title=&quot;基础规则&quot;&gt;&lt;/a&gt;基础规则&lt;/h2&gt;&lt;p&gt;先复习一下，基础规则是针对所有 C++ coroutine 实现的，不单单对 ASIO</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
-    
-    <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
-    
-    <category term="awaitable" scheme="http://kingsamchen.github.io/tags/awaitable/"/>
     
   </entry>
   
