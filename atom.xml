@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-03-30T15:04:39.445Z</updated>
+  <updated>2026-04-07T06:43:05.797Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Apr 2026</title>
+    <link href="http://kingsamchen.github.io/2026/04/07/weekly-2026-apr-1/"/>
+    <id>http://kingsamchen.github.io/2026/04/07/weekly-2026-apr-1/</id>
+    <published>2026-04-07T06:13:54.000Z</published>
+    <updated>2026-04-07T06:43:05.797Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;31 ~ 04&amp;#x2F;05）是四月份第一周，夹杂清明假期。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Mar 2026</title>
@@ -512,32 +538,6 @@
         
         
     <summary type="html">&lt;p&gt;这周（12&amp;#x2F;8 ~ 12&amp;#x2F;14）是12月第二周，这周偏冷啊。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Dec 2025</title>
-    <link href="http://kingsamchen.github.io/2025/12/08/weekly-2025-dec-1/"/>
-    <id>http://kingsamchen.github.io/2025/12/08/weekly-2025-dec-1/</id>
-    <published>2025-12-08T14:39:42.000Z</published>
-    <updated>2025-12-08T14:59:59.238Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（12&amp;#x2F;1 ~ 12&amp;#x2F;7）是12月第一周，这周气温工作日略冷，到了周末就回升了，体感反而不错&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
