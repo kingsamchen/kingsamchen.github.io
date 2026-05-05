@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2025-06-09T06:34:53.146Z</updated>
+  <updated>2026-05-05T02:30:31.627Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -17,18 +17,18 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>一周杂记 in Week 1 June 2025</title>
-    <link href="http://kingsamchen.github.io/2025/06/09/weekly-2025-june-1/"/>
-    <id>http://kingsamchen.github.io/2025/06/09/weekly-2025-june-1/</id>
-    <published>2025-06-09T06:01:55.000Z</published>
-    <updated>2025-06-09T06:34:53.146Z</updated>
+    <title>一周杂记 in Week 5 Apr 2026</title>
+    <link href="http://kingsamchen.github.io/2026/05/05/weekly-2026-apr-5/"/>
+    <id>http://kingsamchen.github.io/2026/05/05/weekly-2026-apr-5/</id>
+    <published>2026-05-05T02:01:22.000Z</published>
+    <updated>2026-05-05T02:30:31.627Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（06&amp;#x2F;03 ~ 06&amp;#x2F;08）是六月份第一周，也是休陪产假的第二周。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;27 ~ 05&amp;#x2F;03）是四月份最后一周，周五开始就是五一假期。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -43,20 +43,19 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 5 May 2025</title>
-    <link href="http://kingsamchen.github.io/2025/06/03/weekly-2025-may-5/"/>
-    <id>http://kingsamchen.github.io/2025/06/03/weekly-2025-may-5/</id>
-    <published>2025-06-03T13:38:36.000Z</published>
-    <updated>2025-06-09T06:01:38.799Z</updated>
+    <title>一周杂记 in Week 4 Apr 2026</title>
+    <link href="http://kingsamchen.github.io/2026/04/27/weekly-2026-apr-4/"/>
+    <id>http://kingsamchen.github.io/2026/04/27/weekly-2026-apr-4/</id>
+    <published>2026-04-27T09:02:53.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（05&amp;#x2F;26 ~ 06&amp;#x2F;02）是五月份最后一周，因为周末有端午假日，所以直接算到周一假日最后一天了。&lt;/p&gt;
-&lt;p&gt;这周突发的事情一个接一个，我快忙晕头转向。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot;</summary>
+    <summary type="html">&lt;p&gt;本周（4&amp;#x2F;20 ~ 4&amp;#x2F;26）是四月份第四周，这周大部分时候继续在家办公。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
     
@@ -70,21 +69,174 @@
   </entry>
   
   <entry>
-    <title>C++20 Calendar Datetime Quick Intro</title>
-    <link href="http://kingsamchen.github.io/2025/05/31/cxx-20-date-time-samples/"/>
-    <id>http://kingsamchen.github.io/2025/05/31/cxx-20-date-time-samples/</id>
-    <published>2025-05-31T07:09:32.000Z</published>
-    <updated>2025-06-09T06:01:38.799Z</updated>
+    <title>一周杂记 in Week 3 Apr 2026</title>
+    <link href="http://kingsamchen.github.io/2026/04/19/weekly-2026-apr-3/"/>
+    <id>http://kingsamchen.github.io/2026/04/19/weekly-2026-apr-3/</id>
+    <published>2026-04-19T15:04:07.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;blockquote&gt;
-&lt;p&gt;💡 标准库是以 Howard Hinnant 的 date library 为原型，考虑到编译器的支持，以下用 date library 为例子&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;h2 id=&quot;核心类型-year-month-day&quot;&gt;&lt;a</summary>
+    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;13 ~ 04&amp;#x2F;19）是四月第三周，这周二回新办公室，没两天又因为空气质量问题又可以继续居家了 🤣&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Apr 2026</title>
+    <link href="http://kingsamchen.github.io/2026/04/13/weekly-2026-apr-2/"/>
+    <id>http://kingsamchen.github.io/2026/04/13/weekly-2026-apr-2/</id>
+    <published>2026-04-13T08:24:10.000Z</published>
+    <updated>2026-05-05T01:59:42.180Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;07 ~ 04&amp;#x2F;12）时四月第二周，这周因为公司搬家原因所以一周都居家办公。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Apr 2026</title>
+    <link href="http://kingsamchen.github.io/2026/04/07/weekly-2026-apr-1/"/>
+    <id>http://kingsamchen.github.io/2026/04/07/weekly-2026-apr-1/</id>
+    <published>2026-04-07T06:13:54.000Z</published>
+    <updated>2026-05-05T01:59:42.180Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;31 ~ 04&amp;#x2F;05）是四月份第一周，夹杂清明假期。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 4 Mar 2026</title>
+    <link href="http://kingsamchen.github.io/2026/03/30/weekly-2026-mar-4/"/>
+    <id>http://kingsamchen.github.io/2026/03/30/weekly-2026-mar-4/</id>
+    <published>2026-03-30T14:15:24.000Z</published>
+    <updated>2026-05-05T01:59:42.182Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;23 ~ 03&amp;#x2F;30）是3月份的第四周，虽然3月份很长，但是这周是最后一周了，惊不惊喜，意不意外。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Mar 2026</title>
+    <link href="http://kingsamchen.github.io/2026/03/24/weekly-2026-mar-3/"/>
+    <id>http://kingsamchen.github.io/2026/03/24/weekly-2026-mar-3/</id>
+    <published>2026-03-23T16:35:59.000Z</published>
+    <updated>2026-05-05T01:59:42.182Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;16 ~ 03&amp;#x2F;22）是3月份的第三周，这周空气不是很好。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Mar 2026</title>
+    <link href="http://kingsamchen.github.io/2026/03/15/weekly-2026-mar-2/"/>
+    <id>http://kingsamchen.github.io/2026/03/15/weekly-2026-mar-2/</id>
+    <published>2026-03-15T14:22:54.000Z</published>
+    <updated>2026-05-05T01:59:42.182Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;09 ~ 03&amp;#x2F;15）是3月份的第二周，天气渐渐暖起来了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>Object-Wide Cancellation and Per-Operation Cancellation in ASIO</title>
+    <link href="http://kingsamchen.github.io/2026/03/15/per-operation-cancellation-in-asio/"/>
+    <id>http://kingsamchen.github.io/2026/03/15/per-operation-cancellation-in-asio/</id>
+    <published>2026-03-15T08:35:20.000Z</published>
+    <updated>2026-05-05T01:59:42.180Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;In the post &lt;a href=&quot;/2026/02/20/general-purpose-cancellation-mechanism-stop-token/&quot; title=&quot;std::stop_token: A General-Purpose</summary>
         
       
     
@@ -95,26 +247,27 @@
     
     <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-    <category term="datetime" scheme="http://kingsamchen.github.io/tags/datetime/"/>
+    <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
     
-    <category term="chrono" scheme="http://kingsamchen.github.io/tags/chrono/"/>
+    <category term="cancellation" scheme="http://kingsamchen.github.io/tags/cancellation/"/>
+    
+    <category term="asynchronous" scheme="http://kingsamchen.github.io/tags/asynchronous/"/>
     
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 4 May 2025</title>
-    <link href="http://kingsamchen.github.io/2025/05/25/weekly-2025-may-4/"/>
-    <id>http://kingsamchen.github.io/2025/05/25/weekly-2025-may-4/</id>
-    <published>2025-05-25T15:43:28.000Z</published>
-    <updated>2025-05-28T06:35:28.384Z</updated>
+    <title>一周杂记 in Week 1 Mar 2026</title>
+    <link href="http://kingsamchen.github.io/2026/03/08/weekly-2026-mar-1/"/>
+    <id>http://kingsamchen.github.io/2026/03/08/weekly-2026-mar-1/</id>
+    <published>2026-03-08T15:44:38.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（05&amp;#x2F;19 ~ 05&amp;#x2F;25）是五月份第四周&lt;/p&gt;
-&lt;p&gt;老婆22号顺利分娩，喜得一女，开始进入人生新阶段了&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;02 ~ 03&amp;#x2F;08）是三月份的第一周，似乎每年的3月份感觉起来都极其漫长。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -129,18 +282,18 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 3 May 2025</title>
-    <link href="http://kingsamchen.github.io/2025/05/18/weekly-2025-may-3/"/>
-    <id>http://kingsamchen.github.io/2025/05/18/weekly-2025-may-3/</id>
-    <published>2025-05-18T15:45:06.000Z</published>
-    <updated>2025-05-28T03:19:29.411Z</updated>
+    <title>一周杂记 in Week 4 Feb 2026</title>
+    <link href="http://kingsamchen.github.io/2026/03/01/weekly-2026-feb-4/"/>
+    <id>http://kingsamchen.github.io/2026/03/01/weekly-2026-feb-4/</id>
+    <published>2026-03-01T14:32:03.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（05&amp;#x2F;12 ~ 05&amp;#x2F;18）是5月份第三周，距离月底端午假期还有两周，而且马上就要陪产假了&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;23 ~ 03&amp;#x2F;01）是2月份第四周，周日已经是3&amp;#x2F;1，春节假期也结束了，又回到了打工牛马的状态。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -155,18 +308,18 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 2 May 2025</title>
-    <link href="http://kingsamchen.github.io/2025/05/11/weekly-2025-may-2/"/>
-    <id>http://kingsamchen.github.io/2025/05/11/weekly-2025-may-2/</id>
-    <published>2025-05-11T15:38:00.000Z</published>
-    <updated>2025-05-28T03:19:29.411Z</updated>
+    <title>一周杂记 in Week 3 Feb 2026</title>
+    <link href="http://kingsamchen.github.io/2026/02/23/weekly-2026-feb-3/"/>
+    <id>http://kingsamchen.github.io/2026/02/23/weekly-2026-feb-3/</id>
+    <published>2026-02-23T15:37:54.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（05&amp;#x2F;05 ~ 05&amp;#x2F;11）是五月的第二周，过完了周一五一最后一个假期，又得开始恢复搬砖生活了。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;16 ~ 02&amp;#x2F;22）是2月份第三周，2&amp;#x2F;16 第一天就是除夕，春节假期正式开始。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -181,18 +334,49 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 1 May 2025</title>
-    <link href="http://kingsamchen.github.io/2025/05/05/weekly-2025-may-1/"/>
-    <id>http://kingsamchen.github.io/2025/05/05/weekly-2025-may-1/</id>
-    <published>2025-05-05T03:30:42.000Z</published>
-    <updated>2025-05-28T03:19:29.411Z</updated>
+    <title>std::stop_token: A General-Purpose Cancellation Mechanism</title>
+    <link href="http://kingsamchen.github.io/2026/02/20/general-purpose-cancellation-mechanism-stop-token/"/>
+    <id>http://kingsamchen.github.io/2026/02/20/general-purpose-cancellation-mechanism-stop-token/</id>
+    <published>2026-02-20T03:29:12.000Z</published>
+    <updated>2026-05-05T01:59:42.180Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;28 ~ 05&amp;#x2F;04）是五月的第一周，周四是五一 labor day，终于进入假期了。&lt;/p&gt;
+    <summary type="html">&lt;h2 id=&quot;Using-std-stop-source-and-std-stop-token&quot;&gt;&lt;a href=&quot;#Using-std-stop-source-and-std-stop-token&quot; class=&quot;headerlink&quot; title=&quot;Using</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="stop_token" scheme="http://kingsamchen.github.io/tags/stop-token/"/>
+    
+    <category term="cancellation" scheme="http://kingsamchen.github.io/tags/cancellation/"/>
+    
+    <category term="asynchronous" scheme="http://kingsamchen.github.io/tags/asynchronous/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Feb 2026</title>
+    <link href="http://kingsamchen.github.io/2026/02/15/weekly-2026-feb-2/"/>
+    <id>http://kingsamchen.github.io/2026/02/15/weekly-2026-feb-2/</id>
+    <published>2026-02-15T15:52:43.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;09 ~ 02&amp;#x2F;15）是2月份第二周，周六已经提前进入春节假期。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -207,18 +391,18 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 4 Apr 2025</title>
-    <link href="http://kingsamchen.github.io/2025/04/28/weekly-2025-apr-4/"/>
-    <id>http://kingsamchen.github.io/2025/04/28/weekly-2025-apr-4/</id>
-    <published>2025-04-27T16:35:05.000Z</published>
-    <updated>2025-05-28T03:19:29.408Z</updated>
+    <title>一周杂记 in Week 1 Feb 2026</title>
+    <link href="http://kingsamchen.github.io/2026/02/08/weekly-2026-feb-1/"/>
+    <id>http://kingsamchen.github.io/2026/02/08/weekly-2026-feb-1/</id>
+    <published>2026-02-08T14:07:15.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;21 ~ 04&amp;#x2F;27）是四月份最后一周，下周四就是五月一号了。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;这周（02&amp;#x2F;02 ~ 02&amp;#x2F;08）是2月份第一周，下周是节前最后一个工作周了。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -233,18 +417,18 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 3 Apr 2025</title>
-    <link href="http://kingsamchen.github.io/2025/04/21/weekly-2025-apr-3/"/>
-    <id>http://kingsamchen.github.io/2025/04/21/weekly-2025-apr-3/</id>
-    <published>2025-04-20T17:01:19.000Z</published>
-    <updated>2025-05-28T03:19:29.407Z</updated>
+    <title>一周杂记 in Week 5 Jan 2026</title>
+    <link href="http://kingsamchen.github.io/2026/02/01/weekly-2026-jan-5/"/>
+    <id>http://kingsamchen.github.io/2026/02/01/weekly-2026-jan-5/</id>
+    <published>2026-02-01T15:37:26.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;14 ~ 04&amp;#x2F;20）是四月份第三周，距离五一假期越来越近了。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;26 ~ 02&amp;#x2F;01）是一月份第五周，1月份的最后一周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -259,18 +443,18 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 2 Apr 2025</title>
-    <link href="http://kingsamchen.github.io/2025/04/13/weekly-2025-apr-2/"/>
-    <id>http://kingsamchen.github.io/2025/04/13/weekly-2025-apr-2/</id>
-    <published>2025-04-13T15:46:36.000Z</published>
-    <updated>2025-05-28T03:19:29.407Z</updated>
+    <title>一周杂记 in Week 4 Jan 2026</title>
+    <link href="http://kingsamchen.github.io/2026/01/25/weekly-2026-jan-4/"/>
+    <id>http://kingsamchen.github.io/2026/01/25/weekly-2026-jan-4/</id>
+    <published>2026-01-25T14:53:15.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;07 ~ 04&amp;#x2F;13）是四月份第二周，这周除了周六天气反常之外其他时候都是多数晴天。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周（1&amp;#x2F;19 ~ 1&amp;#x2F;25）是1月份第四周，一月份已经进入了下旬。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -285,18 +469,45 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 1 Apr 2025</title>
-    <link href="http://kingsamchen.github.io/2025/04/07/weekly-2025-apr-1/"/>
-    <id>http://kingsamchen.github.io/2025/04/07/weekly-2025-apr-1/</id>
-    <published>2025-04-06T16:47:15.000Z</published>
-    <updated>2025-05-28T03:19:29.407Z</updated>
+    <title>一周杂记 in Week 3 Jan 2026</title>
+    <link href="http://kingsamchen.github.io/2026/01/18/weekly-2026-jan-3/"/>
+    <id>http://kingsamchen.github.io/2026/01/18/weekly-2026-jan-3/</id>
+    <published>2026-01-18T15:27:31.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;31 ~ 04&amp;#x2F;6）是四月份第一周，气温又明显回升，开始有夏天的感觉了。&lt;/p&gt;
+    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;12 ~ 01&amp;#x2F;18）是1月份第三周。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
+&lt;p&gt;这周</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 2 Jan 2026</title>
+    <link href="http://kingsamchen.github.io/2026/01/11/weekly-2026-jan-2/"/>
+    <id>http://kingsamchen.github.io/2026/01/11/weekly-2026-jan-2/</id>
+    <published>2026-01-11T14:45:54.000Z</published>
+    <updated>2026-05-05T01:59:42.181Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;05 ~ 01&amp;#x2F;11）是1月份第二周。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
@@ -311,235 +522,31 @@
   </entry>
   
   <entry>
-    <title>一周杂记 in Week 4 Mar 2025</title>
-    <link href="http://kingsamchen.github.io/2025/03/30/weekly-2025-mar-4/"/>
-    <id>http://kingsamchen.github.io/2025/03/30/weekly-2025-mar-4/</id>
-    <published>2025-03-30T15:55:05.000Z</published>
-    <updated>2025-05-28T03:19:29.410Z</updated>
+    <title>The Lambda Coroutine Fiasco</title>
+    <link href="http://kingsamchen.github.io/2026/01/10/the-lambda-coroutine-fiasco/"/>
+    <id>http://kingsamchen.github.io/2026/01/10/the-lambda-coroutine-fiasco/</id>
+    <published>2026-01-10T06:56:48.000Z</published>
+    <updated>2026-05-05T01:59:42.180Z</updated>
     
     
       
       
         
         
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;24 ~ 03&amp;#x2F;30）是三月份最后一周，下周二就是4月1号了。&lt;/p&gt;
-&lt;p&gt;本周气温腰斩转冷，真的是有点不太适应。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+    <summary type="html">&lt;p&gt;This is a follow-up to &lt;a href=&quot;/2025/11/29/using-asio-awaitable/&quot; title=&quot;Using ASIO awaitable the Easy Way&quot;&gt;Using ASIO awaitable the</summary>
         
       
     
     
     
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
     
     
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
     
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Mar 2025</title>
-    <link href="http://kingsamchen.github.io/2025/03/24/weekly-2025-mar-3/"/>
-    <id>http://kingsamchen.github.io/2025/03/24/weekly-2025-mar-3/</id>
-    <published>2025-03-24T15:54:31.000Z</published>
-    <updated>2025-05-28T03:19:29.410Z</updated>
+    <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
     
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;17 ~ 03&amp;#x2F;23）是3月份第三周，天气短暂的开始转热，感觉已经要一秒入夏了。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 Mar 2025</title>
-    <link href="http://kingsamchen.github.io/2025/03/18/weekly-2025-mar-2/"/>
-    <id>http://kingsamchen.github.io/2025/03/18/weekly-2025-mar-2/</id>
-    <published>2025-03-17T17:53:04.000Z</published>
-    <updated>2025-05-28T03:19:29.410Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;10 ~ 03&amp;#x2F;16）是三月份第二周，这周事情也比较多&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Mar 2025</title>
-    <link href="http://kingsamchen.github.io/2025/03/11/weekly-2025-mar-1/"/>
-    <id>http://kingsamchen.github.io/2025/03/11/weekly-2025-mar-1/</id>
-    <published>2025-03-10T16:58:49.000Z</published>
-    <updated>2025-05-28T03:19:29.410Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;03 ~ 03&amp;#x2F;09）是3月份第一周。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Feb 2025</title>
-    <link href="http://kingsamchen.github.io/2025/03/04/weekly-2025-feb-4/"/>
-    <id>http://kingsamchen.github.io/2025/03/04/weekly-2025-feb-4/</id>
-    <published>2025-03-04T13:24:44.000Z</published>
-    <updated>2025-05-28T03:19:29.408Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;24 ~ 03&amp;#x2F;02）是2月份的最后一周，周末正式进入三月份&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 3 Feb 2025</title>
-    <link href="http://kingsamchen.github.io/2025/02/25/weekly-2025-feb-3/"/>
-    <id>http://kingsamchen.github.io/2025/02/25/weekly-2025-feb-3/</id>
-    <published>2025-02-24T16:14:56.000Z</published>
-    <updated>2025-05-28T03:19:29.408Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;17 ~ 02&amp;#x2F;23）是2月份第三周，主旋律依然是想躺平 🤣&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 Feb 2025</title>
-    <link href="http://kingsamchen.github.io/2025/02/17/weekly-2025-feb-2/"/>
-    <id>http://kingsamchen.github.io/2025/02/17/weekly-2025-feb-2/</id>
-    <published>2025-02-16T16:45:25.000Z</published>
-    <updated>2025-05-28T03:19:29.408Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;10 ~ 02&amp;#x2F;16）是2月份第二周，节后开始正式上班了&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Feb 2025</title>
-    <link href="http://kingsamchen.github.io/2025/02/09/weekly-2025-feb-1/"/>
-    <id>http://kingsamchen.github.io/2025/02/09/weekly-2025-feb-1/</id>
-    <published>2025-02-09T15:40:50.000Z</published>
-    <updated>2025-05-28T03:19:29.408Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（02&amp;#x2F;03 ~ 02&amp;#x2F;09）是2月份第一周，舒服幸福的春节假期也马上结束了，又要回到惨无人道的工作中去 🤷‍♂️&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 5 Jan 2025</title>
-    <link href="http://kingsamchen.github.io/2025/02/03/weekly-2025-jan-5/"/>
-    <id>http://kingsamchen.github.io/2025/02/03/weekly-2025-jan-5/</id>
-    <published>2025-02-02T16:12:55.000Z</published>
-    <updated>2025-05-28T03:19:29.409Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（01&amp;#x2F;27 ~ 02&amp;#x2F;02）是一月份第五周，春节假期过半，也终于进入了2月份。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
     
   </entry>
   

@@ -1,0 +1,162 @@
+<!DOCTYPE html><html lang="en"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="Gone with the ruins"><title>一周杂记 in Week 2 Feb 2026 | KC的废墟堆</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">一周杂记 in Week 2 Feb 2026</h1><a id="logo" href="/.">KC的废墟堆</a><p class="description">Will you serve in Heaven, or rule in Hell</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> Home</i></a><a href="/archives/"><i class="fa fa-archive"> Archive</i></a><a href="/source-code-reading/"><i class="fa fa-archive"> 源码分析</i></a><a href="/about/"><i class="fa fa-user"> About</i></a><a href="/atom.xml"><i class="fa fa-rss"> RSS</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">一周杂记 in Week 2 Feb 2026</h1><div class="post-meta">2026-02-15<span> | </span><span class="category"><a href="/categories/CODE-LIFE/">CODE-LIFE</a></span></div><a class="disqus-comment-count" data-disqus-identifier="2026/02/15/weekly-2026-feb-2/" href="/2026/02/15/weekly-2026-feb-2/#disqus_thread"></a><div class="post-content"><p>本周（02&#x2F;09 ~ 02&#x2F;15）是2月份第二周，周六已经提前进入春节假期。</p>
+<h2 id="Life"><a href="#Life" class="headerlink" title="Life"></a>Life</h2><p>#1</p>
+<p>这周是节前最后一个工作周了，不过官方节假日安排上周六还要调休上班，真的离谱。</p>
+<p>今年春节虽说表面上看有9天假期，但是扣掉调休和正常的周末，实际上只多给了一天，也就是只有5天的公共假期…真抠啊</p>
+<p>虽然马上要放假了，但是工作强度依然不减，每天看到老崔那个伪君子的脸就想死，而且吃饭的时候聊了一下发现不止我一个人这种感觉</p>
+<p>于是索性这周六调休直接开始请假，并且节后的第一个工作日也休假得了，这样加起来11天假期。</p>
+<p>所以这周五下班之后就正式进入春节假期了。</p>
+<p>#2</p>
+<p>之前按照两位G老师的说法，升级了硬盘固件，调整了 PCIE 的几个设置之后发现果然系统稳定了，再也没有黑屏掉盘死机的问题发生。</p>
+<p>于是看 ASUS 又出了个主板 BIOS，索性心一横，直接刷了最新的 BIOS，然后重新打开 DOCP-I 的超频设置，现在内存又从5600回到了6400</p>
+<p>不过用了几天后发现除了另外的问题：睡眠后半个多小时后这机器自己就醒来了。</p>
+<p>一开始以为误触了键盘鼠标，但是后来发现确实是自己唤醒</p>
+<p>重新问了 G 老师，说可以用 admin 权限运行</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">powercfg /lastwake</span><br></pre></td></tr></table></figure>
+
+<p>看看是被啥唤醒了</p>
+<p>逮到一次机会后发现是两个比较 general 啥 usb root 和 pcie xxx 唤醒的，但是具体是哪个设备也不知道。。</p>
+<p>G老师说那既然如此，直接把除了键盘鼠标之外的设备的 wakeup 都给关了</p>
+<p>嗯，好像确实可以了 🤔</p>
+<p>#3</p>
+<p>这周和老婆因为娃喂奶的事情吵架了，然后我把用了好几年的 logi mx master 2s 给摔坏了…</p>
+<p>于是又出血买了一个 mx master 3s…</p>
+<p>🤷‍♂️</p>
+<h2 id="Work"><a href="#Work" class="headerlink" title="Work"></a>Work</h2><p>#1</p>
+<p><strong>CppNow 2025 | Advanced Ranges - Writing Modular, Clean, and Efficient Code with Custom Views - Steve Sorkin</strong> <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=5iXUCcFP6H4&list=PL_AKIMJc4roW7umwjjd9Td-rtoqkiyqFl&index=54">https://www.youtube.com/watch?v=5iXUCcFP6H4&amp;list=PL_AKIMJc4roW7umwjjd9Td-rtoqkiyqFl&amp;index=54</a></p>
+<ul>
+<li>如果使用预置的那些 views 会有潜在性能问题或者 filter 会依赖外部状态的时候可以考虑创建自己的 views</li>
+<li>custom views 也有各种坑，实现尽量保持简单，对外部的 ref 尽量 by value，否则 composition 的时候可能会有问题</li>
+<li>Slides: <a target="_blank" rel="noopener" href="https://github.com/boostcon/cppnow_presentations_2025/blob/main/Presentations/Advanced_Ranges.pdf">https://github.com/boostcon/cppnow_presentations_2025/blob/main/Presentations/Advanced_Ranges.pdf</a></li>
+<li>Demo: <a target="_blank" rel="noopener" href="https://godbolt.org/z/jaEr8Eaaf">https://godbolt.org/z/jaEr8Eaaf</a></li>
+</ul>
+<p><strong>C++ Weekly - Ep 518 - Online C++ Tools You Must See! (2026)</strong> <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=VAgC2bCwOQo">https://www.youtube.com/watch?v=VAgC2bCwOQo</a></p>
+<ul>
+<li>整理一下就是<ul>
+<li><a target="_blank" rel="noopener" href="https://compiler-explorer.com/">https://compiler-explorer.com</a></li>
+<li><a target="_blank" rel="noopener" href="https://wg21.cmeerw.net/cppdraft/search">https://wg21.cmeerw.net/cppdraft/search</a></li>
+<li><a target="_blank" rel="noopener" href="https://eel.is/c++draft/">https://eel.is/c++draft/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/timsong-cpp/cppwp">https://github.com/timsong-cpp/cppwp</a></li>
+<li><a target="_blank" rel="noopener" href="https://search.cpp-lang.org/#">https://search.cpp-lang.org/#</a></li>
+<li><a target="_blank" rel="noopener" href="https://wg21.link/">https://wg21.link/</a></li>
+<li><a target="_blank" rel="noopener" href="https://cppinsights.io/">https://cppinsights.io/</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/lefticus/cppstdmd/">https://github.com/lefticus/cppstdmd/</a></li>
+<li><a target="_blank" rel="noopener" href="https://cppevo.dev/">https://cppevo.dev/</a></li>
+<li><a target="_blank" rel="noopener" href="https://cppstat.dev/">https://cppstat.dev/</a></li>
+</ul>
+</li>
+<li>一些 proposal&#x2F;draft 相关的普通人其实也没必要去看，太 lang lawful 了</li>
+<li><a target="_blank" rel="noopener" href="http://cppstat.dev/">cppstat.dev</a> 这个感觉挺不错的，之前在 reddit 上看到就再跟了</li>
+</ul>
+<p><strong>C++ Weekly - Ep 196 - What is <code>requires requires</code>?</strong> <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=tc0hVIOJk_U">https://www.youtube.com/watch?v=tc0hVIOJk_U</a></p>
+<ul>
+<li>经典的 requires requires</li>
+<li>不过 Jason 提到了出现这个大多时候 imply code smell，应该单独创建一个 concept</li>
+</ul>
+<p><strong>C++ Weekly - Ep 195 - C++20’s <code>constinit</code></strong> <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=o0z3KT4gW7k">https://www.youtube.com/watch?v=o0z3KT4gW7k</a></p>
+<ul>
+<li>constinit 是强制在编译期初始化某个变量（多为 global duration），但是变量本身不是 const，因而是可以修改的</li>
+<li>目前的主要用途是解决 global initialization fiasco</li>
+</ul>
+<p><strong>C++ Weekly - Ep 194 - From SFINAE To Concepts With C++20</strong> <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=dR64GQb4AGo">https://www.youtube.com/watch?v=dR64GQb4AGo</a></p>
+<ul>
+<li>介绍 concept，其中 terse syntex 部分讲了好多，并且 terse syntax 更加灵活：<ul>
+<li>作为函数参数可以支持参数不必都是同一种类型，只要满足 concept 即可</li>
+<li>可以作为函数返回类型</li>
+<li>甚至可以直接作为变量定义时候的约束</li>
+</ul>
+</li>
+<li>不过我觉得如果没有必要，反而应该减少 terse syntax 的使用</li>
+</ul>
+<p><strong>C++ Weekly - Ep 193 - C++20’s <code>contains</code> Members</strong> <a target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=4yDRsQyWqqc">https://www.youtube.com/watch?v=4yDRsQyWqqc</a></p>
+<ul>
+<li>各容器终于引入了 <code>contains()</code> 函数</li>
+</ul>
+<p><strong>Don’t Use shared_ptr’s Aliasing Constructor</strong> <a target="_blank" rel="noopener" href="https://ibob.bg/blog/2022/12/28/dont-use-shared_ptr-aliasing-ctor/">https://ibob.bg/blog/2022/12/28/dont-use-shared_ptr-aliasing-ctor/</a></p>
+<ul>
+<li><p>作者观点是，aliasing constructor 会导致下面这种危险的用法</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> name_addr = &amp;alice-&gt;name;</span><br><span class="line">alice.<span class="built_in">reset</span>();</span><br><span class="line"><span class="function">std::shared_ptr&lt;std::string&gt; <span class="title">name</span><span class="params">(alice, name_addr)</span></span>;</span><br><span class="line"><span class="built_in">assert</span>(name != <span class="literal">nullptr</span>);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>虽然 <code>name.use_count() == 0</code>，但是自身不是 <code>nullptr</code>；并且 check against nullptr 是非常 idiomatic 的方式</p>
+</li>
+<li><p>作者给的方案是不允许直接使用 aliasing ctor</p>
+  <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;<span class="keyword">typename</span> U, <span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="function">std::shared_ptr&lt;T&gt; <span class="title">make_aliased</span><span class="params">(<span class="type">const</span> std::shared_ptr&lt;U&gt;&amp; owner, T* ptr)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (owner.<span class="built_in">use_count</span>() == <span class="number">0</span>) <span class="keyword">return</span> &#123;&#125;;</span><br><span class="line">    <span class="keyword">return</span> std::<span class="built_in">shared_ptr</span>&lt;T&gt;(owner, ptr);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>这个方案确实可以在一定程度上有帮助，但是其实更大的问题是 aliasing 的误用。绝大多数情况下 <code>ptr</code> 指向的应该是 <code>owner</code> 的一个 field；而 aliasing constructed after reset 我觉得是更严重的逻辑问题，不如在 <code>make_aliased()</code> 里先加一个 assert</p>
+</li>
+</ul>
+<p><strong>Recognizing stop_token as a General-Purpose Signaling Mechanism</strong> <a target="_blank" rel="noopener" href="https://www.vinniefalco.com/p/recognizing-stop_token-as-a-general">https://www.vinniefalco.com/p/recognizing-stop_token-as-a-general</a></p>
+<ul>
+<li>C++ 20 引入的 stop_source &#x2F; stop_token 可以看作 one-shot &amp; one-to-many 的 signaling event mechanism；加上搭配的 stop_callback 可以做一些 event ready operations</li>
+<li>作者在这个基础上想搞一个支持 reset 的更通用的，并且提了 proposal…</li>
+</ul>
+<p>#2</p>
+<p>这周有不少时间在研究如何给 fawkes 做 graceful shutdown，总结起来需要的理论步骤如下：</p>
+<ol>
+<li>监听 signals，例如 <code>SIGINT</code>&#x2F;<code>SIGTERM</code></li>
+<li>signal 触发后首先“停”掉 listener&#x2F;acceptor，这一步是避免后续再有新的请求进来；这一步之后只需要处理存量 http 连接即可</li>
+<li>对于处在 idle 的连接可以直接 shutdown；而已经在 serve 中的连接要在发完 response 之后当作 keep-alive &#x3D;&#x3D; false 的情况处理，关掉连接</li>
+<li>然后等到 executors 没有 outstanding work 自然退出即可</li>
+</ol>
+<p>对于 ASIO 来说，因为 proactor 模型，所以需要一个机制取消 outstanding async operations；第二步里直接 close tcp::acceptor 就行，而 idle 连接的 async_read 是不能用直接 cancel 或者 close 整个 socket 的方式来取消的，因为这会导致 serving 连接的操作也直接被强制中断。</p>
+<p>所以对于 ASIO 来说就要用到 cancellation_signal&#x2F;cancellation_slot 这一对用来支持 per-operation cancelaltion 的机制</p>
+<p>因为 http 各连接之间不需要互相通讯（和 chat 这类明显不同）所以我非常非常不情愿实现一个 session manager 类似的东西，因为用这个一定得引入同步机制，这月等于给自己上了一个枷锁。</p>
+<p>所以这周很大一部分时间是在研究如何不改动当前各 http connection 独立的情况下加 cancellation 支持。</p>
+<p>好消息是已经有个能 work 的 demo，剧透一下核心利用的 std::stop_source&#x2F;stop_token 搭配 cancellation_signal&#x2F;cancellation_slot</p>
+<p>具体后面专门出几期的 posts 来展开讲一下。这部分内容比较多，而且涉及多个组件，所以估计得单开一个系列。</p>
+<p>#3</p>
+<p>其实 cancellation 也是 structural concurrency 的一部分，所以其实也顺带研究了一下 ASIO 为 <code>awaitable&lt;&gt;</code> 提供的 parallel group 的语法糖，即</p>
+<ul>
+<li><code>co_await (op1 &amp;&amp; op2 &amp;&amp; ...)</code> 本质是 when_all，会等待所有 op 结束或者其中某一个以异常方式失败，则其他的操作直接被取消</li>
+<li><code>co_await (op1 || op2 || ...)</code> 本质是 when_any，只要其中一个成功，其他的操作被取消</li>
+</ul>
+<p>这套语法糖对应的是 parallel group 和 when_op，并且深度利用了 per-operation cancellation</p>
+<p>这部分内容也会在上面那个系列里讲到。</p>
+<p>感觉这个春节假期的任务比较重？ 🤔</p>
+<hr>
+<p>好了这周就这样，下周见。</p>
+</div><div class="tags"><a href="/tags/%E6%9D%82%E8%AE%B0/"><i class="fa fa-tag"></i>杂记</a></div><div class="post-nav"><a class="pre" href="/2026/02/20/general-purpose-cancellation-mechanism-stop-token/">std::stop_token: A General-Purpose Cancellation Mechanism</a><a class="next" href="/2026/02/08/weekly-2026-feb-1/">一周杂记 in Week 1 Feb 2026</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论（请确保 Disqus 可以正常加载）</button></div><script type="text/javascript">var disqus_config = function () {
+    this.page.url = 'http://kingsamchen.github.io/2026/02/15/weekly-2026-feb-2/';
+    this.page.identifier = '2026/02/15/weekly-2026-feb-2/';
+    this.page.title = '一周杂记 in Week 2 Feb 2026';
+  };</script><script type="text/javascript" id="disqus-lazy-load-script">$.ajax({
+url: 'https://disqus.com/next/config.json',
+timeout: 2500,
+type: 'GET',
+success: function(){
+  var d = document;
+  var s = d.createElement('script');
+  s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+  s.setAttribute('data-timestamp', + new Date());
+  (d.head || d.body).appendChild(s);
+  $('.disqus_click_btn').css('display', 'none');
+},
+error: function() {
+  $('.disqus_click_btn').css('display', 'block');
+}
+});</script><script type="text/javascript" id="disqus-click-load">$('.btn_click_load').click(() => {  //click to load comments
+    (() => { // DON'T EDIT BELOW THIS LINE
+        var d = document;
+        var s = d.createElement('script');
+        s.src = '//kingsamchen-github-io.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', + new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+    $('.disqus_click_btn').css('display','none');
+});</script><script type="text/javascript" id="disqus-count-script">$(function() {
+     var xhr = new XMLHttpRequest();
+     xhr.open('GET', '//disqus.com/next/config.json', true);
+     xhr.timeout = 2500;
+     xhr.onreadystatechange = function () {
+       if (xhr.readyState === 4 && xhr.status === 200) {
+         $('.post-meta .post-comments-count').show();
+         var s = document.createElement('script');
+         s.id = 'dsq-count-scr';
+         s.src = 'https://kingsamchen-github-io.disqus.com/count.js';
+         s.async = true;
+         (document.head || document.body).appendChild(s);
+       }
+     };
+     xhr.ontimeout = function () { xhr.abort(); };
+     xhr.send(null);
+   });
+</script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form class="search-form" action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://kingsamchen.github.io"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> Categories</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/CODE-LIFE/">CODE-LIFE</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/PROGRAMMING/">PROGRAMMING</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> Recent</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2026/05/05/weekly-2026-apr-5/">一周杂记 in Week 5 Apr 2026</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/27/weekly-2026-apr-4/">一周杂记 in Week 4 Apr 2026</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/19/weekly-2026-apr-3/">一周杂记 in Week 3 Apr 2026</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/13/weekly-2026-apr-2/">一周杂记 in Week 2 Apr 2026</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/04/07/weekly-2026-apr-1/">一周杂记 in Week 1 Apr 2026</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/03/30/weekly-2026-mar-4/">一周杂记 in Week 4 Mar 2026</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/03/24/weekly-2026-mar-3/">一周杂记 in Week 3 Mar 2026</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/03/15/weekly-2026-mar-2/">一周杂记 in Week 2 Mar 2026</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/03/15/per-operation-cancellation-in-asio/">Object-Wide Cancellation and Per-Operation Cancellation in ASIO</a></li><li class="post-list-item"><a class="post-list-link" href="/2026/03/08/weekly-2026-mar-1/">一周杂记 in Week 1 Mar 2026</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> Tags</i></div><div class="tagcloud"><a href="/tags/rant/" style="font-size: 15px;">rant</a> <a href="/tags/life/" style="font-size: 15px;">life</a> <a href="/tags/android/" style="font-size: 15px;">android</a> <a href="/tags/cpp/" style="font-size: 15px;">cpp</a> <a href="/tags/exception/" style="font-size: 15px;">exception</a> <a href="/tags/Windows/" style="font-size: 15px;">Windows</a> <a href="/tags/crash/" style="font-size: 15px;">crash</a> <a href="/tags/breakpad/" style="font-size: 15px;">breakpad</a> <a href="/tags/memory-fence/" style="font-size: 15px;">memory fence</a> <a href="/tags/memory-ordering/" style="font-size: 15px;">memory ordering</a> <a href="/tags/multiple-instance/" style="font-size: 15px;">multiple instance</a> <a href="/tags/c/" style="font-size: 15px;">c++</a> <a href="/tags/enum/" style="font-size: 15px;">enum</a> <a href="/tags/flag/" style="font-size: 15px;">flag</a> <a href="/tags/bitwise%EF%BC%8C-SFINAE/" style="font-size: 15px;">bitwise， SFINAE</a> <a href="/tags/KBase/" style="font-size: 15px;">KBase</a> <a href="/tags/command-line/" style="font-size: 15px;">command-line</a> <a href="/tags/abstraction/" style="font-size: 15px;">abstraction</a> <a href="/tags/%E6%A2%AF%E5%AD%90/" style="font-size: 15px;">梯子</a> <a href="/tags/shadowsocks/" style="font-size: 15px;">shadowsocks</a> <a href="/tags/trojan/" style="font-size: 15px;">trojan</a> <a href="/tags/socat/" style="font-size: 15px;">socat</a> <a href="/tags/windows/" style="font-size: 15px;">windows</a> <a href="/tags/design/" style="font-size: 15px;">design</a> <a href="/tags/environment/" style="font-size: 15px;">environment</a> <a href="/tags/C-17/" style="font-size: 15px;">C++ 17</a> <a href="/tags/string-view/" style="font-size: 15px;">string_view</a> <a href="/tags/tokenizer/" style="font-size: 15px;">tokenizer</a> <a href="/tags/buddy-allocator/" style="font-size: 15px;">buddy-allocator</a> <a href="/tags/algorithms/" style="font-size: 15px;">algorithms</a> <a href="/tags/anvil/" style="font-size: 15px;">anvil</a> <a href="/tags/cmake/" style="font-size: 15px;">cmake</a> <a href="/tags/project-management/" style="font-size: 15px;">project management</a> <a href="/tags/asio/" style="font-size: 15px;">asio</a> <a href="/tags/docker/" style="font-size: 15px;">docker</a> <a href="/tags/cfs/" style="font-size: 15px;">cfs</a> <a href="/tags/non-capturing-lambda/" style="font-size: 15px;">non-capturing lambda</a> <a href="/tags/function-pointer/" style="font-size: 15px;">function pointer</a> <a href="/tags/obs-studio/" style="font-size: 15px;">obs-studio</a> <a href="/tags/atoi/" style="font-size: 15px;">atoi</a> <a href="/tags/golang/" style="font-size: 15px;">golang</a> <a href="/tags/inno-setup/" style="font-size: 15px;">inno setup</a> <a href="/tags/installer/" style="font-size: 15px;">installer</a> <a href="/tags/Linux/" style="font-size: 15px;">Linux</a> <a href="/tags/Unix/" style="font-size: 15px;">Unix</a> <a href="/tags/signal/" style="font-size: 15px;">signal</a> <a href="/tags/signalfd/" style="font-size: 15px;">signalfd</a> <a href="/tags/self-pipe-trick/" style="font-size: 15px;">self-pipe trick</a> <a href="/tags/cant/" style="font-size: 15px;">cant</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/HandlerThread/" style="font-size: 15px;">HandlerThread</a> <a href="/tags/Looper/" style="font-size: 15px;">Looper</a> <a href="/tags/Handler/" style="font-size: 15px;">Handler</a> <a href="/tags/MessageLoop/" style="font-size: 15px;">MessageLoop</a> <a href="/tags/http/" style="font-size: 15px;">http</a> <a href="/tags/proxy/" style="font-size: 15px;">proxy</a> <a href="/tags/thread-pool/" style="font-size: 15px;">thread-pool</a> <a href="/tags/chromium/" style="font-size: 15px;">chromium</a> <a href="/tags/urlfetcher/" style="font-size: 15px;">urlfetcher</a> <a href="/tags/wireshark/" style="font-size: 15px;">wireshark</a> <a href="/tags/localhost/" style="font-size: 15px;">localhost</a> <a href="/tags/SFINAE/" style="font-size: 15px;">SFINAE</a> <a href="/tags/template/" style="font-size: 15px;">template</a> <a href="/tags/source-internals/" style="font-size: 15px;">source internals</a> <a href="/tags/message-loop/" style="font-size: 15px;">message-loop</a> <a href="/tags/visual-studio/" style="font-size: 15px;">visual studio</a> <a href="/tags/libx264/" style="font-size: 15px;">libx264</a> <a href="/tags/vcpkg/" style="font-size: 15px;">vcpkg</a> <a href="/tags/shared-ptr/" style="font-size: 15px;">shared_ptr</a> <a href="/tags/type-injection/" style="font-size: 15px;">type injection</a> <a href="/tags/tag-dispatching/" style="font-size: 15px;">tag dispatching</a> <a href="/tags/shared-ptr-internals/" style="font-size: 15px;">shared_ptr-internals</a> <a href="/tags/source-code-study/" style="font-size: 15px;">source-code-study</a> <a href="/tags/weak-ptr/" style="font-size: 15px;">weak_ptr</a> <a href="/tags/base-lib/" style="font-size: 15px;">base lib</a> <a href="/tags/boost/" style="font-size: 15px;">boost</a> <a href="/tags/libstdc/" style="font-size: 15px;">libstdc++</a> <a href="/tags/gcc/" style="font-size: 15px;">gcc</a> <a href="/tags/clang/" style="font-size: 15px;">clang</a> <a href="/tags/sfinae/" style="font-size: 15px;">sfinae</a> <a href="/tags/google-breakpad/" style="font-size: 15px;">google-breakpad</a> <a href="/tags/invalid-paramter/" style="font-size: 15px;">invalid paramter</a> <a href="/tags/operator/" style="font-size: 15px;">operator[]</a> <a href="/tags/Visual-Studio/" style="font-size: 15px;">Visual Studio</a> <a href="/tags/debugger/" style="font-size: 15px;">debugger</a> <a href="/tags/UTF-8/" style="font-size: 15px;">UTF-8</a> <a href="/tags/error-handling/" style="font-size: 15px;">error handling</a> <a href="/tags/owner-semantics/" style="font-size: 15px;">owner semantics</a> <a href="/tags/view-semantics/" style="font-size: 15px;">view semantics</a> <a href="/tags/msvc/" style="font-size: 15px;">msvc</a> <a href="/tags/ebo/" style="font-size: 15px;">ebo</a> <a href="/tags/multiple-inheritance/" style="font-size: 15px;">multiple inheritance</a> <a href="/tags/python/" style="font-size: 15px;">python</a> <a href="/tags/haskell/" style="font-size: 15px;">haskell</a> <a href="/tags/infix-operator/" style="font-size: 15px;">infix operator</a> <a href="/tags/linux/" style="font-size: 15px;">linux</a> <a href="/tags/mint/" style="font-size: 15px;">mint</a> <a href="/tags/%E7%A3%81%E7%9B%98/" style="font-size: 15px;">磁盘</a> <a href="/tags/%E6%89%A9%E5%AE%B9/" style="font-size: 15px;">扩容</a> <a href="/tags/ffmpeg/" style="font-size: 15px;">ffmpeg</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> Links</i></div><ul></ul><a href="https://www.daozhihun.com/" title="刀之魂 | 大木老师成长日记" target="_blank">刀之魂 | 大木老师成长日记</a><ul></ul><a href="https://runzhen.github.io/" title="管理员 | 硅谷谈撸管" target="_blank">管理员 | 硅谷谈撸管</a><ul></ul><a href="https://blog.chichou.me/" title="ChiChou | 首席安全地球仪切图总奸" target="_blank">ChiChou | 首席安全地球仪切图总奸</a><ul></ul><a href="https://fleurer.github.io/" title="Fleurer-lee | F叔的读书笔记（大量干货）" target="_blank">Fleurer-lee | F叔的读书笔记（大量干货）</a><ul></ul><a href="https://vizee.org/" title="Vizee | 即将走上人生巅峰推萝莉的章总" target="_blank">Vizee | 即将走上人生巅峰推萝莉的章总</a><ul></ul><a href="https://blog.thecjw.me/" title="TheCJW | 爱弹棉花的小伟" target="_blank">TheCJW | 爱弹棉花的小伟</a><ul></ul><a href="https://newbiecoder.0ginr.com/blog/" title="Newbie Coder | 萌萌哒的炉子" target="_blank">Newbie Coder | 萌萌哒的炉子</a><ul></ul><a href="https://frankpie.github.io/" title="裴草莓 | 愤怒的老司机" target="_blank">裴草莓 | 愤怒的老司机</a><ul></ul><a href="https://beanbee.me/" title="陈老师 | Beanbee.Max" target="_blank">陈老师 | Beanbee.Max</a><ul></ul><a href="https://sunus.me/" title="Sunus | 李师傅食品厂CEO" target="_blank">Sunus | 李师傅食品厂CEO</a><ul></ul><a href="http://www.tolower.net/" title="Lower | 喊大木大哥的小弟" target="_blank">Lower | 喊大木大哥的小弟</a><ul></ul><a href="http://mrljdx.com/" title="Mrljdx | 大保健老司机" target="_blank">Mrljdx | 大保健老司机</a><ul></ul><a href="https://www.mydavelv.net/" title="Davelv | 江湖人称大尾驴" target="_blank">Davelv | 江湖人称大尾驴</a></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> Recent Comments</i></div><script type="text/javascript" src="//kingsamchen-github-io.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2026 <a href="/." rel="nofollow">KC的废墟堆.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><script type="text/javascript" src="/js/copycode.js" successtext="Copy Successed!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
