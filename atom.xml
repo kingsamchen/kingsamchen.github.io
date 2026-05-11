@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-04-27T13:46:21.681Z</updated>
+  <updated>2026-05-11T15:54:10.484Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,58 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 May 2026</title>
+    <link href="http://kingsamchen.github.io/2026/05/11/weekly-2026-may-1/"/>
+    <id>http://kingsamchen.github.io/2026/05/11/weekly-2026-may-1/</id>
+    <published>2026-05-11T15:27:25.000Z</published>
+    <updated>2026-05-11T15:54:10.484Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（05&amp;#x2F;04 ~ 05&amp;#x2F;10）是五月份第一周，已经开始结束假期开始重新上班了。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 5 Apr 2026</title>
+    <link href="http://kingsamchen.github.io/2026/05/05/weekly-2026-apr-5/"/>
+    <id>http://kingsamchen.github.io/2026/05/05/weekly-2026-apr-5/</id>
+    <published>2026-05-05T02:01:22.000Z</published>
+    <updated>2026-05-05T08:52:12.468Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;27 ~ 05&amp;#x2F;03）是四月份最后一周，周五开始就是五一假期。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Apr 2026</title>
@@ -482,61 +534,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（01&amp;#x2F;05 ~ 01&amp;#x2F;11）是1月份第二周。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>The Lambda Coroutine Fiasco</title>
-    <link href="http://kingsamchen.github.io/2026/01/10/the-lambda-coroutine-fiasco/"/>
-    <id>http://kingsamchen.github.io/2026/01/10/the-lambda-coroutine-fiasco/</id>
-    <published>2026-01-10T06:56:48.000Z</published>
-    <updated>2026-01-10T13:47:28.587Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;This is a follow-up to &lt;a href=&quot;/2025/11/29/using-asio-awaitable/&quot; title=&quot;Using ASIO awaitable the Easy Way&quot;&gt;Using ASIO awaitable the</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="lambda" scheme="http://kingsamchen.github.io/tags/lambda/"/>
-    
-    <category term="coroutine" scheme="http://kingsamchen.github.io/tags/coroutine/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 Jan 2026</title>
-    <link href="http://kingsamchen.github.io/2026/01/05/weekly-2026-jan-1/"/>
-    <id>http://kingsamchen.github.io/2026/01/05/weekly-2026-jan-1/</id>
-    <published>2026-01-05T13:01:56.000Z</published>
-    <updated>2026-01-05T15:40:38.038Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（12&amp;#x2F;29 ~ 01&amp;#x2F;04）是 2026 年 1 月份第一周，Happy New Year！又活了一年&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
