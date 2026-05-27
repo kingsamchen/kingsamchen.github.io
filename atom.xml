@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-05-25T14:38:21.553Z</updated>
+  <updated>2026-05-27T15:00:05.903Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>The Space-ship Operator &lt;=&gt;</title>
+    <link href="http://kingsamchen.github.io/2026/05/27/the-space-ship-operator/"/>
+    <id>http://kingsamchen.github.io/2026/05/27/the-space-ship-operator/</id>
+    <published>2026-05-27T14:57:56.000Z</published>
+    <updated>2026-05-27T15:00:05.903Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;h2 id=&quot;Totality-Interchangeability&quot;&gt;&lt;a href=&quot;#Totality-Interchangeability&quot; class=&quot;headerlink&quot; title=&quot;Totality &amp;amp;</summary>
+        
+      
+    
+    
+    
+    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
+    
+    
+    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
+    
+    <category term="operator&lt;=&gt;" scheme="http://kingsamchen.github.io/tags/operator/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 3 May 2026</title>
@@ -508,32 +535,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（01&amp;#x2F;26 ~ 02&amp;#x2F;01）是一月份第五周，1月份的最后一周。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Jan 2026</title>
-    <link href="http://kingsamchen.github.io/2026/01/25/weekly-2026-jan-4/"/>
-    <id>http://kingsamchen.github.io/2026/01/25/weekly-2026-jan-4/</id>
-    <published>2026-01-25T14:53:15.000Z</published>
-    <updated>2026-01-25T15:30:38.030Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（1&amp;#x2F;19 ~ 1&amp;#x2F;25）是1月份第四周，一月份已经进入了下旬。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
