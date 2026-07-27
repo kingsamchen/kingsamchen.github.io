@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-07-13T16:36:02.726Z</updated>
+  <updated>2026-07-27T15:19:33.641Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,58 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 4 July 2026</title>
+    <link href="http://kingsamchen.github.io/2026/07/27/weekly-2026-july-4/"/>
+    <id>http://kingsamchen.github.io/2026/07/27/weekly-2026-july-4/</id>
+    <published>2026-07-27T14:12:24.000Z</published>
+    <updated>2026-07-27T15:19:33.641Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（7.20 ~ 7.26）是7月份第四周，这周在温州老家居家办公了4天。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>一周杂记 in Week 3 July 2026</title>
+    <link href="http://kingsamchen.github.io/2026/07/21/weekly-2026-july-3/"/>
+    <id>http://kingsamchen.github.io/2026/07/21/weekly-2026-july-3/</id>
+    <published>2026-07-20T16:33:45.000Z</published>
+    <updated>2026-07-25T09:14:37.452Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（7.13 ~ 7.19）是7月份的第三周，这周实在太热了，台风一走直接变到酷暑高温。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 July 2026</title>
@@ -484,63 +536,6 @@
     
     
     <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 2 Mar 2026</title>
-    <link href="http://kingsamchen.github.io/2026/03/15/weekly-2026-mar-2/"/>
-    <id>http://kingsamchen.github.io/2026/03/15/weekly-2026-mar-2/</id>
-    <published>2026-03-15T14:22:54.000Z</published>
-    <updated>2026-03-15T14:37:33.237Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;09 ~ 03&amp;#x2F;15）是3月份的第二周，天气渐渐暖起来了。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Object-Wide Cancellation and Per-Operation Cancellation in ASIO</title>
-    <link href="http://kingsamchen.github.io/2026/03/15/per-operation-cancellation-in-asio/"/>
-    <id>http://kingsamchen.github.io/2026/03/15/per-operation-cancellation-in-asio/</id>
-    <published>2026-03-15T08:35:20.000Z</published>
-    <updated>2026-03-15T14:16:01.856Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;In the post &lt;a href=&quot;/2026/02/20/general-purpose-cancellation-mechanism-stop-token/&quot; title=&quot;std::stop_token: A General-Purpose</summary>
-        
-      
-    
-    
-    
-    <category term="PROGRAMMING" scheme="http://kingsamchen.github.io/categories/PROGRAMMING/"/>
-    
-    
-    <category term="cpp" scheme="http://kingsamchen.github.io/tags/cpp/"/>
-    
-    <category term="asio" scheme="http://kingsamchen.github.io/tags/asio/"/>
-    
-    <category term="cancellation" scheme="http://kingsamchen.github.io/tags/cancellation/"/>
-    
-    <category term="asynchronous" scheme="http://kingsamchen.github.io/tags/asynchronous/"/>
     
   </entry>
   
