@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-08-01T08:03:50.234Z</updated>
+  <updated>2026-08-04T15:43:04.997Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 5 July 2026</title>
+    <link href="http://kingsamchen.github.io/2026/08/04/weekly-2026-july-5/"/>
+    <id>http://kingsamchen.github.io/2026/08/04/weekly-2026-july-5/</id>
+    <published>2026-08-04T15:14:12.000Z</published>
+    <updated>2026-08-04T15:43:04.997Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（07&amp;#x2F;27 ~ 08&amp;#x2F;02）是7月份最后一周，炎炎夏日啊。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>TotW #2: Sorting with Custom Comparators Done Right — When Your Comparator Breaks std::sort</title>
@@ -500,32 +526,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（03&amp;#x2F;31 ~ 04&amp;#x2F;05）是四月份第一周，夹杂清明假期。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 4 Mar 2026</title>
-    <link href="http://kingsamchen.github.io/2026/03/30/weekly-2026-mar-4/"/>
-    <id>http://kingsamchen.github.io/2026/03/30/weekly-2026-mar-4/</id>
-    <published>2026-03-30T14:15:24.000Z</published>
-    <updated>2026-03-30T15:04:39.445Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（03&amp;#x2F;23 ~ 03&amp;#x2F;30）是3月份的第四周，虽然3月份很长，但是这周是最后一周了，惊不惊喜，意不意外。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
