@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-09-01T16:06:02.070Z</updated>
+  <updated>2026-09-08T15:27:29.927Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,33 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 1 Sep 2026</title>
+    <link href="http://kingsamchen.github.io/2026/09/06/weekly-2026-sep-1/"/>
+    <id>http://kingsamchen.github.io/2026/09/06/weekly-2026-sep-1/</id>
+    <published>2026-09-06T15:28:35.000Z</published>
+    <updated>2026-09-08T15:27:29.927Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（8.31 ~ 9.6）是9月份第一周。&lt;/p&gt;
+&lt;p&gt;这周开始搞 httpd -&amp;gt; fawkes 的迁移了，有点忙，事情也有点多。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 4 Aug 2026</title>
@@ -498,32 +525,6 @@
         
         
     <summary type="html">&lt;p&gt;本周（05&amp;#x2F;04 ~ 05&amp;#x2F;10）是五月份第一周，已经开始结束假期开始重新上班了。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 5 Apr 2026</title>
-    <link href="http://kingsamchen.github.io/2026/05/05/weekly-2026-apr-5/"/>
-    <id>http://kingsamchen.github.io/2026/05/05/weekly-2026-apr-5/</id>
-    <published>2026-05-05T02:01:22.000Z</published>
-    <updated>2026-05-05T08:52:12.468Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（04&amp;#x2F;27 ~ 05&amp;#x2F;03）是四月份最后一周，周五开始就是五一假期。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
         
       
