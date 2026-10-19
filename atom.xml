@@ -6,7 +6,7 @@
   <link href="http://kingsamchen.github.io/atom.xml" rel="self"/>
   
   <link href="http://kingsamchen.github.io/"/>
-  <updated>2026-10-12T15:51:08.239Z</updated>
+  <updated>2026-10-19T15:45:34.835Z</updated>
   <id>http://kingsamchen.github.io/</id>
   
   <author>
@@ -15,6 +15,32 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>一周杂记 in Week 3 Oct 2026</title>
+    <link href="http://kingsamchen.github.io/2026/10/19/weekly-2026-oct-3/"/>
+    <id>http://kingsamchen.github.io/2026/10/19/weekly-2026-oct-3/</id>
+    <published>2026-10-19T14:21:57.000Z</published>
+    <updated>2026-10-19T15:45:34.835Z</updated>
+    
+    
+      
+      
+        
+        
+    <summary type="html">&lt;p&gt;本周（10.12 ~ 10.18）是10月第三周，本周天气开始反复，不过最热也只30出头。&lt;/p&gt;
+&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
+        
+      
+    
+    
+    
+    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
+    
+    
+    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
+    
+  </entry>
   
   <entry>
     <title>一周杂记 in Week 2 Oct 2026</title>
@@ -499,33 +525,6 @@
         
     <summary type="html">&lt;p&gt;本周（6.8 ~ 6.14）是6月份第二周，这周末杭州开始进入梅雨季。&lt;/p&gt;
 &lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot;</summary>
-        
-      
-    
-    
-    
-    <category term="CODE-LIFE" scheme="http://kingsamchen.github.io/categories/CODE-LIFE/"/>
-    
-    
-    <category term="杂记" scheme="http://kingsamchen.github.io/tags/%E6%9D%82%E8%AE%B0/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>一周杂记 in Week 1 June 2026</title>
-    <link href="http://kingsamchen.github.io/2026/06/08/weekly-2026-june-1/"/>
-    <id>http://kingsamchen.github.io/2026/06/08/weekly-2026-june-1/</id>
-    <published>2026-06-08T14:48:42.000Z</published>
-    <updated>2026-06-08T15:10:05.002Z</updated>
-    
-    
-      
-      
-        
-        
-    <summary type="html">&lt;p&gt;本周（6.1 ~ 6.7）是6月份第一周，Q2的最后一个月。&lt;/p&gt;
-&lt;h2 id=&quot;Life&quot;&gt;&lt;a href=&quot;#Life&quot; class=&quot;headerlink&quot; title=&quot;Life&quot;&gt;&lt;/a&gt;Life&lt;/h2&gt;&lt;p&gt;#1&lt;/p&gt;
-&lt;p&gt;周五 WFH</summary>
         
       
     
